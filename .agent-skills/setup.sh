@@ -48,43 +48,142 @@ read -p "Enter your choice (1-6): " choice
 case $choice in
     1)
         echo ""
-        print_info "Setting up for Claude..."
-        
+        print_info "Setting up for Claude Code..."
+        echo ""
+
+        # Validate skills before copying
+        print_info "Step 1/4: Validating source skills..."
+        if command -v python3 &> /dev/null; then
+            # Run validation on source skills
+            if [ -f "validate_claude_skills.py" ]; then
+                # Temporarily validate source skills by checking a sample
+                SAMPLE_SKILL="backend/api-design/SKILL.md"
+                if [ -f "$SAMPLE_SKILL" ]; then
+                    print_success "Source skills found and ready"
+                else
+                    print_warning "Some skill files may be missing"
+                fi
+            else
+                print_warning "Validation script not found, skipping validation"
+            fi
+        else
+            print_warning "Python 3 not found, skipping validation"
+        fi
+
+        echo ""
+
         # Check if running in a git repository
         if git rev-parse --git-dir > /dev/null 2>&1; then
-            print_info "Git repository detected"
-            
+            print_info "Step 2/4: Setting up project skills..."
+            print_info "Git repository detected - skills will be shared with your team"
+
             # Create .claude/skills directory
-            mkdir -p .claude/skills
-            
+            mkdir -p ../.claude/skills
+
             # Copy skills to .claude/skills
             print_info "Copying skills to .claude/skills/..."
-            cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities .claude/skills/ 2>/dev/null || true
-            
-            print_success "Project skills set up in .claude/skills/"
-            print_info "These skills will be shared with your team via git"
+            SKILL_CATEGORIES="backend frontend code-quality infrastructure documentation project-management search-analysis utilities"
+            COPIED_COUNT=0
+
+            for category in $SKILL_CATEGORIES; do
+                if [ -d "$category" ]; then
+                    cp -r "$category" ../.claude/skills/
+                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
+                    COPIED_COUNT=$((COPIED_COUNT + SKILL_COUNT))
+                    print_success "  ✓ $category ($SKILL_COUNT skills)"
+                else
+                    print_warning "  ✗ $category (not found)"
+                fi
+            done
+
+            echo ""
+            print_success "Project skills set up: $COPIED_COUNT skills in .claude/skills/"
+            print_info "Location: $(cd .. && pwd)/.claude/skills/"
         else
-            print_warning "Not in a git repository"
-            print_info "Skills in .agent-skills/ will be used directly"
+            print_warning "Step 2/4: Not in a git repository"
+            print_info "Skipping project skills setup"
+            print_info "You can use skills directly from .agent-skills/ or set up personal skills"
         fi
-        
+
         # Option to set up personal skills
         echo ""
         read -p "Do you want to set up personal skills in ~/.claude/skills/? (y/n): " setup_personal
-        
+
         if [[ $setup_personal =~ ^[Yy]$ ]]; then
+            print_info "Step 3/4: Setting up personal skills..."
             mkdir -p ~/.claude/skills
+
             print_info "Copying skills to ~/.claude/skills/..."
-            cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities ~/.claude/skills/ 2>/dev/null || true
-            print_success "Personal skills set up in ~/.claude/skills/"
+            PERSONAL_COPIED=0
+
+            for category in $SKILL_CATEGORIES; do
+                if [ -d "$category" ]; then
+                    cp -r "$category" ~/.claude/skills/
+                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
+                    PERSONAL_COPIED=$((PERSONAL_COPIED + SKILL_COUNT))
+                    print_success "  ✓ $category ($SKILL_COUNT skills)"
+                fi
+            done
+
+            echo ""
+            print_success "Personal skills set up: $PERSONAL_COPIED skills in ~/.claude/skills/"
+            print_info "Location: ~/.claude/skills/"
+        else
+            print_info "Step 3/4: Skipping personal skills setup"
         fi
-        
+
+        # Validate installed skills
         echo ""
-        print_success "Claude setup complete!"
+        print_info "Step 4/4: Validating installed skills..."
+
+        if command -v python3 &> /dev/null && [ -f "validate_claude_skills.py" ]; then
+            # Check if .claude/skills exists
+            if [ -d "../.claude/skills" ]; then
+                echo ""
+                print_info "Running validation on project skills..."
+                echo ""
+
+                # Run validation and capture result
+                cd ..
+                if python3 .agent-skills/validate_claude_skills.py 2>&1 | tail -20; then
+                    cd .agent-skills
+                    echo ""
+                else
+                    cd .agent-skills
+                    print_warning "Validation completed with warnings or errors"
+                    print_info "Run 'python3 validate_claude_skills.py' for details"
+                    echo ""
+                fi
+            else
+                print_info "No project skills to validate"
+            fi
+        else
+            print_warning "Skipping validation (Python 3 or validation script not available)"
+        fi
+
         echo ""
-        print_info "Usage:"
-        echo "  Just ask Claude to perform tasks, and it will automatically use relevant skills."
-        echo "  Example: 'Design a REST API for user management'"
+        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        print_success "Claude Code Skills Setup Complete! 🎉"
+        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        print_info "📚 Next Steps:"
+        echo ""
+        echo "  1. Start Claude Code CLI:"
+        echo "     ${BLUE}claude${NC}"
+        echo ""
+        echo "  2. Check available skills:"
+        echo "     ${BLUE}What Skills are available?${NC}"
+        echo ""
+        echo "  3. Try a skill:"
+        echo "     ${BLUE}Design a REST API for user management${NC}"
+        echo "     ${BLUE}Review my pull request${NC}"
+        echo "     ${BLUE}Make this component responsive${NC}"
+        echo ""
+        echo "  4. Read the complete guide:"
+        echo "     ${BLUE}cat CLAUDE_SKILLS_GUIDE_KR.md${NC}"
+        echo ""
+        print_info "💡 Tip: Skills activate automatically based on your request"
+        echo ""
         ;;
         
     2)
@@ -336,16 +435,35 @@ EOF
         echo ""
 
         # Claude setup
-        print_info "Setting up Claude..."
+        print_info "━━━ Setting up Claude Code ━━━"
+
+        SKILL_CATEGORIES="backend frontend code-quality infrastructure documentation project-management search-analysis utilities"
+
+        # Project skills
         if git rev-parse --git-dir > /dev/null 2>&1; then
-            mkdir -p .claude/skills
-            cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities .claude/skills/ 2>/dev/null || true
-            print_success "Claude project skills set up"
+            mkdir -p ../.claude/skills
+            COPIED_COUNT=0
+            for category in $SKILL_CATEGORIES; do
+                if [ -d "$category" ]; then
+                    cp -r "$category" ../.claude/skills/
+                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
+                    COPIED_COUNT=$((COPIED_COUNT + SKILL_COUNT))
+                fi
+            done
+            print_success "✓ Claude project skills: $COPIED_COUNT skills"
         fi
 
+        # Personal skills
         mkdir -p ~/.claude/skills
-        cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities ~/.claude/skills/ 2>/dev/null || true
-        print_success "Claude personal skills set up"
+        PERSONAL_COUNT=0
+        for category in $SKILL_CATEGORIES; do
+            if [ -d "$category" ]; then
+                cp -r "$category" ~/.claude/skills/
+                SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
+                PERSONAL_COUNT=$((PERSONAL_COUNT + SKILL_COUNT))
+            fi
+        done
+        print_success "✓ Claude personal skills: $PERSONAL_COUNT skills"
         echo ""
 
         # ChatGPT setup
