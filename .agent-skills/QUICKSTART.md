@@ -35,6 +35,39 @@ cd /Users/supercent/Documents/Github/doc/.agent-skills
 
 ### ChatGPT 사용자
 
+**방법 1: ChatGPT 전용 템플릿 사용 (권장)**
+
+1. 템플릿 복사:
+   ```bash
+   cp -r templates/chatgpt-skill-template chatgpt/my-skill
+   ```
+
+2. skills.md 작성:
+   - `chatgpt/my-skill/skills.md` 파일 편집
+   - 플레이스홀더(`{SKILL_NAME}`, `{역할}` 등)를 실제 내용으로 교체
+   - 스킬의 목적, 사용 방법, 예시 등을 상세히 작성
+
+3. Custom GPT 생성:
+   - ChatGPT Builder에서 "Create a GPT" 클릭
+   - Instructions 탭 열기
+   - `skills.md`의 "7. Instructions 탭에 넣을 압축 버전" 섹션 복사
+   - 실제 값으로 교체하여 붙여넣기
+
+4. Knowledge 설정 (선택사항):
+   - `skills.md`의 "2.2 Knowledge" 섹션 참고
+   - 필요한 문서를 Knowledge에 업로드
+
+5. Actions 설정 (선택사항):
+   - `skills.md`의 "3. GPT Actions" 섹션 참고
+   - OpenAPI 스키마 작성 및 연결
+
+6. 테스트:
+   ```
+   사용자: "Design a REST API for user management"
+   ```
+
+**방법 2: Knowledge Base 업로드 (레거시)**
+
 1. 생성된 zip 파일 확인:
    ```bash
    ls -lh agent-skills-*.zip
@@ -43,19 +76,14 @@ cd /Users/supercent/Documents/Github/doc/.agent-skills
 2. Custom GPT 생성:
    - ChatGPT에서 "Create a GPT" 클릭
    - Knowledge 섹션에 zip 파일 업로드
-   - Instructions에 다음 추가:
-
-   ```
-   You have access to Agent Skills in your knowledge base.
-   When a task matches a skill, search for the SKILL.md file and follow it.
-   
-   Available skills: api-design, code-review, technical-writing, codebase-search
-   ```
+   - Instructions에 기본 가이드 추가
 
 3. 테스트:
    ```
    사용자: "Design a REST API for user management"
    ```
+
+**템플릿 가이드**: `templates/chatgpt-skill-template/README.md` 참고
 
 ### Gemini 사용자
 
@@ -279,8 +307,11 @@ find .claude/skills -name "SKILL.md"
 ```
 
 **ChatGPT**:
-- Custom GPT에 zip 파일이 업로드되었는지 확인
-- Instructions에 Skills 사용 가이드가 있는지 확인
+- 템플릿 방식 사용 시: `skills.md` 파일이 올바르게 작성되었는지 확인
+- Instructions 탭에 압축 버전이 올바르게 복사되었는지 확인
+- Knowledge 파일이 필요한 경우 업로드되었는지 확인
+- Actions 사용 시 OpenAPI 스키마가 올바르게 연결되었는지 확인
+- 레거시 방식 사용 시: Custom GPT에 zip 파일이 업로드되었는지 확인
 
 **Gemini**:
 ```bash

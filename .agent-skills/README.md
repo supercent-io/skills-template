@@ -23,6 +23,10 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 ├── setup.sh                           # 설정 스크립트
 ├── skill_loader.py                    # Python 유틸리티
 ├── templates/                         # Skills 작성 템플릿
+│   ├── basic-skill-template/         # 기본 템플릿
+│   ├── advanced-skill-template/       # 고급 템플릿
+│   ├── multiplatform-skill-template/ # 멀티 플랫폼 템플릿
+│   └── chatgpt-skill-template/       # ChatGPT 전용 템플릿 ✅
 ├── infrastructure/                    # 인프라 Skills
 │   ├── system-setup/
 │   ├── deployment/
@@ -89,23 +93,41 @@ cp -r .agent-skills/* ~/.claude/skills/
 
 ### ChatGPT (Custom GPTs)
 
+ChatGPT에는 공식적인 `skills.md` 포맷이 없고, 대신 **Custom GPT 설명서**를 Instructions 탭에 작성하는 방식입니다. 따라서 `skills.md`는 내부용 설계 문서로 사용하고, 그 내용을 Instructions·Actions에 옮기는 방식을 권장합니다.
+
+**권장 방법: ChatGPT 전용 템플릿 사용**
+
+1. **템플릿 복사**:
+   ```bash
+   cp -r templates/chatgpt-skill-template chatgpt/my-skill
+   ```
+
+2. **skills.md 작성**:
+   - `chatgpt/my-skill/skills.md` 파일 편집
+   - 스킬의 목적, 사용 방법, 예시 등을 상세히 작성
+   - Instructions 탭에 넣을 압축 버전 포함
+
+3. **Custom GPT 생성**:
+   - ChatGPT Builder에서 Custom GPT 생성
+   - Instructions 탭에 `skills.md`의 "7. Instructions 탭에 넣을 압축 버전" 복사
+   - 실제 값으로 교체하여 붙여넣기
+
+4. **Knowledge 설정** (선택사항):
+   - `skills.md`의 "2.2 Knowledge" 섹션 참고
+   - 필요한 문서를 Knowledge에 업로드
+
+5. **Actions 설정** (선택사항):
+   - `skills.md`의 "3. GPT Actions" 섹션 참고
+   - OpenAPI 스키마 작성 및 연결
+
+**템플릿 위치**: `templates/chatgpt-skill-template/`
+
+**기존 방법 (레거시)**:
+
 **방법 1: Knowledge Base 업로드**
 1. `.agent-skills/` 폴더를 zip으로 압축
 2. Custom GPT의 Knowledge에 업로드
-3. Instructions에 다음 추가:
-
-```
-You have access to Agent Skills in your knowledge base.
-Each skill is in a folder with SKILL.md file.
-
-When a task matches a skill's description:
-1. Search for the relevant SKILL.md in knowledge base
-2. Read and follow the instructions
-3. Use referenced files as needed
-
-Available skills: api-design, code-review, technical-writing, 
-codebase-search, and more in the knowledge base.
-```
+3. Instructions에 기본 가이드 추가 (위 템플릿 방식 권장)
 
 **방법 2: 직접 프롬프트 포함**
 ```
@@ -160,8 +182,12 @@ chmod +x setup.sh
 ```
 
 **ChatGPT 사용자**:
-```python
-# skill_loader.py 사용
+```bash
+# ChatGPT 전용 템플릿 사용 (권장)
+cp -r templates/chatgpt-skill-template chatgpt/my-skill
+# chatgpt/my-skill/skills.md 편집 후 Instructions 탭에 복사
+
+# 또는 기존 방법
 python skill_loader.py --skill api-design --output prompt.txt
 # prompt.txt 내용을 ChatGPT에 붙여넣기
 ```
@@ -178,6 +204,7 @@ print(loader.format_for_prompt(['api-design']))
 
 ### 3. 새 Skill 추가
 
+**일반 Skills (Claude, Gemini용)**:
 ```bash
 # 새 Skill 폴더 생성
 mkdir -p .agent-skills/backend/new-skill
@@ -202,6 +229,19 @@ EOF
 # Git에 커밋
 git add .agent-skills/backend/new-skill/
 git commit -m "Add new-skill"
+```
+
+**ChatGPT Custom GPT용**:
+```bash
+# ChatGPT 전용 템플릿 복사
+cp -r templates/chatgpt-skill-template chatgpt/my-skill
+
+# skills.md 편집
+# - 플레이스홀더를 실제 내용으로 교체
+# - Instructions 탭에 넣을 압축 버전 작성
+
+# Custom GPT 생성 시
+# - ChatGPT Builder의 Instructions 탭에 skills.md의 "7. Instructions 탭에 넣을 압축 버전" 복사
 ```
 
 ## 사용 가능한 Skills
