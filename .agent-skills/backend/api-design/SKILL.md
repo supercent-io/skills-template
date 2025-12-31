@@ -1,6 +1,14 @@
 ---
 name: api-design
 description: Design RESTful and GraphQL APIs following best practices. Use when creating new APIs, refactoring existing endpoints, or documenting API specifications. Handles OpenAPI, REST, GraphQL, versioning.
+license: Apache-2.0
+compatibility:
+  - python>=3.10
+metadata:
+  version: "1.0.0"
+  author: "Agent Skills Team"
+allowed-tools:
+  - python
 ---
 
 # API Design

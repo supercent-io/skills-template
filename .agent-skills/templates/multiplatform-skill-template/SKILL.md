@@ -1,5 +1,5 @@
 ---
-name: skill-name
+name: multiplatform-skill-template
 description: 이 스킬의 목적과 언제 사용하는지 간단히 설명합니다. 주요 기술과 시나리오를 포함하세요.
 tags: [tag1, tag2, tag3]
 platforms: [Claude, ChatGPT, Gemini]

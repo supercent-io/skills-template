@@ -1,5 +1,5 @@
 ---
-name: advanced-skill-name
+name: advanced-skill-template
 description: Comprehensive description of what this skill does and when to use it. Include technologies, use cases, and any special requirements or dependencies.
 allowed-tools: Read, Write, Grep, Glob
 ---

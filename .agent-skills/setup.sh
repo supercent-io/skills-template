@@ -40,9 +40,10 @@ echo "1) Claude (Cursor, Claude Code, Claude.ai)"
 echo "2) ChatGPT (Custom GPT setup instructions)"
 echo "3) Gemini (Python integration)"
 echo "4) All platforms (comprehensive setup)"
-echo "5) Exit"
+echo "5) Validate Skills (Check standards)"
+echo "6) Exit"
 echo ""
-read -p "Enter your choice (1-5): " choice
+read -p "Enter your choice (1-6): " choice
 
 case $choice in
     1)
@@ -404,6 +405,16 @@ EOF
         ;;
         
     5)
+        echo ""
+        print_info "Validating skills..."
+        if command -v python3 &> /dev/null; then
+            python3 skill_loader.py validate
+        else
+            print_warning "Python 3 not found, cannot validate."
+        fi
+        ;;
+
+    6)
         echo "Exiting..."
         exit 0
         ;;

@@ -1,5 +1,5 @@
 ---
-name: your-skill-name
+name: basic-skill-template
 description: Brief description of what this Skill does and when to use it. Include key technologies and scenarios.
 ---
 
