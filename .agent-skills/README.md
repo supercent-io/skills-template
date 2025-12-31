@@ -12,6 +12,7 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 - 🌐 **플랫폼 독립적**: Claude, ChatGPT, Gemini 모두 지원
 - 📝 **자체 문서화**: SKILL.md만 읽어도 이해 가능
 - 🔍 **점진적 공개**: 필요할 때만 컨텍스트 로드
+- 🤝 **멀티 에이전트 지원**: 개선 작업 시 여러 AI 에이전트를 협업하여 품질 향상
 
 ## 폴더 구조
 
@@ -58,7 +59,7 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 │   ├── retrospective/
 │   └── standup-helper/
 └── utilities/                         # 유틸리티 Skills
-    ├── git-workflow/
+    ├── git-workflow/                 ✅ 구현됨
     ├── environment-setup/
     ├── file-organization/
     └── automation/
@@ -248,7 +249,7 @@ git commit -m "Add new-skill"
 - 📢 **standup-helper**: 스탠드업 준비
 
 ### Utilities (유틸리티)
-- 🌿 **git-workflow**: Git 워크플로우
+- ✅ **git-workflow**: Git 워크플로우 (구현됨)
 - ⚙️ **environment-setup**: 환경 설정
 - 📁 **file-organization**: 파일 정리
 - 🤖 **automation**: 자동화 스크립트
@@ -263,6 +264,40 @@ git commit -m "Add new-skill"
 3. 지원 파일 추가 (선택사항)
 4. 테스트
 5. Pull Request 생성
+
+### 🤝 멀티 에이전트 기여 방식
+
+이 프로젝트는 개선 작업 시 **멀티 에이전트 접근 방식**을 권장합니다. 여러 AI 에이전트가 각자의 전문 Skill을 활용하여 협업하면 더 높은 품질의 결과를 얻을 수 있습니다.
+
+**멀티 에이전트 워크플로우 예시**:
+
+```
+1. 에이전트 A (구현): 새 Skill 작성
+   → api-design Skill을 참고하여 REST API 설계
+
+2. 에이전트 B (검토): 코드 리뷰 수행
+   → code-review Skill을 활용하여 품질 검증
+   → 보안, 성능, 테스트 커버리지 확인
+
+3. 에이전트 C (문서화): 문서 작성
+   → technical-writing Skill을 사용하여 문서화
+   → README, 예제, Best practices 작성
+
+4. 에이전트 D (검색/분석): 관련 코드 찾기
+   → codebase-search Skill을 활용하여 유사 구현 탐색
+   → 일관성 및 패턴 분석
+```
+
+**멀티 에이전트의 장점**:
+- ✅ 각 에이전트가 전문 Skill에 집중하여 더 정확한 결과
+- ✅ 다양한 관점에서 검토하여 품질 향상
+- ✅ 병렬 작업으로 효율성 증대
+- ✅ 각 Skill의 활용도 증가
+
+**실전 활용**:
+- 새 Skill 개발 시: 구현 → 리뷰 → 문서화 → 검증의 파이프라인 구성
+- 기존 Skill 개선 시: 검색 → 분석 → 개선 → 리뷰 → 문서 업데이트
+- 버그 수정 시: 문제 탐색 → 원인 분석 → 수정 → 테스트 → 문서화
 
 ## 참고 자료
 
