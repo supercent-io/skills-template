@@ -183,10 +183,41 @@ EOF
         echo ""
         print_info "Setting up for Gemini..."
 
-        # Create GEMINI.md in project root
-        print_info "Creating GEMINI.md in project root..."
+        echo "Select Gemini setup mode:"
+        echo "1) Standard Context (Creates GEMINI.md in root - Easiest)"
+        echo "2) CLI Extension (Creates extension scaffold - Advanced/Official)"
+        read -p "Enter choice (1-2): " gemini_mode
 
-        cat > "$AGENT_SKILLS_DIR/../GEMINI.md" << 'EOF'
+        if [ "$gemini_mode" = "2" ]; then
+            print_info "Setting up Gemini CLI Extension..."
+            
+            EXT_DIR="gemini-extension"
+            if [ -d "$EXT_DIR" ]; then
+                read -p "Directory $EXT_DIR already exists. Overwrite? (y/n): " overwrite
+                if [[ ! $overwrite =~ ^[Yy]$ ]]; then
+                    print_warning "Aborted extension setup."
+                else
+                    cp -r templates/gemini-extension-template/* "$EXT_DIR/"
+                    print_success "Extension scaffold updated in ./$EXT_DIR"
+                fi
+            else
+                mkdir -p "$EXT_DIR"
+                cp -r templates/gemini-extension-template/* "$EXT_DIR/"
+                print_success "Extension scaffold created in ./$EXT_DIR"
+            fi
+            
+            echo ""
+            print_info "Gemini CLI Extension Setup Guide:"
+            echo "1. Navigate to the extension directory: cd $EXT_DIR"
+            echo "2. Edit 'GEMINI.md' to define your agent's playbook."
+            echo "3. Edit 'tools.py' to add Python functions."
+            echo "4. Use with Gemini CLI: gemini chat --extension ."
+            
+        else
+            # Default to Standard Context
+            print_info "Creating GEMINI.md in project root..."
+
+            cat > "$AGENT_SKILLS_DIR/../GEMINI.md" << 'EOF'
 # Agent Skills for Gemini
 
 이 프로젝트는 Agent Skills 시스템을 사용합니다.
@@ -239,30 +270,16 @@ Gemini는 `.agent-skills/` 폴더의 스킬들을 작업 매뉴얼로 참조해�
 - 환경변수로 민감 정보 관리
 - 추측성 정보 추가 금지
 EOF
+            print_success "GEMINI.md created in project root"
+        fi
 
-        print_success "GEMINI.md created in project root"
+        # Common instructions
         echo ""
-
-        # Gemini CLI setup instructions
-        print_info "Gemini CLI Setup:"
-        echo ""
-        echo "Option 1: Gemini CLI (Recommended for agentic coding)"
-        echo "  Install: npm install -g @google/gemini-cli"
-        echo "  Setup:   gemini auth login"
-        echo "  Usage:   gemini chat --context GEMINI.md"
-        echo ""
-        echo "  The CLI will automatically read GEMINI.md as project context."
-        echo "  Learn more: https://geminicli.com/docs/cli/gemini-md/"
-        echo ""
-
-        echo "Option 2: Gemini Code Assist (IDE integration)"
-        echo "  Install the Gemini Code Assist extension in your IDE"
-        echo "  Enable 'Agent Mode' for pair-programmer experience"
-        echo "  The agent will read GEMINI.md automatically"
-        echo "  Learn more: https://developers.google.com/gemini-code-assist"
-        echo ""
+        print_info "Reference Guide created: GEMINI_SKILL_GUIDE.md"
+        echo "Check GEMINI_SKILL_GUIDE.md for detailed official patterns."
 
         # Python integration (optional)
+        echo ""
         echo "Option 3: Python API integration"
         read -p "Do you want to install Python dependencies? (y/n): " install_python
 
@@ -311,11 +328,6 @@ EOF
 
         echo ""
         print_success "Gemini setup complete!"
-        echo ""
-        print_info "Quick Start:"
-        echo "  - Use 'gemini chat' in your project directory"
-        echo "  - Gemini will automatically use GEMINI.md as context"
-        echo "  - Ask it to use specific skills: 'Use the api-design skill to create a REST API'"
         ;;
         
     4)
@@ -428,11 +440,18 @@ EOF
         
     5)
         echo ""
-        print_info "Validating skills..."
+        print_info "Validating Claude Code skills..."
         if command -v python3 &> /dev/null; then
-            python3 skill_loader.py validate
+            # Check if Claude skills exist
+            if [ -d "../.claude/skills" ]; then
+                python3 validate_claude_skills.py
+            else
+                print_warning ".claude/skills directory not found."
+                print_info "Please run option 1 (Claude setup) first."
+            fi
         else
             print_warning "Python 3 not found, cannot validate."
+            print_info "Please install Python 3 to use the validation feature."
         fi
         ;;
 
