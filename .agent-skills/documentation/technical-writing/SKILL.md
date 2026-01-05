@@ -406,17 +406,6 @@ def calculate_total(items: List[Item]) -> Decimal:
 - Question 1
 - Question 2
 
-## References
-- [Link 1]
-- [Link 2]
-```
-
-### README Template
-```markdown
-# Project Name
-
-Brief description of the project
-
 ## Features
 - Feature 1
 - Feature 2
@@ -507,7 +496,7 @@ MIT
 
 ### Use examples
 ```
-✅ Good: 
+✅ Good:
 "Set the timeout in seconds:
 ```yaml
 timeout: 30
@@ -527,7 +516,7 @@ timeout: 30
 4. Verify rollout"
 
 ❌ Bad:
-"Deploy by building and pushing the image to the registry, then update 
+"Deploy by building and pushing the image to the registry, then update
 the deployment and verify the rollout succeeded"
 ```
 
@@ -581,10 +570,10 @@ the deployment and verify the rollout succeeded"
 - CloudApp
 - Loom (for videos)
 
-## References
+## Examples
 
-- [Google Developer Documentation Style Guide](https://developers.google.com/style)
-- [Microsoft Writing Style Guide](https://learn.microsoft.com/en-us/style-guide/welcome/)
-- [Write the Docs](https://www.writethedocs.org/)
-- [Mermaid Documentation](https://mermaid.js.org/)
+### Example 1: Basic usage
+<!-- Add example content here -->
 
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

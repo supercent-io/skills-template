@@ -7,19 +7,16 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Sprint Retrospective
 
-## 목적 (Purpose)
 
-팀이 스프린트를 돌아보고 개선 방안을 도출하는 효과적인 회고를 진행합니다.
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **스프린트 종료**: 매 스프린트 마지막
 - **프로젝트 마일스톤**: 주요 릴리스 후
 - **팀 문제 발생**: 즉시 회고 필요 시
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: Start-Stop-Continue
+### Step 1: Start-Stop-Continue
 
 ```markdown
 ## Retrospective Template: Start-Stop-Continue
@@ -45,7 +42,7 @@ platforms: [Claude, ChatGPT, Gemini]
 3. [ ] 금요일 배포 금지 규칙 공지 (팀장)
 ```
 
-### 2단계: Mad-Sad-Glad
+### Step 2: Mad-Sad-Glad
 
 ```markdown
 ## Retrospective: Mad-Sad-Glad
@@ -71,7 +68,7 @@ platforms: [Claude, ChatGPT, Gemini]
 - 매주 금요일 문서화 시간 확보
 ```
 
-### 3단계: 4Ls (Liked-Learned-Lacked-Longed For)
+### Step 3: 4Ls (Liked-Learned-Lacked-Longed For)
 
 ```markdown
 ## Retrospective: 4Ls
@@ -97,7 +94,7 @@ platforms: [Claude, ChatGPT, Gemini]
 - 반응형 디자인 가이드라인 작성
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### Retrospective 문서
 
@@ -127,7 +124,7 @@ platforms: [Claude, ChatGPT, Gemini]
 - Sprint Goal Achievement: 100%
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -140,18 +137,18 @@ platforms: [Claude, ChatGPT, Gemini]
 1. **개인 공격**: 사람이 아닌 프로세스 개선
 2. **너무 많은 Action**: 2-3개로 제한
 
-## 베스트 프랙티스
+## Best practices
 
 1. **Time-box**: 1시간 이내
 2. **Rotate Facilitator**: 팀원이 돌아가며 진행
 3. **Celebrate Wins**: 성공도 함께 축하
 
-## 참고 자료
+## References
 
 - [Retrospective Formats](https://retromat.org/)
 - [Agile Retrospectives](https://www.amazon.com/Agile-Retrospectives-Making-Teams-Great/dp/0977616649)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0
@@ -160,3 +157,11 @@ platforms: [Claude, ChatGPT, Gemini]
 
 ### 태그
 `#retrospective` `#agile` `#scrum` `#team-improvement` `#project-management`
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

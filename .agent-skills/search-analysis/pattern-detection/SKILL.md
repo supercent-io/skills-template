@@ -8,26 +8,17 @@ allowed-tools: [Read, Grep, Glob]
 
 # Pattern Detection
 
-## 목적 (Purpose)
 
-코드와 데이터에서 패턴, 이상 징후, 트렌드를 감지합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 코드 스멜 감지
-- 보안 취약점 패턴 발견
-- 반복 코드 패턴 식별
-- 데이터 이상 징후 탐지
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **코드 리뷰**: 문제 패턴 사전 감지
 - **보안 검토**: 취약점 패턴 스캔
 - **리팩토링**: 중복 코드 식별
 - **모니터링**: 이상 징후 알림
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: 코드 스멜 패턴 감지
+### Step 1: 코드 스멜 패턴 감지
 
 **긴 함수 감지**:
 ```bash
@@ -53,7 +44,7 @@ grep -rn "try\s*{" --include="*.java" . | wc -l
 grep -rn "[^a-zA-Z][0-9]{2,}[^a-zA-Z]" --include="*.{js,ts}" .
 ```
 
-### 2단계: 보안 취약점 패턴
+### Step 2: 보안 취약점 패턴
 
 **SQL Injection 위험**:
 ```bash
@@ -80,7 +71,7 @@ grep -rn "eval\(.*\)\|exec\(.*\)" --include="*.{py,js}" .
 grep -rn "innerHTML\s*=" --include="*.{js,ts}" .
 ```
 
-### 3단계: 코드 구조 패턴
+### Step 3: 코드 구조 패턴
 
 **임포트 분석**:
 ```bash
@@ -104,7 +95,7 @@ grep -rn "catch.*{[\s]*}" --include="*.{js,ts,java}" .
 grep -rn "except:\s*pass" --include="*.py" .
 ```
 
-### 4단계: 데이터 이상 패턴
+### Step 4: 데이터 이상 패턴
 
 **정규식 패턴**:
 ```python
@@ -146,7 +137,7 @@ def detect_anomalies_iqr(data, k=1.5):
     return np.where((data < lower) | (data > upper))[0]
 ```
 
-### 5단계: 트렌드 분석
+### Step 5: 트렌드 분석
 
 ```python
 import pandas as pd
@@ -173,7 +164,7 @@ def analyze_trend(df, date_col, value_col):
     }
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 패턴 감지 리포트
 
@@ -204,14 +195,14 @@ def analyze_trend(df, date_col, value_col):
 2. [조치 2]
 ```
 
-## 베스트 프랙티스
+## Best practices
 
 1. **점진적 분석**: 간단한 패턴부터 시작
 2. **오탐 최소화**: 정확한 정규식 사용
 3. **컨텍스트 확인**: 패턴의 맥락 파악
 4. **우선순위 지정**: 심각도별 정렬
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 1. 읽기 전용 작업
@@ -222,8 +213,16 @@ def analyze_trend(df, date_col, value_col):
 1. 코드 자동 수정 금지
 2. 민감 정보 로깅 금지
 
-## 참고 자료
+## References
 
 - [Regex101](https://regex101.com/)
 - [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/)
 - [Code Smell Catalog](https://refactoring.guru/refactoring/smells)
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

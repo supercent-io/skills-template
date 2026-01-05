@@ -1,6 +1,8 @@
 ---
 name: git-workflow
 description: Manage Git workflows including commits, branches, merges, and collaboration. Use when working with Git repositories, creating commits, managing branches, or resolving conflicts.
+tags: []
+platforms: [Claude, ChatGPT, Gemini]
 ---
 
 # Git Workflow
@@ -519,4 +521,3 @@ git config --global core.editor "vim"           # Vim
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/)
 - [GitHub Flow](https://guides.github.com/introduction/flow/)
-

@@ -7,18 +7,8 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Backend Testing
 
-## 목적 (Purpose)
 
-백엔드 애플리케이션의 안정성과 품질을 보장하는 포괄적인 테스트를 작성합니다.
-
-이 스킬은 다음을 도와줍니다:
-- Unit, Integration, E2E 테스트 작성
-- REST API 엔드포인트 테스트
-- 데이터베이스 작업 테스트
-- 인증/권한 테스트
-- 테스트 커버리지 향상
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 이 스킬을 트리거해야 하는 구체적인 상황을 나열합니다:
 
@@ -54,11 +44,11 @@ Express.js API의 사용자 인증 엔드포인트를 테스트해줘:
 - 커버리지: 90% 이상
 ```
 
-## 작업 절차 (Procedure)
+## Instructions
 
 단계별로 정확하게 따라야 할 작업 순서를 명시합니다.
 
-### 1단계: 테스트 환경 설정
+### Step 1: 테스트 환경 설정
 
 테스트 프레임워크 및 도구를 설치하고 설정합니다.
 
@@ -118,7 +108,7 @@ afterAll(async () => {
 });
 ```
 
-### 2단계: Unit Test 작성 (비즈니스 로직)
+### Step 2: Unit Test 작성 (비즈니스 로직)
 
 개별 함수/클래스의 단위 테스트를 작성합니다.
 
@@ -210,7 +200,7 @@ describe('validatePassword', () => {
 });
 ```
 
-### 3단계: Integration Test (API 엔드포인트)
+### Step 3: Integration Test (API 엔드포인트)
 
 API 엔드포인트의 통합 테스트를 작성합니다.
 
@@ -354,7 +344,7 @@ describe('POST /auth/login', () => {
 });
 ```
 
-### 4단계: 인증/권한 테스트
+### Step 4: 인증/권한 테스트
 
 JWT 토큰 및 권한 기반 접근 제어를 테스트합니다.
 
@@ -454,7 +444,7 @@ describe('Protected Routes', () => {
 });
 ```
 
-### 5단계: Mocking 및 테스트 격리
+### Step 5: Mocking 및 테스트 격리
 
 외부 의존성을 모킹하여 테스트를 격리합니다.
 
@@ -525,7 +515,7 @@ describe('sendVerificationEmail', () => {
 });
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 결과물이 따라야 할 정확한 형식을 정의합니다.
 
@@ -578,7 +568,7 @@ All files                 |   92.5  |   88.3   |   95.2  |   92.8  |
 --------------------------|---------|----------|---------|---------|
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 반드시 지켜야 할 규칙과 금지 사항을 명시합니다.
 
@@ -616,7 +606,7 @@ All files                 |   92.5  |   88.3   |   95.2  |   92.8  |
 - **민감정보 하드코딩 금지**: 테스트 코드에도 API 키, 비밀번호 하드코딩 금지
 - **환경변수 분리**: .env.test 파일 사용
 
-## 작업 예시 (Examples)
+## Examples
 
 ### 예시 1: Python FastAPI 테스트 (Pytest)
 
@@ -734,7 +724,7 @@ def test_protected_route_with_token(client):
     assert response.json()["email"] == "test@example.com"
 ```
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 ### 품질 향상
 
@@ -821,7 +811,7 @@ it('should work', async () => {
 });
 ```
 
-## 참고 자료 (References)
+## References
 
 ### 공식 문서
 - [Jest Documentation](https://jestjs.io/docs/getting-started)
@@ -837,7 +827,7 @@ it('should work', async () => {
 - [nock](https://github.com/nock/nock) - HTTP 모킹
 - [faker.js](https://fakerjs.dev/) - 테스트 데이터 생성
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0

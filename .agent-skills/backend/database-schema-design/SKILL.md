@@ -7,18 +7,8 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Database Schema Design
 
-## 목적 (Purpose)
 
-효율적이고 확장 가능한 데이터베이스 스키마를 설계하고 최적화합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 정규화/비정규화된 스키마 설계
-- 관계형 및 NoSQL 데이터베이스 모델링
-- 인덱스 전략 수립
-- 마이그레이션 스크립트 작성
-- 성능 최적화
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 이 스킬을 트리거해야 하는 구체적인 상황을 나열합니다:
 
@@ -57,11 +47,11 @@ platforms: [Claude, ChatGPT, Gemini]
 - 읽기 중심 (상품 조회 빈번)
 ```
 
-## 작업 절차 (Procedure)
+## Instructions
 
 단계별로 정확하게 따라야 할 작업 순서를 명시합니다.
 
-### 1단계: 엔티티 및 속성 정의
+### Step 1: 엔티티 및 속성 정의
 
 핵심 데이터 객체와 그 속성을 식별합니다.
 
@@ -105,7 +95,7 @@ OrderItems (주문 상품 - 중간 테이블)
 - price: DECIMAL(10, 2) NOT NULL
 ```
 
-### 2단계: 관계 설계 및 정규화
+### Step 2: 관계 설계 및 정규화
 
 테이블 간의 관계를 정의하고 정규화를 적용합니다.
 
@@ -164,7 +154,7 @@ erDiagram
     }
 ```
 
-### 3단계: 인덱스 전략 수립
+### Step 3: 인덱스 전략 수립
 
 쿼리 성능을 위한 인덱스를 설계합니다.
 
@@ -229,7 +219,7 @@ CREATE INDEX idx_products_name_fts ON products USING GIN(to_tsvector('english', 
 CREATE INDEX idx_products_description_fts ON products USING GIN(to_tsvector('english', description));
 ```
 
-### 4단계: 제약조건 및 트리거 설정
+### Step 4: 제약조건 및 트리거 설정
 
 데이터 무결성을 위한 제약조건을 추가합니다.
 
@@ -268,7 +258,7 @@ FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 ```
 
-### 5단계: 마이그레이션 스크립트 작성
+### Step 5: 마이그레이션 스크립트 작성
 
 스키마 변경사항을 안전하게 적용하는 마이그레이션을 작성합니다.
 
@@ -326,7 +316,7 @@ DROP TABLE IF EXISTS users CASCADE;
 COMMIT;
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 결과물이 따라야 할 정확한 형식을 정의합니다.
 
@@ -388,7 +378,7 @@ erDiagram
 - **Estimated rows**: 10,000
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 반드시 지켜야 할 규칙과 금지 사항을 명시합니다.
 
@@ -426,7 +416,7 @@ erDiagram
 - **SQL Injection 방지**: Prepared Statements/Parameterized Queries 사용
 - **민감 칼럼 암호화**: 개인정보는 암호화 저장 고려
 
-## 작업 예시 (Examples)
+## Examples
 
 실제 사용 사례를 통해 스킬의 적용 방법을 보여줍니다.
 
@@ -600,7 +590,7 @@ db.messages.createIndex({ sender_id: 1 });
 - 자주 조회되는 필드에 인덱스
 - 배열 필드 활용 (participants, read_by)
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 ### 품질 향상
 
@@ -671,7 +661,7 @@ CREATE INDEX idx_order_items_product_id ON order_items(product_id);
 - MySQL: `UUID_TO_BIN(UUID(), 1)` 사용
 - 또는 Auto-increment BIGINT 사용 고려
 
-## 참고 자료 (References)
+## References
 
 ### 공식 문서
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
@@ -687,7 +677,7 @@ CREATE INDEX idx_order_items_product_id ON order_items(product_id);
 - [Database Design Course (freecodecamp)](https://www.youtube.com/watch?v=ztHopE5Wnpc)
 - [Use The Index, Luke](https://use-the-index-luke.com/) - SQL 인덱싱 가이드
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0
