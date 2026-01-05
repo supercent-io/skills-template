@@ -163,6 +163,64 @@ model = genai.GenerativeModel('gemini-pro')
 response = model.generate_content(prompt)
 ```
 
+### MCP Integration (Gemini-CLI, Codex-CLI)
+
+**MCP(Model Context Protocol) 서버를 통한 스킬 사용**:
+
+MCP는 Claude Code에서 다양한 AI 모델을 통합하여 사용할 수 있게 하는 프로토콜입니다. Gemini-CLI, Codex-CLI 등의 MCP 서버를 통해 Agent Skills를 활용할 수 있습니다.
+
+**설정 방법**:
+```bash
+# setup.sh 실행 후 옵션 6 선택
+./setup.sh
+# 6) MCP Integration (Gemini-CLI, Codex-CLI)
+```
+
+**생성되는 파일**:
+- `MCP_CONTEXT.md`: MCP 사용을 위한 스킬 시스템 가이드
+- `mcp-skill-loader.sh`: 스킬 로드 헬퍼 스크립트
+- `mcp-shell-config.sh`: Shell 설정 스니펫
+
+**사용 예시**:
+```bash
+# 1. Helper 함수 로드
+source .agent-skills/mcp-skill-loader.sh
+
+# 2. 사용 가능한 스킬 목록 확인
+list_skills
+
+# 3. 스킬 검색
+search_skills "API design"
+
+# 4. Gemini CLI와 함께 사용
+gemini chat "$(load_skill backend/api-design)
+
+사용자 관리 REST API를 설계해줘"
+
+# 5. Codex CLI와 함께 사용
+codex-cli shell "$(load_skill code-quality/code-review)
+
+이 코드를 리뷰해줘: $(cat src/app.ts)"
+
+# 6. 컨텍스트와 함께 스킬 로드
+load_skill_with_context backend/api-design
+```
+
+**Shell RC 파일에 추가** (~/.bashrc 또는 ~/.zshrc):
+```bash
+# Agent Skills MCP 통합
+export AGENT_SKILLS_PATH="/path/to/.agent-skills"
+source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
+
+# 편의 alias
+alias skills-list='list_skills'
+alias skills-search='search_skills'
+```
+
+**MCP 서버 설정**:
+MCP 서버 설치 및 설정은 다음 가이드를 참고하세요:
+- `.agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md`
+
 ## 빠른 시작
 
 ### 1. 설정

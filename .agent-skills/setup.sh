@@ -28,8 +28,47 @@ print_warning() {
     echo -e "${YELLOW}⚠️  $1${NC}"
 }
 
-# Detect current directory
-AGENT_SKILLS_DIR=$(pwd)
+# Resolve script directory for path-independent execution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AGENT_SKILLS_DIR="$SCRIPT_DIR"
+
+# Cleanup function for temporary directories
+TEMP_DIR=""
+cleanup_temp_dir() {
+    if [ -n "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+    fi
+}
+trap cleanup_temp_dir EXIT
+
+# Skill categories as array
+SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities)
+
+# Function to copy skills to a destination
+copy_skills() {
+    local dest="$1"
+    local verbose="$2"
+    local copied=0
+    local category
+
+    for category in "${SKILL_CATEGORIES[@]}"; do
+        if [ -d "$category" ]; then
+            cp -r "$category" "$dest/"
+            local skill_count
+            skill_count=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
+            copied=$((copied + skill_count))
+            if [ "$verbose" = "true" ]; then
+                print_success "  ✓ $category ($skill_count skills)"
+            fi
+        else
+            if [ "$verbose" = "true" ]; then
+                print_warning "  ✗ $category (not found)"
+            fi
+        fi
+    done
+
+    echo "$copied"
+}
 
 print_info "Agent Skills directory: $AGENT_SKILLS_DIR"
 echo ""
@@ -41,11 +80,12 @@ echo "2) ChatGPT (Custom GPT setup instructions)"
 echo "3) Gemini (Python integration)"
 echo "4) All platforms (comprehensive setup)"
 echo "5) Validate Skills (Check standards)"
-echo "6) Exit"
+echo "6) MCP Integration (Gemini-CLI, Codex-CLI)"
+echo "7) Exit"
 echo ""
-read -p "Enter your choice (1-6): " choice
+read -p "Enter your choice (1-7): " choice
 
-case $choice in
+case "$choice" in
     1)
         echo ""
         print_info "Setting up for Claude Code..."
@@ -82,19 +122,7 @@ case $choice in
 
             # Copy skills to .claude/skills
             print_info "Copying skills to .claude/skills/..."
-            SKILL_CATEGORIES="backend frontend code-quality infrastructure documentation project-management search-analysis utilities"
-            COPIED_COUNT=0
-
-            for category in $SKILL_CATEGORIES; do
-                if [ -d "$category" ]; then
-                    cp -r "$category" ../.claude/skills/
-                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
-                    COPIED_COUNT=$((COPIED_COUNT + SKILL_COUNT))
-                    print_success "  ✓ $category ($SKILL_COUNT skills)"
-                else
-                    print_warning "  ✗ $category (not found)"
-                fi
-            done
+            COPIED_COUNT=$(copy_skills "../.claude/skills" "true")
 
             echo ""
             print_success "Project skills set up: $COPIED_COUNT skills in .claude/skills/"
@@ -114,16 +142,7 @@ case $choice in
             mkdir -p ~/.claude/skills
 
             print_info "Copying skills to ~/.claude/skills/..."
-            PERSONAL_COPIED=0
-
-            for category in $SKILL_CATEGORIES; do
-                if [ -d "$category" ]; then
-                    cp -r "$category" ~/.claude/skills/
-                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
-                    PERSONAL_COPIED=$((PERSONAL_COPIED + SKILL_COUNT))
-                    print_success "  ✓ $category ($SKILL_COUNT skills)"
-                fi
-            done
+            PERSONAL_COPIED=$(copy_skills "$HOME/.claude/skills" "true")
 
             echo ""
             print_success "Personal skills set up: $PERSONAL_COPIED skills in ~/.claude/skills/"
@@ -144,12 +163,9 @@ case $choice in
                 echo ""
 
                 # Run validation and capture result
-                cd ..
-                if python3 .agent-skills/validate_claude_skills.py 2>&1 | tail -20; then
-                    cd .agent-skills
+                if (cd .. && python3 .agent-skills/validate_claude_skills.py 2>&1 | tail -20); then
                     echo ""
                 else
-                    cd .agent-skills
                     print_warning "Validation completed with warnings or errors"
                     print_info "Run 'python3 validate_claude_skills.py' for details"
                     echo ""
@@ -195,14 +211,11 @@ case $choice in
         print_info "Creating zip file: $ZIP_FILE"
 
         # Create temporary directory
-        TEMP_DIR=$(mktemp -d)
+        TEMP_DIR="$(mktemp -d)"
         cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities "$TEMP_DIR/"
 
         # Create zip
-        cd "$TEMP_DIR"
-        zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1
-        cd "$AGENT_SKILLS_DIR"
-        rm -rf "$TEMP_DIR"
+        (cd "$TEMP_DIR" && zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1)
 
         print_success "Zip file created: $ZIP_FILE"
         echo ""
@@ -437,44 +450,25 @@ EOF
         # Claude setup
         print_info "━━━ Setting up Claude Code ━━━"
 
-        SKILL_CATEGORIES="backend frontend code-quality infrastructure documentation project-management search-analysis utilities"
-
         # Project skills
         if git rev-parse --git-dir > /dev/null 2>&1; then
             mkdir -p ../.claude/skills
-            COPIED_COUNT=0
-            for category in $SKILL_CATEGORIES; do
-                if [ -d "$category" ]; then
-                    cp -r "$category" ../.claude/skills/
-                    SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
-                    COPIED_COUNT=$((COPIED_COUNT + SKILL_COUNT))
-                fi
-            done
+            COPIED_COUNT=$(copy_skills "../.claude/skills" "false")
             print_success "✓ Claude project skills: $COPIED_COUNT skills"
         fi
 
         # Personal skills
         mkdir -p ~/.claude/skills
-        PERSONAL_COUNT=0
-        for category in $SKILL_CATEGORIES; do
-            if [ -d "$category" ]; then
-                cp -r "$category" ~/.claude/skills/
-                SKILL_COUNT=$(find "$category" -name "SKILL.md" -o -name "SKILL.toon" | wc -l | tr -d ' ')
-                PERSONAL_COUNT=$((PERSONAL_COUNT + SKILL_COUNT))
-            fi
-        done
+        PERSONAL_COUNT=$(copy_skills "$HOME/.claude/skills" "false")
         print_success "✓ Claude personal skills: $PERSONAL_COUNT skills"
         echo ""
 
         # ChatGPT setup
         print_info "Setting up ChatGPT..."
         ZIP_FILE="agent-skills-$(date +%Y%m%d).zip"
-        TEMP_DIR=$(mktemp -d)
+        TEMP_DIR="$(mktemp -d)"
         cp -r infrastructure backend frontend documentation code-quality search-analysis project-management utilities "$TEMP_DIR/"
-        cd "$TEMP_DIR"
-        zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1
-        cd "$AGENT_SKILLS_DIR"
-        rm -rf "$TEMP_DIR"
+        (cd "$TEMP_DIR" && zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1)
         print_success "ChatGPT zip file created: $ZIP_FILE"
         print_info "Upload this to Custom GPT Knowledge section"
         echo ""
@@ -574,6 +568,281 @@ EOF
         ;;
 
     6)
+        echo ""
+        print_info "Setting up MCP Integration..."
+        echo ""
+
+        # Create MCP_CONTEXT.md
+        print_info "Step 1/3: Creating MCP context file..."
+        cat > "$AGENT_SKILLS_DIR/MCP_CONTEXT.md" << 'EOF'
+# Agent Skills System for MCP (Model Context Protocol)
+
+이 프로젝트는 Agent Skills 시스템을 사용합니다.
+MCP 서버(gemini-cli, codex-cli 등)를 통해 작업할 때 이 문서를 참조하세요.
+
+## 스킬 시스템 개요
+
+각 스킬은 독립된 폴더에 다음 구조로 구성됩니다:
+- **SKILL.md**: 스킬의 목적, 트리거 조건, 절차, 출력 포맷, 제약사항
+- **지원 파일**: 템플릿, 예시, 참조 문서, 스크립트
+
+## 스킬 로드 방법
+
+### 방법 1: 직접 파일 읽기
+```bash
+# 특정 스킬 로드
+cat .agent-skills/backend/api-design/SKILL.md
+
+# 프롬프트와 함께 사용
+gemini chat "$(cat .agent-skills/backend/api-design/SKILL.md)
+
+사용자 관리 REST API를 설계해줘"
+```
+
+### 방법 2: Helper 스크립트 사용
+```bash
+# mcp-skill-loader.sh 사용
+source .agent-skills/mcp-skill-loader.sh
+load_skill backend/api-design
+
+# 또는 직접 프롬프트에 포함
+gemini chat "$(load_skill backend/api-design) 이제 설계해줘"
+```
+
+## 사용 가능한 스킬 카테고리
+
+- **infrastructure/**: 인프라 설정 및 배포
+- **backend/**: 백엔드 개발 및 API 설계
+- **frontend/**: 프론트엔드 개발 및 UI/UX
+- **documentation/**: 기술 문서 작성
+- **code-quality/**: 코드 리뷰 및 품질 검사
+- **search-analysis/**: 코드베이스 검색 및 분석
+- **project-management/**: 프로젝트 관리 워크플로우
+- **utilities/**: 유틸리티 및 헬퍼 도구
+
+## 주요 스킬 목록
+
+### Backend
+- `backend/api-design`: REST/GraphQL API 설계
+
+### Code Quality
+- `code-quality/code-review`: 코드 리뷰 및 품질 검사
+
+### Documentation
+- `documentation/technical-writing`: 기술 문서 작성
+
+### Search & Analysis
+- `search-analysis/codebase-search`: 코드베이스 검색 및 분석
+
+### Utilities
+- `utilities/git-workflow`: Git 워크플로우 관리
+
+## MCP 사용 패턴
+
+### Gemini CLI 사용
+```bash
+# 1. 스킬 컨텍스트와 함께 질문
+gemini chat "$(cat .agent-skills/MCP_CONTEXT.md)
+$(cat .agent-skills/backend/api-design/SKILL.md)
+
+이제 사용자 관리 API를 설계해줘"
+
+# 2. 파일 첨부 방식
+gemini chat --attach .agent-skills/backend/api-design/SKILL.md \
+  "이 가이드라인을 따라 API를 설계해줘"
+```
+
+### Codex CLI 사용
+```bash
+# 스킬 컨텍스트 로드
+codex-cli shell "$(cat .agent-skills/code-quality/code-review/SKILL.md)
+
+이 코드를 리뷰해줘: $(cat src/app.ts)"
+```
+
+### Claude Code + MCP
+```
+"gemini-cli를 사용해서 .agent-skills/backend/api-design/SKILL.md의
+가이드라인을 따라 사용자 관리 API를 설계해줘"
+```
+
+## 메타 규칙
+
+- 스킬 지시사항을 일반 지식보다 우선시
+- 여러 스킬이 적용 가능하면 가장 관련성 높은 것 선택
+- 스킬 절차에서 요청되지 않은 정보는 추가하지 않음
+- 보안 및 제약 규칙을 엄격히 준수
+
+## 환경 설정
+
+### Shell RC 파일에 추가 (~/.bashrc 또는 ~/.zshrc)
+```bash
+# Agent Skills 경로 설정
+export AGENT_SKILLS_PATH="/path/to/.agent-skills"
+
+# Helper 함수 로드
+source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
+```
+
+## 참고 문서
+
+- MCP 설정 가이드: `.agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md`
+- Claude Skills 가이드: `.agent-skills/prompt/CLAUDE_SETUP_GUIDE.md`
+- Gemini 설정: `.agent-skills/prompt/GEMINI_SETUP_PROMPT.md`
+EOF
+        print_success "MCP_CONTEXT.md created"
+
+        # Create mcp-skill-loader.sh
+        echo ""
+        print_info "Step 2/3: Creating MCP skill loader script..."
+        cat > "$AGENT_SKILLS_DIR/mcp-skill-loader.sh" << 'EOF'
+#!/bin/bash
+# MCP Skill Loader Helper Script
+# Usage: source mcp-skill-loader.sh
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export AGENT_SKILLS_PATH="$SCRIPT_DIR"
+
+# Function to load a skill
+load_skill() {
+    local skill_path="$1"
+    local full_path="$AGENT_SKILLS_PATH/$skill_path/SKILL.md"
+
+    if [ -f "$full_path" ]; then
+        cat "$full_path"
+    else
+        echo "Error: Skill not found at $full_path" >&2
+        return 1
+    fi
+}
+
+# Function to list available skills
+list_skills() {
+    echo "Available Skills:"
+    echo ""
+    find "$AGENT_SKILLS_PATH" -name "SKILL.md" -type f | while read -r skill; do
+        local rel_path="${skill#$AGENT_SKILLS_PATH/}"
+        local skill_dir="$(dirname "$rel_path")"
+        echo "  - $skill_dir"
+    done
+}
+
+# Function to load skill with context
+load_skill_with_context() {
+    local skill_path="$1"
+    cat "$AGENT_SKILLS_PATH/MCP_CONTEXT.md"
+    echo ""
+    echo "---"
+    echo ""
+    load_skill "$skill_path"
+}
+
+# Function to search skills by keyword
+search_skills() {
+    local keyword="$1"
+    echo "Searching for skills matching '$keyword':"
+    echo ""
+    grep -r -l "$keyword" "$AGENT_SKILLS_PATH"/*/*/SKILL.md 2>/dev/null | while read -r skill; do
+        local rel_path="${skill#$AGENT_SKILLS_PATH/}"
+        local skill_dir="$(dirname "$rel_path")"
+        echo "  - $skill_dir"
+    done
+}
+
+# Export functions
+export -f load_skill
+export -f list_skills
+export -f load_skill_with_context
+export -f search_skills
+
+# Print usage if called directly
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    echo "MCP Skill Loader"
+    echo "================"
+    echo ""
+    echo "Usage: source mcp-skill-loader.sh"
+    echo ""
+    echo "Available functions:"
+    echo "  load_skill <category>/<skill-name>        - Load a specific skill"
+    echo "  load_skill_with_context <category>/<skill> - Load skill with MCP context"
+    echo "  list_skills                                - List all available skills"
+    echo "  search_skills <keyword>                    - Search skills by keyword"
+    echo ""
+    echo "Examples:"
+    echo "  load_skill backend/api-design"
+    echo "  load_skill_with_context code-quality/code-review"
+    echo "  list_skills"
+    echo "  search_skills 'REST API'"
+fi
+EOF
+        chmod +x "$AGENT_SKILLS_DIR/mcp-skill-loader.sh"
+        print_success "mcp-skill-loader.sh created"
+
+        # Create shell configuration snippet
+        echo ""
+        print_info "Step 3/3: Creating shell configuration snippet..."
+        cat > "$AGENT_SKILLS_DIR/mcp-shell-config.sh" << EOF
+# Agent Skills MCP Integration
+# Add this to your ~/.bashrc or ~/.zshrc
+
+# Set Agent Skills path
+export AGENT_SKILLS_PATH="$AGENT_SKILLS_DIR"
+
+# Load helper functions
+if [ -f "\$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ]; then
+    source "\$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
+fi
+
+# Aliases for quick access
+alias skills-list='list_skills'
+alias skills-search='search_skills'
+alias skills-load='load_skill'
+
+# MCP-specific aliases
+alias gemini-skill='gemini chat "\$(load_skill_with_context'
+alias codex-skill='codex-cli shell "\$(load_skill_with_context'
+EOF
+        print_success "mcp-shell-config.sh created"
+
+        echo ""
+        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        print_success "MCP Integration Setup Complete! 🎉"
+        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        print_info "📚 Next Steps:"
+        echo ""
+        echo "  1. Load helper functions in your current shell:"
+        echo "     ${BLUE}source .agent-skills/mcp-skill-loader.sh${NC}"
+        echo ""
+        echo "  2. Add to your shell RC file (~/.bashrc or ~/.zshrc):"
+        echo "     ${BLUE}cat .agent-skills/mcp-shell-config.sh >> ~/.bashrc${NC}"
+        echo "     ${BLUE}source ~/.bashrc${NC}"
+        echo ""
+        echo "  3. List available skills:"
+        echo "     ${BLUE}list_skills${NC}"
+        echo ""
+        echo "  4. Use with Gemini CLI:"
+        echo "     ${BLUE}gemini chat \"\$(load_skill backend/api-design)${NC}"
+        echo "     ${BLUE}사용자 관리 API를 설계해줘\"${NC}"
+        echo ""
+        echo "  5. Use with Codex CLI:"
+        echo "     ${BLUE}codex-cli shell \"\$(load_skill code-quality/code-review)${NC}"
+        echo "     ${BLUE}이 코드를 리뷰해줘\"${NC}"
+        echo ""
+        echo "  6. Search for skills:"
+        echo "     ${BLUE}search_skills 'API design'${NC}"
+        echo ""
+        print_info "📖 Documentation:"
+        echo "  - MCP Context: ${BLUE}.agent-skills/MCP_CONTEXT.md${NC}"
+        echo "  - Setup Guide: ${BLUE}.agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md${NC}"
+        echo ""
+        print_info "💡 Tip: MCP 서버(gemini-cli, codex-cli)가 설치되어 있어야 합니다"
+        echo "        설치 가이드: .agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md"
+        echo ""
+        ;;
+
+    7)
         echo "Exiting..."
         exit 0
         ;;
