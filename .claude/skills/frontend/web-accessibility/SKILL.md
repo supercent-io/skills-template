@@ -7,18 +7,8 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Web Accessibility (A11y)
 
-## 목적 (Purpose)
 
-모든 사용자가 접근 가능한 웹 애플리케이션을 구축합니다.
-
-이 스킬은 다음을 도와줍니다:
-- WCAG 2.1 AA 수준 준수
-- 스크린 리더 지원
-- 키보드 네비게이션 구현
-- ARIA 속성 적용
-- 접근성 테스트 및 검증
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **새 UI 컴포넌트 개발**: 접근 가능한 컴포넌트 설계
 - **접근성 감사**: 기존 사이트의 접근성 문제 식별 및 수정
@@ -51,9 +41,9 @@ React 모달 컴포넌트를 접근 가능하게 만들어줘:
   - 스크린 리더에서 제목/설명 읽기
 ```
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: Semantic HTML 사용
+### Step 1: Semantic HTML 사용
 
 의미있는 HTML 요소를 사용하여 구조를 명확히 합니다.
 
@@ -102,7 +92,7 @@ React 모달 컴포넌트를 접근 가능하게 만들어줘:
 </label>
 ```
 
-### 2단계: 키보드 네비게이션 구현
+### Step 2: 키보드 네비게이션 구현
 
 마우스 없이도 모든 기능 사용 가능하도록 합니다.
 
@@ -216,7 +206,7 @@ function AccessibleDropdown({ label, options, onChange }: DropdownProps) {
 }
 ```
 
-### 3단계: ARIA 속성 추가
+### Step 3: ARIA 속성 추가
 
 스크린 리더에게 추가 컨텍스트를 제공합니다.
 
@@ -296,7 +286,7 @@ function Notification({ message, type }: { message: string; type: 'success' | 'e
 }
 ```
 
-### 4단계: 색상 대비 및 시각적 접근성
+### Step 4: 색상 대비 및 시각적 접근성
 
 시각 장애인을 위한 충분한 대비율을 보장합니다.
 
@@ -338,7 +328,7 @@ button:focus {
 }
 ```
 
-### 5단계: 접근성 테스트
+### Step 5: 접근성 테스트
 
 자동 및 수동 테스트로 접근성을 검증합니다.
 
@@ -390,7 +380,7 @@ describe('AccessibleButton', () => {
 });
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 기본 체크리스트
 
@@ -427,7 +417,7 @@ describe('AccessibleButton', () => {
 - [x] 스크린 리더 테스트 완료
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -457,7 +447,7 @@ describe('AccessibleButton', () => {
    - 색맹 사용자 고려
    - 예: "빨간색 항목 클릭" → "⚠️ Error 항목 클릭"
 
-## 작업 예시 (Examples)
+## Examples
 
 ### 예시 1: 접근 가능한 폼
 
@@ -603,7 +593,7 @@ function AccessibleTabs({ tabs }: { tabs: { id: string; label: string; content: 
 }
 ```
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 1. **시맨틱 HTML 우선**: ARIA는 마지막 수단
    - 올바른 HTML 요소 사용하면 ARIA 불필요
@@ -616,7 +606,7 @@ function AccessibleTabs({ tabs }: { tabs: { id: string; label: string; content: 
 3. **에러 메시지**: 명확하고 도움이 되는 에러 메시지
    - "Invalid input" ❌ → "Email must be in format: example@domain.com" ✅
 
-## 참고 자료 (References)
+## References
 
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [MDN ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA)
@@ -624,7 +614,7 @@ function AccessibleTabs({ tabs }: { tabs: { id: string; label: string; content: 
 - [axe DevTools](https://www.deque.com/axe/devtools/)
 - [A11y Project](https://www.a11yproject.com/)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0

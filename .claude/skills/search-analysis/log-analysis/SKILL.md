@@ -8,26 +8,17 @@ allowed-tools: [Read, Grep, Glob]
 
 # Log Analysis
 
-## 목적 (Purpose)
 
-애플리케이션 로그를 분석하여 오류, 성능 문제, 보안 이상 징후를 식별합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 에러 패턴 감지
-- 성능 병목 분석
-- 보안 이상 징후 탐지
-- 로그 기반 디버깅
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **오류 디버깅**: 애플리케이션 오류 원인 분석
 - **성능 분석**: 응답 시간, 처리량 분석
 - **보안 감사**: 비정상 접근 패턴 탐지
 - **인시던트 대응**: 장애 발생 시 원인 조사
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: 로그 파일 위치 파악
+### Step 1: 로그 파일 위치 파악
 
 ```bash
 # 일반적인 로그 위치
@@ -37,7 +28,7 @@ allowed-tools: [Read, Grep, Glob]
 ./logs/                      # 애플리케이션 로그
 ```
 
-### 2단계: 에러 패턴 검색
+### Step 2: 에러 패턴 검색
 
 **일반 에러 검색**:
 ```bash
@@ -63,7 +54,7 @@ grep -E "HTTP/[0-9.]+ 4[0-9]{2}" access.log
 grep "HTTP/1.1\" 500" access.log
 ```
 
-### 3단계: 패턴 분석
+### Step 3: 패턴 분석
 
 **시간별 분석**:
 ```bash
@@ -83,7 +74,7 @@ awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -20
 grep "192.168.1.100" access.log
 ```
 
-### 4단계: 성능 분석
+### Step 4: 성능 분석
 
 **응답 시간 분석**:
 ```bash
@@ -103,7 +94,7 @@ awk '{print $4}' access.log | cut -d: -f1,2,3 | uniq -c
 awk '{print $7}' access.log | sort | uniq -c | sort -rn | head -20
 ```
 
-### 5단계: 보안 분석
+### Step 5: 보안 분석
 
 **의심스러운 패턴**:
 ```bash
@@ -120,7 +111,7 @@ grep -E "\.\./" access.log
 grep -E "POST.*/login" access.log | awk '{print $1}' | sort | uniq -c | sort -rn
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 분석 리포트 구조
 
@@ -144,14 +135,14 @@ grep -E "POST.*/login" access.log | awk '{print $1}' | sort | uniq -c | sort -rn
 2. [조치 2]
 ```
 
-## 베스트 프랙티스
+## Best practices
 
 1. **시간 범위 지정**: 분석할 시간 범위를 명확히 설정
 2. **패턴 저장**: 자주 사용하는 grep 패턴 스크립트화
 3. **컨텍스트 확인**: 에러 전후 로그도 함께 확인 (`-A`, `-B` 옵션)
 4. **로그 로테이션**: 압축된 로그도 zgrep으로 검색
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 1. 읽기 전용 작업만 수행
@@ -161,8 +152,16 @@ grep -E "POST.*/login" access.log | awk '{print $1}' | sort | uniq -c | sort -rn
 1. 로그 파일 수정 금지
 2. 민감 정보 외부 노출 금지
 
-## 참고 자료
+## References
 
 - [grep 매뉴얼](https://www.gnu.org/software/grep/manual/)
 - [awk 가이드](https://www.gnu.org/software/gawk/manual/)
 - [로그 분석 베스트 프랙티스](https://www.loggly.com/ultimate-guide/)
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

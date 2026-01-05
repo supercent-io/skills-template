@@ -419,7 +419,7 @@ grep -n "function\(\)"
 
 2. Find main routes/endpoints
    Grep: "route|endpoint|@app\\."
-   
+
 3. Find data models
    Semantic: "Where are data models defined?"
    Common: models/, entities/
@@ -523,3 +523,10 @@ git log --grep="feature name"
 - [Regular Expressions Tutorial](https://regexone.com/)
 - [Git Blame Guide](https://git-scm.com/docs/git-blame)
 
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

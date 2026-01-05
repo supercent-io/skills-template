@@ -7,27 +7,17 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Deployment Automation
 
-## 목적 (Purpose)
 
-애플리케이션의 자동화된 배포 파이프라인을 구축하고 관리합니다.
-
-이 스킬은 다음을 도와줍니다:
-- CI/CD 파이프라인 설정 (GitHub Actions, GitLab CI)
-- Docker 컨테이너화
-- Kubernetes 오케스트레이션
-- 클라우드 배포 (AWS, Vercel, Netlify)
-- 무중단 배포 (Blue-Green, Rolling)
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **신규 프로젝트**: 처음부터 자동 배포 설정
 - **수동 배포 개선**: 반복적인 수동 작업 자동화
 - **멀티 환경**: dev, staging, production 환경 분리
 - **스케일링**: 트래픽 증가 대비 Kubernetes 도입
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: Docker 컨테이너화
+### Step 1: Docker 컨테이너화
 
 애플리케이션을 Docker 이미지로 패키징합니다.
 
@@ -103,7 +93,7 @@ docker stop myapp-container
 docker rm myapp-container
 ```
 
-### 2단계: GitHub Actions CI/CD
+### Step 2: GitHub Actions CI/CD
 
 코드 푸시 시 자동으로 테스트 및 배포합니다.
 
@@ -206,7 +196,7 @@ jobs:
             docker image prune -f
 ```
 
-### 3단계: Kubernetes 배포
+### Step 3: Kubernetes 배포
 
 확장 가능한 컨테이너 오케스트레이션을 구현합니다.
 
@@ -340,7 +330,7 @@ kubectl get pods -n ${NAMESPACE} -l app=myapp
 echo "Deployment completed successfully!"
 ```
 
-### 4단계: Vercel/Netlify (프론트엔드)
+### Step 4: Vercel/Netlify (프론트엔드)
 
 정적 사이트 및 Next.js 앱을 간단히 배포합니다.
 
@@ -402,7 +392,7 @@ vercel --prod
 vercel env add DATABASE_URL
 ```
 
-### 5단계: 무중단 배포 전략
+### Step 5: 무중단 배포 전략
 
 서비스 중단 없이 새 버전을 배포합니다.
 
@@ -468,7 +458,7 @@ else
 fi
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 배포 체크리스트
 
@@ -497,7 +487,7 @@ fi
 - [ ] Deployment documented in changelog
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -526,14 +516,14 @@ fi
 2. **프로덕션에서 디버그 모드**: `NODE_ENV=production` 필수
 3. **latest 태그만 사용**: 버전 태그 사용 (v1.0.0, sha-abc123)
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 1. **Multi-stage Docker builds**: 이미지 크기 최소화
 2. **Immutable infrastructure**: 서버 수정 대신 새로 배포
 3. **Blue-Green deployment**: 무중단 배포 및 쉬운 롤백
 4. **Monitoring 필수**: Prometheus, Grafana, Datadog
 
-## 참고 자료 (References)
+## References
 
 - [Docker Docs](https://docs.docker.com/)
 - [Kubernetes Docs](https://kubernetes.io/docs/)
@@ -541,7 +531,7 @@ fi
 - [Vercel](https://vercel.com/docs)
 - [12 Factor App](https://12factor.net/)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0
@@ -554,3 +544,11 @@ fi
 
 ### 태그
 `#deployment` `#CI/CD` `#Docker` `#Kubernetes` `#automation` `#infrastructure`
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

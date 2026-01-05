@@ -7,27 +7,17 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # UI Component Patterns
 
-## 목적 (Purpose)
 
-재사용 가능하고 유지보수하기 쉬운 UI 컴포넌트를 설계하고 구현합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 컴포넌트 설계 패턴 (Composition, Compound Components, Render Props)
-- Props API 설계
-- TypeScript로 타입 안전한 컴포넌트
-- 성능 최적화 (memo, useMemo, useCallback)
-- 테스트 가능한 컴포넌트
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **컴포넌트 라이브러리 구축**: 재사용 가능한 UI 컴포넌트 제작
 - **디자인 시스템 구현**: 일관된 UI 패턴 적용
 - **복잡한 UI**: 여러 변형이 필요한 컴포넌트 (Button, Modal, Dropdown)
 - **리팩토링**: 중복 코드를 컴포넌트로 추출
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: Props API 설계
+### Step 1: Props API 설계
 
 사용하기 쉽고 확장 가능한 Props를 설계합니다.
 
@@ -92,7 +82,7 @@ function Button({
 </Button>
 ```
 
-### 2단계: Composition Pattern (합성 패턴)
+### Step 2: Composition Pattern (합성 패턴)
 
 작은 컴포넌트를 조합하여 복잡한 UI를 만듭니다.
 
@@ -151,7 +141,7 @@ function ProductCard() {
 }
 ```
 
-### 3단계: Render Props / Children as Function
+### Step 3: Render Props / Children as Function
 
 유연한 커스터마이징을 위한 패턴입니다.
 
@@ -219,7 +209,7 @@ function UserDropdown() {
 }
 ```
 
-### 4단계: Custom Hooks로 로직 분리
+### Step 4: Custom Hooks로 로직 분리
 
 UI와 비즈니스 로직을 분리합니다.
 
@@ -275,7 +265,7 @@ function App() {
 }
 ```
 
-### 5단계: 성능 최적화
+### Step 5: 성능 최적화
 
 불필요한 리렌더링을 방지합니다.
 
@@ -331,7 +321,7 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
 });
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 컴포넌트 파일 구조
 
@@ -389,7 +379,7 @@ Component.displayName = 'Component';
 export default Component;
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -421,7 +411,7 @@ export default Component;
    <Component style={style} onClick={handleClick} />
    ```
 
-## 작업 예시 (Examples)
+## Examples
 
 ### 예시 1: Accordion (Compound Component)
 
@@ -507,14 +497,14 @@ function Text<C extends React.ElementType = 'span'>({
 <Text as={Link} href="/about">Link</Text>
 ```
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 1. **Composition over Props**: 많은 props 대신 children 활용
 2. **Controlled vs Uncontrolled**: 상황에 맞게 선택
 3. **Default Props**: 합리적인 기본값 제공
 4. **Storybook**: 컴포넌트 문서화 및 개발
 
-## 참고 자료 (References)
+## References
 
 - [React Patterns](https://reactpatterns.com/)
 - [Compound Components](https://kentcdodds.com/blog/compound-components-with-react-hooks)
@@ -522,7 +512,7 @@ function Text<C extends React.ElementType = 'span'>({
 - [Chakra UI](https://chakra-ui.com/) - Component library
 - [shadcn/ui](https://ui.shadcn.com/) - Copy-paste components
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0

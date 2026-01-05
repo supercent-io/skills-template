@@ -12,9 +12,6 @@ allowed-tools:
 
 # MCP Codex-CLI Integration
 
-## 목적 (Purpose)
-
-codex-cli MCP 서버를 Claude Code에서 효과적으로 활용하기 위한 통합 스킬입니다.
 
 ### codex-cli란?
 
@@ -35,16 +32,16 @@ codex-cli (@openai/codex-shell-tool-mcp)
 | **스킬 처리** | 자체 처리 | Claude가 처리 |
 | **용도** | AI 질의 | 명령 실행 |
 
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **명령 실행**: 빌드, 테스트, 배포 스크립트 실행
 - **파일 조작**: 파일 읽기/쓰기, 디렉토리 생성
 - **환경 확인**: 시스템 상태, 의존성 확인
 - **스킬 기반 작업**: 스킬 로드 후 codex-cli로 실행
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: 스킬 + codex-cli 통합 패턴
+### Step 1: 스킬 + codex-cli 통합 패턴
 
 **패턴 A: 스킬 읽기 → Claude 처리 → codex-cli 실행**
 
@@ -65,7 +62,7 @@ Claude 처리:
 3. codex-cli: 파일 생성 및 테스트 실행
 ```
 
-### 2단계: codex-cli 명령 실행
+### Step 2: codex-cli 명령 실행
 
 **기본 사용법**:
 ```typescript
@@ -86,7 +83,7 @@ mcp__codex-cli__shell({
 }
 ```
 
-### 3단계: 스킬 기반 작업 실행
+### Step 3: 스킬 기반 작업 실행
 
 **Infrastructure 스킬 예시**:
 ```
@@ -108,7 +105,7 @@ mcp__codex-cli__shell({
    - npm run type-check
 ```
 
-### 4단계: 결과 처리 패턴
+### Step 4: 결과 처리 패턴
 
 ```
 codex-cli 실행
@@ -182,7 +179,7 @@ Claude 작업:
 6. 결과 보고
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -196,7 +193,7 @@ Claude 작업:
 2. **무한 루프 금지**: 실패 시 3회 이상 재시도 금지
 3. **민감 정보 출력 금지**: 환경변수, 비밀키 로깅 주의
 
-## 베스트 프랙티스
+## Best practices
 
 ### 1. 스킬 로드 → Claude 처리 → codex 실행
 ```
@@ -231,7 +228,7 @@ mcp__codex-cli__shell({
 | 파일 조작 | codex-cli 또는 Bash | 직접 실행 |
 | 스킬 기반 작업 | Claude + codex-cli | 스킬은 Claude, 실행은 codex |
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0
@@ -244,3 +241,16 @@ mcp__codex-cli__shell({
 
 ### 태그
 `#mcp` `#codex-cli` `#shell` `#automation` `#integration`
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->
+
+## References
+
+- [Official Documentation](https://example.com/docs)
+- [Best Practices Guide](https://example.com/guide)

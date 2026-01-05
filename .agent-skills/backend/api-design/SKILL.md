@@ -9,7 +9,7 @@ metadata:
   author: "Agent Skills Team"
 allowed-tools:
   - python
-tags: []
+tags: [api-design, REST, GraphQL, OpenAPI, versioning, backend]
 platforms: [Claude, ChatGPT, Gemini]
 ---
 

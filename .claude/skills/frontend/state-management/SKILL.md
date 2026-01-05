@@ -7,27 +7,17 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # State Management
 
-## 목적 (Purpose)
 
-프론트엔드 애플리케이션의 상태를 효율적으로 관리합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 전역 상태 관리 (Context, Redux, Zustand)
-- 로컬 vs 전역 상태 구분
-- 상태 불변성 유지
-- 비동기 상태 처리
-- 상태 디버깅 및 최적화
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **전역 상태 필요**: 여러 컴포넌트가 같은 데이터 공유
 - **Props Drilling 문제**: 5단계 이상 props 전달
 - **복잡한 상태 로직**: 인증, 장바구니, 테마 등
 - **상태 동기화**: 서버 데이터와 클라이언트 상태 동기화
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: 상태 범위 결정
+### Step 1: 상태 범위 결정
 
 로컬 vs 전역 상태를 구분합니다.
 
@@ -64,7 +54,7 @@ function SearchBox() {
 const { user, logout } = useAuth();  // Context 또는 Zustand
 ```
 
-### 2단계: React Context API (간단한 전역 상태)
+### Step 2: React Context API (간단한 전역 상태)
 
 가벼운 전역 상태 관리에 적합합니다.
 
@@ -163,7 +153,7 @@ function Header() {
 }
 ```
 
-### 3단계: Zustand (현대적이고 간결한 상태 관리)
+### Step 3: Zustand (현대적이고 간결한 상태 관리)
 
 Redux보다 간단하고 보일러플레이트가 적습니다.
 
@@ -276,7 +266,7 @@ function Cart() {
 }
 ```
 
-### 4단계: Redux Toolkit (대규모 앱)
+### Step 4: Redux Toolkit (대규모 앱)
 
 복잡한 상태 로직과 미들웨어가 필요한 경우 사용합니다.
 
@@ -408,7 +398,7 @@ function TodoList() {
 }
 ```
 
-### 5단계: 서버 상태 관리 (React Query / TanStack Query)
+### Step 5: 서버 상태 관리 (React Query / TanStack Query)
 
 API 데이터 fetching 및 캐싱에 특화되어 있습니다.
 
@@ -458,7 +448,7 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 상태 관리 도구 선택 가이드
 
@@ -481,7 +471,7 @@ function UserProfile({ userId }: { userId: string }) {
    → React Hook Form + Zod
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -514,7 +504,7 @@ function UserProfile({ userId }: { userId: string }) {
 
 2. **모든 것을 전역 상태로**: 로컬 상태로 충분한 경우 전역 상태 사용 지양
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 1. **선택적 구독**: 필요한 상태만 구독
    ```tsx
@@ -529,7 +519,7 @@ function UserProfile({ userId }: { userId: string }) {
 
 3. **TypeScript 사용**: 타입 안정성 확보
 
-## 참고 자료 (References)
+## References
 
 - [Zustand](https://zustand-demo.pmnd.rs/)
 - [Redux Toolkit](https://redux-toolkit.js.org/)
@@ -537,7 +527,7 @@ function UserProfile({ userId }: { userId: string }) {
 - [Jotai](https://jotai.org/)
 - [Recoil](https://recoiljs.org/)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0
@@ -550,3 +540,11 @@ function UserProfile({ userId }: { userId: string }) {
 
 ### 태그
 `#state-management` `#React` `#Redux` `#Zustand` `#Context` `#global-state` `#frontend`
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->

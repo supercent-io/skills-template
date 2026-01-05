@@ -7,27 +7,17 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Responsive Design
 
-## 목적 (Purpose)
 
-모든 디바이스에서 최적의 사용자 경험을 제공하는 반응형 웹 디자인을 구현합니다.
-
-이 스킬은 다음을 도와줍니다:
-- Mobile-first 반응형 레이아웃
-- CSS Grid/Flexbox 활용
-- 미디어 쿼리 및 브레이크포인트
-- 반응형 이미지 및 타이포그래피
-- 뷰포트 최적화
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **새 웹사이트/앱**: 모바일-데스크톱 겸용 레이아웃 설계
 - **레거시 개선**: 고정 레이아웃을 반응형으로 전환
 - **성능 최적화**: 디바이스별 이미지 최적화
 - **다양한 화면**: 태블릿, 데스크톱, 대형 화면 지원
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: Mobile-First 접근
+### Step 1: Mobile-First 접근
 
 작은 화면부터 설계하고 점진적으로 확장합니다.
 
@@ -80,7 +70,7 @@ platforms: [Claude, ChatGPT, Gemini]
 }
 ```
 
-### 2단계: Flexbox/Grid 레이아웃
+### Step 2: Flexbox/Grid 레이아웃
 
 현대적인 CSS 레이아웃 시스템을 활용합니다.
 
@@ -154,7 +144,7 @@ platforms: [Claude, ChatGPT, Gemini]
 .footer { grid-area: footer; }
 ```
 
-### 3단계: 반응형 이미지
+### Step 3: 반응형 이미지
 
 디바이스에 맞는 이미지를 제공합니다.
 
@@ -218,7 +208,7 @@ platforms: [Claude, ChatGPT, Gemini]
 }
 ```
 
-### 4단계: 반응형 타이포그래피
+### Step 4: 반응형 타이포그래피
 
 화면 크기에 따라 텍스트 크기를 조정합니다.
 
@@ -262,7 +252,7 @@ body {
 }
 ```
 
-### 5단계: Container Queries (신기능)
+### Step 5: Container Queries (신기능)
 
 부모 컨테이너 크기에 따라 스타일 적용합니다.
 
@@ -302,7 +292,7 @@ body {
 }
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 표준 브레이크포인트
 
@@ -325,7 +315,7 @@ body {
 @media (min-width: 1024px) { /* Desktop */ }
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 
@@ -351,7 +341,7 @@ body {
 2. **중복 코드**: 모든 브레이크포인트에 같은 스타일 반복 금지
    - 공통 스타일은 기본으로, 차이만 미디어 쿼리에
 
-## 작업 예시 (Examples)
+## Examples
 
 ### 예시 1: 반응형 네비게이션
 
@@ -492,21 +482,21 @@ function ProductGrid({ products }) {
 }
 ```
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 1. **컨테이너 쿼리 우선**: 가능하면 미디어 쿼리 대신 컨테이너 쿼리
 2. **Flexbox vs Grid**: 1차원은 Flexbox, 2차원은 Grid
 3. **성능**: 이미지 lazy loading, WebP 포맷 사용
 4. **테스트**: Chrome DevTools Device Mode, BrowserStack
 
-## 참고 자료 (References)
+## References
 
 - [MDN Responsive Design](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design)
 - [CSS Grid Guide](https://css-tricks.com/snippets/css/complete-guide-grid/)
 - [Flexbox Guide](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
 - [Container Queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0

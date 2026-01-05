@@ -7,18 +7,8 @@ platforms: [Claude, ChatGPT, Gemini]
 
 # Authentication Setup
 
-## 목적 (Purpose)
 
-사용자 인증(Authentication)과 권한 부여(Authorization) 시스템을 안전하게 설계하고 구현합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 안전한 사용자 인증 시스템 구축
-- JWT, OAuth 2.0, Session 기반 인증 구현
-- 역할 기반 접근 제어(RBAC) 설정
-- 비밀번호 보안 및 암호화
-- 다중 인증(MFA) 통합
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 이 스킬을 트리거해야 하는 구체적인 상황을 나열합니다:
 
@@ -56,11 +46,11 @@ platforms: [Claude, ChatGPT, Gemini]
 - Refresh Token: 사용
 ```
 
-## 작업 절차 (Procedure)
+## Instructions
 
 단계별로 정확하게 따라야 할 작업 순서를 명시합니다.
 
-### 1단계: 데이터 모델 설계
+### Step 1: 데이터 모델 설계
 
 사용자 및 인증 관련 데이터베이스 스키마를 설계합니다.
 
@@ -95,7 +85,7 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
 ```
 
-### 2단계: 비밀번호 보안 구현
+### Step 2: 비밀번호 보안 구현
 
 비밀번호 해싱 및 검증 로직을 구현합니다.
 
@@ -139,7 +129,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 ```
 
-### 3단계: JWT 토큰 생성 및 검증
+### Step 3: JWT 토큰 생성 및 검증
 
 JWT 기반 인증을 위한 토큰 시스템을 구현합니다.
 
@@ -195,7 +185,7 @@ export function verifyRefreshToken(token: string): TokenPayload {
 }
 ```
 
-### 4단계: 인증 미들웨어 구현
+### Step 4: 인증 미들웨어 구현
 
 API 요청을 보호하는 인증 미들웨어를 작성합니다.
 
@@ -254,7 +244,7 @@ export function requireRole(...roles: string[]) {
 }
 ```
 
-### 5단계: 인증 API 엔드포인트 구현
+### Step 5: 인증 API 엔드포인트 구현
 
 회원가입, 로그인, 토큰 갱신 등의 API를 작성합니다.
 
@@ -423,7 +413,7 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
 export default router;
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 결과물이 따라야 할 정확한 형식을 정의합니다.
 
@@ -462,7 +452,7 @@ GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 ```
 
-## 제약사항 (Constraints)
+## Constraints
 
 반드시 지켜야 할 규칙과 금지 사항을 명시합니다.
 
@@ -501,7 +491,7 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 - **CORS 설정**: 허용된 도메인만 API 접근 가능하도록 설정
 - **Input Validation**: 모든 사용자 입력 검증 (SQL Injection, XSS 방지)
 
-## 작업 예시 (Examples)
+## Examples
 
 실제 사용 사례를 통해 스킬의 적용 방법을 보여줍니다.
 
@@ -569,7 +559,7 @@ router.delete('/users/:id',
 // 관리자(role: 'admin') 요청 → 200 OK
 ```
 
-## 베스트 프랙티스 (Best Practices)
+## Best practices
 
 효과적으로 이 스킬을 사용하기 위한 권장사항입니다.
 
@@ -642,7 +632,7 @@ app.use(cors({
 2. 만료 시간 적절히 설정 (최소 7일)
 3. 만료된 토큰 정기적으로 정리하는 cron job 추가
 
-## 참고 자료 (References)
+## References
 
 ### 공식 문서
 - [JWT.io - JSON Web Token Introduction](https://jwt.io/introduction)
@@ -659,7 +649,7 @@ app.use(cors({
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [NIST Digital Identity Guidelines](https://pages.nist.gov/800-63-3/)
 
-## 메타데이터
+## Metadata
 
 ### 버전
 - **현재 버전**: 1.0.0

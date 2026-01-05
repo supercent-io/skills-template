@@ -8,26 +8,17 @@ allowed-tools: [Read, Grep, Glob, Bash]
 
 # Data Analysis
 
-## 목적 (Purpose)
 
-데이터셋을 분석하여 인사이트를 추출하고 패턴을 식별합니다.
-
-이 스킬은 다음을 도와줍니다:
-- 데이터 탐색 및 이해
-- 통계 분석 수행
-- 패턴 및 이상치 감지
-- 데이터 시각화
-
-## 사용 시점 (When to Use)
+## When to use this skill
 
 - **데이터 탐색**: 새로운 데이터셋 이해
 - **리포트 생성**: 데이터 기반 인사이트 도출
 - **품질 검증**: 데이터 정합성 확인
 - **의사결정 지원**: 데이터 기반 추천
 
-## 작업 절차 (Procedure)
+## Instructions
 
-### 1단계: 데이터 로드 및 탐색
+### Step 1: 데이터 로드 및 탐색
 
 **Python (Pandas)**:
 ```python
@@ -67,7 +58,7 @@ SELECT
 FROM table_name;
 ```
 
-### 2단계: 데이터 정제
+### Step 2: 데이터 정제
 
 ```python
 # 결측치 처리
@@ -88,7 +79,7 @@ IQR = Q3 - Q1
 df = df[(df['value'] >= Q1 - 1.5*IQR) & (df['value'] <= Q3 + 1.5*IQR)]
 ```
 
-### 3단계: 통계 분석
+### Step 3: 통계 분석
 
 ```python
 # 기술 통계
@@ -114,7 +105,7 @@ pivot = pd.pivot_table(df,
 )
 ```
 
-### 4단계: 시각화
+### Step 4: 시각화
 
 ```python
 import matplotlib.pyplot as plt
@@ -145,7 +136,7 @@ plt.title('Time Series of Values')
 plt.savefig('timeseries.png')
 ```
 
-### 5단계: 인사이트 도출
+### Step 5: 인사이트 도출
 
 ```python
 # 상위/하위 분석
@@ -166,7 +157,7 @@ segments = df.groupby('segment').agg({
 segments['avg_order_value'] = segments['revenue'] / segments['orders']
 ```
 
-## 출력 포맷 (Output Format)
+## Output format
 
 ### 분석 리포트 구조
 
@@ -196,7 +187,7 @@ segments['avg_order_value'] = segments['revenue'] / segments['orders']
 2. [권장 사항 2]
 ```
 
-## 베스트 프랙티스
+## Best practices
 
 1. **데이터 이해 우선**: 분석 전 데이터 구조와 의미 파악
 2. **점진적 분석**: 간단한 분석에서 복잡한 분석으로 진행
@@ -204,7 +195,7 @@ segments['avg_order_value'] = segments['revenue'] / segments['orders']
 4. **가정 검증**: 데이터에 대한 가정을 항상 검증
 5. **재현 가능성**: 분석 코드와 결과를 문서화
 
-## 제약사항 (Constraints)
+## Constraints
 
 ### 필수 규칙 (MUST)
 1. 원본 데이터 보존 (복사본으로 작업)
@@ -215,8 +206,16 @@ segments['avg_order_value'] = segments['revenue'] / segments['orders']
 1. 민감한 개인정보 노출 금지
 2. 근거 없는 결론 도출 금지
 
-## 참고 자료
+## References
 
 - [Pandas Documentation](https://pandas.pydata.org/docs/)
 - [Matplotlib Gallery](https://matplotlib.org/stable/gallery/)
 - [Seaborn Tutorial](https://seaborn.pydata.org/tutorial.html)
+
+## Examples
+
+### Example 1: Basic usage
+<!-- Add example content here -->
+
+### Example 2: Advanced usage
+<!-- Add advanced example content here -->
