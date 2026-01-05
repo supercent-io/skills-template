@@ -1,6 +1,6 @@
 # Available Skills for Codex-CLI Integration
 
-You have access to 30 skills that can be executed via codex-cli.
+You have access to 34 skills that can be executed via codex-cli.
 
 ## Skills List
 - **technical-writing** (documentation): Write clear, comprehensive technical documentation. Use when creating specs, architecture docs, runbooks, API docs, or any technical documentation. Follows industry best practices for clarity and structure.
@@ -28,8 +28,12 @@ You have access to 30 skills that can be executed via codex-cli.
 - **code-review** (code-quality): Conduct thorough, constructive code reviews. Use when reviewing pull requests, checking code quality, or providing feedback on code. Covers best practices, common issues, security, performance, and testing.
 - **code-refactoring** (code-quality): Improve code structure, readability, and maintainability without changing functionality. Use when simplifying complex code, removing duplication, or applying design patterns. Handles Extract Method, DRY principle, SOLID principles, and refactoring patterns.
 - **performance-optimization** (code-quality): Optimize application performance for speed, efficiency, and scalability. Use when improving page load times, reducing bundle size, optimizing database queries, or fixing performance bottlenecks. Handles React optimization, lazy loading, caching, code splitting, and profiling.
+- **log-analysis** (search-analysis): Analyze application logs to identify errors, performance issues, and security anomalies. Use when debugging issues, monitoring system health, or investigating incidents. Handles various log formats including Apache, Nginx, application logs, and JSON logs.
+- **data-analysis** (search-analysis): Analyze datasets to extract insights, identify patterns, and generate reports. Use when exploring data, creating visualizations, or performing statistical analysis. Handles CSV, JSON, SQL queries, and Python pandas operations.
 - **codebase-search** (search-analysis): Search and navigate large codebases efficiently. Use when finding specific code patterns, tracing function calls, understanding code structure, or locating bugs. Handles semantic search, grep patterns, AST analysis.
+- **pattern-detection** (search-analysis): Detect patterns, anomalies, and trends in code and data. Use when identifying code smells, finding security vulnerabilities, or discovering recurring patterns. Handles regex patterns, AST analysis, and statistical anomaly detection.
 - **deployment-automation** (infrastructure): Automate application deployment to cloud platforms and servers. Use when setting up CI/CD pipelines, deploying to Docker/Kubernetes, or configuring cloud infrastructure. Handles GitHub Actions, Docker, Kubernetes, AWS, Vercel, and deployment best practices.
+- **firebase-ai-logic** (infrastructure): Integrate Firebase AI Logic (Gemini in Firebase) for intelligent app features. Use when adding AI capabilities to Firebase apps, implementing generative AI features, or setting up Firebase AI SDK. Handles Firebase AI SDK setup, prompt engineering, and AI-powered features.
 - **security-best-practices** (infrastructure): Implement security best practices for web applications and infrastructure. Use when securing APIs, preventing common vulnerabilities, or implementing security policies. Handles HTTPS, CORS, XSS, SQL Injection, CSRF, rate limiting, and OWASP Top 10.
 - **system-environment-setup** (infrastructure): Configure development and production environments for consistent and reproducible setups. Use when setting up new projects, Docker environments, or development tooling. Handles Docker Compose, .env configuration, dev containers, and infrastructure as code.
 - **monitoring-observability** (infrastructure): Set up monitoring, logging, and observability for applications and infrastructure. Use when implementing health checks, metrics collection, log aggregation, or alerting systems. Handles Prometheus, Grafana, ELK Stack, Datadog, and monitoring best practices.
