@@ -1,6 +1,7 @@
 ---
-name: environment-configuration
+name: environment-setup
 description: Configure and manage development, staging, and production environments. Use when setting up environment variables, managing configurations, or separating environments. Handles .env files, config management, and environment-specific settings.
+allowed-tools: [Read, Write, Edit, Bash]
 tags: [environment, configuration, env-variables, dotenv, config-management]
 platforms: [Claude, ChatGPT, Gemini]
 ---

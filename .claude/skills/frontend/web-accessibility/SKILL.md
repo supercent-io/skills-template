@@ -632,7 +632,7 @@ function AccessibleTabs({ tabs }: { tabs: { id: string; label: string; content: 
 - **호환 플랫폼**: Claude, ChatGPT, Gemini
 
 ### 관련 스킬
-- [ui-components](../ui-components/SKILL.md): UI 컴포넌트 구현
+- [ui-component-patterns](../ui-component-patterns/SKILL.md): UI 컴포넌트 구현
 - [responsive-design](../responsive-design/SKILL.md): 반응형 디자인
 
 ### 태그

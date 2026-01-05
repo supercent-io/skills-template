@@ -545,8 +545,8 @@ function UserProfile({ userId }: { userId: string }) {
 - **호환 플랫폼**: Claude, ChatGPT, Gemini
 
 ### 관련 스킬
-- [ui-components](../ui-components/SKILL.md): 컴포넌트와 상태 통합
-- [backend-testing](../../backend/testing/SKILL.md): 상태 로직 테스트
+- [ui-component-patterns](../ui-component-patterns/SKILL.md): 컴포넌트와 상태 통합
+- [backend-testing](../../backend/backend-testing/SKILL.md): 상태 로직 테스트
 
 ### 태그
 `#state-management` `#React` `#Redux` `#Zustand` `#Context` `#global-state` `#frontend`

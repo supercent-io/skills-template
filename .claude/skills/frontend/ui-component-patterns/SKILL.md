@@ -530,7 +530,7 @@ function Text<C extends React.ElementType = 'span'>({
 - **호환 플랫폼**: Claude, ChatGPT, Gemini
 
 ### 관련 스킬
-- [accessibility](../accessibility/SKILL.md): 접근 가능한 컴포넌트
+- [web-accessibility](../web-accessibility/SKILL.md): 접근 가능한 컴포넌트
 - [state-management](../state-management/SKILL.md): 컴포넌트 상태 관리
 
 ### 태그

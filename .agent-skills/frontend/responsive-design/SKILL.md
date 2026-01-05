@@ -514,8 +514,8 @@ function ProductGrid({ products }) {
 - **호환 플랫폼**: Claude, ChatGPT, Gemini
 
 ### 관련 스킬
-- [ui-components](../ui-components/SKILL.md): 반응형 컴포넌트
-- [accessibility](../accessibility/SKILL.md): 접근성과 함께 고려
+- [ui-component-patterns](../ui-component-patterns/SKILL.md): 반응형 컴포넌트
+- [web-accessibility](../web-accessibility/SKILL.md): 접근성과 함께 고려
 
 ### 태그
 `#responsive` `#mobile-first` `#CSS` `#Flexbox` `#Grid` `#media-query` `#frontend`

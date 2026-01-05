@@ -95,20 +95,20 @@ platforms: [Claude, ChatGPT, Gemini]
 
 **Slack 템플릿**:
 ```markdown
-:calendar: **Daily Update - 2025-01-15**
+[Daily Update - 2025-01-15]
 
-:white_check_mark: **Yesterday**
+**Yesterday**
 - Completed user authentication flow
 - Fixed bug in password validation
 
-:runner: **Today**
+**Today**
 - Implementing JWT refresh tokens
 - Writing unit tests
 
-:no_entry: **Blockers**
+**Blockers**
 - None
 
-:chart_with_upward_trend: **Sprint Progress**
+**Sprint Progress**
 - 8/13 story points completed
 ```
 

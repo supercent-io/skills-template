@@ -73,7 +73,7 @@ function processOrder(order: Order) {
 
 **After (메서드 추출)**:
 ```typescript
-function processOrder(order: Order) {
+async function processOrder(order: Order) {
   validateOrder(order);
   const total = calculateTotal(order);
   await checkInventory(order);

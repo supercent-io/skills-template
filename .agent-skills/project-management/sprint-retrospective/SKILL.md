@@ -50,17 +50,17 @@ platforms: [Claude, ChatGPT, Gemini]
 ```markdown
 ## Retrospective: Mad-Sad-Glad
 
-### MAD 😡 (화가 났던 것)
+### MAD (화가 났던 것)
 - 배포 후 긴급 버그 발생 (2번)
 - 요구사항이 자주 변경됨
 - 테스트 환경 불안정
 
-### SAD 😔 (아쉬웠던 것)
+### SAD (아쉬웠던 것)
 - 코드 리뷰 시간 부족
 - 문서화가 뒤처짐
 - 기술 부채 누적
 
-### GLAD 😊 (좋았던 것)
+### GLAD (좋았던 것)
 - 새 팀원 빠른 적응
 - CI/CD 파이프라인 안정화
 - 고객 피드백 긍정적
