@@ -7,15 +7,76 @@
 [![Skills](https://img.shields.io/badge/Skills-30-green.svg)](.agent-skills/)
 [![Platforms](https://img.shields.io/badge/Platforms-Claude%20%7C%20ChatGPT%20%7C%20Gemini%20%7C%20MCP-informational.svg)](https://agentskills.io/)
 
+## Architecture
+
+```mermaid
+graph TB
+    subgraph "Agent Skills System"
+        AS[".agent-skills/"]
+        SK["SKILL.md Files"]
+        SL["skill_loader.py"]
+        SS["setup.sh"]
+    end
+
+    subgraph "AI Platforms"
+        CL["Claude Code"]
+        GP["ChatGPT"]
+        GM["Gemini"]
+    end
+
+    subgraph "MCP Integration"
+        GC["gemini-cli"]
+        CC["codex-cli"]
+    end
+
+    AS --> SK
+    SK --> SL
+    SK --> SS
+
+    SS --> CL
+    SS --> GP
+    SS --> GM
+    SL --> GC
+    SL --> CC
+
+    style AS fill:#e1f5fe
+    style CL fill:#a5d6a7
+    style GP fill:#fff59d
+    style GM fill:#ce93d8
+    style GC fill:#ffab91
+    style CC fill:#ffab91
+```
+
 ## Features
 
-- **Multi-Platform Support** - Claude, ChatGPT, Gemini, MCP(gemini-cli, codex-cli) 지원
-- **30+ Ready-to-Use Skills** - 8개 카테고리의 실전 스킬
-- **Open Standard** - Agent Skills 오픈 표준 준수
-- **Easy Setup** - `setup.sh` 원클릭 설정
-- **Extensible** - 템플릿 기반 스킬 추가
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Multi-Platform** | Claude, ChatGPT, Gemini, MCP 지원 | ✅ |
+| **30+ Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **Open Standard** | Agent Skills 오픈 표준 준수 | ✅ |
+| **Easy Setup** | `setup.sh` 원클릭 설정 | ✅ |
+| **Extensible** | 템플릿 기반 스킬 추가 | ✅ |
+| **MCP Integration** | gemini-cli, codex-cli 연동 | ✅ |
 
 ## Quick Start
+
+```mermaid
+flowchart LR
+    A["1. Clone"] --> B["2. Run setup.sh"]
+    B --> C{"Select Platform"}
+    C -->|1| D["Claude"]
+    C -->|2| E["ChatGPT"]
+    C -->|3| F["Gemini"]
+    C -->|6| G["MCP"]
+
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#fce4ec
+    style D fill:#a5d6a7
+    style E fill:#fff59d
+    style F fill:#ce93d8
+    style G fill:#ffab91
+```
 
 ```bash
 # 1. 저장소 클론
@@ -30,20 +91,46 @@ cd .agent-skills && ./setup.sh
 
 ## Skills Overview
 
-| Category | Skills | Description |
-|----------|--------|-------------|
-| **Backend** | 5 | API 설계, 데이터베이스, 인증, 테스팅 |
-| **Frontend** | 4 | UI 컴포넌트, 상태 관리, 반응형, 접근성 |
-| **Code-Quality** | 4 | 코드 리뷰, 리팩토링, 테스트 전략, 성능 최적화 |
-| **Infrastructure** | 4 | 시스템 설정, 배포, 모니터링, 보안 |
-| **Documentation** | 4 | 기술 문서, API 문서, 사용자 가이드, Changelog |
-| **Project-Management** | 4 | 태스크 계획, 견적, 회고, 스탠드업 |
-| **Search-Analysis** | 1 | 코드베이스 검색 및 분석 |
-| **Utilities** | 4 | Git 워크플로우, 환경 설정, 자동화 |
+### Categories
 
-**Total: 30 Skills**
+```mermaid
+pie showData
+    title Skills by Category
+    "Backend" : 5
+    "Frontend" : 4
+    "Code-Quality" : 4
+    "Infrastructure" : 4
+    "Documentation" : 4
+    "Project-Mgmt" : 4
+    "Search-Analysis" : 1
+    "Utilities" : 4
+```
+
+### Detailed Skills
+
+| Category | Count | Skills |
+|:---------|:-----:|:-------|
+| **Backend** | 5 | `api-design` `database-schema` `authentication` `backend-testing` `error-handling` |
+| **Frontend** | 4 | `ui-components` `state-management` `responsive-design` `accessibility` |
+| **Code-Quality** | 4 | `code-review` `refactoring` `testing-strategies` `performance-optimization` |
+| **Infrastructure** | 4 | `system-setup` `deployment` `monitoring` `security` |
+| **Documentation** | 4 | `technical-writing` `api-docs` `user-guides` `changelog` |
+| **Project-Mgmt** | 4 | `task-planning` `estimation` `retrospective` `standup` |
+| **Search-Analysis** | 1 | `codebase-search` |
+| **Utilities** | 4 | `git-workflow` `environment-setup` `file-organization` `automation` |
+
+> **Total: 30 Skills**
 
 ## Platform Support
+
+### Comparison Table
+
+| Platform | Setup Method | Auto-Detection | Skill Loading |
+|:---------|:-------------|:--------------:|:--------------|
+| **Claude Code** | `setup.sh` → Option 1 | ✅ | Automatic |
+| **ChatGPT** | `setup.sh` → Option 2 | ❌ | Knowledge Upload |
+| **Gemini** | `setup.sh` → Option 3 | ❌ | Python API |
+| **MCP CLI** | `setup.sh` → Option 6 | ✅ | Shell Script |
 
 ### Claude Code
 
@@ -76,6 +163,24 @@ response = model.generate_content(f"{skill['body']}\n\nDesign a REST API")
 
 ### MCP Integration (gemini-cli / codex-cli)
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as mcp-skill-loader.sh
+    participant SK as SKILL.md
+    participant CLI as gemini-cli / codex-cli
+    participant AI as AI Model
+
+    U->>S: source mcp-skill-loader.sh
+    U->>S: load_skill backend/api-design
+    S->>SK: Read SKILL.md
+    SK-->>S: Skill Content
+    U->>CLI: gemini chat "$(load_skill ...) prompt"
+    CLI->>AI: Skill + User Prompt
+    AI-->>CLI: Response
+    CLI-->>U: Output
+```
+
 ```bash
 # setup.sh에서 옵션 6 선택하여 MCP 설정
 
@@ -92,29 +197,54 @@ codex-cli shell "$(load_skill code-quality/code-review) 이 코드 리뷰해줘"
 
 ## Project Structure
 
-```
-.
-├── .agent-skills/
-│   ├── setup.sh                 # 자동 설정 스크립트
-│   ├── skill_loader.py          # Python 스킬 유틸리티
-│   ├── mcp-skill-loader.sh      # MCP 스킬 로더
-│   ├── validate_claude_skills.py # 스킬 검증 도구
-│   │
-│   ├── templates/               # 스킬 템플릿
-│   ├── backend/                 # 백엔드 스킬 (5)
-│   ├── frontend/                # 프론트엔드 스킬 (4)
-│   ├── code-quality/            # 코드 품질 스킬 (4)
-│   ├── infrastructure/          # 인프라 스킬 (4)
-│   ├── documentation/           # 문서화 스킬 (4)
-│   ├── project-management/      # 프로젝트 관리 스킬 (4)
-│   ├── search-analysis/         # 검색/분석 스킬 (1)
-│   └── utilities/               # 유틸리티 스킬 (4)
-│
-├── prompt/                      # 설정 프롬프트
-└── README.md
+```mermaid
+graph TD
+    ROOT[skills-template/] --> AS[.agent-skills/]
+    ROOT --> PM[prompt/]
+    ROOT --> RM[README.md]
+
+    AS --> CORE["Core Files"]
+    AS --> CATS["Skill Categories"]
+    AS --> TPL[templates/]
+
+    CORE --> SS[setup.sh]
+    CORE --> SL[skill_loader.py]
+    CORE --> ML[mcp-skill-loader.sh]
+    CORE --> VS[validate_claude_skills.py]
+
+    CATS --> BE["backend/ (5)"]
+    CATS --> FE["frontend/ (4)"]
+    CATS --> CQ["code-quality/ (4)"]
+    CATS --> IF["infrastructure/ (4)"]
+    CATS --> DC["documentation/ (4)"]
+    CATS --> PM2["project-management/ (4)"]
+    CATS --> SA["search-analysis/ (1)"]
+    CATS --> UT["utilities/ (4)"]
+
+    style ROOT fill:#e8f5e9
+    style AS fill:#e3f2fd
+    style CORE fill:#fff3e0
+    style CATS fill:#fce4ec
 ```
 
 ## Adding New Skills
+
+```mermaid
+flowchart TD
+    A["1. Copy Template"] --> B["2. Edit SKILL.md"]
+    B --> C["3. Test with skill_loader.py"]
+    C --> D{"Valid?"}
+    D -->|Yes| E["4. Git Commit"]
+    D -->|No| B
+    E --> F["Done!"]
+
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
+    style D fill:#ffebee
+    style E fill:#e8f5e9
+    style F fill:#a5d6a7
+```
 
 ```bash
 # 1. 템플릿 복사
@@ -132,35 +262,31 @@ git add .agent-skills/backend/my-skill && git commit -m "Add my-skill"
 
 ## CLI Tools
 
-```bash
-# 스킬 목록
-python skill_loader.py list
-
-# 스킬 검색
-python skill_loader.py search "api"
-
-# 스킬 상세 보기
-python skill_loader.py show api-design
-
-# 프롬프트 생성
-python skill_loader.py prompt --skills api-design --format xml
-```
+| Command | Description | Example |
+|:--------|:------------|:--------|
+| `list` | 모든 스킬 목록 | `python skill_loader.py list` |
+| `search` | 스킬 검색 | `python skill_loader.py search "api"` |
+| `show` | 스킬 상세 보기 | `python skill_loader.py show api-design` |
+| `prompt` | 프롬프트 생성 | `python skill_loader.py prompt --skills api-design --format xml` |
 
 ## Contributing
 
-`CONTRIBUTING.md` 참조. 주요 내용:
-- 스킬 작성 가이드
-- YAML frontmatter 규칙
-- 제출 프로세스
-- 코드 리뷰 기준
+| Topic | Description |
+|:------|:------------|
+| **Guide** | `CONTRIBUTING.md` 참조 |
+| **Template** | `templates/basic-skill-template/` |
+| **Frontmatter** | `name`, `description` 필수 |
+| **Review** | PR 제출 후 코드 리뷰 |
 
 ## References
 
-- [Agent Skills 공식 사이트](https://agentskills.io/)
-- [Agent Skills 사양](https://agentskills.io/specification)
-- [Claude Code Skills](https://code.claude.com/docs/ko/skills)
-- [QUICKSTART.md](.agent-skills/QUICKSTART.md)
-- [CONTRIBUTING.md](.agent-skills/CONTRIBUTING.md)
+| Resource | Link |
+|:---------|:-----|
+| Agent Skills 공식 | [agentskills.io](https://agentskills.io/) |
+| 사양 문서 | [Specification](https://agentskills.io/specification) |
+| Claude Code Skills | [Documentation](https://code.claude.com/docs/ko/skills) |
+| Quick Start | [QUICKSTART.md](.agent-skills/QUICKSTART.md) |
+| Contributing | [CONTRIBUTING.md](.agent-skills/CONTRIBUTING.md) |
 
 ## License
 
@@ -168,4 +294,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 1.1.0 | **Updated**: 2026-01-05 | **Status**: Active
+**Version**: 1.2.0 | **Updated**: 2026-01-05 | **Status**: Active
