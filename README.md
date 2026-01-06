@@ -1,89 +1,77 @@
 # Agent Skills
 
-> Claude, ChatGPT, Gemini, MCP 기반 CLI에서 사용 가능한 범용 AI 에이전트 스킬 시스템
+> Claude Code 중심의 Multi-Agent 워크플로우 시스템 (Gemini-CLI + Codex-CLI 통합)
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg?logo=python)](https://www.python.org/)
 [![Skills](https://img.shields.io/badge/Skills-39-green.svg)](.agent-skills/)
-[![Platforms](https://img.shields.io/badge/Platforms-Claude%20%7C%20ChatGPT%20%7C%20Gemini%20%7C%20MCP-informational.svg)](https://agentskills.io/)
-[![MCP](https://img.shields.io/badge/MCP-gemini--cli%20%7C%20codex--cli-ff6b6b.svg)](.agent-skills/skill-query-handler.py)
+[![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
+[![Token](https://img.shields.io/badge/Token%20Optimization-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
 ## Architecture
 
 ```mermaid
 graph TB
+    subgraph "Multi-Agent Workflow"
+        U["User Request"]
+        CC["Claude Code<br/>(Orchestrator)"]
+        GC["Gemini-CLI<br/>(Analyst)"]
+        CX["Codex-CLI<br/>(Executor)"]
+    end
+
     subgraph "Agent Skills System"
         AS[".agent-skills/"]
-        SK["SKILL.md Files"]
-        TN["skills.toon (TOON Format)"]
-        SL["skill_loader.py"]
-        SS["setup.sh"]
-        ANS["add_new_skill.sh"]
+        SK["SKILL.md"]
+        TN["SKILL.toon"]
+        CM["CLAUDE.md"]
     end
 
-    subgraph "AI Platforms"
-        CL["Claude Code"]
-        GP["ChatGPT"]
-        GM["Gemini"]
-    end
-
-    subgraph "MCP Integration"
-        GC["gemini-cli"]
-        CC["codex-cli"]
-    end
-
+    U --> CC
+    CC --> |"스킬 로드"| AS
+    CC --> |"대용량 분석"| GC
+    CC --> |"명령 실행"| CX
     AS --> SK
     AS --> TN
-    SK --> SL
-    SK --> SS
-    ANS --> SK
+    CM --> CC
 
-    SS --> CL
-    SS --> GP
-    SS --> GM
-    SL --> GC
-    SL --> CC
+    GC --> |"분석 결과"| CC
+    CX --> |"실행 결과"| CC
+    CC --> |"최종 응답"| U
 
-    style AS fill:#e1f5fe
+    style CC fill:#a5d6a7
+    style GC fill:#ce93d8
+    style CX fill:#ffab91
+    style CM fill:#e1f5fe
     style TN fill:#fff3e0
-    style CL fill:#a5d6a7
-    style GP fill:#fff59d
-    style GM fill:#ce93d8
-    style GC fill:#ffab91
-    style CC fill:#ffab91
 ```
 
 ## Features
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **Multi-Platform** | Claude, ChatGPT, Gemini, MCP 지원 | ✅ |
+| **Multi-Agent Workflow** | Claude + Gemini + Codex 자동 오케스트레이션 | ✅ |
 | **39 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **Token Optimization** | 95% 토큰 절감 (toon 모드 기본) | ✅ |
+| **Auto Orchestration** | CLAUDE.md 기반 에이전트 역할 자동 분배 | ✅ |
+| **MCP Integration** | gemini-cli, codex-cli 원클릭 설정 | ✅ |
 | **Smart Query Matching** | 사용자 쿼리 기반 스킬 자동 매칭 | ✅ |
-| **Token Optimization** | 88-95% 토큰 절감 (compact/toon 모드) | ✅ |
-| **MCP Integration** | gemini-cli, codex-cli 완벽 연동 | ✅ |
+| **Quick Setup** | `setup.sh` 7단계 통합 설정 | ✅ |
 | **Open Standard** | Agent Skills 오픈 표준 준수 | ✅ |
-| **Easy Setup** | `setup.sh` 원클릭 설정 | ✅ |
-| **Auto Add Skill** | `add_new_skill.sh` 자동 스킬 생성 | ✅ |
 
 ## Quick Start
 
 ```mermaid
 flowchart LR
     A["1. Clone"] --> B["2. Run setup.sh"]
-    B --> C{"Select Platform"}
-    C -->|1| D["Claude"]
-    C -->|2| E["ChatGPT"]
-    C -->|3| F["Gemini"]
-    C -->|6| G["MCP"]
+    B --> C["3. Quick Setup (1)"]
+    C --> D["Multi-Agent Ready!"]
+    D --> E["Claude + Gemini + Codex"]
 
     style A fill:#e3f2fd
     style B fill:#fff3e0
-    style C fill:#fce4ec
-    style D fill:#a5d6a7
-    style E fill:#fff59d
-    style F fill:#ce93d8
-    style G fill:#ffab91
+    style C fill:#a5d6a7
+    style D fill:#c8e6c9
+    style E fill:#dcedc8
 ```
 
 ```bash
@@ -91,11 +79,28 @@ flowchart LR
 git clone https://github.com/your-org/skills-template.git
 cd skills-template
 
-# 2. 설정 스크립트 실행
+# 2. Quick Setup 실행 (권장)
 cd .agent-skills && ./setup.sh
+# → 옵션 1 선택 (Multi-Agent workflow + Token optimization + MCP servers)
 
-# 3. 플랫폼 선택 (1: Claude, 2: ChatGPT, 3: Gemini, 6: MCP Integration)
+# 3. 셸 재시작
+source ~/.zshrc  # or ~/.bashrc
+
+# 4. Multi-Agent 워크플로우 테스트
+claude  # Claude Code 실행 → "REST API 설계하고 테스트해줘"
 ```
+
+### Quick Setup 7단계
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Token optimization | SKILL.toon 생성 (95% 절감) |
+| 2 | Claude skills | .claude/skills/ 복사 |
+| 3 | MCP shell config | gemini-skill, codex-skill 함수 |
+| 4 | Shell RC config | ~/.zshrc 자동 설정 |
+| 5 | Multi-Agent orchestration | CLAUDE.md 생성 |
+| 6 | MCP servers | gemini-cli, codex-cli 등록 |
+| 7 | Verification | 설정 확인 |
 
 ## Skills Overview
 
@@ -259,25 +264,56 @@ python scripts/skill_manifest_builder.py
 git add backend/my-skill && git commit -m "Add my-skill"
 ```
 
-## Platform Support
+## Multi-Agent Workflow
 
-### Multi-Agent Workflow
+> Claude Code가 오케스트레이터로서 Gemini-CLI와 Codex-CLI를 자동으로 활용합니다.
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant CC as Claude Code
-    participant GC as Gemini-CLI
-    participant CX as Codex-CLI
+    participant CC as Claude Code<br/>(Orchestrator)
+    participant GC as Gemini-CLI<br/>(Analyst)
+    participant CX as Codex-CLI<br/>(Executor)
 
-    U->>CC: "인프라 설계해줘"
-    CC->>CC: Load infrastructure skill
-    CC->>GC: 분석 요청 (ask-gemini)
-    GC-->>CC: 분석 결과
-    CC->>CX: 명령 실행 (shell)
-    CX-->>CC: 실행 결과
-    CC-->>U: 완료 리포트
+    U->>CC: "REST API 설계하고 테스트해줘"
+    CC->>CC: api-design 스킬 로드
+    CC->>CC: API 스펙 설계 및 코드 생성
+    CC->>GC: 대규모 코드 분석 요청 (ask-gemini)
+    GC-->>CC: 분석 결과 반환
+    CC->>CX: 테스트 실행 (shell "npm test")
+    CX-->>CC: 실행 결과 반환
+    CC-->>U: 완료 리포트 + 코드
 ```
+
+### Agent Roles
+
+| Agent | Role | MCP Tool | Best For |
+|-------|------|----------|----------|
+| **Claude Code** | Orchestrator | Built-in | 계획 수립, 코드 생성, 스킬 해석 |
+| **Gemini-CLI** | Analyst | `ask-gemini` | 대용량 분석 (1M+ 토큰), 리서치 |
+| **Codex-CLI** | Executor | `shell` | 명령 실행, 빌드, 배포 |
+
+### Orchestration Examples
+
+```bash
+# Example 1: API 설계 + 테스트
+"REST API를 설계하고 테스트해줘"
+# → Claude: 스킬 로드 → API 설계 → Codex: npm test → Claude: 리포트
+
+# Example 2: 대규모 코드 리뷰
+"전체 코드베이스를 분석해줘"
+# → Claude: 파일 식별 → Gemini: 대용량 분석 → Claude: 개선점 도출
+
+# Example 3: 인프라 배포
+"Docker로 배포해줘"
+# → Claude: 스킬 기반 계획 → Codex: docker-compose up → Claude: 결과 확인
+```
+
+### CLAUDE.md (Orchestration File)
+
+Quick Setup 실행 시 프로젝트 루트에 `CLAUDE.md`가 생성됩니다. 이 파일은 Claude Code가 자동으로 읽어 multi-agent 워크플로우를 이해합니다.
+
+## Platform Support
 
 ### Platform Comparison
 
@@ -454,4 +490,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.2.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Token Modes**: 3 | **Status**: Active
+**Version**: 2.3.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Workflow**: Multi-Agent | **Token**: 95% Reduction

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Agent Skills Setup Script
-# Unified setup with token optimization and MCP integration
+# Unified setup with token optimization, MCP integration, and Multi-Agent workflow
 
 set -e
 
@@ -143,6 +143,113 @@ configure_shell_rc() {
     return 1
 }
 
+# Generate CLAUDE.md for multi-agent orchestration
+generate_claude_md() {
+    local project_dir="$(dirname "$AGENT_SKILLS_DIR")"
+    cat > "$project_dir/CLAUDE.md" << 'EOFCLAUDEMD'
+# Agent Skills - Multi-Agent Workflow
+
+> 이 프로젝트는 Claude Code를 중심으로 Gemini-CLI와 Codex-CLI를 통합하는 Multi-Agent 시스템입니다.
+
+## Agent Roles
+
+| Agent | Role | MCP Tool | Best For |
+|-------|------|----------|----------|
+| **Claude Code** | Orchestrator | Built-in | 계획 수립, 코드 생성, 스킬 해석 |
+| **Gemini-CLI** | Analyst | `ask-gemini` | 대용량 분석, 리서치, 코드 리뷰 |
+| **Codex-CLI** | Executor | `shell` | 명령 실행, 빌드, 배포 |
+
+## Multi-Agent Workflow
+
+### When to Use Each Agent
+
+**Claude Code (기본)**: 코드 작성/수정, 파일 읽기/쓰기, 스킬 기반 작업 계획
+
+**Gemini-CLI (`ask-gemini`)**: 대용량 코드베이스 분석 (1M+ 토큰), 복잡한 아키텍처 리서치
+
+**Codex-CLI (`shell`)**: 장시간 실행 명령, Docker/Kubernetes 작업, 빌드/배포
+
+### Skill Integration
+
+```bash
+# 스킬 쿼리 (기본: toon 모드 - 95% 토큰 절감)
+gemini-skill "API 설계해줘"
+gemini-skill "query" compact  # 88% 절감
+gemini-skill "query" full     # 상세
+```
+
+### Orchestration Examples
+
+**API 설계 + 구현**:
+1. [Claude] 스킬 로드 → API 스펙 설계
+2. [Codex] shell "npm test"
+3. [Claude] 결과 리포트
+
+**대규모 코드 리뷰**:
+1. [Gemini] ask-gemini "@src/ 전체 분석"
+2. [Claude] 개선점 도출 및 수정
+
+## Available Skills
+
+- `backend/`: API 설계, DB 스키마, 인증
+- `frontend/`: UI 컴포넌트, 상태 관리
+- `code-quality/`: 코드 리뷰, 디버깅
+- `infrastructure/`: 배포, 모니터링, 보안
+- `documentation/`: 기술 문서, API 문서
+- `utilities/`: Git, 환경 설정
+
+## MCP Server Check
+
+```bash
+claude mcp list
+# Expected: gemini-cli, codex-cli - Connected
+```
+
+---
+**Version**: 2.3.0 | **Workflow**: Multi-Agent
+EOFCLAUDEMD
+    print_success "CLAUDE.md created for multi-agent orchestration"
+}
+
+# Configure MCP servers
+configure_mcp_servers() {
+    local auto_configure="$1"
+
+    if [ "$auto_configure" = "auto" ]; then
+        print_info "Configuring MCP servers..."
+
+        # Check if claude CLI is available
+        if ! command -v claude &> /dev/null; then
+            print_warning "Claude CLI not found. Skipping MCP server configuration."
+            print_info "Install Claude CLI first, then run: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
+            return 1
+        fi
+
+        # Add gemini-cli MCP server
+        if claude mcp list 2>/dev/null | grep -q "gemini-cli"; then
+            print_info "gemini-cli already configured"
+        else
+            print_info "Adding gemini-cli MCP server..."
+            claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool 2>/dev/null || \
+                print_warning "Failed to add gemini-cli (may need manual setup)"
+        fi
+
+        # Add codex-cli MCP server
+        if claude mcp list 2>/dev/null | grep -q "codex-cli"; then
+            print_info "codex-cli already configured"
+        else
+            print_info "Adding codex-cli MCP server..."
+            claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex 2>/dev/null || \
+                print_warning "Failed to add codex-cli (may need manual setup)"
+        fi
+
+        print_success "MCP servers configured"
+        return 0
+    fi
+
+    return 1
+}
+
 # ============================================================
 # Main Menu
 # ============================================================
@@ -157,7 +264,7 @@ echo ""
 echo "Select setup option:"
 echo ""
 echo -e "  ${GREEN}1) Quick Setup (Recommended)${NC}"
-echo "     → Token optimization + MCP integration + Shell config"
+echo "     → Multi-Agent workflow + Token optimization + MCP servers"
 echo ""
 echo "  2) Claude Code only"
 echo "  3) ChatGPT (Knowledge zip)"
@@ -175,10 +282,10 @@ case "$choice" in
         # Quick Setup - All-in-one
         # ============================================================
         echo ""
-        print_header "Quick Setup - All-in-one Configuration"
+        print_header "Quick Setup - All-in-one Multi-Agent Configuration"
         echo ""
 
-        TOTAL_STEPS=5
+        TOTAL_STEPS=7
         CURRENT_STEP=0
 
         # Step 1: Token Optimization
@@ -230,7 +337,32 @@ case "$choice" in
         fi
         echo ""
 
-        # Step 5: Verification
+        # Step 5: Multi-Agent Orchestration (CLAUDE.md)
+        CURRENT_STEP=$((CURRENT_STEP + 1))
+        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Creating multi-agent orchestration..."
+        generate_claude_md
+        echo ""
+
+        # Step 6: MCP Servers Configuration
+        CURRENT_STEP=$((CURRENT_STEP + 1))
+        print_info "[$CURRENT_STEP/$TOTAL_STEPS] MCP servers configuration..."
+        echo ""
+        echo "Configure MCP servers for multi-agent workflow?"
+        echo "  1) Yes, configure automatically (gemini-cli + codex-cli)"
+        echo "  2) No, I'll do it manually"
+        echo ""
+        read -p "Choice (1-2): " mcp_choice
+
+        if [ "$mcp_choice" = "1" ]; then
+            configure_mcp_servers "auto"
+        else
+            print_info "Manual setup commands:"
+            echo "  claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
+            echo "  claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex"
+        fi
+        echo ""
+
+        # Step 7: Verification
         CURRENT_STEP=$((CURRENT_STEP + 1))
         print_info "[$CURRENT_STEP/$TOTAL_STEPS] Verifying setup..."
 
@@ -246,9 +378,14 @@ case "$choice" in
             print_success "gemini-skill function: Ready"
         fi
 
+        # Check CLAUDE.md
+        if [ -f "$(dirname "$AGENT_SKILLS_DIR")/CLAUDE.md" ]; then
+            print_success "CLAUDE.md: Ready (Multi-Agent Orchestration)"
+        fi
+
         echo ""
         print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        print_success "Quick Setup Complete! 🎉"
+        print_success "Multi-Agent Setup Complete! 🎉"
         print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
 
@@ -257,11 +394,20 @@ case "$choice" in
         echo "  1. Reload shell:"
         echo "     ${BLUE}source ~/.zshrc${NC}  # or ~/.bashrc"
         echo ""
-        echo "  2. Test MCP skill matching:"
+        echo "  2. Verify MCP servers:"
+        echo "     ${BLUE}claude mcp list${NC}"
+        echo ""
+        echo "  3. Test multi-agent workflow:"
         echo "     ${BLUE}gemini-skill \"API 설계해줘\"${NC}"
         echo ""
-        echo "  3. Use with Claude Code:"
-        echo "     ${BLUE}\"REST API를 설계해줘\"${NC}  # Skills auto-activate"
+        echo "  4. Use with Claude Code (multi-agent auto-orchestration):"
+        echo "     ${BLUE}\"REST API를 설계하고 테스트해줘\"${NC}"
+        echo ""
+
+        print_info "🤖 Multi-Agent Roles:"
+        echo "  Claude Code  → Orchestrator (계획, 코드 생성)"
+        echo "  Gemini-CLI   → Analyst (대용량 분석, 리서치)"
+        echo "  Codex-CLI    → Executor (명령 실행, 배포)"
         echo ""
 
         print_info "🎯 Default Mode: toon (95% token reduction)"
