@@ -4,9 +4,9 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg?logo=python)](https://www.python.org/)
-[![Skills](https://img.shields.io/badge/Skills-34-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-39-green.svg)](.agent-skills/)
 [![Platforms](https://img.shields.io/badge/Platforms-Claude%20%7C%20ChatGPT%20%7C%20Gemini%20%7C%20MCP-informational.svg)](https://agentskills.io/)
-[![TOON](https://img.shields.io/badge/TOON-16.8%25%20Token%20Saved-orange.svg)](.agent-skills/skills.toon)
+[![MCP](https://img.shields.io/badge/MCP-gemini--cli%20%7C%20codex--cli-ff6b6b.svg)](.agent-skills/skill-query-handler.py)
 
 ## Architecture
 
@@ -58,12 +58,12 @@ graph TB
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **Multi-Platform** | Claude, ChatGPT, Gemini, MCP 지원 | ✅ |
-| **34 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
-| **TOON Format** | 16.8% 토큰 절감 포맷 | ✅ |
+| **39 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **Smart Query Matching** | 사용자 쿼리 기반 스킬 자동 매칭 | ✅ |
+| **MCP Integration** | gemini-cli, codex-cli 완벽 연동 | ✅ |
 | **Open Standard** | Agent Skills 오픈 표준 준수 | ✅ |
 | **Easy Setup** | `setup.sh` 원클릭 설정 | ✅ |
 | **Auto Add Skill** | `add_new_skill.sh` 자동 스킬 생성 | ✅ |
-| **MCP Integration** | gemini-cli, codex-cli 연동 | ✅ |
 
 ## Quick Start
 
@@ -102,31 +102,32 @@ cd .agent-skills && ./setup.sh
 
 ```mermaid
 pie showData
-    title Skills by Category (34 Total)
-    "Backend" : 5
-    "Frontend" : 4
-    "Code-Quality" : 4
-    "Infrastructure" : 5
+    title Skills by Category (39 Total)
+    "Backend" : 4
+    "Frontend" : 5
+    "Code-Quality" : 5
+    "Infrastructure" : 6
     "Documentation" : 4
     "Project-Mgmt" : 4
     "Search-Analysis" : 4
-    "Utilities" : 5
+    "Utilities" : 6
+    "Templates" : 3
 ```
 
 ### Detailed Skills
 
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
-| **Backend** | 5 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `toon-demo` |
-| **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
-| **Code-Quality** | 4 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` |
-| **Infrastructure** | 5 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` |
+| **Backend** | 4 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` |
+| **Frontend** | 5 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` `react-components` |
+| **Code-Quality** | 5 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` |
+| **Infrastructure** | 6 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `docker-containerization` `firebase-ai-logic` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 4 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 5 | `git-workflow` `environment-setup` `file-organization` `workflow-automation` `mcp-codex-integration` |
+| **Utilities** | 6 | `git-workflow` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` |
 
-> **Total: 34 Skills**
+> **Total: 39 Skills** (including 3 templates)
 
 ## Token Optimization (TOON Format)
 
@@ -279,55 +280,70 @@ response = model.generate_content(f"{skill['body']}\n\nDesign a REST API")
 ### MCP Integration (gemini-cli / codex-cli)
 
 ```bash
-# setup.sh에서 옵션 6 선택하여 MCP 설정
+# 1. setup.sh에서 옵션 6 선택하여 MCP 설정
+cd .agent-skills && ./setup.sh  # 옵션 6 선택
 
-# 스킬 로더 활성화
-source mcp-skill-loader.sh
+# 2. 스킬 쿼리 핸들러 사용 (자동 스킬 매칭)
+python3 skill-query-handler.py list                    # 전체 스킬 목록
+python3 skill-query-handler.py match "REST API 설계"   # 스킬 매칭
+python3 skill-query-handler.py query "코드 리뷰해줘"   # 프롬프트 생성
 
-# 스킬 목록 확인
-list_skills
+# 3. Claude Code에서 MCP 도구 사용
+# "gemini-cli를 사용해서 .agent-skills/backend/api-design/SKILL.md의
+#  가이드라인을 따라 사용자 관리 API를 설계해줘"
 
-# Gemini-CLI 사용 (AI 응답)
-gemini chat "$(load_skill backend/api-design) 사용자 관리 API 설계해줘"
+# 4. Shell에서 직접 사용 (mcp-shell-config.sh 설정 후)
+gemini-skill "Design a REST API for users"
+codex-skill "Run tests and show results"
+```
 
-# Codex-CLI 사용 (Shell 실행)
-codex-cli shell "docker-compose up -d"
+### Skill Query Handler
+
+사용자 쿼리를 분석하여 자동으로 적합한 스킬을 매칭하고 MCP 도구용 프롬프트를 생성합니다.
+
+```bash
+# 사용 예시
+python3 skill-query-handler.py query "데이터베이스 스키마 설계해줘" --tool gemini
+# 출력: @/path/to/.agent-skills/backend/database-schema-design/SKILL.md
+#       데이터베이스 스키마 설계해줘
+
+python3 skill-query-handler.py match "보안 취약점"
+# 출력: [3] infrastructure/security-best-practices
 ```
 
 ## Project Structure
 
 ```
 skills-template/
-├── .agent-skills/                 # 핵심 스킬 시스템
-│   ├── setup.sh                   # 플랫폼별 설정 스크립트
-│   ├── skill_loader.py            # Python 스킬 로더
-│   ├── mcp-skill-loader.sh        # MCP 스킬 로더
-│   ├── skills.json                # 스킬 매니페스트
-│   ├── skills.toon                # TOON 포맷 매니페스트
+├── .agent-skills/                  # 핵심 스킬 시스템
+│   ├── setup.sh                    # 플랫폼별 설정 스크립트
+│   ├── skill-query-handler.py      # 스킬 쿼리 핸들러 (MCP용)
+│   ├── skill_loader.py             # Python 스킬 로더
+│   ├── mcp-skill-loader.sh         # MCP 스킬 로더 (Shell)
+│   ├── mcp-shell-config.sh         # Shell RC 설정 스니펫
+│   ├── MCP_CONTEXT.md              # MCP 컨텍스트 문서
 │   ├── scripts/
-│   │   ├── add_new_skill.sh       # 스킬 자동 생성
-│   │   ├── toon_converter.py      # TOON 변환기
-│   │   ├── skill_manifest_builder.py
-│   │   └── codex_skill_executor.sh
-│   ├── backend/                   # 백엔드 스킬 (5)
-│   ├── frontend/                  # 프론트엔드 스킬 (4)
-│   ├── code-quality/              # 코드 품질 스킬 (4)
-│   ├── infrastructure/            # 인프라 스킬 (5)
-│   ├── documentation/             # 문서화 스킬 (4)
-│   ├── project-management/        # 프로젝트 관리 스킬 (4)
-│   ├── search-analysis/           # 검색/분석 스킬 (4)
-│   ├── utilities/                 # 유틸리티 스킬 (5)
-│   └── templates/                 # 스킬 템플릿
-├── .claude/skills/                # Claude Code 스킬 (setup.sh로 생성)
-├── work/                          # 작업 문서
-│   └── result.md                  # 멀티 에이전트 테스트 결과
-├── docs/                          # 문서
-├── prompt/                        # 프롬프트 템플릿
-│   └── add_new_skill_prompt.md    # 스킬 추가 프롬프트
+│   │   ├── add_new_skill.sh        # 스킬 자동 생성
+│   │   ├── convert_skills.py       # 스킬 표준화 스크립트
+│   │   └── skill_manifest_builder.py
+│   ├── backend/                    # 백엔드 스킬 (4)
+│   ├── frontend/                   # 프론트엔드 스킬 (5)
+│   ├── code-quality/               # 코드 품질 스킬 (5)
+│   ├── infrastructure/             # 인프라 스킬 (6)
+│   ├── documentation/              # 문서화 스킬 (4)
+│   ├── project-management/         # 프로젝트 관리 스킬 (4)
+│   ├── search-analysis/            # 검색/분석 스킬 (4)
+│   ├── utilities/                  # 유틸리티 스킬 (6)
+│   └── templates/                  # 스킬 템플릿 (3)
+├── .claude/skills/                 # Claude Code 스킬 (setup.sh로 생성)
+├── work/                           # 작업 문서
+├── docs/                           # 문서
 └── README.md
 ```
 
 ## CLI Tools
+
+### skill_loader.py (스킬 로더)
 
 | Command | Description | Example |
 |:--------|:------------|:--------|
@@ -335,6 +351,15 @@ skills-template/
 | `search` | 스킬 검색 | `python skill_loader.py search "api"` |
 | `show` | 스킬 상세 보기 | `python skill_loader.py show api-design` |
 | `prompt` | 프롬프트 생성 | `python skill_loader.py prompt --skills api-design` |
+
+### skill-query-handler.py (MCP 쿼리 핸들러)
+
+| Command | Description | Example |
+|:--------|:------------|:--------|
+| `list` | 인덱싱된 스킬 목록 | `python skill-query-handler.py list` |
+| `match` | 쿼리에 맞는 스킬 찾기 | `python skill-query-handler.py match "REST API"` |
+| `query` | MCP용 프롬프트 생성 | `python skill-query-handler.py query "API 설계"` |
+| `prompt` | 특정 스킬로 프롬프트 | `python skill-query-handler.py prompt "쿼리" --skill backend/api-design` |
 
 ### TOON Converter
 
@@ -379,4 +404,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.0.0 | **Updated**: 2025-01-05 | **Skills**: 34 | **Status**: Active
+**Version**: 2.1.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Status**: Active

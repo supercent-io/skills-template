@@ -569,11 +569,39 @@ EOF
 
     6)
         echo ""
-        print_info "Setting up MCP Integration..."
+        print_info "Setting up MCP Integration (gemini-cli / codex-cli)..."
         echo ""
 
-        # Create MCP_CONTEXT.md
-        print_info "Step 1/3: Creating MCP context file..."
+        # Step 1: Check prerequisites
+        print_info "Step 1/5: Checking prerequisites..."
+
+        GEMINI_CLI_INSTALLED=false
+        CODEX_CLI_INSTALLED=false
+
+        if command -v gemini &> /dev/null || command -v npx &> /dev/null; then
+            print_success "Gemini CLI: Available"
+            GEMINI_CLI_INSTALLED=true
+        else
+            print_warning "Gemini CLI: Not found (optional)"
+        fi
+
+        if command -v codex &> /dev/null; then
+            print_success "Codex CLI: Available"
+            CODEX_CLI_INSTALLED=true
+        else
+            print_warning "Codex CLI: Not found (optional)"
+        fi
+
+        if command -v python3 &> /dev/null; then
+            print_success "Python 3: Available"
+        else
+            print_warning "Python 3: Not found (required for skill-query-handler)"
+        fi
+
+        echo ""
+
+        # Step 2: Create MCP_CONTEXT.md
+        print_info "Step 2/5: Creating MCP context file..."
         cat > "$AGENT_SKILLS_DIR/MCP_CONTEXT.md" << 'EOF'
 # Agent Skills System for MCP (Model Context Protocol)
 
@@ -692,9 +720,9 @@ source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
 EOF
         print_success "MCP_CONTEXT.md created"
 
-        # Create mcp-skill-loader.sh
+        # Step 3: Create mcp-skill-loader.sh
         echo ""
-        print_info "Step 2/3: Creating MCP skill loader script..."
+        print_info "Step 3/5: Creating MCP skill loader script..."
         cat > "$AGENT_SKILLS_DIR/mcp-skill-loader.sh" << 'EOF'
 #!/bin/bash
 # MCP Skill Loader Helper Script
@@ -779,9 +807,25 @@ EOF
         chmod +x "$AGENT_SKILLS_DIR/mcp-skill-loader.sh"
         print_success "mcp-skill-loader.sh created"
 
-        # Create shell configuration snippet
+        # Step 4: Make skill-query-handler.py executable
         echo ""
-        print_info "Step 3/3: Creating shell configuration snippet..."
+        print_info "Step 4/5: Setting up skill query handler..."
+        if [ -f "$AGENT_SKILLS_DIR/skill-query-handler.py" ]; then
+            chmod +x "$AGENT_SKILLS_DIR/skill-query-handler.py"
+            print_success "skill-query-handler.py ready"
+
+            # Test the handler
+            if command -v python3 &> /dev/null; then
+                SKILL_COUNT=$(python3 "$AGENT_SKILLS_DIR/skill-query-handler.py" list 2>/dev/null | grep -c "^  Description:" || echo "0")
+                print_success "Skill query handler: $SKILL_COUNT skills indexed"
+            fi
+        else
+            print_warning "skill-query-handler.py not found"
+        fi
+
+        # Step 5: Create shell configuration snippet
+        echo ""
+        print_info "Step 5/5: Creating shell configuration snippet..."
         cat > "$AGENT_SKILLS_DIR/mcp-shell-config.sh" << EOF
 # Agent Skills MCP Integration
 # Add this to your ~/.bashrc or ~/.zshrc
@@ -799,9 +843,34 @@ alias skills-list='list_skills'
 alias skills-search='search_skills'
 alias skills-load='load_skill'
 
-# MCP-specific aliases
-alias gemini-skill='gemini chat "\$(load_skill_with_context'
-alias codex-skill='codex-cli shell "\$(load_skill_with_context'
+# Skill Query Handler (Python)
+alias skill-query='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query'
+alias skill-match='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" match'
+alias skill-list='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" list'
+
+# MCP-specific functions
+gemini-skill() {
+    local query="\$*"
+    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool gemini 2>/dev/null)
+    if [ -n "\$prompt" ]; then
+        echo "\$prompt"
+    else
+        echo "No matching skill found for: \$query"
+    fi
+}
+
+codex-skill() {
+    local query="\$*"
+    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool codex 2>/dev/null)
+    if [ -n "\$prompt" ]; then
+        echo "\$prompt"
+    else
+        echo "No matching skill found for: \$query"
+    fi
+}
+
+export -f gemini-skill
+export -f codex-skill
 EOF
         print_success "mcp-shell-config.sh created"
 
@@ -810,35 +879,35 @@ EOF
         print_success "MCP Integration Setup Complete! 🎉"
         print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        print_info "📚 Next Steps:"
+        print_info "📚 Quick Start:"
         echo ""
-        echo "  1. Load helper functions in your current shell:"
+        echo "  1. Load helper functions:"
         echo "     ${BLUE}source .agent-skills/mcp-skill-loader.sh${NC}"
         echo ""
-        echo "  2. Add to your shell RC file (~/.bashrc or ~/.zshrc):"
-        echo "     ${BLUE}cat .agent-skills/mcp-shell-config.sh >> ~/.bashrc${NC}"
-        echo "     ${BLUE}source ~/.bashrc${NC}"
+        echo "  2. (Optional) Add to shell RC file:"
+        echo "     ${BLUE}cat .agent-skills/mcp-shell-config.sh >> ~/.zshrc${NC}"
         echo ""
-        echo "  3. List available skills:"
-        echo "     ${BLUE}list_skills${NC}"
+        print_info "📋 Available Commands:"
         echo ""
-        echo "  4. Use with Gemini CLI:"
-        echo "     ${BLUE}gemini chat \"\$(load_skill backend/api-design)${NC}"
-        echo "     ${BLUE}사용자 관리 API를 설계해줘\"${NC}"
+        echo "  ${GREEN}skill-list${NC}                    - List all available skills"
+        echo "  ${GREEN}skill-match \"query\"${NC}           - Find matching skills"
+        echo "  ${GREEN}skill-query \"query\"${NC}           - Generate prompt for query"
         echo ""
-        echo "  5. Use with Codex CLI:"
-        echo "     ${BLUE}codex-cli shell \"\$(load_skill code-quality/code-review)${NC}"
-        echo "     ${BLUE}이 코드를 리뷰해줘\"${NC}"
+        print_info "🔧 Usage with MCP Tools:"
         echo ""
-        echo "  6. Search for skills:"
-        echo "     ${BLUE}search_skills 'API design'${NC}"
+        echo "  ${BLUE}# Auto-match skill and use with gemini-cli${NC}"
+        echo "  gemini-skill \"Design a REST API for users\""
+        echo ""
+        echo "  ${BLUE}# Use specific skill with gemini-cli${NC}"
+        echo "  python3 skill-query-handler.py prompt \"query\" --skill backend/api-design"
+        echo ""
+        echo "  ${BLUE}# In Claude Code with MCP servers${NC}"
+        echo "  \"gemini-cli를 사용해서 .agent-skills/backend/api-design/SKILL.md의"
+        echo "   가이드라인을 따라 사용자 관리 API를 설계해줘\""
         echo ""
         print_info "📖 Documentation:"
+        echo "  - Skill Query Handler: ${BLUE}.agent-skills/skill-query-handler.py --help${NC}"
         echo "  - MCP Context: ${BLUE}.agent-skills/MCP_CONTEXT.md${NC}"
-        echo "  - Setup Guide: ${BLUE}.agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md${NC}"
-        echo ""
-        print_info "💡 Tip: MCP 서버(gemini-cli, codex-cli)가 설치되어 있어야 합니다"
-        echo "        설치 가이드: .agent-skills/prompt/CLAUDE_MCP_GEMINI_CODEX_SETUP.md"
         echo ""
         ;;
 
