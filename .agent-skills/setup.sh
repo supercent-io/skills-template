@@ -81,9 +81,10 @@ echo "3) Gemini (Python integration)"
 echo "4) All platforms (comprehensive setup)"
 echo "5) Validate Skills (Check standards)"
 echo "6) MCP Integration (Gemini-CLI, Codex-CLI)"
-echo "7) Exit"
+echo "7) Token Optimization (Generate compact skills)"
+echo "8) Exit"
 echo ""
-read -p "Enter your choice (1-7): " choice
+read -p "Enter your choice (1-8): " choice
 
 case "$choice" in
     1)
@@ -847,11 +848,20 @@ alias skills-load='load_skill'
 alias skill-query='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query'
 alias skill-match='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" match'
 alias skill-list='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" list'
+alias skill-stats='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" stats'
 
-# MCP-specific functions
+# Token optimization mode aliases (full, compact, toon)
+alias skill-query-full='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
+alias skill-query-compact='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
+alias skill-query-toon='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode toon'
+
+# MCP-specific functions with token optimization
+# Usage: gemini-skill "query" [mode]
+# Modes: full (default), compact (75% reduction), toon (95% reduction)
 gemini-skill() {
-    local query="\$*"
-    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool gemini 2>/dev/null)
+    local query="\$1"
+    local mode="\${2:-compact}"  # Default to compact mode
+    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool gemini --mode "\$mode" 2>/dev/null)
     if [ -n "\$prompt" ]; then
         echo "\$prompt"
     else
@@ -860,8 +870,9 @@ gemini-skill() {
 }
 
 codex-skill() {
-    local query="\$*"
-    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool codex 2>/dev/null)
+    local query="\$1"
+    local mode="\${2:-compact}"  # Default to compact mode
+    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool codex --mode "\$mode" 2>/dev/null)
     if [ -n "\$prompt" ]; then
         echo "\$prompt"
     else
@@ -892,14 +903,22 @@ EOF
         echo "  ${GREEN}skill-list${NC}                    - List all available skills"
         echo "  ${GREEN}skill-match \"query\"${NC}           - Find matching skills"
         echo "  ${GREEN}skill-query \"query\"${NC}           - Generate prompt for query"
+        echo "  ${GREEN}skill-stats${NC}                   - Show token usage statistics"
+        echo ""
+        print_info "🎯 Token Optimization Modes:"
+        echo ""
+        echo "  ${BLUE}full${NC}     - SKILL.md (~2000 tokens) - Maximum detail"
+        echo "  ${BLUE}compact${NC}  - SKILL.compact.md (~500 tokens) - Balanced"
+        echo "  ${BLUE}toon${NC}     - SKILL.toon (~100 tokens) - Minimal, fastest"
         echo ""
         print_info "🔧 Usage with MCP Tools:"
         echo ""
-        echo "  ${BLUE}# Auto-match skill and use with gemini-cli${NC}"
+        echo "  ${BLUE}# Auto-match skill (default: compact mode)${NC}"
         echo "  gemini-skill \"Design a REST API for users\""
         echo ""
-        echo "  ${BLUE}# Use specific skill with gemini-cli${NC}"
-        echo "  python3 skill-query-handler.py prompt \"query\" --skill backend/api-design"
+        echo "  ${BLUE}# Use with specific token mode${NC}"
+        echo "  gemini-skill \"Design a REST API\" full    # Full detail"
+        echo "  gemini-skill \"Design a REST API\" toon    # Minimal tokens"
         echo ""
         echo "  ${BLUE}# In Claude Code with MCP servers${NC}"
         echo "  \"gemini-cli를 사용해서 .agent-skills/backend/api-design/SKILL.md의"
@@ -912,6 +931,63 @@ EOF
         ;;
 
     7)
+        echo ""
+        print_info "Token Optimization - Generate Compact Skills"
+        echo ""
+
+        # Check if Python is available
+        if ! command -v python3 &> /dev/null; then
+            print_warning "Python 3 is required for token optimization"
+            exit 1
+        fi
+
+        # Check if generate_compact_skills.py exists
+        if [ ! -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
+            print_warning "generate_compact_skills.py not found in scripts/"
+            exit 1
+        fi
+
+        echo "Token optimization generates compact versions of SKILL.md files:"
+        echo "  - SKILL.compact.md: ~75% token reduction"
+        echo "  - SKILL.toon: ~95% token reduction"
+        echo ""
+        echo "Options:"
+        echo "1) Generate all compact skills"
+        echo "2) Generate for specific skill"
+        echo "3) Show statistics only"
+        echo "4) Clean generated files"
+        echo "5) Back to main menu"
+        echo ""
+        read -p "Enter choice (1-5): " token_choice
+
+        case "$token_choice" in
+            1)
+                print_info "Generating compact skills for all categories..."
+                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py"
+                ;;
+            2)
+                echo ""
+                read -p "Enter skill path (e.g., backend/api-design): " skill_path
+                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" --skill "$skill_path"
+                ;;
+            3)
+                print_info "Token usage statistics:"
+                python3 "$AGENT_SKILLS_DIR/skill-query-handler.py" stats
+                ;;
+            4)
+                print_info "Cleaning generated files..."
+                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" --clean
+                ;;
+            5)
+                exec "$0"
+                ;;
+            *)
+                print_warning "Invalid choice"
+                ;;
+        esac
+        ;;
+
+    8)
         echo "Exiting..."
         exit 0
         ;;

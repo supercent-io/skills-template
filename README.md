@@ -60,6 +60,7 @@ graph TB
 | **Multi-Platform** | Claude, ChatGPT, Gemini, MCP 지원 | ✅ |
 | **39 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
 | **Smart Query Matching** | 사용자 쿼리 기반 스킬 자동 매칭 | ✅ |
+| **Token Optimization** | 88-95% 토큰 절감 (compact/toon 모드) | ✅ |
 | **MCP Integration** | gemini-cli, codex-cli 완벽 연동 | ✅ |
 | **Open Standard** | Agent Skills 오픈 표준 준수 | ✅ |
 | **Easy Setup** | `setup.sh` 원클릭 설정 | ✅ |
@@ -129,42 +130,82 @@ pie showData
 
 > **Total: 39 Skills** (including 3 templates)
 
-## Token Optimization (TOON Format)
+## Token Optimization
 
-TOON (Token-Oriented Object Notation)은 LLM 토큰 사용량을 최적화하는 직렬화 포맷입니다.
+스킬 로딩 시 토큰 사용량을 최적화하는 3가지 모드를 제공합니다.
 
 ```mermaid
 graph LR
-    A["JSON (Original)"] -->|toon_converter.py| B["TOON Format"]
-    B -->|16.8% 절감| C["Reduced Tokens"]
+    A["SKILL.md<br/>~2000 tokens"] -->|generate_compact_skills.py| B["SKILL.compact.md<br/>~250 tokens"]
+    A -->|generate_compact_skills.py| C["SKILL.toon<br/>~110 tokens"]
+
+    B -->|88% 절감| D["Balanced"]
+    C -->|95% 절감| E["Minimal"]
 
     style A fill:#ffcdd2
-    style B fill:#c8e6c9
-    style C fill:#a5d6a7
+    style B fill:#fff3e0
+    style C fill:#c8e6c9
+    style D fill:#e3f2fd
+    style E fill:#a5d6a7
 ```
 
-### TOON 변환 예시
+### 모드 비교
 
-**Before (JSON)**:
-```json
-{"name": "api-design", "category": "backend", "description": "Design RESTful APIs"}
-```
+| Mode | File | Avg Tokens | Reduction | Use Case |
+|:-----|:-----|:-----------|:----------|:---------|
+| **full** | SKILL.md | ~2,000 | - | 상세 예시 필요 시 |
+| **compact** | SKILL.compact.md | ~250 | 88% | 일반 작업 (기본값) |
+| **toon** | SKILL.toon | ~110 | 95% | 빠른 참조, 간단한 쿼리 |
 
-**After (TOON)**:
-```
-N:api-design C:backend D:Design RESTful APIs
-```
-
-### TOON CLI 사용
+### 토큰 최적화 실행
 
 ```bash
-# 전체 스킬 TOON 변환
-python3 scripts/toon_converter.py convert-all
+# setup.sh 옵션 7 사용 (권장)
+cd .agent-skills && ./setup.sh  # 옵션 7 선택
+
+# 또는 직접 실행
+python3 scripts/generate_compact_skills.py
 
 # 통계 확인
-python3 scripts/toon_converter.py stats skills.json
+python3 skill-query-handler.py stats
+```
 
-# 결과: 16.8% 토큰 절감
+### 모드별 사용
+
+```bash
+# 기본: compact 모드 (88% 토큰 절감)
+gemini-skill "REST API 설계해줘"
+
+# full 모드: 상세 예시 포함
+gemini-skill "REST API 설계해줘" full
+
+# toon 모드: 최소 토큰 (95% 절감)
+gemini-skill "REST API 설계해줘" toon
+
+# skill-query-handler 직접 사용
+python3 skill-query-handler.py query "쿼리" --mode compact
+python3 skill-query-handler.py query "쿼리" --mode toon
+```
+
+### TOON 포맷 예시
+
+```
+N:api-design
+D:Design RESTful and GraphQL APIs following best practices...
+G:api-design REST GraphQL OpenAPI
+U[3]:
+  REST API 설계 시
+  GraphQL 스키마 작성 시
+  API 버저닝 결정 시
+S[4]{n,action}:
+  1,Define resources and endpoints
+  2,Design request/response schemas
+  3,Add authentication and authorization
+  4,Document with OpenAPI
+R[5]:
+  Use nouns for resources
+  HTTP methods correctly
+  Consistent error format
 ```
 
 ## Adding New Skills
@@ -324,6 +365,7 @@ skills-template/
 │   ├── MCP_CONTEXT.md              # MCP 컨텍스트 문서
 │   ├── scripts/
 │   │   ├── add_new_skill.sh        # 스킬 자동 생성
+│   │   ├── generate_compact_skills.py  # 토큰 최적화 (compact/toon 생성)
 │   │   ├── convert_skills.py       # 스킬 표준화 스크립트
 │   │   └── skill_manifest_builder.py
 │   ├── backend/                    # 백엔드 스킬 (4)
@@ -360,15 +402,23 @@ skills-template/
 | `match` | 쿼리에 맞는 스킬 찾기 | `python skill-query-handler.py match "REST API"` |
 | `query` | MCP용 프롬프트 생성 | `python skill-query-handler.py query "API 설계"` |
 | `prompt` | 특정 스킬로 프롬프트 | `python skill-query-handler.py prompt "쿼리" --skill backend/api-design` |
+| `stats` | 토큰 사용량 통계 | `python skill-query-handler.py stats` |
 
-### TOON Converter
+**옵션:**
+| Option | Description | Values |
+|:-------|:------------|:-------|
+| `--mode` | 토큰 최적화 모드 | `full`, `compact` (기본), `toon` |
+| `--tool` | MCP 도구 선택 | `gemini`, `codex` |
+| `--skill` | 특정 스킬 지정 | `backend/api-design` |
+
+### generate_compact_skills.py (토큰 최적화)
 
 | Command | Description | Example |
 |:--------|:------------|:--------|
-| `convert-all` | 전체 스킬 TOON 변환 | `python toon_converter.py convert-all` |
-| `encode` | JSON → TOON | `python toon_converter.py encode skills.json` |
-| `decode` | TOON → JSON | `python toon_converter.py decode skills.toon` |
-| `stats` | 토큰 절감 통계 | `python toon_converter.py stats skills.json` |
+| (기본) | 전체 스킬 compact/toon 생성 | `python generate_compact_skills.py` |
+| `--skill` | 특정 스킬만 처리 | `--skill backend/api-design` |
+| `--stats` | 통계 표시 | `--stats` |
+| `--clean` | 생성 파일 삭제 | `--clean` |
 
 ### Add New Skill
 
@@ -404,4 +454,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.1.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Status**: Active
+**Version**: 2.2.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Token Modes**: 3 | **Status**: Active
