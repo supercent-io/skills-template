@@ -36,12 +36,12 @@ alias skill-query-full='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" quer
 alias skill-query-compact='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
 alias skill-query-toon='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode toon'
 
-# MCP-specific functions with token optimization
+# MCP functions (default: toon mode for minimal tokens - 95% reduction)
 # Usage: gemini-skill "query" [mode]
-# Modes: full (default), compact (75% reduction), toon (95% reduction)
+# Modes: toon (default), compact (75% reduction), full (max detail)
 gemini-skill() {
     local query="$1"
-    local mode="${2:-compact}"  # Default to compact mode
+    local mode="${2:-toon}"  # Default to toon mode
     local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool gemini --mode "$mode" 2>/dev/null)
     if [ -n "$prompt" ]; then
         echo "$prompt"
@@ -52,7 +52,7 @@ gemini-skill() {
 
 codex-skill() {
     local query="$1"
-    local mode="${2:-compact}"  # Default to compact mode
+    local mode="${2:-toon}"  # Default to toon mode
     local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool codex --mode "$mode" 2>/dev/null)
     if [ -n "$prompt" ]; then
         echo "$prompt"
