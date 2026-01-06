@@ -1,8 +1,19 @@
+#!/bin/bash
 # Agent Skills MCP Integration
 # Add this to your ~/.bashrc or ~/.zshrc
+# Usage: source /path/to/.agent-skills/mcp-shell-config.sh
+
+# Auto-detect script directory (works with both bash and zsh)
+if [ -n "$BASH_SOURCE" ]; then
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "$ZSH_VERSION" ]; then
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "${(%):-%x}")" && pwd)"
+else
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 
 # Set Agent Skills path
-export AGENT_SKILLS_PATH="/Users/supercent/Documents/Github/skills-template/.agent-skills"
+export AGENT_SKILLS_PATH="$_MCP_SCRIPT_DIR"
 
 # Load helper functions
 if [ -f "$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ]; then
@@ -52,3 +63,6 @@ codex-skill() {
 
 export -f gemini-skill
 export -f codex-skill
+
+# Cleanup temporary variable
+unset _MCP_SCRIPT_DIR

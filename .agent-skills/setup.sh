@@ -824,19 +824,30 @@ EOF
             print_warning "skill-query-handler.py not found"
         fi
 
-        # Step 5: Create shell configuration snippet
+        # Step 5: Create shell configuration snippet (with auto-detect path)
         echo ""
-        print_info "Step 5/5: Creating shell configuration snippet..."
-        cat > "$AGENT_SKILLS_DIR/mcp-shell-config.sh" << EOF
+        print_info "Step 5/6: Creating shell configuration snippet..."
+        cat > "$AGENT_SKILLS_DIR/mcp-shell-config.sh" << 'EOFCONFIG'
+#!/bin/bash
 # Agent Skills MCP Integration
 # Add this to your ~/.bashrc or ~/.zshrc
+# Usage: source /path/to/.agent-skills/mcp-shell-config.sh
+
+# Auto-detect script directory (works with both bash and zsh)
+if [ -n "$BASH_SOURCE" ]; then
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "$ZSH_VERSION" ]; then
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "${(%):-%x}")" && pwd)"
+else
+    _MCP_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 
 # Set Agent Skills path
-export AGENT_SKILLS_PATH="$AGENT_SKILLS_DIR"
+export AGENT_SKILLS_PATH="$_MCP_SCRIPT_DIR"
 
 # Load helper functions
-if [ -f "\$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ]; then
-    source "\$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
+if [ -f "$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ]; then
+    source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
 fi
 
 # Aliases for quick access
@@ -845,58 +856,141 @@ alias skills-search='search_skills'
 alias skills-load='load_skill'
 
 # Skill Query Handler (Python)
-alias skill-query='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query'
-alias skill-match='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" match'
-alias skill-list='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" list'
-alias skill-stats='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" stats'
+alias skill-query='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query'
+alias skill-match='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" match'
+alias skill-list='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" list'
+alias skill-stats='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" stats'
 
 # Token optimization mode aliases (full, compact, toon)
-alias skill-query-full='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
-alias skill-query-compact='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
-alias skill-query-toon='python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode toon'
+alias skill-query-full='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
+alias skill-query-compact='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
+alias skill-query-toon='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode toon'
 
 # MCP-specific functions with token optimization
 # Usage: gemini-skill "query" [mode]
 # Modes: full (default), compact (75% reduction), toon (95% reduction)
 gemini-skill() {
-    local query="\$1"
-    local mode="\${2:-compact}"  # Default to compact mode
-    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool gemini --mode "\$mode" 2>/dev/null)
-    if [ -n "\$prompt" ]; then
-        echo "\$prompt"
+    local query="$1"
+    local mode="${2:-compact}"  # Default to compact mode
+    local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool gemini --mode "$mode" 2>/dev/null)
+    if [ -n "$prompt" ]; then
+        echo "$prompt"
     else
-        echo "No matching skill found for: \$query"
+        echo "No matching skill found for: $query"
     fi
 }
 
 codex-skill() {
-    local query="\$1"
-    local mode="\${2:-compact}"  # Default to compact mode
-    local prompt=\$(python3 "\$AGENT_SKILLS_PATH/skill-query-handler.py" query "\$query" --tool codex --mode "\$mode" 2>/dev/null)
-    if [ -n "\$prompt" ]; then
-        echo "\$prompt"
+    local query="$1"
+    local mode="${2:-compact}"  # Default to compact mode
+    local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool codex --mode "$mode" 2>/dev/null)
+    if [ -n "$prompt" ]; then
+        echo "$prompt"
     else
-        echo "No matching skill found for: \$query"
+        echo "No matching skill found for: $query"
     fi
 }
 
 export -f gemini-skill
 export -f codex-skill
-EOF
-        print_success "mcp-shell-config.sh created"
+
+# Cleanup temporary variable
+unset _MCP_SCRIPT_DIR
+EOFCONFIG
+        chmod +x "$AGENT_SKILLS_DIR/mcp-shell-config.sh"
+        print_success "mcp-shell-config.sh created (with auto-detect path)"
+
+        # Step 6: Auto-configure shell RC file
+        echo ""
+        print_info "Step 6/6: Shell RC configuration..."
+        echo ""
+        echo "Do you want to automatically add MCP configuration to your shell?"
+        echo "This will enable gemini-skill and codex-skill commands in new terminals."
+        echo ""
+        echo "1) Yes, configure automatically (Recommended)"
+        echo "2) No, I'll configure manually"
+        echo ""
+        read -p "Enter choice (1-2): " shell_choice
+
+        SHELL_CONFIGURED=false
+        if [ "$shell_choice" = "1" ]; then
+            # Detect shell type
+            SHELL_RC=""
+            if [ -n "$ZSH_VERSION" ] || [ "$SHELL" = "/bin/zsh" ] || [ "$SHELL" = "/usr/bin/zsh" ]; then
+                SHELL_RC="$HOME/.zshrc"
+                SHELL_NAME="zsh"
+            elif [ -n "$BASH_VERSION" ] || [ "$SHELL" = "/bin/bash" ] || [ "$SHELL" = "/usr/bin/bash" ]; then
+                SHELL_RC="$HOME/.bashrc"
+                SHELL_NAME="bash"
+            fi
+
+            if [ -n "$SHELL_RC" ]; then
+                # Check if already configured
+                MARKER="# Agent Skills MCP Integration"
+                if grep -q "$MARKER" "$SHELL_RC" 2>/dev/null; then
+                    print_warning "MCP configuration already exists in $SHELL_RC"
+                    echo ""
+                    read -p "Do you want to update it? (y/n): " update_rc
+                    if [[ $update_rc =~ ^[Yy]$ ]]; then
+                        # Remove old configuration
+                        sed -i.bak "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null || \
+                        sed -i '' "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null
+                        print_info "Removed old configuration"
+                    else
+                        SHELL_CONFIGURED=true
+                    fi
+                fi
+
+                if [ "$SHELL_CONFIGURED" = "false" ]; then
+                    # Add configuration with markers
+                    echo "" >> "$SHELL_RC"
+                    echo "$MARKER" >> "$SHELL_RC"
+                    echo "# Auto-generated by setup.sh - $(date +%Y-%m-%d)" >> "$SHELL_RC"
+                    echo "if [ -f \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\" ]; then" >> "$SHELL_RC"
+                    echo "    source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\"" >> "$SHELL_RC"
+                    echo "fi" >> "$SHELL_RC"
+                    echo "# End Agent Skills MCP" >> "$SHELL_RC"
+
+                    print_success "Added MCP configuration to $SHELL_RC"
+                    SHELL_CONFIGURED=true
+
+                    # Verify by sourcing
+                    echo ""
+                    print_info "Verifying configuration..."
+                    if bash -c "source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\" && type gemini-skill" &>/dev/null; then
+                        print_success "gemini-skill function: OK"
+                    else
+                        print_warning "gemini-skill function: Not available (reload shell)"
+                    fi
+                fi
+            else
+                print_warning "Could not detect shell type. Please configure manually."
+            fi
+        fi
 
         echo ""
         print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         print_success "MCP Integration Setup Complete! 🎉"
         print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        print_info "📚 Quick Start:"
-        echo ""
-        echo "  1. Load helper functions:"
-        echo "     ${BLUE}source .agent-skills/mcp-skill-loader.sh${NC}"
-        echo ""
-        echo "  2. (Optional) Add to shell RC file:"
-        echo "     ${BLUE}cat .agent-skills/mcp-shell-config.sh >> ~/.zshrc${NC}"
+
+        if [ "$SHELL_CONFIGURED" = "true" ]; then
+            print_info "📚 Quick Start:"
+            echo ""
+            echo "  1. Reload your shell or run:"
+            echo "     ${BLUE}source $SHELL_RC${NC}"
+            echo ""
+            echo "  2. Test the configuration:"
+            echo "     ${BLUE}gemini-skill \"Design a REST API\"${NC}"
+        else
+            print_info "📚 Manual Setup:"
+            echo ""
+            echo "  1. Add to your shell RC file:"
+            echo "     ${BLUE}echo 'source $AGENT_SKILLS_DIR/mcp-shell-config.sh' >> ~/.zshrc${NC}"
+            echo ""
+            echo "  2. Reload your shell:"
+            echo "     ${BLUE}source ~/.zshrc${NC}"
+        fi
         echo ""
         print_info "📋 Available Commands:"
         echo ""
