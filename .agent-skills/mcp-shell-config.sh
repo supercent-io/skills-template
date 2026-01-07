@@ -1,9 +1,6 @@
 #!/bin/bash
-# Agent Skills MCP Integration
-# Add this to your ~/.bashrc or ~/.zshrc
-# Usage: source /path/to/.agent-skills/mcp-shell-config.sh
+# Agent Skills MCP Integration (Auto-detect path)
 
-# Auto-detect script directory (works with both bash and zsh)
 if [ -n "$BASH_SOURCE" ]; then
     _MCP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 elif [ -n "$ZSH_VERSION" ]; then
@@ -12,57 +9,34 @@ else
     _MCP_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 fi
 
-# Set Agent Skills path
 export AGENT_SKILLS_PATH="$_MCP_SCRIPT_DIR"
 
 # Load helper functions
-if [ -f "$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ]; then
-    source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
-fi
+[ -f "$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ] && source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
 
-# Aliases for quick access
-alias skills-list='list_skills'
-alias skills-search='search_skills'
-alias skills-load='load_skill'
-
-# Skill Query Handler (Python)
-alias skill-query='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query'
-alias skill-match='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" match'
+# Aliases
 alias skill-list='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" list'
+alias skill-match='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" match'
+alias skill-query='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query'
 alias skill-stats='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" stats'
 
-# Token optimization mode aliases (full, compact, toon)
-alias skill-query-full='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
-alias skill-query-compact='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
+# Token mode aliases
 alias skill-query-toon='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode toon'
+alias skill-query-compact='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
+alias skill-query-full='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
 
-# MCP functions (default: toon mode for minimal tokens - 95% reduction)
-# Usage: gemini-skill "query" [mode]
-# Modes: toon (default), compact (75% reduction), full (max detail)
+# MCP functions (default: toon mode for minimal tokens)
 gemini-skill() {
     local query="$1"
-    local mode="${2:-toon}"  # Default to toon mode
-    local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool gemini --mode "$mode" 2>/dev/null)
-    if [ -n "$prompt" ]; then
-        echo "$prompt"
-    else
-        echo "No matching skill found for: $query"
-    fi
+    local mode="${2:-toon}"
+    python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool gemini --mode "$mode" 2>/dev/null || echo "No matching skill for: $query"
 }
 
 codex-skill() {
     local query="$1"
-    local mode="${2:-toon}"  # Default to toon mode
-    local prompt=$(python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool codex --mode "$mode" 2>/dev/null)
-    if [ -n "$prompt" ]; then
-        echo "$prompt"
-    else
-        echo "No matching skill found for: $query"
-    fi
+    local mode="${2:-toon}"
+    python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool codex --mode "$mode" 2>/dev/null || echo "No matching skill for: $query"
 }
 
-export -f gemini-skill
-export -f codex-skill
-
-# Cleanup temporary variable
+export -f gemini-skill codex-skill
 unset _MCP_SCRIPT_DIR

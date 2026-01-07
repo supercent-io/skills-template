@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg?logo=python)](https://www.python.org/)
-[![Skills](https://img.shields.io/badge/Skills-39-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-37-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Optimization-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
@@ -50,7 +50,7 @@ graph TB
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **Multi-Agent Workflow** | Claude + Gemini + Codex 자동 오케스트레이션 | ✅ |
-| **39 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **37 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
 | **Token Optimization** | 95% 토큰 절감 (toon 모드 기본) | ✅ |
 | **Auto Orchestration** | CLAUDE.md 기반 에이전트 역할 자동 분배 | ✅ |
 | **MCP Integration** | gemini-cli, codex-cli 원클릭 설정 | ✅ |
@@ -108,16 +108,16 @@ claude  # Claude Code 실행 → "REST API 설계하고 테스트해줘"
 
 ```mermaid
 pie showData
-    title Skills by Category (39 Total)
+    title Skills by Category (37 Total)
     "Backend" : 4
-    "Frontend" : 5
+    "Frontend" : 4
     "Code-Quality" : 5
-    "Infrastructure" : 6
+    "Infrastructure" : 5
     "Documentation" : 4
     "Project-Mgmt" : 4
     "Search-Analysis" : 4
     "Utilities" : 6
-    "Templates" : 3
+    "Templates" : 5
 ```
 
 ### Detailed Skills
@@ -125,15 +125,15 @@ pie showData
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
 | **Backend** | 4 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` |
-| **Frontend** | 5 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` `react-components` |
+| **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
 | **Code-Quality** | 5 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` |
-| **Infrastructure** | 6 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `docker-containerization` `firebase-ai-logic` |
+| **Infrastructure** | 5 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 4 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
 | **Utilities** | 6 | `git-workflow` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` |
 
-> **Total: 39 Skills** (including 3 templates)
+> **Total: 37 Skills** (including 5 templates: `basic` `advanced` `multiplatform` `chatgpt` `toon`)
 
 ## Token Optimization
 
@@ -396,26 +396,50 @@ skills-template/
 │   ├── setup.sh                    # 플랫폼별 설정 스크립트
 │   ├── skill-query-handler.py      # 스킬 쿼리 핸들러 (MCP용)
 │   ├── skill_loader.py             # Python 스킬 로더
+│   ├── validate_claude_skills.py   # 스킬 검증 스크립트
 │   ├── mcp-skill-loader.sh         # MCP 스킬 로더 (Shell)
-│   ├── mcp-shell-config.sh         # Shell RC 설정 스니펫
+│   ├── mcp-shell-config.sh         # Shell RC 설정 스니펫 (setup.sh로 생성)
+│   ├── skills.json                 # 스킬 메타데이터 (자동 생성)
+│   ├── skills.toon                 # TOON 포맷 스킬 인덱스
 │   ├── MCP_CONTEXT.md              # MCP 컨텍스트 문서
+│   ├── QUICKSTART.md               # 빠른 시작 가이드
+│   ├── CONTRIBUTING.md             # 기여 가이드
+│   ├── CLAUDE_CODEX_PROMPT.md      # Claude+Codex 프롬프트 가이드
+│   ├── README.md                   # .agent-skills 내부 문서
 │   ├── scripts/
 │   │   ├── add_new_skill.sh        # 스킬 자동 생성
 │   │   ├── generate_compact_skills.py  # 토큰 최적화 (compact/toon 생성)
 │   │   ├── convert_skills.py       # 스킬 표준화 스크립트
-│   │   └── skill_manifest_builder.py
+│   │   ├── skill_manifest_builder.py   # 매니페스트 빌더
+│   │   ├── toon_converter.py       # TOON 포맷 변환기
+│   │   ├── codex_skill_executor.sh # Codex 스킬 실행기
+│   │   ├── remove_duplicates.py    # 중복 제거 유틸리티
+│   │   └── final_cleanup.py        # 정리 유틸리티
+│   ├── prompt/                     # 플랫폼별 설정 프롬프트
+│   │   ├── CHATGPT_SETUP_PROMPT.md
+│   │   ├── CLAUDE_MCP_GEMINI_CODEX_SETUP.md
+│   │   ├── CLAUDE_SETUP_GUIDE.md
+│   │   └── GEMINI_SETUP_PROMPT.md
 │   ├── backend/                    # 백엔드 스킬 (4)
-│   ├── frontend/                   # 프론트엔드 스킬 (5)
+│   ├── frontend/                   # 프론트엔드 스킬 (4)
 │   ├── code-quality/               # 코드 품질 스킬 (5)
-│   ├── infrastructure/             # 인프라 스킬 (6)
+│   ├── infrastructure/             # 인프라 스킬 (5)
 │   ├── documentation/              # 문서화 스킬 (4)
 │   ├── project-management/         # 프로젝트 관리 스킬 (4)
 │   ├── search-analysis/            # 검색/분석 스킬 (4)
 │   ├── utilities/                  # 유틸리티 스킬 (6)
-│   └── templates/                  # 스킬 템플릿 (3)
+│   └── templates/                  # 스킬 템플릿 (5)
+│       ├── basic-skill-template/
+│       ├── advanced-skill-template/
+│       ├── multiplatform-skill-template/
+│       ├── chatgpt-skill-template/
+│       └── toon-skill-template/
 ├── .claude/skills/                 # Claude Code 스킬 (setup.sh로 생성)
+├── prompt/                         # 추가 프롬프트
+│   └── add_new_skill_prompt.md
 ├── work/                           # 작업 문서
 ├── docs/                           # 문서
+├── CLAUDE.md                       # Multi-Agent 오케스트레이션 (setup.sh로 생성)
 └── README.md
 ```
 
@@ -490,4 +514,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.3.0 | **Updated**: 2026-01-06 | **Skills**: 39 | **Workflow**: Multi-Agent | **Token**: 95% Reduction
+**Version**: 2.4.0 | **Updated**: 2026-01-08 | **Skills**: 37 | **Workflow**: Multi-Agent | **Token**: 95% Reduction
