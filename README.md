@@ -8,6 +8,24 @@
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Optimization-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
+---
+
+## Installation / 설치
+
+**English:**
+```bash
+cd .agent-skills && ./setup.sh
+```
+> Run the setup script and select option 1 (Quick Setup) for full Multi-Agent configuration.
+
+**한국어:**
+```bash
+cd .agent-skills && ./setup.sh
+```
+> setup 스크립트를 실행하고 옵션 1 (Quick Setup)을 선택하면 Multi-Agent 전체 설정이 완료됩니다.
+
+---
+
 ## Architecture
 
 ```mermaid
@@ -75,32 +93,33 @@ flowchart LR
 ```
 
 ```bash
-# 1. 저장소 클론
+# 1. Clone repository / 저장소 클론
 git clone https://github.com/your-org/skills-template.git
 cd skills-template
 
-# 2. Quick Setup 실행 (권장)
+# 2. Run Quick Setup (Recommended) / Quick Setup 실행 (권장)
 cd .agent-skills && ./setup.sh
-# → 옵션 1 선택 (Multi-Agent workflow + Token optimization + MCP servers)
+# → Select option 1 / 옵션 1 선택
+#   (Multi-Agent workflow + Token optimization + MCP servers)
 
-# 3. 셸 재시작
+# 3. Reload shell / 셸 재시작
 source ~/.zshrc  # or ~/.bashrc
 
-# 4. Multi-Agent 워크플로우 테스트
-claude  # Claude Code 실행 → "REST API 설계하고 테스트해줘"
+# 4. Test Multi-Agent workflow / Multi-Agent 워크플로우 테스트
+claude  # Run Claude Code → "Design a REST API and test it"
 ```
 
-### Quick Setup 7단계
+### Quick Setup 7 Steps / Quick Setup 7단계
 
 | Step | Action | Result |
 |------|--------|--------|
-| 1 | Token optimization | SKILL.toon 생성 (95% 절감) |
-| 2 | Claude skills | .claude/skills/ 복사 |
-| 3 | MCP shell config | gemini-skill, codex-skill 함수 |
-| 4 | Shell RC config | ~/.zshrc 자동 설정 |
-| 5 | Multi-Agent orchestration | CLAUDE.md 생성 |
-| 6 | MCP servers | gemini-cli, codex-cli 등록 |
-| 7 | Verification | 설정 확인 |
+| 1 | Token optimization | Generate SKILL.toon (95% reduction) / SKILL.toon 생성 (95% 절감) |
+| 2 | Claude skills | Copy to .claude/skills/ / .claude/skills/ 복사 |
+| 3 | MCP shell config | Create gemini-skill, codex-skill functions / gemini-skill, codex-skill 함수 생성 |
+| 4 | Shell RC config | Auto-configure ~/.zshrc / ~/.zshrc 자동 설정 |
+| 5 | Multi-Agent orchestration | Generate CLAUDE.md / CLAUDE.md 생성 |
+| 6 | MCP servers | Register gemini-cli, codex-cli / gemini-cli, codex-cli 등록 |
+| 7 | Verification | Verify setup / 설정 확인 |
 
 ## Skills Overview
 
