@@ -4,47 +4,20 @@
 
 ---
 
-## AI Agent Quick Setup / AI 에이전트 빠른 설정
+## AI Agent Setup / AI 에이전트 설정
 
-> **이 섹션은 AI 에이전트(Claude Code, GPT, Gemini 등)가 스킬을 설정할 때 참조합니다.**
+> **For AI Agents**: `.agent-skills/setup.sh 실행하고 skill 설정해줘`
 
-### For AI with Shell Access (Claude Code, Codex-CLI)
+| Agent Type | Command |
+|------------|---------|
+| **Shell Access** (Claude Code, Codex) | `./setup.sh` → option 1 |
+| **No Shell** (GPT, Gemini Web) | 사용자에게 안내: `cd .agent-skills && ./setup.sh` |
 
+**Non-interactive (AI recommended):**
 ```bash
-# One-line setup (interactive)
-./setup.sh  # Select option 1
-
-# Non-interactive setup (recommended for AI agents)
 python3 scripts/generate_compact_skills.py && \
 mkdir -p ~/.claude/skills && \
 cp -r backend frontend code-quality infrastructure documentation project-management search-analysis utilities ~/.claude/skills/
-```
-
-### For AI without Shell Access (ChatGPT, Gemini Web)
-
-AI가 셸 명령을 실행할 수 없는 경우, 사용자에게 다음을 안내하세요:
-
-**사용자에게 전달할 메시지:**
-```
-Agent Skills를 설정하려면 터미널에서 다음 명령을 실행하세요:
-
-cd .agent-skills && ./setup.sh
-
-옵션 1 (Quick Setup)을 선택하면 모든 설정이 자동으로 완료됩니다.
-설정 완료 후 셸을 재시작하세요: source ~/.zshrc
-```
-
-### Setup Verification / 설정 확인
-
-```bash
-# Check if skills are installed
-ls ~/.claude/skills/
-
-# Check token-optimized files
-find . -name "SKILL.toon" | wc -l
-
-# Test skill query
-python3 skill-query-handler.py list
 ```
 
 ---
@@ -169,40 +142,7 @@ ChatGPT에는 공식적인 `skills.md` 포맷이 없고, 대신 **Custom GPT 설
 
 **템플릿 위치**: `templates/chatgpt-skill-template/`
 
-**GPT가 setup.sh를 실행하도록 안내하는 방법**:
-
-GPT는 직접 셸 명령을 실행할 수 없으므로, 사용자에게 다음과 같이 안내해야 합니다:
-
-```markdown
-## Agent Skills 설정 가이드
-
-이 프로젝트는 Agent Skills 시스템을 사용합니다. 설정을 완료하려면:
-
-1. **터미널 열기**: 프로젝트 루트 디렉토리에서 터미널을 엽니다.
-
-2. **setup.sh 실행**:
-   ```bash
-   cd .agent-skills && ./setup.sh
-   ```
-
-3. **옵션 선택**: 
-   - `1) Quick Setup` - 전체 Multi-Agent 워크플로우 설정 (권장)
-   - `2) Claude Code only` - Claude 전용 설정
-   - `3) ChatGPT` - Knowledge용 zip 파일 생성
-
-4. **셸 재시작**:
-   ```bash
-   source ~/.zshrc  # 또는 ~/.bashrc
-   ```
-
-5. **설정 확인**:
-   ```bash
-   claude mcp list  # MCP 서버 확인
-   gemini-skill "test"  # 스킬 함수 테스트
-   ```
-
-설정이 완료되면 저에게 알려주세요. 스킬을 활용하여 도움을 드리겠습니다.
-```
+> **GPT Setup**: See [AI Agent Setup](#ai-agent-setup--ai-에이전트-설정) section above.
 
 **기존 방법 (레거시)**:
 
@@ -305,16 +245,9 @@ MCP 서버 설치 및 설정은 다음 가이드를 참고하세요:
 
 ## 빠른 시작
 
-### 1. 설정
-```bash
-# 스크립트 실행 권한 부여
-chmod +x setup.sh
+> **Setup**: See [AI Agent Setup](#ai-agent-setup--ai-에이전트-설정) or run `./setup.sh`
 
-# 기본 설정 실행
-./setup.sh
-```
-
-### 2. 첫 번째 Skill 사용
+### 첫 번째 Skill 사용
 
 **Claude 사용자**:
 ```

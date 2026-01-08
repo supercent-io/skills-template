@@ -12,71 +12,32 @@
 
 ## Installation / 설치
 
-**English:**
+> **Important / 중요**: This `skills-template` folder must be placed in a location accessible to the AI agent.
+> 이 `skills-template` 폴더는 AI 에이전트가 접근 가능한 위치에 배치되어야 합니다.
+> - Claude Code: Project root or `~/.claude/skills/`
+> - ChatGPT: Upload to Custom GPT Knowledge
+> - Gemini: Project directory with Python access
+
+### Setup Command / 설정 명령
+
 ```bash
 cd .agent-skills && ./setup.sh
+# → Select option 1 (Quick Setup) / 옵션 1 선택
 ```
-> Run the setup script and select option 1 (Quick Setup) for full Multi-Agent configuration.
 
-**한국어:**
+### For AI Agents / AI 에이전트용
+
+**With Shell Access (Claude Code, Codex-CLI):**
 ```bash
-cd .agent-skills && ./setup.sh
-```
-> setup 스크립트를 실행하고 옵션 1 (Quick Setup)을 선택하면 Multi-Agent 전체 설정이 완료됩니다.
-
----
-
-## AI Agent Setup / AI 에이전트 설정
-
-> **For AI Agents (Claude Code, GPT, Gemini, etc.)**
-> AI 에이전트가 이 프로젝트의 스킬을 설정할 때 사용하는 가이드입니다.
-
-### Quick Command / 빠른 명령
-
-**English:**
-```
-Run .agent-skills/setup.sh and configure skills
-```
-
-**한국어:**
-```
 .agent-skills/setup.sh 실행하고 skill 설정해줘
+# Run .agent-skills/setup.sh and configure skills
 ```
 
-### For AI Agents with Shell Access / 셸 접근 가능한 AI 에이전트
+**Without Shell Access (GPT, Gemini Web)** - Instruct user:
+> 터미널에서 `cd .agent-skills && ./setup.sh` 실행 후 옵션 1 선택
 
-If you are an AI agent (Claude Code, Codex-CLI, etc.) with shell execution capability:
-
-```bash
-# Execute this command to set up Agent Skills
-cd .agent-skills && ./setup.sh
-
-# For non-interactive setup (Claude Code recommended):
-# 1. Generate token-optimized skills
-python3 scripts/generate_compact_skills.py
-
-# 2. Copy skills to Claude directory
-mkdir -p ~/.claude/skills && cp -r backend frontend code-quality infrastructure documentation project-management search-analysis utilities ~/.claude/skills/
-
-# 3. Source shell config
-source mcp-shell-config.sh
-```
-
-### For AI Agents without Shell Access / 셸 접근 불가능한 AI 에이전트 (GPT 등)
-
-If you are ChatGPT or another AI without shell access, please instruct the user:
-
-> **User Action Required:**
-> 1. Open terminal in this project directory
-> 2. Run: `cd .agent-skills && ./setup.sh`
-> 3. Select option 1 (Quick Setup)
-> 4. Reload shell: `source ~/.zshrc`
-
-### Detailed Documentation / 상세 문서
-
-For complete setup instructions and skill usage, see:
-- **[.agent-skills/README.md](.agent-skills/README.md)** - Full documentation
-- **[.agent-skills/QUICKSTART.md](.agent-skills/QUICKSTART.md)** - Quick start guide
+### Documentation / 상세 문서
+- **[.agent-skills/README.md](.agent-skills/README.md)** - Full setup guide
 
 ---
 
@@ -134,33 +95,20 @@ graph TB
 
 ```mermaid
 flowchart LR
-    A["1. Clone"] --> B["2. Run setup.sh"]
-    B --> C["3. Quick Setup (1)"]
-    C --> D["Multi-Agent Ready!"]
-    D --> E["Claude + Gemini + Codex"]
+    A["1. Clone"] --> B["2. setup.sh"]
+    B --> C["3. Reload shell"]
+    C --> D["Ready!"]
 
     style A fill:#e3f2fd
     style B fill:#fff3e0
     style C fill:#a5d6a7
     style D fill:#c8e6c9
-    style E fill:#dcedc8
 ```
 
 ```bash
-# 1. Clone repository / 저장소 클론
 git clone https://github.com/your-org/skills-template.git
-cd skills-template
-
-# 2. Run Quick Setup (Recommended) / Quick Setup 실행 (권장)
-cd .agent-skills && ./setup.sh
-# → Select option 1 / 옵션 1 선택
-#   (Multi-Agent workflow + Token optimization + MCP servers)
-
-# 3. Reload shell / 셸 재시작
-source ~/.zshrc  # or ~/.bashrc
-
-# 4. Test Multi-Agent workflow / Multi-Agent 워크플로우 테스트
-claude  # Run Claude Code → "Design a REST API and test it"
+cd skills-template/.agent-skills && ./setup.sh  # Select option 1
+source ~/.zshrc && claude  # Test: "REST API 설계해줘"
 ```
 
 ### Quick Setup 7 Steps / Quick Setup 7단계
