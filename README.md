@@ -26,6 +26,60 @@ cd .agent-skills && ./setup.sh
 
 ---
 
+## AI Agent Setup / AI 에이전트 설정
+
+> **For AI Agents (Claude Code, GPT, Gemini, etc.)**
+> AI 에이전트가 이 프로젝트의 스킬을 설정할 때 사용하는 가이드입니다.
+
+### Quick Command / 빠른 명령
+
+**English:**
+```
+Run .agent-skills/setup.sh and configure skills
+```
+
+**한국어:**
+```
+.agent-skills/setup.sh 실행하고 skill 설정해줘
+```
+
+### For AI Agents with Shell Access / 셸 접근 가능한 AI 에이전트
+
+If you are an AI agent (Claude Code, Codex-CLI, etc.) with shell execution capability:
+
+```bash
+# Execute this command to set up Agent Skills
+cd .agent-skills && ./setup.sh
+
+# For non-interactive setup (Claude Code recommended):
+# 1. Generate token-optimized skills
+python3 scripts/generate_compact_skills.py
+
+# 2. Copy skills to Claude directory
+mkdir -p ~/.claude/skills && cp -r backend frontend code-quality infrastructure documentation project-management search-analysis utilities ~/.claude/skills/
+
+# 3. Source shell config
+source mcp-shell-config.sh
+```
+
+### For AI Agents without Shell Access / 셸 접근 불가능한 AI 에이전트 (GPT 등)
+
+If you are ChatGPT or another AI without shell access, please instruct the user:
+
+> **User Action Required:**
+> 1. Open terminal in this project directory
+> 2. Run: `cd .agent-skills && ./setup.sh`
+> 3. Select option 1 (Quick Setup)
+> 4. Reload shell: `source ~/.zshrc`
+
+### Detailed Documentation / 상세 문서
+
+For complete setup instructions and skill usage, see:
+- **[.agent-skills/README.md](.agent-skills/README.md)** - Full documentation
+- **[.agent-skills/QUICKSTART.md](.agent-skills/QUICKSTART.md)** - Quick start guide
+
+---
+
 ## Architecture
 
 ```mermaid
