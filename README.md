@@ -108,7 +108,7 @@ flowchart LR
 ```bash
 git clone https://github.com/your-org/skills-template.git
 cd skills-template/.agent-skills && ./setup.sh  # Select option 1
-source ~/.zshrc && claude  # Test: "REST API 설계해줘"
+source ~/.zshrc && claude  # Test: "skill을 사용해서 REST API 설계해줘"
 ```
 
 ### Quick Setup 7 Steps / Quick Setup 7단계
@@ -287,7 +287,7 @@ git add backend/my-skill && git commit -m "Add my-skill"
 
 ## Multi-Agent Workflow
 
-> Claude Code가 오케스트레이터로서 Gemini-CLI와 Codex-CLI를 자동으로 활용합니다.
+> **"skill을 사용해서 작업해줘"** 라고 요청하면 Claude Code가 오케스트레이터로서 Gemini-CLI와 Codex-CLI를 자동으로 활용하여 최적의 스킬을 매칭하고 작업을 수행합니다.
 
 ```mermaid
 sequenceDiagram
@@ -318,7 +318,7 @@ sequenceDiagram
 
 ```bash
 # Example 1: API 설계 + 테스트
-"REST API를 설계하고 테스트해줘"
+"skill을 사용해서 REST API를 설계하고 테스트해줘"
 # → Claude: 스킬 로드 → API 설계 → Codex: npm test → Claude: 리포트
 
 # Example 2: 대규모 코드 리뷰
