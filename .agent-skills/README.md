@@ -81,7 +81,8 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 │   ├── task-planning/
 │   ├── estimation/
 │   ├── retrospective/
-│   └── standup-helper/
+│   ├── standup-helper/
+│   └── ultrathink-multiagent-workflow/ ✅ 구현됨 (Ralph Wiggum 기법)
 └── utilities/                         # 유틸리티 Skills
     ├── git-workflow/                 ✅ 구현됨
     ├── environment-setup/
@@ -361,6 +362,7 @@ cp -r templates/chatgpt-skill-template chatgpt/my-skill
 - ⏱️ **estimation**: 개발 시간 추정
 - 🔄 **retrospective**: 회고 진행
 - 📢 **standup-helper**: 스탠드업 준비
+- ✅ **ultrathink-multiagent-workflow**: Ralph Wiggum 기반 멀티 에이전트 워크플로우 (구현됨)
 
 ### Utilities (유틸리티)
 - ✅ **git-workflow**: Git 워크플로우 (구현됨)
@@ -438,7 +440,7 @@ cp -r templates/chatgpt-skill-template chatgpt/my-skill
 
 ---
 
-**버전**: 1.1.0
+**버전**: 1.2.0
 **최종 업데이트**: 2026-01-10  
 **관리자**: [Your Name]
 
