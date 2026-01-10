@@ -88,7 +88,8 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
     ├── environment-setup/
     ├── file-organization/
     ├── automation/
-    └── opencode-authentication/      ✅ 구현됨 (OAuth 인증 가이드)
+    ├── opencode-authentication/      ✅ 구현됨 (OAuth 인증 가이드)
+    └── npm-git-install/              ✅ 구현됨 (GitHub에서 npm 설치)
 ```
 
 ## 사용 방법
@@ -370,6 +371,7 @@ cp -r templates/chatgpt-skill-template chatgpt/my-skill
 - 📁 **file-organization**: 파일 정리
 - 🤖 **automation**: 자동화 스크립트
 - ✅ **opencode-authentication**: Opencode OAuth 인증 (Claude Code, Gemini/Antigravity, Codex) (구현됨)
+- ✅ **npm-git-install**: GitHub 리포지토리에서 npm 패키지 설치 (구현됨)
 
 ## 기여하기
 
@@ -440,7 +442,7 @@ cp -r templates/chatgpt-skill-template chatgpt/my-skill
 
 ---
 
-**버전**: 1.2.0
-**최종 업데이트**: 2026-01-10  
+**버전**: 1.3.0
+**최종 업데이트**: 2026-01-11  
 **관리자**: [Your Name]
 

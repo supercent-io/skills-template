@@ -1,0 +1,31 @@
+N:npm-git-install
+D:Install npm packages directly from GitHub repositories using git URLs. Use for private repos, specific branches...
+G:npm git github install package-management node private-repo
+U[4]:
+  npm에 없는 패키지 설치
+  특정 브랜치/태그/커밋 설치
+  프라이빗 리포지토리 설치
+  포크된 패키지 사용
+S[7]{n,action}:
+  1,기본 설치 명령어 (HTTPS/SSH)
+  2,npm install 플로우 이해
+  3,설치 위치 확인
+  4,package.json 의존성 추가
+  5,프라이빗 리포 설치 (SSH/PAT)
+  6,오류 해결 (EACCES/Git/Auth)
+  7,업데이트 & 제거
+R[6]:
+  `git+https://github.com/owner/repo.git#main`
+  `git+ssh://git@github.com:owner/repo.git`
+  `github:owner/repo#v1.0.0`
+  `npm root -g`
+  `npm cache clean --force`
+  `~/.npm-global`
+C[4]:
+  Git 설치 필수
+  토큰 하드코딩 금지
+  프로덕션은 태그 고정
+  SSH 방식 권장
+E[2]:
+  `EACCES→npm config set prefix ~/.npm-global`
+  `Auth→ssh -T git@github.com`
