@@ -1,34 +1,131 @@
 #!/bin/bash
 
-# Agent Skills Setup Script
-# Unified setup with token optimization, MCP integration, and Multi-Agent workflow
+# Agent Skills Setup Script v3.0
+# Multi-Agent Workflow with Auto-Detection & Progressive Configuration
+# Supports: Claude Code, Gemini-CLI, Codex-CLI
 
 set -e
 
-# Colors for output
+# ============================================================
+# Colors & Constants
+# ============================================================
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+RED='\033[0;31m'
+BOLD='\033[1m'
+NC='\033[0m'
 
 # Resolve script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGENT_SKILLS_DIR="$SCRIPT_DIR"
+PROJECT_DIR="$(dirname "$AGENT_SKILLS_DIR")"
 
 # Skill categories
 SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities)
 
 # ============================================================
+# Global State Variables (Auto-detected)
+# ============================================================
+HAS_CLAUDE_CLI=false
+HAS_GEMINI_MCP=false
+HAS_CODEX_MCP=false
+HAS_PYTHON3=false
+WORKFLOW_TYPE="standalone"  # standalone, claude-only, claude-gemini, claude-codex, full-multiagent
+
+# ============================================================
 # Helper Functions
 # ============================================================
-
 print_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
 print_success() { echo -e "${GREEN}✅ $1${NC}"; }
 print_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+print_error() { echo -e "${RED}❌ $1${NC}"; }
 print_header() { echo -e "${CYAN}━━━ $1 ━━━${NC}"; }
+print_status() {
+    if [ "$2" = "true" ]; then
+        echo -e "  ${GREEN}[✅]${NC} $1"
+    else
+        echo -e "  ${RED}[❌]${NC} $1"
+    fi
+}
 
-# Copy skills to destination
+# ============================================================
+# 1. MCP Environment Auto-Detection
+# ============================================================
+detect_mcp_environment() {
+    echo ""
+    print_header "MCP Environment Auto-Detection"
+    echo ""
+
+    # Check Python3
+    if command -v python3 &> /dev/null; then
+        HAS_PYTHON3=true
+        print_status "Python3" "true"
+    else
+        HAS_PYTHON3=false
+        print_status "Python3 (토큰 최적화에 필요)" "false"
+    fi
+
+    # Check Claude CLI
+    if command -v claude &> /dev/null; then
+        HAS_CLAUDE_CLI=true
+        print_status "Claude CLI" "true"
+
+        # Get MCP server list (single call for efficiency)
+        local mcp_list=""
+        mcp_list=$(claude mcp list 2>/dev/null || echo "")
+
+        # Check Gemini-CLI MCP
+        if echo "$mcp_list" | grep -q "gemini-cli"; then
+            HAS_GEMINI_MCP=true
+            print_status "gemini-cli MCP Server" "true"
+        else
+            HAS_GEMINI_MCP=false
+            print_status "gemini-cli MCP Server" "false"
+        fi
+
+        # Check Codex-CLI MCP
+        if echo "$mcp_list" | grep -q "codex-cli"; then
+            HAS_CODEX_MCP=true
+            print_status "codex-cli MCP Server" "true"
+        else
+            HAS_CODEX_MCP=false
+            print_status "codex-cli MCP Server" "false"
+        fi
+    else
+        HAS_CLAUDE_CLI=false
+        print_status "Claude CLI" "false"
+        print_warning "  → Claude CLI 미설치: npm install -g @anthropic-ai/claude-code"
+    fi
+
+    # Determine workflow type
+    determine_workflow_type
+    echo ""
+    echo -e "  ${BOLD}Workflow Type:${NC} ${CYAN}$WORKFLOW_TYPE${NC}"
+    echo ""
+}
+
+# ============================================================
+# 2. Workflow Type Determination
+# ============================================================
+determine_workflow_type() {
+    if ! $HAS_CLAUDE_CLI; then
+        WORKFLOW_TYPE="standalone"
+    elif $HAS_GEMINI_MCP && $HAS_CODEX_MCP; then
+        WORKFLOW_TYPE="full-multiagent"
+    elif $HAS_GEMINI_MCP; then
+        WORKFLOW_TYPE="claude-gemini"
+    elif $HAS_CODEX_MCP; then
+        WORKFLOW_TYPE="claude-codex"
+    else
+        WORKFLOW_TYPE="claude-only"
+    fi
+}
+
+# ============================================================
+# 3. Skills Copy Functions
+# ============================================================
 copy_skills() {
     local dest="$1"
     local verbose="$2"
@@ -37,7 +134,7 @@ copy_skills() {
     for category in "${SKILL_CATEGORIES[@]}"; do
         if [ -d "$AGENT_SKILLS_DIR/$category" ]; then
             cp -r "$AGENT_SKILLS_DIR/$category" "$dest/"
-            local count=$(find "$AGENT_SKILLS_DIR/$category" -name "SKILL.md" | wc -l | tr -d ' ')
+            local count=$(find "$AGENT_SKILLS_DIR/$category" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
             copied=$((copied + count))
             [ "$verbose" = "true" ] && print_success "  ✓ $category ($count skills)"
         fi
@@ -45,23 +142,49 @@ copy_skills() {
     echo "$copied"
 }
 
-# Generate compact/toon skills
+copy_skills_to_claude() {
+    local verbose="${1:-false}"
+
+    # Project-level skills (if in git repo)
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        mkdir -p "$PROJECT_DIR/.claude/skills"
+        local project_count=$(copy_skills "$PROJECT_DIR/.claude/skills" "$verbose")
+        print_success "Project skills: $project_count files → .claude/skills/"
+    fi
+
+    # Personal skills
+    mkdir -p ~/.claude/skills
+    local personal_count=$(copy_skills "$HOME/.claude/skills" "$verbose")
+    print_success "Personal skills: $personal_count files → ~/.claude/skills/"
+}
+
+# ============================================================
+# 4. Token Optimization
+# ============================================================
 generate_compact_skills() {
+    if ! $HAS_PYTHON3; then
+        print_warning "Python3 필요 - 토큰 최적화 건너뜀"
+        return 1
+    fi
+
     if [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
-        print_info "Generating token-optimized skills (compact/toon)..."
-        python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>/dev/null
+        print_info "토큰 최적화 스킬 생성 중..."
+        python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -5
         return 0
     else
-        print_warning "generate_compact_skills.py not found"
+        print_warning "generate_compact_skills.py 없음"
         return 1
     fi
 }
 
-# Setup MCP shell config
+# ============================================================
+# 5. MCP Shell Config Generation
+# ============================================================
 setup_mcp_shell_config() {
     cat > "$AGENT_SKILLS_DIR/mcp-shell-config.sh" << 'EOFCONFIG'
 #!/bin/bash
 # Agent Skills MCP Integration (Auto-detect path)
+# Generated by setup.sh v3.0
 
 if [ -n "$BASH_SOURCE" ]; then
     _MCP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -76,7 +199,7 @@ export AGENT_SKILLS_PATH="$_MCP_SCRIPT_DIR"
 # Load helper functions
 [ -f "$AGENT_SKILLS_PATH/mcp-skill-loader.sh" ] && source "$AGENT_SKILLS_PATH/mcp-skill-loader.sh"
 
-# Aliases
+# Skill query aliases
 alias skill-list='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" list'
 alias skill-match='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" match'
 alias skill-query='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query'
@@ -87,7 +210,7 @@ alias skill-query-toon='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" quer
 alias skill-query-compact='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode compact'
 alias skill-query-full='python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query --mode full'
 
-# MCP functions (default: toon mode for minimal tokens)
+# MCP Agent functions (default: toon mode - 95% token savings)
 gemini-skill() {
     local query="$1"
     local mode="${2:-toon}"
@@ -100,18 +223,30 @@ codex-skill() {
     python3 "$AGENT_SKILLS_PATH/skill-query-handler.py" query "$query" --tool codex --mode "$mode" 2>/dev/null || echo "No matching skill for: $query"
 }
 
-export -f gemini-skill codex-skill
+# Check MCP environment status
+mcp-status() {
+    echo "🔍 MCP Environment Status"
+    echo "========================="
+    command -v claude &>/dev/null && echo "✅ Claude CLI: Installed" || echo "❌ Claude CLI: Not found"
+    if command -v claude &>/dev/null; then
+        claude mcp list 2>/dev/null | grep -E "(gemini-cli|codex-cli)" || echo "  No MCP servers registered"
+    fi
+}
+
+export -f gemini-skill codex-skill mcp-status 2>/dev/null || true
 unset _MCP_SCRIPT_DIR
 EOFCONFIG
     chmod +x "$AGENT_SKILLS_DIR/mcp-shell-config.sh"
 }
 
-# Configure shell RC file
+# ============================================================
+# 6. Shell RC Configuration (Idempotent)
+# ============================================================
 configure_shell_rc() {
     local auto_configure="$1"
+    local SHELL_RC=""
 
     # Detect shell
-    local SHELL_RC=""
     if [ "$SHELL" = "/bin/zsh" ] || [ "$SHELL" = "/usr/bin/zsh" ]; then
         SHELL_RC="$HOME/.zshrc"
     else
@@ -119,366 +254,447 @@ configure_shell_rc() {
     fi
 
     if [ "$auto_configure" = "auto" ]; then
-        # Check if already configured
         local MARKER="# Agent Skills MCP Integration"
+
+        # Remove old config if exists (idempotent)
         if grep -q "$MARKER" "$SHELL_RC" 2>/dev/null; then
-            # Remove old and add new
-            sed -i.bak "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null || \
-            sed -i '' "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null
+            # macOS compatible sed
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                sed -i '' "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null || true
+            else
+                sed -i "/$MARKER/,/# End Agent Skills MCP/d" "$SHELL_RC" 2>/dev/null || true
+            fi
         fi
 
         # Add new configuration
         {
             echo ""
             echo "$MARKER"
-            echo "# Auto-generated by setup.sh - $(date +%Y-%m-%d)"
+            echo "# Auto-generated by setup.sh v3.0 - $(date +%Y-%m-%d)"
             echo "[ -f \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\" ] && source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
             echo "# End Agent Skills MCP"
         } >> "$SHELL_RC"
 
-        print_success "Shell RC configured: $SHELL_RC"
+        print_success "Shell RC 설정 완료: $SHELL_RC"
         return 0
     fi
-
     return 1
 }
 
-# Generate CLAUDE.md for multi-agent orchestration
-generate_claude_md() {
-    local project_dir="$(dirname "$AGENT_SKILLS_DIR")"
-    cat > "$project_dir/CLAUDE.md" << 'EOFCLAUDEMD'
-# Agent Skills - Multi-Agent Workflow
+# ============================================================
+# 7. Dynamic CLAUDE.md Generation (Environment-aware)
+# ============================================================
+generate_claude_md_dynamic() {
+    local workflow_label=""
+    local gemini_status="❌ Not Integrated"
+    local codex_status="❌ Not Integrated"
 
-> 이 프로젝트는 Claude Code를 중심으로 Gemini-CLI와 Codex-CLI를 통합하는 Multi-Agent 시스템입니다.
+    # Determine labels
+    case "$WORKFLOW_TYPE" in
+        "full-multiagent")
+            workflow_label="Full Multi-Agent"
+            gemini_status="✅ Integrated"
+            codex_status="✅ Integrated"
+            ;;
+        "claude-gemini")
+            workflow_label="Analysis & Research Focus"
+            gemini_status="✅ Integrated"
+            ;;
+        "claude-codex")
+            workflow_label="Execution & Deployment Focus"
+            codex_status="✅ Integrated"
+            ;;
+        "claude-only")
+            workflow_label="Claude-Centric"
+            ;;
+        *)
+            workflow_label="Standalone (No Claude CLI)"
+            ;;
+    esac
 
-## Agent Roles
+    cat > "$PROJECT_DIR/CLAUDE.md" << EOF
+# Agent Skills - $workflow_label Workflow
 
-| Agent | Role | MCP Tool | Best For |
-|-------|------|----------|----------|
-| **Claude Code** | Orchestrator | Built-in | 계획 수립, 코드 생성, 스킬 해석 |
-| **Gemini-CLI** | Analyst | `ask-gemini` | 대용량 분석, 리서치, 코드 리뷰 |
-| **Codex-CLI** | Executor | `shell` | 명령 실행, 빌드, 배포 |
+> 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
+> Generated: $(date +%Y-%m-%d) | Workflow: $WORKFLOW_TYPE
 
-## Multi-Agent Workflow
+## Agent Roles & Status
 
-### When to Use Each Agent
+| Agent | Role | Status | Best For |
+|-------|------|--------|----------|
+| **Claude Code** | Orchestrator | ✅ Integrated | 계획 수립, 코드 생성, 스킬 해석 |
+| **Gemini-CLI** | Analyst | $gemini_status | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
+| **Codex-CLI** | Executor | $codex_status | 명령 실행, 빌드, 배포, Docker/K8s |
 
-**Claude Code (기본)**: 코드 작성/수정, 파일 읽기/쓰기, 스킬 기반 작업 계획
+EOF
 
-**Gemini-CLI (`ask-gemini`)**: 대용량 코드베이스 분석 (1M+ 토큰), 복잡한 아키텍처 리서치
+    # Add workflow-specific sections
+    case "$WORKFLOW_TYPE" in
+        "full-multiagent")
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## Full Multi-Agent Workflow
 
-**Codex-CLI (`shell`)**: 장시간 실행 명령, Docker/Kubernetes 작업, 빌드/배포
-
-### Skill Integration
-
-```bash
-# 스킬 쿼리 (기본: toon 모드 - 95% 토큰 절감)
-gemini-skill "API 설계해줘"
-gemini-skill "query" compact  # 88% 절감
-gemini-skill "query" full     # 상세
+### Orchestration Pattern
+```
+[Claude] 계획 수립 → [Gemini] 분석/리서치 → [Claude] 코드 작성 → [Codex] 실행/테스트 → [Claude] 결과 종합
 ```
 
-### Orchestration Examples
+### Example: API 설계 + 구현 + 테스트
+1. **[Claude]** 스킬 기반 API 스펙 설계
+2. **[Gemini]** `ask-gemini "@src/ 기존 API 패턴 분석"` - 대용량 코드베이스 분석
+3. **[Claude]** 분석 결과 기반 코드 구현
+4. **[Codex]** `shell "npm test && npm run build"` - 테스트 및 빌드
+5. **[Claude]** 최종 리포트 생성
 
-**API 설계 + 구현**:
-1. [Claude] 스킬 로드 → API 스펙 설계
-2. [Codex] shell "npm test"
-3. [Claude] 결과 리포트
+### MCP Tools Usage
+```bash
+# Gemini: 대용량 분석
+ask-gemini "전체 코드베이스 구조 분석해줘"
+ask-gemini "@src/ @tests/ 테스트 커버리지 분석"
 
-**대규모 코드 리뷰**:
-1. [Gemini] ask-gemini "@src/ 전체 분석"
-2. [Claude] 개선점 도출 및 수정
+# Codex: 명령 실행
+shell "docker-compose up -d"
+shell "kubectl apply -f deployment.yaml"
+```
 
+EOF
+            ;;
+        "claude-gemini")
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## Analysis-Focused Workflow
+
+### Orchestration Pattern
+```
+[Claude] 계획 수립 → [Gemini] 대용량 분석 → [Claude] 코드 작성 + 실행
+```
+
+### Best Use Cases
+- 대규모 코드베이스 리뷰 및 리팩토링
+- 아키텍처 분석 및 문서화
+- 기술 리서치 및 벤치마킹
+
+### Example: 코드 리뷰
+1. **[Gemini]** `ask-gemini "@src/ 전체 코드 품질 분석"`
+2. **[Claude]** 분석 결과 기반 개선점 구현
+3. **[Claude]** 직접 테스트 실행 (`Bash` tool)
+
+EOF
+            ;;
+        "claude-codex")
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## Execution-Focused Workflow
+
+### Orchestration Pattern
+```
+[Claude] 계획 + 코드 작성 → [Codex] 실행/배포 → [Claude] 결과 분석
+```
+
+### Best Use Cases
+- CI/CD 파이프라인 구축
+- Docker/Kubernetes 배포
+- 장시간 실행 작업 (빌드, 테스트)
+
+### Example: 배포 자동화
+1. **[Claude]** Dockerfile, K8s manifests 작성
+2. **[Codex]** `shell "docker build && docker push"`
+3. **[Codex]** `shell "kubectl apply -f k8s/"`
+4. **[Claude]** 배포 상태 확인 및 리포트
+
+EOF
+            ;;
+        *)
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## Claude-Centric Workflow
+
+현재 Claude Code만 사용 가능합니다. 더 강력한 워크플로우를 위해 MCP 서버를 추가하세요.
+
+### 현재 가능한 작업
+- 스킬 기반 코드 작성
+- 파일 읽기/쓰기
+- Bash 명령 실행
+
+EOF
+            ;;
+    esac
+
+    # Add enhancement guide if not full
+    if [ "$WORKFLOW_TYPE" != "full-multiagent" ]; then
+        cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## Workflow 업그레이드 가이드
+
+EOF
+        if ! $HAS_GEMINI_MCP; then
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+### Gemini-CLI 추가 (분석/리서치 강화)
+```bash
+claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool
+```
+- 1M+ 토큰 컨텍스트로 대용량 분석 가능
+- 코드 리뷰, 아키텍처 분석에 최적
+
+EOF
+        fi
+        if ! $HAS_CODEX_MCP; then
+            cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+### Codex-CLI 추가 (실행/배포 강화)
+```bash
+claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex
+```
+- 샌드박스 환경에서 안전한 명령 실행
+- 장시간 빌드/배포 작업에 최적
+
+EOF
+        fi
+    fi
+
+    # Add available skills section
+    cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
 ## Available Skills
 
-- `backend/`: API 설계, DB 스키마, 인증
-- `frontend/`: UI 컴포넌트, 상태 관리
-- `code-quality/`: 코드 리뷰, 디버깅
-- `infrastructure/`: 배포, 모니터링, 보안
-- `documentation/`: 기술 문서, API 문서
-- `utilities/`: Git, 환경 설정
+| Category | Description |
+|----------|-------------|
+| `backend/` | API 설계, DB 스키마, 인증 |
+| `frontend/` | UI 컴포넌트, 상태 관리 |
+| `code-quality/` | 코드 리뷰, 디버깅, 테스트 |
+| `infrastructure/` | 배포, 모니터링, 보안 |
+| `documentation/` | 기술 문서, API 문서 |
+| `utilities/` | Git, 환경 설정 |
 
-## MCP Server Check
-
+### Skill Query (Token-Optimized)
 ```bash
-claude mcp list
-# Expected: gemini-cli, codex-cli - Connected
+gemini-skill "API 설계해줘"           # toon mode (95% 절감)
+gemini-skill "query" compact          # compact mode (88% 절감)
+gemini-skill "query" full             # 상세 모드
 ```
 
 ---
-**Version**: 2.3.0 | **Workflow**: Multi-Agent
-EOFCLAUDEMD
-    print_success "CLAUDE.md created for multi-agent orchestration"
+**Version**: 3.0.0 | **Generated**: $(date +%Y-%m-%d)
+EOF
+
+    print_success "CLAUDE.md 생성 완료 ($workflow_label)"
 }
 
-# Configure MCP servers
-configure_mcp_servers() {
-    local auto_configure="$1"
-
-    if [ "$auto_configure" = "auto" ]; then
-        print_info "Configuring MCP servers..."
-
-        # Check if claude CLI is available
-        if ! command -v claude &> /dev/null; then
-            print_warning "Claude CLI not found. Skipping MCP server configuration."
-            print_info "Install Claude CLI first, then run: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
-            return 1
-        fi
-
-        # Add gemini-cli MCP server
-        if claude mcp list 2>/dev/null | grep -q "gemini-cli"; then
-            print_info "gemini-cli already configured"
-        else
-            print_info "Adding gemini-cli MCP server..."
-            claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool 2>/dev/null || \
-                print_warning "Failed to add gemini-cli (may need manual setup)"
-        fi
-
-        # Add codex-cli MCP server
-        if claude mcp list 2>/dev/null | grep -q "codex-cli"; then
-            print_info "codex-cli already configured"
-        else
-            print_info "Adding codex-cli MCP server..."
-            claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex 2>/dev/null || \
-                print_warning "Failed to add codex-cli (may need manual setup)"
-        fi
-
-        print_success "MCP servers configured"
+# ============================================================
+# 8. MCP Server Configuration
+# ============================================================
+add_gemini_mcp() {
+    if $HAS_GEMINI_MCP; then
+        print_info "gemini-cli 이미 등록됨"
         return 0
     fi
 
-    return 1
+    print_info "gemini-cli MCP 서버 추가 중..."
+    if claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool 2>/dev/null; then
+        HAS_GEMINI_MCP=true
+        print_success "gemini-cli 추가 완료"
+        return 0
+    else
+        print_error "gemini-cli 추가 실패"
+        print_info "수동 설치: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
+        return 1
+    fi
+}
+
+add_codex_mcp() {
+    if $HAS_CODEX_MCP; then
+        print_info "codex-cli 이미 등록됨"
+        return 0
+    fi
+
+    print_info "codex-cli MCP 서버 추가 중..."
+    if claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex 2>/dev/null; then
+        HAS_CODEX_MCP=true
+        print_success "codex-cli 추가 완료"
+        return 0
+    else
+        print_error "codex-cli 추가 실패"
+        print_info "수동 설치: claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex"
+        return 1
+    fi
 }
 
 # ============================================================
-# Main Menu
+# 9. Auto-Configure Workflow (Progressive)
 # ============================================================
+auto_configure_workflow() {
+    echo ""
+    print_header "Auto-Configure Workflow"
+    echo ""
 
-echo ""
-echo -e "${CYAN}🚀 Agent Skills Setup${NC}"
-echo "====================="
-echo ""
-print_info "Directory: $AGENT_SKILLS_DIR"
-echo ""
+    local STEPS_TOTAL=6
+    local STEP=0
 
-echo "Select setup option:"
-echo ""
-echo -e "  ${GREEN}1) Quick Setup (Recommended)${NC}"
-echo "     → Multi-Agent workflow + Token optimization + MCP servers"
-echo ""
-echo "  2) Claude Code only"
-echo "  3) ChatGPT (Knowledge zip)"
-echo "  4) Gemini (Python API)"
-echo "  5) Token Optimization only"
-echo "  6) MCP Integration only"
-echo "  7) Validate Skills"
-echo "  8) Exit"
-echo ""
-read -p "Enter choice (1-8): " choice
+    # Step 1: Token Optimization
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] 토큰 최적화..."
+    generate_compact_skills || true
+    echo ""
 
-case "$choice" in
-    1)
-        # ============================================================
-        # Quick Setup - All-in-one
-        # ============================================================
+    # Step 2: Claude Skills Copy
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] Claude 스킬 복사..."
+    copy_skills_to_claude "false"
+    echo ""
+
+    # Step 3: MCP Shell Config
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] MCP 쉘 설정 생성..."
+    setup_mcp_shell_config
+    print_success "mcp-shell-config.sh 생성됨"
+    echo ""
+
+    # Step 4: Shell RC (with prompt)
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] 쉘 RC 설정..."
+    echo ""
+    echo "쉘 설정을 자동으로 추가할까요?"
+    echo "  1) 예, 자동 설정 (권장)"
+    echo "  2) 아니오, 수동 설정"
+    read -p "선택 (1-2): " shell_choice
+
+    if [ "$shell_choice" = "1" ]; then
+        configure_shell_rc "auto"
+    else
+        print_info "수동 설정 필요:"
+        echo "  source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
+    fi
+    echo ""
+
+    # Step 5: MCP Servers (with prompt)
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] MCP 서버 설정..."
+
+    if $HAS_CLAUDE_CLI; then
         echo ""
-        print_header "Quick Setup - All-in-one Multi-Agent Configuration"
+        echo "MCP 서버를 추가하시겠습니까?"
         echo ""
 
-        TOTAL_STEPS=7
-        CURRENT_STEP=0
-
-        # Step 1: Token Optimization
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Generating token-optimized skills..."
-        if command -v python3 &> /dev/null && [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
-            python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -5
-            print_success "Token optimization complete (toon: 95% reduction)"
+        if ! $HAS_GEMINI_MCP; then
+            read -p "  gemini-cli 추가? (분석/리서치 강화) [y/n]: " add_gemini
+            [[ "$add_gemini" =~ ^[Yy]$ ]] && add_gemini_mcp
         else
-            print_warning "Skipping token optimization (Python3 or script not found)"
+            print_success "  gemini-cli: 이미 설정됨"
         fi
-        echo ""
 
-        # Step 2: Claude Setup
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Setting up Claude Code skills..."
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            mkdir -p "$(dirname "$AGENT_SKILLS_DIR")/.claude/skills"
-            COPIED=$(copy_skills "$(dirname "$AGENT_SKILLS_DIR")/.claude/skills" "false")
-            print_success "Claude project skills: $COPIED files copied"
-        fi
-        mkdir -p ~/.claude/skills
-        PERSONAL=$(copy_skills "$HOME/.claude/skills" "false")
-        print_success "Claude personal skills: $PERSONAL files copied"
-        echo ""
-
-        # Step 3: MCP Shell Config
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Creating MCP shell configuration..."
-        setup_mcp_shell_config
-        print_success "mcp-shell-config.sh created"
-        echo ""
-
-        # Step 4: Shell RC Configuration
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Configuring shell RC..."
-        echo ""
-        echo "Add MCP commands to your shell?"
-        echo "  1) Yes, configure automatically (Recommended)"
-        echo "  2) No, I'll do it manually"
-        echo ""
-        read -p "Choice (1-2): " shell_choice
-
-        if [ "$shell_choice" = "1" ]; then
-            configure_shell_rc "auto"
+        if ! $HAS_CODEX_MCP; then
+            read -p "  codex-cli 추가? (실행/배포 강화) [y/n]: " add_codex
+            [[ "$add_codex" =~ ^[Yy]$ ]] && add_codex_mcp
         else
-            print_info "Manual setup: Add this to your ~/.zshrc or ~/.bashrc:"
-            echo "  source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
+            print_success "  codex-cli: 이미 설정됨"
         fi
-        echo ""
+    else
+        print_warning "Claude CLI 없음 - MCP 서버 설정 건너뜀"
+    fi
+    echo ""
 
-        # Step 5: Multi-Agent Orchestration (CLAUDE.md)
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Creating multi-agent orchestration..."
-        generate_claude_md
-        echo ""
+    # Recalculate workflow type after changes
+    determine_workflow_type
 
-        # Step 6: MCP Servers Configuration
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] MCP servers configuration..."
-        echo ""
-        echo "Configure MCP servers for multi-agent workflow?"
-        echo "  1) Yes, configure automatically (gemini-cli + codex-cli)"
-        echo "  2) No, I'll do it manually"
-        echo ""
-        read -p "Choice (1-2): " mcp_choice
+    # Step 6: Generate CLAUDE.md
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] CLAUDE.md 생성..."
+    generate_claude_md_dynamic
+    echo ""
 
-        if [ "$mcp_choice" = "1" ]; then
-            configure_mcp_servers "auto"
-        else
-            print_info "Manual setup commands:"
-            echo "  claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
-            echo "  claude mcp add codex-cli -s user -- npx -y @anthropic-ai/claude-code-mcp-codex"
-        fi
-        echo ""
+    # Final Summary
+    print_summary
+}
 
-        # Step 7: Verification
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        print_info "[$CURRENT_STEP/$TOTAL_STEPS] Verifying setup..."
+# ============================================================
+# 10. Print Summary
+# ============================================================
+print_summary() {
+    echo ""
+    print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    print_success "설정 완료!"
+    print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
 
-        # Check token stats
-        if command -v python3 &> /dev/null; then
-            TOON_COUNT=$(find "$AGENT_SKILLS_DIR" -name "SKILL.toon" | wc -l | tr -d ' ')
-            COMPACT_COUNT=$(find "$AGENT_SKILLS_DIR" -name "SKILL.compact.md" | wc -l | tr -d ' ')
-            print_success "Token files: $TOON_COUNT toon, $COMPACT_COUNT compact"
-        fi
+    echo -e "${BOLD}현재 Workflow:${NC} ${CYAN}$WORKFLOW_TYPE${NC}"
+    echo ""
 
-        # Test gemini-skill
-        if bash -c "source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\" && type gemini-skill" &>/dev/null; then
-            print_success "gemini-skill function: Ready"
-        fi
+    # Stats
+    local toon_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.toon" 2>/dev/null | wc -l | tr -d ' ')
+    local skill_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+    echo "📊 통계:"
+    echo "   - 스킬 파일: $skill_count SKILL.md"
+    echo "   - 토큰 최적화: $toon_count SKILL.toon"
+    echo ""
 
-        # Check CLAUDE.md
-        if [ -f "$(dirname "$AGENT_SKILLS_DIR")/CLAUDE.md" ]; then
-            print_success "CLAUDE.md: Ready (Multi-Agent Orchestration)"
-        fi
+    echo "📚 다음 단계:"
+    echo ""
+    echo "  1. 쉘 재시작:"
+    echo -e "     ${BLUE}source ~/.zshrc${NC}  # 또는 ~/.bashrc"
+    echo ""
+    echo "  2. MCP 상태 확인:"
+    echo -e "     ${BLUE}claude mcp list${NC}"
+    echo ""
 
-        echo ""
-        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        print_success "Multi-Agent Setup Complete! 🎉"
-        print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo ""
+    case "$WORKFLOW_TYPE" in
+        "full-multiagent")
+            echo "  3. Full Multi-Agent 테스트:"
+            echo -e "     ${BLUE}ask-gemini \"코드베이스 분석해줘\"${NC}"
+            echo -e "     ${BLUE}shell \"npm test\"${NC}"
+            ;;
+        "claude-gemini")
+            echo "  3. 분석 워크플로우 테스트:"
+            echo -e "     ${BLUE}ask-gemini \"코드 리뷰해줘\"${NC}"
+            ;;
+        "claude-codex")
+            echo "  3. 실행 워크플로우 테스트:"
+            echo -e "     ${BLUE}shell \"npm run build\"${NC}"
+            ;;
+        *)
+            echo "  3. 스킬 테스트:"
+            echo -e "     ${BLUE}gemini-skill \"API 설계\"${NC}"
+            ;;
+    esac
+    echo ""
+}
 
-        print_info "📚 Next Steps:"
-        echo ""
-        echo "  1. Reload shell:"
-        echo "     ${BLUE}source ~/.zshrc${NC}  # or ~/.bashrc"
-        echo ""
-        echo "  2. Verify MCP servers:"
-        echo "     ${BLUE}claude mcp list${NC}"
-        echo ""
-        echo "  3. Test multi-agent workflow:"
-        echo "     ${BLUE}gemini-skill \"API 설계해줘\"${NC}"
-        echo ""
-        echo "  4. Use with Claude Code (multi-agent auto-orchestration):"
-        echo "     ${BLUE}\"REST API를 설계하고 테스트해줘\"${NC}"
-        echo ""
+# ============================================================
+# 11. Manual Setup Submenu
+# ============================================================
+manual_setup_menu() {
+    echo ""
+    print_header "Manual Setup"
+    echo ""
+    echo "  1) Claude Code 스킬만 설정"
+    echo "  2) ChatGPT용 Knowledge Zip 생성"
+    echo "  3) Gemini용 GEMINI.md 생성"
+    echo "  4) MCP 쉘 설정만 생성"
+    echo "  5) 돌아가기"
+    echo ""
+    read -p "선택 (1-5): " manual_choice
 
-        print_info "🤖 Multi-Agent Roles:"
-        echo "  Claude Code  → Orchestrator (계획, 코드 생성)"
-        echo "  Gemini-CLI   → Analyst (대용량 분석, 리서치)"
-        echo "  Codex-CLI    → Executor (명령 실행, 배포)"
-        echo ""
-
-        print_info "🎯 Default Mode: toon (95% token reduction)"
-        echo "  gemini-skill \"query\"           → toon mode"
-        echo "  gemini-skill \"query\" compact   → compact mode"
-        echo "  gemini-skill \"query\" full      → full detail"
-        echo ""
-        ;;
-
-    2)
-        # Claude Code only
-        echo ""
-        print_header "Claude Code Setup"
-        echo ""
-
-        # Generate compact skills first
-        if command -v python3 &> /dev/null && [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
-            print_info "Generating token-optimized skills..."
-            python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -3
+    case "$manual_choice" in
+        1)
             echo ""
-        fi
+            print_header "Claude Code Setup"
+            generate_compact_skills || true
+            copy_skills_to_claude "true"
+            echo ""
+            print_success "Claude Code 스킬 설정 완료!"
+            ;;
+        2)
+            echo ""
+            print_header "ChatGPT Knowledge Zip"
+            local ZIP_FILE="agent-skills-$(date +%Y%m%d).zip"
+            local TEMP_DIR="$(mktemp -d)"
+            trap "rm -rf $TEMP_DIR" EXIT
 
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            print_info "Setting up project skills..."
-            mkdir -p "$(dirname "$AGENT_SKILLS_DIR")/.claude/skills"
-            COPIED=$(copy_skills "$(dirname "$AGENT_SKILLS_DIR")/.claude/skills" "true")
-            print_success "Project skills: $COPIED files in .claude/skills/"
-        fi
+            for cat in "${SKILL_CATEGORIES[@]}"; do
+                [ -d "$AGENT_SKILLS_DIR/$cat" ] && cp -r "$AGENT_SKILLS_DIR/$cat" "$TEMP_DIR/"
+            done
 
-        echo ""
-        read -p "Set up personal skills in ~/.claude/skills/? (y/n): " personal
-        if [[ $personal =~ ^[Yy]$ ]]; then
-            mkdir -p ~/.claude/skills
-            PERSONAL=$(copy_skills "$HOME/.claude/skills" "true")
-            print_success "Personal skills: $PERSONAL files"
-        fi
-
-        echo ""
-        print_success "Claude Code setup complete!"
-        echo ""
-        echo "Next: Run ${BLUE}claude${NC} and ask ${BLUE}\"What skills are available?\"${NC}"
-        ;;
-
-    3)
-        # ChatGPT
-        echo ""
-        print_header "ChatGPT Setup"
-        echo ""
-
-        ZIP_FILE="agent-skills-$(date +%Y%m%d).zip"
-        TEMP_DIR="$(mktemp -d)"
-        trap "rm -rf $TEMP_DIR" EXIT
-
-        for cat in "${SKILL_CATEGORIES[@]}"; do
-            [ -d "$AGENT_SKILLS_DIR/$cat" ] && cp -r "$AGENT_SKILLS_DIR/$cat" "$TEMP_DIR/"
-        done
-
-        (cd "$TEMP_DIR" && zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1)
-
-        print_success "Created: $ZIP_FILE"
-        echo ""
-        echo "Upload to ChatGPT Custom GPT → Knowledge section"
-        ;;
-
-    4)
-        # Gemini
-        echo ""
-        print_header "Gemini Setup"
-        echo ""
-
-        cat > "$(dirname "$AGENT_SKILLS_DIR")/GEMINI.md" << 'EOF'
+            (cd "$TEMP_DIR" && zip -r "$AGENT_SKILLS_DIR/$ZIP_FILE" . > /dev/null 2>&1)
+            print_success "생성됨: $ZIP_FILE"
+            echo "ChatGPT Custom GPT → Knowledge 섹션에 업로드하세요."
+            ;;
+        3)
+            echo ""
+            print_header "Gemini Setup"
+            cat > "$PROJECT_DIR/GEMINI.md" << 'EOF'
 # Agent Skills for Gemini
 
 이 프로젝트는 Agent Skills 시스템을 사용합니다.
@@ -497,107 +713,130 @@ case "$choice" in
 2. 지시사항에 따라 작업 수행
 3. 출력 포맷 준수
 EOF
-
-        print_success "GEMINI.md created"
-
-        if command -v python3 &> /dev/null; then
-            if ! python3 -c "import google.generativeai" 2>/dev/null; then
-                read -p "Install google-generativeai? (y/n): " install
-                [[ $install =~ ^[Yy]$ ]] && pip3 install google-generativeai
-            fi
-        fi
-        ;;
-
-    5)
-        # Token Optimization only
-        echo ""
-        print_header "Token Optimization"
-        echo ""
-
-        if ! command -v python3 &> /dev/null; then
-            print_warning "Python 3 required"
-            exit 1
-        fi
-
-        echo "1) Generate all compact/toon files"
-        echo "2) Show statistics"
-        echo "3) Clean generated files"
-        echo ""
-        read -p "Choice (1-3): " opt
-
-        case "$opt" in
-            1)
-                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py"
-                ;;
-            2)
-                python3 "$AGENT_SKILLS_DIR/skill-query-handler.py" stats
-                ;;
-            3)
-                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" --clean
-                ;;
-        esac
-        ;;
-
-    6)
-        # MCP Integration only
-        echo ""
-        print_header "MCP Integration"
-        echo ""
-
-        # Generate compact skills
-        if command -v python3 &> /dev/null && [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
-            print_info "Generating token-optimized skills..."
-            python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -3
+            print_success "GEMINI.md 생성됨"
+            ;;
+        4)
+            setup_mcp_shell_config
+            print_success "mcp-shell-config.sh 생성됨"
             echo ""
-        fi
+            echo "쉘에 추가하려면:"
+            echo "  source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
+            ;;
+        5)
+            return 0
+            ;;
+    esac
+}
 
-        print_info "Creating MCP configuration..."
-        setup_mcp_shell_config
-        print_success "mcp-shell-config.sh created"
+# ============================================================
+# 12. Utilities Submenu
+# ============================================================
+utilities_menu() {
+    echo ""
+    print_header "Utilities"
+    echo ""
+    echo "  1) 토큰 최적화 파일 생성"
+    echo "  2) 토큰 통계 보기"
+    echo "  3) 생성된 파일 정리 (clean)"
+    echo "  4) 스킬 유효성 검사"
+    echo "  5) MCP 환경 재감지"
+    echo "  6) 돌아가기"
+    echo ""
+    read -p "선택 (1-6): " util_choice
 
-        echo ""
-        echo "Configure shell automatically?"
-        echo "  1) Yes"
-        echo "  2) No"
-        read -p "Choice: " rc_choice
+    case "$util_choice" in
+        1)
+            generate_compact_skills
+            ;;
+        2)
+            if $HAS_PYTHON3 && [ -f "$AGENT_SKILLS_DIR/skill-query-handler.py" ]; then
+                python3 "$AGENT_SKILLS_DIR/skill-query-handler.py" stats
+            else
+                local skill_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+                local toon_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.toon" 2>/dev/null | wc -l | tr -d ' ')
+                local compact_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.compact.md" 2>/dev/null | wc -l | tr -d ' ')
+                echo ""
+                echo "📊 스킬 통계:"
+                echo "   SKILL.md: $skill_count"
+                echo "   SKILL.toon: $toon_count"
+                echo "   SKILL.compact.md: $compact_count"
+            fi
+            ;;
+        3)
+            if $HAS_PYTHON3 && [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
+                python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" --clean
+            else
+                print_warning "Python3 또는 스크립트 없음"
+            fi
+            ;;
+        4)
+            if [ -f "$AGENT_SKILLS_DIR/validate_claude_skills.py" ]; then
+                python3 "$AGENT_SKILLS_DIR/validate_claude_skills.py"
+            else
+                local skill_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+                echo "발견된 스킬: $skill_count SKILL.md"
+            fi
+            ;;
+        5)
+            detect_mcp_environment
+            ;;
+        6)
+            return 0
+            ;;
+    esac
+}
 
-        if [ "$rc_choice" = "1" ]; then
-            configure_shell_rc "auto"
-        fi
+# ============================================================
+# MAIN MENU
+# ============================================================
 
-        echo ""
-        print_success "MCP Integration complete!"
-        echo ""
-        echo "Reload shell: ${BLUE}source ~/.zshrc${NC}"
-        echo "Test: ${BLUE}gemini-skill \"API 설계\"${NC}"
-        ;;
+# Auto-detect environment on start
+detect_mcp_environment
 
-    7)
-        # Validate
-        echo ""
-        print_header "Skill Validation"
-        echo ""
+# Main menu
+while true; do
+    echo ""
+    echo -e "${CYAN}🚀 Agent Skills Setup v3.0${NC}"
+    echo "═══════════════════════════════════════════════"
+    echo ""
+    echo -e "${BOLD}현재 환경:${NC}"
+    print_status "Claude CLI" "$HAS_CLAUDE_CLI"
+    print_status "gemini-cli MCP" "$HAS_GEMINI_MCP"
+    print_status "codex-cli MCP" "$HAS_CODEX_MCP"
+    echo -e "  ${BOLD}Workflow:${NC} ${CYAN}$WORKFLOW_TYPE${NC}"
+    echo ""
+    echo "───────────────────────────────────────────────"
+    echo ""
+    echo -e "  ${GREEN}1) 자동 설정 (Auto-configure)${NC} ${YELLOW}← 권장${NC}"
+    echo "     → 감지된 환경에 맞춰 누락된 부분만 점진적 설정"
+    echo ""
+    echo "  2) 수동 설정 (Manual Setup)"
+    echo "     → Claude/ChatGPT/Gemini 개별 설정"
+    echo ""
+    echo "  3) 유틸리티 (Utilities)"
+    echo "     → 토큰 최적화, 검증, 정리"
+    echo ""
+    echo "  4) 종료 (Exit)"
+    echo ""
+    read -p "선택 (1-4): " main_choice
 
-        if [ -f "$AGENT_SKILLS_DIR/validate_claude_skills.py" ]; then
-            python3 "$AGENT_SKILLS_DIR/validate_claude_skills.py"
-        else
-            SKILL_COUNT=$(find "$AGENT_SKILLS_DIR" -name "SKILL.md" | wc -l | tr -d ' ')
-            TOON_COUNT=$(find "$AGENT_SKILLS_DIR" -name "SKILL.toon" | wc -l | tr -d ' ')
-            echo "Skills found: $SKILL_COUNT SKILL.md, $TOON_COUNT SKILL.toon"
-        fi
-        ;;
-
-    8)
-        echo "Exiting..."
-        exit 0
-        ;;
-
-    *)
-        print_warning "Invalid choice"
-        exit 1
-        ;;
-esac
-
-echo ""
-print_success "Setup complete! 🎉"
-echo ""
+    case "$main_choice" in
+        1)
+            auto_configure_workflow
+            ;;
+        2)
+            manual_setup_menu
+            ;;
+        3)
+            utilities_menu
+            ;;
+        4)
+            echo ""
+            print_success "종료합니다."
+            exit 0
+            ;;
+        *)
+            print_warning "잘못된 선택"
+            ;;
+    esac
+done

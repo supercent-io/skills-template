@@ -1,60 +1,58 @@
-# Agent Skills - Multi-Agent Workflow
+# Agent Skills - Full Multi-Agent Workflow
 
-> 이 프로젝트는 Claude Code를 중심으로 Gemini-CLI와 Codex-CLI를 통합하는 Multi-Agent 시스템입니다.
+> 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
+> Generated: 2026-01-13 | Workflow: full-multiagent
 
-## Agent Roles
+## Agent Roles & Status
 
-| Agent | Role | MCP Tool | Best For |
-|-------|------|----------|----------|
-| **Claude Code** | Orchestrator | Built-in | 계획 수립, 코드 생성, 스킬 해석 |
-| **Gemini-CLI** | Analyst | `ask-gemini` | 대용량 분석, 리서치, 코드 리뷰 |
-| **Codex-CLI** | Executor | `shell` | 명령 실행, 빌드, 배포 |
+| Agent | Role | Status | Best For |
+|-------|------|--------|----------|
+| **Claude Code** | Orchestrator | ✅ Integrated | 계획 수립, 코드 생성, 스킬 해석 |
+| **Gemini-CLI** | Analyst | ✅ Integrated | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
+| **Codex-CLI** | Executor | ✅ Integrated | 명령 실행, 빌드, 배포, Docker/K8s |
 
-## Multi-Agent Workflow
+## Full Multi-Agent Workflow
 
-### When to Use Each Agent
-
-**Claude Code (기본)**: 코드 작성/수정, 파일 읽기/쓰기, 스킬 기반 작업 계획
-
-**Gemini-CLI (`ask-gemini`)**: 대용량 코드베이스 분석 (1M+ 토큰), 복잡한 아키텍처 리서치
-
-**Codex-CLI (`shell`)**: 장시간 실행 명령, Docker/Kubernetes 작업, 빌드/배포
-
-### Skill Integration
-
-```bash
-# 스킬 쿼리 (기본: toon 모드 - 95% 토큰 절감)
-gemini-skill "API 설계해줘"
-gemini-skill "query" compact  # 88% 절감
-gemini-skill "query" full     # 상세
+### Orchestration Pattern
+```
+[Claude] 계획 수립 → [Gemini] 분석/리서치 → [Claude] 코드 작성 → [Codex] 실행/테스트 → [Claude] 결과 종합
 ```
 
-### Orchestration Examples
+### Example: API 설계 + 구현 + 테스트
+1. **[Claude]** 스킬 기반 API 스펙 설계
+2. **[Gemini]** `ask-gemini "@src/ 기존 API 패턴 분석"` - 대용량 코드베이스 분석
+3. **[Claude]** 분석 결과 기반 코드 구현
+4. **[Codex]** `shell "npm test && npm run build"` - 테스트 및 빌드
+5. **[Claude]** 최종 리포트 생성
 
-**API 설계 + 구현**:
-1. [Claude] 스킬 로드 → API 스펙 설계
-2. [Codex] shell "npm test"
-3. [Claude] 결과 리포트
+### MCP Tools Usage
+```bash
+# Gemini: 대용량 분석
+ask-gemini "전체 코드베이스 구조 분석해줘"
+ask-gemini "@src/ @tests/ 테스트 커버리지 분석"
 
-**대규모 코드 리뷰**:
-1. [Gemini] ask-gemini "@src/ 전체 분석"
-2. [Claude] 개선점 도출 및 수정
+# Codex: 명령 실행
+shell "docker-compose up -d"
+shell "kubectl apply -f deployment.yaml"
+```
 
 ## Available Skills
 
-- `backend/`: API 설계, DB 스키마, 인증
-- `frontend/`: UI 컴포넌트, 상태 관리
-- `code-quality/`: 코드 리뷰, 디버깅
-- `infrastructure/`: 배포, 모니터링, 보안
-- `documentation/`: 기술 문서, API 문서
-- `utilities/`: Git, 환경 설정
+| Category | Description |
+|----------|-------------|
+| `backend/` | API 설계, DB 스키마, 인증 |
+| `frontend/` | UI 컴포넌트, 상태 관리 |
+| `code-quality/` | 코드 리뷰, 디버깅, 테스트 |
+| `infrastructure/` | 배포, 모니터링, 보안 |
+| `documentation/` | 기술 문서, API 문서 |
+| `utilities/` | Git, 환경 설정 |
 
-## MCP Server Check
-
+### Skill Query (Token-Optimized)
 ```bash
-claude mcp list
-# Expected: gemini-cli, codex-cli - Connected
+gemini-skill "API 설계해줘"           # toon mode (95% 절감)
+gemini-skill "query" compact          # compact mode (88% 절감)
+gemini-skill "query" full             # 상세 모드
 ```
 
 ---
-**Version**: 2.3.0 | **Workflow**: Multi-Agent
+**Version**: 3.0.0 | **Generated**: $(date +%Y-%m-%d)

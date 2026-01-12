@@ -4,9 +4,10 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg?logo=python)](https://www.python.org/)
-[![Skills](https://img.shields.io/badge/Skills-38-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-46-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Optimization-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
+[![Setup](https://img.shields.io/badge/Setup-Auto--Detect-orange.svg)](.agent-skills/setup.sh)
 
 ---
 
@@ -22,8 +23,32 @@
 
 ```bash
 cd .agent-skills && ./setup.sh
-# → Select option 1 (Quick Setup) / 옵션 1 선택
+# → 환경 자동 감지 후 옵션 1 (Auto-configure) 선택
 ```
+
+### Auto-Detection / 자동 감지 (v3.0)
+
+setup.sh v3.0은 실행 시 MCP 환경을 자동으로 감지합니다:
+
+```
+━━━ MCP Environment Auto-Detection ━━━
+
+  [✅] Python3
+  [✅] Claude CLI
+  [✅] gemini-cli MCP Server
+  [❌] codex-cli MCP Server
+
+  Workflow Type: claude-gemini
+```
+
+**5가지 Workflow Type 자동 결정:**
+| Type | 조건 | 용도 |
+|------|------|------|
+| `standalone` | Claude CLI 없음 | 기본 스킬만 사용 |
+| `claude-only` | Claude만 있음 | 내장 Bash 사용 |
+| `claude-gemini` | +Gemini | 대용량 분석/리서치 |
+| `claude-codex` | +Codex | 실행/배포 자동화 |
+| `full-multiagent` | 모두 있음 | 풀 오케스트레이션 |
 
 ### For AI Agents / AI 에이전트용
 
@@ -83,12 +108,13 @@ graph TB
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **Multi-Agent Workflow** | Claude + Gemini + Codex 자동 오케스트레이션 | ✅ |
-| **38 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **46 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
 | **Token Optimization** | 95% 토큰 절감 (toon 모드 기본) | ✅ |
 | **Auto Orchestration** | CLAUDE.md 기반 에이전트 역할 자동 분배 | ✅ |
 | **MCP Integration** | gemini-cli, codex-cli 원클릭 설정 | ✅ |
 | **Smart Query Matching** | 사용자 쿼리 기반 스킬 자동 매칭 | ✅ |
-| **Quick Setup** | `setup.sh` 7단계 통합 설정 | ✅ |
+| **Auto-Configure (v3.0)** | MCP 환경 자동 감지 + 점진적 설정 | ✅ |
+| **Dynamic CLAUDE.md** | 환경별 워크플로우 문서 자동 생성 | ✅ |
 | **Open Standard** | Agent Skills 오픈 표준 준수 | ✅ |
 
 ## Quick Start
@@ -111,17 +137,21 @@ cd skills-template/.agent-skills && ./setup.sh  # Select option 1
 source ~/.zshrc && claude  # Test: "skill을 사용해서 REST API 설계해줘"
 ```
 
-### Quick Setup 7 Steps / Quick Setup 7단계
+### Auto-Configure 6 Steps (v3.0)
 
 | Step | Action | Result |
 |------|--------|--------|
 | 1 | Token optimization | Generate SKILL.toon (95% reduction) / SKILL.toon 생성 (95% 절감) |
 | 2 | Claude skills | Copy to .claude/skills/ / .claude/skills/ 복사 |
-| 3 | MCP shell config | Create gemini-skill, codex-skill functions / gemini-skill, codex-skill 함수 생성 |
-| 4 | Shell RC config | Auto-configure ~/.zshrc / ~/.zshrc 자동 설정 |
-| 5 | Multi-Agent orchestration | Generate CLAUDE.md / CLAUDE.md 생성 |
-| 6 | MCP servers | Register gemini-cli, codex-cli / gemini-cli, codex-cli 등록 |
-| 7 | Verification | Verify setup / 설정 확인 |
+| 3 | MCP shell config | Create mcp-shell-config.sh / mcp-shell-config.sh 생성 |
+| 4 | Shell RC config | Auto-configure ~/.zshrc (멱등성) / ~/.zshrc 자동 설정 |
+| 5 | MCP servers | **점진적 설정** - 누락된 서버만 추가 |
+| 6 | Dynamic CLAUDE.md | **환경별 자동 생성** - 감지된 Workflow Type에 맞춰 생성 |
+
+**v3.0 핵심 개선:**
+- **MCP 환경 자동 감지**: 스크립트 시작 시 Claude CLI, gemini-cli, codex-cli 상태 확인
+- **점진적 설정 (Idempotent)**: 이미 설정된 부분은 스킵, 누락된 부분만 설정
+- **동적 CLAUDE.md**: 5가지 Workflow Type에 맞는 문서 자동 생성
 
 ## Skills Overview
 
@@ -129,7 +159,7 @@ source ~/.zshrc && claude  # Test: "skill을 사용해서 REST API 설계해줘"
 
 ```mermaid
 pie showData
-    title Skills by Category (38 Total)
+    title Skills by Category (46 Total)
     "Backend" : 4
     "Frontend" : 4
     "Code-Quality" : 6
@@ -154,7 +184,7 @@ pie showData
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
 | **Utilities** | 6 | `git-workflow` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` |
 
-> **Total: 38 Skills** (including 5 templates: `basic` `advanced` `multiplatform` `chatgpt` `toon`)
+> **Total: 46 Skills** (including 5 templates: `basic` `advanced` `multiplatform` `chatgpt` `toon`)
 
 ## Token Optimization
 
@@ -535,4 +565,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.5.0 | **Updated**: 2026-01-12 | **Skills**: 38 | **Workflow**: Multi-Agent | **Token**: 95% Reduction
+**Version**: 3.0.0 | **Updated**: 2026-01-13 | **Skills**: 46 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
