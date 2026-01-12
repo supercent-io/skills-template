@@ -1,0 +1,41 @@
+N:agent-evaluation
+D:Design eval systems for AI agents. Covers graders, benchmarks, 8-step roadmap, production integration.
+G:agent-evaluation evals AI-agents benchmarks graders testing quality-assurance
+U[7]:
+  Designing eval systems for AI agents
+  Building benchmarks for coding/conversational/research agents
+  Creating graders (code-based, model-based, human)
+  Implementing production monitoring
+  Setting up CI/CD with automated evals
+  Debugging agent performance
+  Measuring agent improvement
+S[8]{n,action}:
+  0,Start early with 20-50 representative tasks
+  1,Convert existing manual tests to eval tasks
+  2,Ensure clarity + add reference solutions
+  3,Balance positive/negative/edge cases
+  4,Isolate eval environments (Docker)
+  5,Focus on outcomes not paths
+  6,Always read transcripts for debugging
+  7,Monitor eval saturation
+  8,Long-term maintenance + team contribution
+T[3]{type,use,notes}:
+  Code-based,Coding agents,Fast objective reproducible
+  Model-based,Conversational,Flexible needs calibration
+  Human,Final validation,Accurate but expensive
+A[4]{agent,benchmarks,metrics}:
+  Coding,SWE-bench Terminal-Bench,tests lint build diff
+  Conversational,τ2-Bench,resolution empathy turns
+  Research,Custom,grounding coverage sources
+  Computer-Use,WebArena OSWorld,UI DB file state
+R[6]:
+  Use code-based graders when possible
+  Focus on outcomes not intermediate steps
+  Read transcripts for debugging insights
+  Balance pos/neg/edge cases 50/30/20
+  Monitor saturation add harder tasks
+  Integrate evals in CI/CD pipeline
+X[2]{problem,solution}:
+  100% scores,Add harder tasks check saturation
+  Prod failures,Add production cases to eval suite
+REF:anthropic.com/engineering/demystifying-evals-for-ai-agents

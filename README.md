@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg?logo=python)](https://www.python.org/)
-[![Skills](https://img.shields.io/badge/Skills-37-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-38-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Optimization-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
@@ -83,7 +83,7 @@ graph TB
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **Multi-Agent Workflow** | Claude + Gemini + Codex 자동 오케스트레이션 | ✅ |
-| **37 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
+| **38 Skills** | 8개 카테고리의 실전 스킬 | ✅ |
 | **Token Optimization** | 95% 토큰 절감 (toon 모드 기본) | ✅ |
 | **Auto Orchestration** | CLAUDE.md 기반 에이전트 역할 자동 분배 | ✅ |
 | **MCP Integration** | gemini-cli, codex-cli 원클릭 설정 | ✅ |
@@ -129,10 +129,10 @@ source ~/.zshrc && claude  # Test: "skill을 사용해서 REST API 설계해줘"
 
 ```mermaid
 pie showData
-    title Skills by Category (37 Total)
+    title Skills by Category (38 Total)
     "Backend" : 4
     "Frontend" : 4
-    "Code-Quality" : 5
+    "Code-Quality" : 6
     "Infrastructure" : 5
     "Documentation" : 4
     "Project-Mgmt" : 4
@@ -147,14 +147,14 @@ pie showData
 |:---------|:-----:|:-------|
 | **Backend** | 4 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` |
 | **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
-| **Code-Quality** | 5 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` |
+| **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
 | **Infrastructure** | 5 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 4 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
 | **Utilities** | 6 | `git-workflow` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` |
 
-> **Total: 37 Skills** (including 5 templates: `basic` `advanced` `multiplatform` `chatgpt` `toon`)
+> **Total: 38 Skills** (including 5 templates: `basic` `advanced` `multiplatform` `chatgpt` `toon`)
 
 ## Token Optimization
 
@@ -535,4 +535,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.4.0 | **Updated**: 2026-01-08 | **Skills**: 37 | **Workflow**: Multi-Agent | **Token**: 95% Reduction
+**Version**: 2.5.0 | **Updated**: 2026-01-12 | **Skills**: 38 | **Workflow**: Multi-Agent | **Token**: 95% Reduction
