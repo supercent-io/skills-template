@@ -553,7 +553,11 @@ generate_compact_skills() {
 
     if [ -f "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" ]; then
         print_info "토큰 최적화 스킬 생성 중..."
-        python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -5
+        if $SILENT_MODE; then
+            python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" > /dev/null 2>&1
+        else
+            python3 "$AGENT_SKILLS_DIR/scripts/generate_compact_skills.py" 2>&1 | tail -5
+        fi
         return 0
     else
         print_warning "generate_compact_skills.py 없음"
@@ -1020,6 +1024,9 @@ auto_configure_workflow() {
 # 10. Print Summary
 # ============================================================
 print_summary() {
+    # Skip summary in silent mode
+    $SILENT_MODE && return 0
+
     echo ""
     print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     print_success "설정 완료!"
