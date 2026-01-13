@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.0
-# Multi-Agent Workflow with Auto-Detection & Progressive Configuration
+# Agent Skills Setup Script v3.1
+# Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
 # Supports: Claude Code, Gemini-CLI, Codex-CLI
 
 set -e
@@ -33,6 +33,35 @@ HAS_GEMINI_MCP=false
 HAS_CODEX_MCP=false
 HAS_PYTHON3=false
 WORKFLOW_TYPE="standalone"  # standalone, claude-only, claude-gemini, claude-codex, full-multiagent
+PERFORMANCE_PRESET="balanced"  # high-performance, balanced, cost-effective
+
+# ============================================================
+# Model Definitions (2025/2026)
+# ============================================================
+# Claude Models
+CLAUDE_OPUS="claude-opus-4-5-20251101"
+CLAUDE_SONNET="claude-sonnet-4-5-20241022"
+CLAUDE_HAIKU="claude-haiku-4-5-20241022"
+
+# Gemini Models
+GEMINI_3_PRO="gemini-3-pro"
+GEMINI_3_FLASH="gemini-3-flash"
+GEMINI_25_PRO="gemini-2.5-pro"
+GEMINI_25_FLASH="gemini-2.5-flash"
+
+# OpenAI/Codex Models
+GPT5_CODEX="gpt-5.2-codex"
+GPT5_CODEX_MINI="gpt-5.1-codex-mini"
+GPT41="gpt-4.1"
+GPT41_MINI="gpt-4.1-mini"
+
+# Role-based Model Variables (set by configure_models)
+MODEL_ORCHESTRATOR=""
+MODEL_ANALYST=""
+MODEL_EXECUTOR=""
+PROVIDER_ORCHESTRATOR=""
+PROVIDER_ANALYST=""
+PROVIDER_EXECUTOR=""
 
 # ============================================================
 # Helper Functions
@@ -121,6 +150,276 @@ determine_workflow_type() {
     else
         WORKFLOW_TYPE="claude-only"
     fi
+
+    # Auto-configure models based on workflow type
+    configure_models_for_workflow
+}
+
+# ============================================================
+# 2.1 Model Configuration for Workflow
+# ============================================================
+configure_models_for_workflow() {
+    case "$WORKFLOW_TYPE" in
+        # Claude-Only: Use Claude models for all roles
+        "claude-only")
+            MODEL_ORCHESTRATOR="$CLAUDE_OPUS"
+            MODEL_ANALYST="$CLAUDE_SONNET"       # Sonnet as Analyst (Gemini role)
+            MODEL_EXECUTOR="$CLAUDE_HAIKU"       # Haiku as Executor (Codex role)
+            PROVIDER_ORCHESTRATOR="claude"
+            PROVIDER_ANALYST="claude"
+            PROVIDER_EXECUTOR="claude"
+            ;;
+
+        # Claude + Gemini: Gemini for analysis
+        "claude-gemini")
+            MODEL_ORCHESTRATOR="$CLAUDE_OPUS"
+            MODEL_ANALYST="$GEMINI_3_PRO"        # Gemini Pro for large analysis
+            MODEL_EXECUTOR="$CLAUDE_HAIKU"       # Claude Haiku for execution
+            PROVIDER_ORCHESTRATOR="claude"
+            PROVIDER_ANALYST="gemini"
+            PROVIDER_EXECUTOR="claude"
+            ;;
+
+        # Claude + Codex: Codex for execution
+        "claude-codex")
+            MODEL_ORCHESTRATOR="$CLAUDE_OPUS"
+            MODEL_ANALYST="$CLAUDE_SONNET"       # Claude Sonnet for analysis
+            MODEL_EXECUTOR="$GPT5_CODEX"         # GPT-5 Codex for execution
+            PROVIDER_ORCHESTRATOR="claude"
+            PROVIDER_ANALYST="claude"
+            PROVIDER_EXECUTOR="openai"
+            ;;
+
+        # Full Multi-Agent: Optimal model for each role
+        "full-multiagent")
+            MODEL_ORCHESTRATOR="$CLAUDE_OPUS"
+            MODEL_ANALYST="$GEMINI_3_PRO"        # Gemini Pro for deep analysis
+            MODEL_EXECUTOR="$GPT5_CODEX"         # GPT-5 Codex for execution
+            PROVIDER_ORCHESTRATOR="claude"
+            PROVIDER_ANALYST="gemini"
+            PROVIDER_EXECUTOR="openai"
+            ;;
+
+        # Gemini-Only (for future support)
+        "gemini-only")
+            MODEL_ORCHESTRATOR="$GEMINI_3_PRO"
+            MODEL_ANALYST="$GEMINI_3_FLASH"
+            MODEL_EXECUTOR="$GEMINI_3_FLASH"
+            PROVIDER_ORCHESTRATOR="gemini"
+            PROVIDER_ANALYST="gemini"
+            PROVIDER_EXECUTOR="gemini"
+            ;;
+
+        # Standalone/Default
+        *)
+            MODEL_ORCHESTRATOR="$CLAUDE_SONNET"
+            MODEL_ANALYST="$CLAUDE_SONNET"
+            MODEL_EXECUTOR="$CLAUDE_HAIKU"
+            PROVIDER_ORCHESTRATOR="claude"
+            PROVIDER_ANALYST="claude"
+            PROVIDER_EXECUTOR="claude"
+            ;;
+    esac
+
+    # Apply performance preset adjustments
+    apply_performance_preset
+}
+
+# ============================================================
+# 2.2 Performance Preset Application
+# ============================================================
+apply_performance_preset() {
+    case "$PERFORMANCE_PRESET" in
+        "high-performance")
+            # Use highest capability models
+            [ "$PROVIDER_ORCHESTRATOR" = "claude" ] && MODEL_ORCHESTRATOR="$CLAUDE_OPUS"
+            [ "$PROVIDER_ANALYST" = "gemini" ] && MODEL_ANALYST="$GEMINI_3_PRO"
+            [ "$PROVIDER_ANALYST" = "claude" ] && MODEL_ANALYST="$CLAUDE_OPUS"
+            [ "$PROVIDER_EXECUTOR" = "openai" ] && MODEL_EXECUTOR="$GPT5_CODEX"
+            [ "$PROVIDER_EXECUTOR" = "claude" ] && MODEL_EXECUTOR="$CLAUDE_SONNET"
+            ;;
+        "balanced")
+            # Default balanced configuration (already set)
+            ;;
+        "cost-effective")
+            # Use lightweight models
+            [ "$PROVIDER_ORCHESTRATOR" = "claude" ] && MODEL_ORCHESTRATOR="$CLAUDE_SONNET"
+            [ "$PROVIDER_ANALYST" = "gemini" ] && MODEL_ANALYST="$GEMINI_3_FLASH"
+            [ "$PROVIDER_ANALYST" = "claude" ] && MODEL_ANALYST="$CLAUDE_HAIKU"
+            [ "$PROVIDER_EXECUTOR" = "openai" ] && MODEL_EXECUTOR="$GPT5_CODEX_MINI"
+            [ "$PROVIDER_EXECUTOR" = "claude" ] && MODEL_EXECUTOR="$CLAUDE_HAIKU"
+            ;;
+    esac
+}
+
+# ============================================================
+# 2.3 Print Model Configuration
+# ============================================================
+print_model_config() {
+    echo ""
+    print_header "Model Configuration"
+    echo ""
+    echo -e "  ${BOLD}Performance Preset:${NC} ${CYAN}$PERFORMANCE_PRESET${NC}"
+    echo ""
+    echo "  ┌─────────────┬──────────┬─────────────────────────────┐"
+    echo "  │ Role        │ Provider │ Model                       │"
+    echo "  ├─────────────┼──────────┼─────────────────────────────┤"
+    printf "  │ Orchestrator│ %-8s │ %-27s │\n" "$PROVIDER_ORCHESTRATOR" "$MODEL_ORCHESTRATOR"
+    printf "  │ Analyst     │ %-8s │ %-27s │\n" "$PROVIDER_ANALYST" "$MODEL_ANALYST"
+    printf "  │ Executor    │ %-8s │ %-27s │\n" "$PROVIDER_EXECUTOR" "$MODEL_EXECUTOR"
+    echo "  └─────────────┴──────────┴─────────────────────────────┘"
+    echo ""
+}
+
+# ============================================================
+# 2.4 Interactive Model Configuration
+# ============================================================
+configure_models_interactive() {
+    echo ""
+    print_header "Model Configuration"
+    echo ""
+    echo "현재 Workflow: $WORKFLOW_TYPE"
+    echo ""
+    echo "성능 프리셋 선택:"
+    echo ""
+    echo "  1) High Performance (고성능)"
+    echo "     → Opus/Pro/Codex - 복잡한 작업에 최적"
+    echo ""
+    echo "  2) Balanced (균형) - 권장"
+    echo "     → Sonnet/Flash/Codex-mini - 비용/성능 균형"
+    echo ""
+    echo "  3) Cost-Effective (비용 효율)"
+    echo "     → Haiku/Flash/Mini - 빠르고 저렴"
+    echo ""
+    echo "  4) Custom (사용자 지정)"
+    echo ""
+    read -p "선택 (1-4): " preset_choice
+
+    case "$preset_choice" in
+        1) PERFORMANCE_PRESET="high-performance" ;;
+        2) PERFORMANCE_PRESET="balanced" ;;
+        3) PERFORMANCE_PRESET="cost-effective" ;;
+        4) configure_models_custom ;;
+        *) PERFORMANCE_PRESET="balanced" ;;
+    esac
+
+    configure_models_for_workflow
+    print_model_config
+}
+
+# ============================================================
+# 2.5 Custom Model Configuration
+# ============================================================
+configure_models_custom() {
+    echo ""
+    print_header "Custom Model Configuration"
+    echo ""
+
+    # Orchestrator model selection
+    echo "Orchestrator 모델 선택 (계획 수립, 코드 생성):"
+    echo "  1) Claude Opus 4.5 (최고 성능)"
+    echo "  2) Claude Sonnet 4.5 (균형)"
+    echo "  3) Claude Haiku 4.5 (빠름)"
+    read -p "선택 (1-3): " orch_choice
+    case "$orch_choice" in
+        1) MODEL_ORCHESTRATOR="$CLAUDE_OPUS" ;;
+        2) MODEL_ORCHESTRATOR="$CLAUDE_SONNET" ;;
+        3) MODEL_ORCHESTRATOR="$CLAUDE_HAIKU" ;;
+        *) MODEL_ORCHESTRATOR="$CLAUDE_SONNET" ;;
+    esac
+    PROVIDER_ORCHESTRATOR="claude"
+    echo ""
+
+    # Analyst model selection
+    echo "Analyst 모델 선택 (대용량 분석, 리서치):"
+    if $HAS_GEMINI_MCP; then
+        echo "  1) Gemini 3 Pro (1M 컨텍스트, 최고 분석)"
+        echo "  2) Gemini 3 Flash (빠르고 저렴)"
+        echo "  3) Claude Sonnet 4.5"
+        echo "  4) Claude Haiku 4.5"
+        read -p "선택 (1-4): " analyst_choice
+        case "$analyst_choice" in
+            1) MODEL_ANALYST="$GEMINI_3_PRO"; PROVIDER_ANALYST="gemini" ;;
+            2) MODEL_ANALYST="$GEMINI_3_FLASH"; PROVIDER_ANALYST="gemini" ;;
+            3) MODEL_ANALYST="$CLAUDE_SONNET"; PROVIDER_ANALYST="claude" ;;
+            4) MODEL_ANALYST="$CLAUDE_HAIKU"; PROVIDER_ANALYST="claude" ;;
+            *) MODEL_ANALYST="$GEMINI_3_FLASH"; PROVIDER_ANALYST="gemini" ;;
+        esac
+    else
+        echo "  1) Claude Sonnet 4.5"
+        echo "  2) Claude Haiku 4.5"
+        read -p "선택 (1-2): " analyst_choice
+        case "$analyst_choice" in
+            1) MODEL_ANALYST="$CLAUDE_SONNET" ;;
+            2) MODEL_ANALYST="$CLAUDE_HAIKU" ;;
+            *) MODEL_ANALYST="$CLAUDE_SONNET" ;;
+        esac
+        PROVIDER_ANALYST="claude"
+    fi
+    echo ""
+
+    # Executor model selection
+    echo "Executor 모델 선택 (명령 실행, 빌드):"
+    if $HAS_CODEX_MCP; then
+        echo "  1) GPT-5.2 Codex (최고 코딩)"
+        echo "  2) GPT-5.1 Codex Mini (경량)"
+        echo "  3) Claude Haiku 4.5"
+        read -p "선택 (1-3): " exec_choice
+        case "$exec_choice" in
+            1) MODEL_EXECUTOR="$GPT5_CODEX"; PROVIDER_EXECUTOR="openai" ;;
+            2) MODEL_EXECUTOR="$GPT5_CODEX_MINI"; PROVIDER_EXECUTOR="openai" ;;
+            3) MODEL_EXECUTOR="$CLAUDE_HAIKU"; PROVIDER_EXECUTOR="claude" ;;
+            *) MODEL_EXECUTOR="$GPT5_CODEX_MINI"; PROVIDER_EXECUTOR="openai" ;;
+        esac
+    else
+        echo "  1) Claude Haiku 4.5 (빠름)"
+        echo "  2) Claude Sonnet 4.5"
+        read -p "선택 (1-2): " exec_choice
+        case "$exec_choice" in
+            1) MODEL_EXECUTOR="$CLAUDE_HAIKU" ;;
+            2) MODEL_EXECUTOR="$CLAUDE_SONNET" ;;
+            *) MODEL_EXECUTOR="$CLAUDE_HAIKU" ;;
+        esac
+        PROVIDER_EXECUTOR="claude"
+    fi
+
+    PERFORMANCE_PRESET="custom"
+}
+
+# ============================================================
+# 2.6 Generate Model Config File
+# ============================================================
+generate_model_config_file() {
+    cat > "$AGENT_SKILLS_DIR/model-config.env" << EOF
+# Multi-Agent Model Configuration
+# Generated by setup.sh v3.1 - $(date +%Y-%m-%d)
+# Workflow: $WORKFLOW_TYPE | Preset: $PERFORMANCE_PRESET
+
+# Environment
+export MCP_WORKFLOW_TYPE="$WORKFLOW_TYPE"
+export MCP_PERFORMANCE_PRESET="$PERFORMANCE_PRESET"
+
+# Model Assignments
+export MODEL_ORCHESTRATOR="$MODEL_ORCHESTRATOR"
+export MODEL_ANALYST="$MODEL_ANALYST"
+export MODEL_EXECUTOR="$MODEL_EXECUTOR"
+
+# Provider Assignments
+export PROVIDER_ORCHESTRATOR="$PROVIDER_ORCHESTRATOR"
+export PROVIDER_ANALYST="$PROVIDER_ANALYST"
+export PROVIDER_EXECUTOR="$PROVIDER_EXECUTOR"
+
+# Claude Task Tool Model Hints
+# Usage in Claude Code: Task tool with model parameter
+#   orchestrator tasks → model: "opus" or "sonnet"
+#   analyst tasks → model: "sonnet" (or use gemini-cli)
+#   executor tasks → model: "haiku" (or use codex-cli)
+export CLAUDE_TASK_ORCHESTRATOR="opus"
+export CLAUDE_TASK_ANALYST="sonnet"
+export CLAUDE_TASK_EXECUTOR="haiku"
+EOF
+
+    print_success "model-config.env 생성됨"
 }
 
 # ============================================================
@@ -316,7 +615,7 @@ generate_claude_md_dynamic() {
 # Agent Skills - $workflow_label Workflow
 
 > 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
-> Generated: $(date +%Y-%m-%d) | Workflow: $WORKFLOW_TYPE
+> Generated: $(date +%Y-%m-%d) | Workflow: $WORKFLOW_TYPE | Preset: $PERFORMANCE_PRESET
 
 ## Agent Roles & Status
 
@@ -325,6 +624,22 @@ generate_claude_md_dynamic() {
 | **Claude Code** | Orchestrator | ✅ Integrated | 계획 수립, 코드 생성, 스킬 해석 |
 | **Gemini-CLI** | Analyst | $gemini_status | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
 | **Codex-CLI** | Executor | $codex_status | 명령 실행, 빌드, 배포, Docker/K8s |
+
+## Model Configuration ($PERFORMANCE_PRESET)
+
+| Role | Provider | Model | Use Case |
+|------|----------|-------|----------|
+| **Orchestrator** | $PROVIDER_ORCHESTRATOR | \`$MODEL_ORCHESTRATOR\` | 계획 수립, 코드 생성 |
+| **Analyst** | $PROVIDER_ANALYST | \`$MODEL_ANALYST\` | 대용량 분석, 리서치 |
+| **Executor** | $PROVIDER_EXECUTOR | \`$MODEL_EXECUTOR\` | 명령 실행, 빌드 |
+
+### Claude Task Tool Model Hints
+\`\`\`
+# Task tool에서 model 파라미터 사용
+orchestrator tasks → model: "opus" (고성능) or "sonnet" (균형)
+analyst tasks     → model: "sonnet" (or gemini-cli ask-gemini)
+executor tasks    → model: "haiku" (빠름) (or codex-cli shell)
+\`\`\`
 
 EOF
 
@@ -740,9 +1055,10 @@ utilities_menu() {
     echo "  3) 생성된 파일 정리 (clean)"
     echo "  4) 스킬 유효성 검사"
     echo "  5) MCP 환경 재감지"
-    echo "  6) 돌아가기"
+    echo -e "  ${GREEN}6) 모델 설정 (Model Config)${NC}"
+    echo "  7) 돌아가기"
     echo ""
-    read -p "선택 (1-6): " util_choice
+    read -p "선택 (1-7): " util_choice
 
     case "$util_choice" in
         1)
@@ -781,6 +1097,10 @@ utilities_menu() {
             detect_mcp_environment
             ;;
         6)
+            configure_models_interactive
+            generate_model_config_file
+            ;;
+        7)
             return 0
             ;;
     esac
@@ -796,7 +1116,7 @@ detect_mcp_environment
 # Main menu
 while true; do
     echo ""
-    echo -e "${CYAN}🚀 Agent Skills Setup v3.0${NC}"
+    echo -e "${CYAN}🚀 Agent Skills Setup v3.1${NC}"
     echo "═══════════════════════════════════════════════"
     echo ""
     echo -e "${BOLD}현재 환경:${NC}"
