@@ -29,9 +29,17 @@ https://github.com/supercent-io/skills-template.git 에서 .agent-skills 폴더�
 ### 비대화형 자동 설정
 
 ```bash
-# Claude Code가 실행하는 명령
+# AI 에이전트용 (권장) - 출력 없음, shell RC 수정 안함
+cd .agent-skills && ./setup.sh --silent
+
+# 개발자용 - shell RC 자동 설정 포함
 cd .agent-skills && ./setup.sh --auto
 ```
+
+**옵션 설명:**
+- `--silent`: 무출력 모드, `~/.zshrc` 수정 안함 (AI 에이전트에 권장)
+- `--auto`: 자동 설정, `~/.zshrc`에 스킬 로더 추가
+- `--no-shell-rc`: shell RC 수정만 건너뛰기 (`--auto --no-shell-rc` 조합 가능)
 
 ---
 
