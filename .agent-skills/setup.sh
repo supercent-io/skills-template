@@ -1,10 +1,68 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.1
+# Agent Skills Setup Script v3.2
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
 # Supports: Claude Code, Gemini-CLI, Codex-CLI
+#
+# Usage:
+#   ./setup.sh              # Interactive mode
+#   ./setup.sh --auto       # Non-interactive auto-configure
+#   ./setup.sh --quick      # Quick setup (skip prompts, use defaults)
+#   ./setup.sh --help       # Show help
 
 set -e
+
+# ============================================================
+# Command Line Arguments
+# ============================================================
+INSTALL_MODE="interactive"
+SKIP_MCP_PROMPTS=false
+SKIP_SHELL_RC_PROMPT=false
+
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --auto)
+                INSTALL_MODE="auto"
+                SKIP_MCP_PROMPTS=true
+                SKIP_SHELL_RC_PROMPT=true
+                shift
+                ;;
+            --quick)
+                INSTALL_MODE="quick"
+                SKIP_MCP_PROMPTS=true
+                SKIP_SHELL_RC_PROMPT=true
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+}
+
+show_help() {
+    cat << 'EOF'
+Agent Skills Setup Script v3.2
+
+Usage:
+  ./setup.sh              Interactive mode (default)
+  ./setup.sh --auto       Non-interactive auto-configure
+  ./setup.sh --quick      Quick setup (defaults, no prompts)
+  ./setup.sh --help       Show this help
+
+One-Liner Installation:
+  git clone https://github.com/supercent-io/skills-template.git _tmp && \
+  mv _tmp/.agent-skills . && rm -rf _tmp && \
+  cd .agent-skills && chmod +x setup.sh && ./setup.sh --quick
+
+For more information: https://github.com/supercent-io/skills-template
+EOF
+}
 
 # ============================================================
 # Colors & Constants
@@ -858,44 +916,56 @@ auto_configure_workflow() {
     print_success "mcp-shell-config.sh 생성됨"
     echo ""
 
-    # Step 4: Shell RC (with prompt)
+    # Step 4: Shell RC (with prompt or auto)
     STEP=$((STEP + 1))
     print_info "[$STEP/$STEPS_TOTAL] 쉘 RC 설정..."
-    echo ""
-    echo "쉘 설정을 자동으로 추가할까요?"
-    echo "  1) 예, 자동 설정 (권장)"
-    echo "  2) 아니오, 수동 설정"
-    read -p "선택 (1-2): " shell_choice
 
-    if [ "$shell_choice" = "1" ]; then
+    if $SKIP_SHELL_RC_PROMPT; then
+        # Non-interactive: auto configure
         configure_shell_rc "auto"
     else
-        print_info "수동 설정 필요:"
-        echo "  source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
+        echo ""
+        echo "쉘 설정을 자동으로 추가할까요?"
+        echo "  1) 예, 자동 설정 (권장)"
+        echo "  2) 아니오, 수동 설정"
+        read -p "선택 (1-2): " shell_choice
+
+        if [ "$shell_choice" = "1" ]; then
+            configure_shell_rc "auto"
+        else
+            print_info "수동 설정 필요:"
+            echo "  source \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\""
+        fi
     fi
     echo ""
 
-    # Step 5: MCP Servers (with prompt)
+    # Step 5: MCP Servers (with prompt or skip)
     STEP=$((STEP + 1))
     print_info "[$STEP/$STEPS_TOTAL] MCP 서버 설정..."
 
     if $HAS_CLAUDE_CLI; then
-        echo ""
-        echo "MCP 서버를 추가하시겠습니까?"
-        echo ""
-
-        if ! $HAS_GEMINI_MCP; then
-            read -p "  gemini-cli 추가? (분석/리서치 강화) [y/n]: " add_gemini
-            [[ "$add_gemini" =~ ^[Yy]$ ]] && add_gemini_mcp
+        if $SKIP_MCP_PROMPTS; then
+            # Non-interactive: skip MCP additions (keep existing)
+            $HAS_GEMINI_MCP && print_success "  gemini-cli: 이미 설정됨" || print_info "  gemini-cli: 건너뜀 (수동 추가 가능)"
+            $HAS_CODEX_MCP && print_success "  codex-cli: 이미 설정됨" || print_info "  codex-cli: 건너뜀 (수동 추가 가능)"
         else
-            print_success "  gemini-cli: 이미 설정됨"
-        fi
+            echo ""
+            echo "MCP 서버를 추가하시겠습니까?"
+            echo ""
 
-        if ! $HAS_CODEX_MCP; then
-            read -p "  codex-cli 추가? (실행/배포 강화) [y/n]: " add_codex
-            [[ "$add_codex" =~ ^[Yy]$ ]] && add_codex_mcp
-        else
-            print_success "  codex-cli: 이미 설정됨"
+            if ! $HAS_GEMINI_MCP; then
+                read -p "  gemini-cli 추가? (분석/리서치 강화) [y/n]: " add_gemini
+                [[ "$add_gemini" =~ ^[Yy]$ ]] && add_gemini_mcp
+            else
+                print_success "  gemini-cli: 이미 설정됨"
+            fi
+
+            if ! $HAS_CODEX_MCP; then
+                read -p "  codex-cli 추가? (실행/배포 강화) [y/n]: " add_codex
+                [[ "$add_codex" =~ ^[Yy]$ ]] && add_codex_mcp
+            else
+                print_success "  codex-cli: 이미 설정됨"
+            fi
         fi
     else
         print_warning "Claude CLI 없음 - MCP 서버 설정 건너뜀"
@@ -1110,13 +1180,24 @@ utilities_menu() {
 # MAIN MENU
 # ============================================================
 
+# Parse command line arguments
+parse_arguments "$@"
+
 # Auto-detect environment on start
 detect_mcp_environment
 
-# Main menu
+# Non-interactive modes
+if [ "$INSTALL_MODE" = "auto" ] || [ "$INSTALL_MODE" = "quick" ]; then
+    print_info "비대화형 모드로 실행 중..."
+    auto_configure_workflow
+    generate_model_config_file
+    exit 0
+fi
+
+# Main menu (interactive mode)
 while true; do
     echo ""
-    echo -e "${CYAN}🚀 Agent Skills Setup v3.1${NC}"
+    echo -e "${CYAN}🚀 Agent Skills Setup v3.2${NC}"
     echo "═══════════════════════════════════════════════"
     echo ""
     echo -e "${BOLD}현재 환경:${NC}"
