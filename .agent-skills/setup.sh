@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.3
+# Agent Skills Setup Script v3.3.1
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
 # Supports: Claude Code, Gemini-CLI, Codex-CLI
 #
@@ -67,7 +67,7 @@ parse_arguments() {
 
 show_help() {
     cat << 'EOF'
-Agent Skills Setup Script v3.3
+Agent Skills Setup Script v3.3.1
 
 Usage:
   ./setup.sh                Interactive mode (default)
@@ -535,55 +535,60 @@ verify_mcp_servers() {
     if command -v claude &> /dev/null; then
         print_status "Claude CLI installed" "true"
 
-        # Test Claude CLI responsiveness
-        if timeout 5 claude --version &> /dev/null 2>&1; then
+        # Test Claude CLI responsiveness (version check is lightweight)
+        if claude --version &> /dev/null 2>&1; then
             print_status "Claude CLI responsive" "true"
         else
             print_status "Claude CLI responsive" "false"
             all_healthy=false
         fi
+
+        # Get MCP server list with connection status (single call)
+        local mcp_health_output=""
+        mcp_health_output=$(claude mcp list 2>/dev/null || echo "")
+
     else
         print_status "Claude CLI installed" "false"
         print_warning "  → Install: npm install -g @anthropic-ai/claude-code"
         all_healthy=false
+        return 1
     fi
 
-    # Check Gemini-CLI MCP
+    # Check Gemini-CLI MCP (parse from mcp list output)
     if $HAS_GEMINI_MCP; then
         print_status "gemini-cli MCP registered" "true"
 
-        # Test Gemini MCP connectivity
-        local gemini_test=$(timeout 10 claude mcp run gemini-cli ping 2>&1 || echo "timeout")
-        if echo "$gemini_test" | grep -qiE "(pong|success|ok)" 2>/dev/null; then
-            print_status "gemini-cli MCP responding" "true"
-        elif echo "$gemini_test" | grep -qi "timeout" 2>/dev/null; then
-            print_status "gemini-cli MCP responding" "false"
-            print_warning "  → gemini-cli MCP 타임아웃 (10초)"
+        # Check connection status from 'claude mcp list' output
+        # Format: "gemini-cli: npx -y gemini-mcp-tool - ✓ Connected"
+        if echo "$mcp_health_output" | grep -E "gemini-cli.*Connected" &>/dev/null; then
+            print_status "gemini-cli MCP connected" "true"
+        elif echo "$mcp_health_output" | grep -E "gemini-cli.*Error" &>/dev/null; then
+            print_status "gemini-cli MCP connected" "false"
+            print_warning "  → 연결 오류 발생"
             all_healthy=false
         else
-            print_status "gemini-cli MCP available" "true"
-            print_info "  → 연결 테스트: ask-gemini \"ping\""
+            print_status "gemini-cli MCP status" "true"
+            print_info "  → 상태 확인: claude mcp list"
         fi
     else
         print_status "gemini-cli MCP registered" "false"
         print_info "  → Add: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
     fi
 
-    # Check Codex-CLI MCP
+    # Check Codex-CLI MCP (parse from mcp list output)
     if $HAS_CODEX_MCP; then
         print_status "codex-cli MCP registered" "true"
 
-        # Test Codex MCP with simple command
-        local codex_test=$(timeout 10 claude mcp run codex-cli shell --command "echo ok" --workdir "$(pwd)" 2>&1 || echo "timeout")
-        if echo "$codex_test" | grep -qiE "(ok|success)" 2>/dev/null; then
-            print_status "codex-cli MCP responding" "true"
-        elif echo "$codex_test" | grep -qi "timeout" 2>/dev/null; then
-            print_status "codex-cli MCP responding" "false"
-            print_warning "  → codex-cli MCP 타임아웃 (10초)"
+        # Check connection status from 'claude mcp list' output
+        if echo "$mcp_health_output" | grep -E "codex-cli.*Connected" &>/dev/null; then
+            print_status "codex-cli MCP connected" "true"
+        elif echo "$mcp_health_output" | grep -E "codex-cli.*Error" &>/dev/null; then
+            print_status "codex-cli MCP connected" "false"
+            print_warning "  → 연결 오류 발생"
             all_healthy=false
         else
-            print_status "codex-cli MCP available" "true"
-            print_info "  → 연결 테스트: shell \"echo test\""
+            print_status "codex-cli MCP status" "true"
+            print_info "  → 상태 확인: claude mcp list"
         fi
     else
         print_status "codex-cli MCP registered" "false"
@@ -746,7 +751,7 @@ EOF
 run_diagnostics() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${CYAN}🔍 Agent Skills System Diagnostics v3.3${NC}"
+    echo -e "${CYAN}🔍 Agent Skills System Diagnostics v3.3.1${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
 
