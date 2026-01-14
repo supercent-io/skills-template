@@ -14,17 +14,36 @@ Agent Skills는 Claude, Gemini, ChatGPT 등 AI 에이전트의 능력을 극대�
 
 ## For AI Agents (AI 에이전트용 설정)
 
-> **Claude Code를 실행한 후 아래 쿼리를 입력하세요.**
+> **Claude Code를 실행한 후 아래 프롬프트를 복사해서 입력하세요.**
+
+### 방법 1: One-Line 프롬프트 (권장)
 
 ```
-https://github.com/supercent-io/skills-template.git 에서 .agent-skills 폴더를 현재 터미널 루트 경로로 가져와서 스킬 설정해줘. 설정 완료 후 클론한 임시 폴더는 삭제해줘.
+skills-template 저장소에서 .agent-skills 폴더를 현재 디렉토리로 복사하고 setup.sh를 silent 모드로 실행해. 설정 완료 후 클론한 임시 폴더는 삭제해.
 ```
 
-| AI Agent | 설정 방법 |
-|----------|----------|
-| **Claude Code** | 위 쿼리 실행 → 자동 설치 및 설정 |
-| **Gemini-CLI** | MCP 서버로 자동 통합 (`claude mcp add gemini-cli`) |
-| **Codex-CLI** | MCP 서버로 자동 통합 (`claude mcp add codex-cli`) |
+### 방법 2: 상세 프롬프트
+
+```
+1. https://github.com/supercent-io/skills-template.git 저장소를 임시 폴더(_tmp_skills)로 클론
+2. .agent-skills 폴더만 현재 작업 디렉토리로 복사
+3. 임시 폴더 삭제
+4. cd .agent-skills && ./setup.sh --silent 실행
+```
+
+### 방법 3: 수동 명령어 (터미널에서 직접 실행)
+
+```bash
+git clone https://github.com/supercent-io/skills-template.git _tmp_skills && \
+mv _tmp_skills/.agent-skills . && rm -rf _tmp_skills && \
+cd .agent-skills && chmod +x setup.sh && ./setup.sh --silent
+```
+
+| AI Agent | 설정 방법 | 상태 |
+|----------|----------|------|
+| **Claude Code** | 위 프롬프트 실행 → 자동 설치 | ✅ 자동 |
+| **Gemini-CLI** | `claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool` | ⚡ MCP 연동 |
+| **Codex-CLI** | `claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp` | ⚡ MCP 연동 |
 
 ### 비대화형 자동 설정
 
@@ -34,11 +53,15 @@ cd .agent-skills && ./setup.sh --silent
 
 # 개발자용 - shell RC 자동 설정 포함
 cd .agent-skills && ./setup.sh --auto
+
+# 문제 해결 - 시스템 진단 실행
+cd .agent-skills && ./setup.sh --diagnose
 ```
 
 **옵션 설명:**
 - `--silent`: 무출력 모드, `~/.zshrc` 수정 안함 (AI 에이전트에 권장)
 - `--auto`: 자동 설정, `~/.zshrc`에 스킬 로더 추가
+- `--diagnose`: MCP 서버 헬스 체크 및 시스템 진단
 - `--no-shell-rc`: shell RC 수정만 건너뛰기 (`--auto --no-shell-rc` 조합 가능)
 
 ---
@@ -300,6 +323,21 @@ shell "npm test && npm run build"
 
 ## Troubleshooting
 
+### 시스템 진단 실행 (권장)
+
+문제 발생 시 먼저 진단을 실행하세요:
+
+```bash
+cd .agent-skills && ./setup.sh --diagnose
+```
+
+진단 항목:
+- 의존성 체크 (Python3, Node.js, Git)
+- MCP 환경 감지 (Claude CLI, Gemini, Codex)
+- MCP 서버 헬스 체크
+- 설정 파일 확인
+- 권장 사항 제안
+
 ### 권한 오류
 
 ```bash
@@ -313,6 +351,21 @@ chmod +x .agent-skills/scripts/*.sh
 # 셸 설정 재로드
 source ~/.zshrc   # Zsh
 source ~/.bashrc  # Bash
+```
+
+### MCP 서버 연결 문제
+
+```bash
+# MCP 서버 상태 확인
+claude mcp list
+
+# Gemini MCP 재설치
+claude mcp remove gemini-cli
+claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool
+
+# Codex MCP 재설치
+claude mcp remove codex-cli
+claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
 ```
 
 ### 스킬이 작동하지 않음
@@ -344,16 +397,17 @@ print('Valid!')
 
 ```
 .agent-skills/
-├── setup.sh                    # 자동 설정 스크립트 (v3.2)
+├── setup.sh                    # 자동 설정 스크립트 (v3.3)
 ├── skill-query-handler.py      # 스킬 쿼리 핸들러 (MCP용)
 ├── skill_loader.py             # Python 스킬 로더
 ├── mcp-shell-config.sh         # MCP 쉘 설정
 ├── model-config.env            # 모델 설정
+├── agent-routing.yaml          # 에이전트 라우팅 설정 (NEW)
 ├── scripts/                    # 유틸리티 스크립트
 ├── backend/                    # 백엔드 스킬 (5)
 ├── frontend/                   # 프론트엔드 스킬 (4)
 ├── code-quality/               # 코드 품질 스킬 (6)
-├── infrastructure/             # 인프라 스킬 (5)
+├── infrastructure/             # 인프라 스킬 (6)
 ├── documentation/              # 문서화 스킬 (4)
 ├── project-management/         # 프로젝트 관리 스킬 (6)
 ├── search-analysis/            # 검색/분석 스킬 (4)
@@ -378,4 +432,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.2.0 | **Updated**: 2026-01-13 | **Skills**: 46 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.3.0 | **Updated**: 2026-01-14 | **Skills**: 46 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction

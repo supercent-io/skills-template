@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.2
+# Agent Skills Setup Script v3.3
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
 # Supports: Claude Code, Gemini-CLI, Codex-CLI
 #
@@ -8,6 +8,7 @@
 #   ./setup.sh              # Interactive mode
 #   ./setup.sh --auto       # Non-interactive auto-configure
 #   ./setup.sh --quick      # Quick setup (skip prompts, use defaults)
+#   ./setup.sh --diagnose   # Run system diagnostics
 #   ./setup.sh --help       # Show help
 
 set -e
@@ -20,6 +21,7 @@ SKIP_MCP_PROMPTS=false
 SKIP_SHELL_RC_PROMPT=false
 SKIP_SHELL_RC=false
 SILENT_MODE=false
+RUN_DIAGNOSE=false
 
 parse_arguments() {
     while [[ $# -gt 0 ]]; do
@@ -48,6 +50,10 @@ parse_arguments() {
                 SKIP_SHELL_RC=true
                 shift
                 ;;
+            --diagnose)
+                RUN_DIAGNOSE=true
+                shift
+                ;;
             --help|-h)
                 show_help
                 exit 0
@@ -61,13 +67,14 @@ parse_arguments() {
 
 show_help() {
     cat << 'EOF'
-Agent Skills Setup Script v3.2
+Agent Skills Setup Script v3.3
 
 Usage:
   ./setup.sh                Interactive mode (default)
   ./setup.sh --auto         Non-interactive auto-configure
   ./setup.sh --quick        Quick setup (defaults, no prompts)
   ./setup.sh --silent       Silent mode (no output, skip shell RC, for AI agents)
+  ./setup.sh --diagnose     Run MCP server diagnostics and health checks
   ./setup.sh --no-shell-rc  Skip ~/.zshrc or ~/.bashrc modification
   ./setup.sh --help         Show this help
 
@@ -76,6 +83,10 @@ Options:
   --quick        Same as --auto but for quick setup
   --silent       Silent mode: no output, skips shell RC modification
                  Best for AI agents (Claude, etc.)
+  --diagnose     Run comprehensive system diagnostics:
+                 - MCP server health checks
+                 - Connection tests (gemini-cli, codex-cli)
+                 - Configuration validation
   --no-shell-rc  Skip shell RC modification (can combine with --auto)
 
 One-Liner Installation (for developers):
@@ -85,6 +96,9 @@ One-Liner Installation (for developers):
 
 For AI Agents (recommended):
   cd .agent-skills && ./setup.sh --silent
+
+Troubleshooting:
+  ./setup.sh --diagnose     # Check MCP server health
 
 For more information: https://github.com/supercent-io/skills-template
 EOF
@@ -505,6 +519,362 @@ export CLAUDE_TASK_EXECUTOR="haiku"
 EOF
 
     print_success "model-config.env 생성됨"
+}
+
+# ============================================================
+# 2.7 MCP Server Health Check
+# ============================================================
+verify_mcp_servers() {
+    echo ""
+    print_header "MCP Server Health Check"
+    echo ""
+
+    local all_healthy=true
+
+    # Check Claude CLI
+    if command -v claude &> /dev/null; then
+        print_status "Claude CLI installed" "true"
+
+        # Test Claude CLI responsiveness
+        if timeout 5 claude --version &> /dev/null 2>&1; then
+            print_status "Claude CLI responsive" "true"
+        else
+            print_status "Claude CLI responsive" "false"
+            all_healthy=false
+        fi
+    else
+        print_status "Claude CLI installed" "false"
+        print_warning "  → Install: npm install -g @anthropic-ai/claude-code"
+        all_healthy=false
+    fi
+
+    # Check Gemini-CLI MCP
+    if $HAS_GEMINI_MCP; then
+        print_status "gemini-cli MCP registered" "true"
+
+        # Test Gemini MCP connectivity
+        local gemini_test=$(timeout 10 claude mcp run gemini-cli ping 2>&1 || echo "timeout")
+        if echo "$gemini_test" | grep -qiE "(pong|success|ok)" 2>/dev/null; then
+            print_status "gemini-cli MCP responding" "true"
+        elif echo "$gemini_test" | grep -qi "timeout" 2>/dev/null; then
+            print_status "gemini-cli MCP responding" "false"
+            print_warning "  → gemini-cli MCP 타임아웃 (10초)"
+            all_healthy=false
+        else
+            print_status "gemini-cli MCP available" "true"
+            print_info "  → 연결 테스트: ask-gemini \"ping\""
+        fi
+    else
+        print_status "gemini-cli MCP registered" "false"
+        print_info "  → Add: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool"
+    fi
+
+    # Check Codex-CLI MCP
+    if $HAS_CODEX_MCP; then
+        print_status "codex-cli MCP registered" "true"
+
+        # Test Codex MCP with simple command
+        local codex_test=$(timeout 10 claude mcp run codex-cli shell --command "echo ok" --workdir "$(pwd)" 2>&1 || echo "timeout")
+        if echo "$codex_test" | grep -qiE "(ok|success)" 2>/dev/null; then
+            print_status "codex-cli MCP responding" "true"
+        elif echo "$codex_test" | grep -qi "timeout" 2>/dev/null; then
+            print_status "codex-cli MCP responding" "false"
+            print_warning "  → codex-cli MCP 타임아웃 (10초)"
+            all_healthy=false
+        else
+            print_status "codex-cli MCP available" "true"
+            print_info "  → 연결 테스트: shell \"echo test\""
+        fi
+    else
+        print_status "codex-cli MCP registered" "false"
+        print_info "  → Add: claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp"
+    fi
+
+    echo ""
+    if $all_healthy; then
+        print_success "All MCP servers healthy"
+    else
+        print_warning "Some MCP servers need attention"
+    fi
+
+    return 0
+}
+
+# ============================================================
+# 2.8 Generate Agent Routing Configuration
+# ============================================================
+generate_agent_routing_config() {
+    local config_file="$AGENT_SKILLS_DIR/agent-routing.yaml"
+
+    cat > "$config_file" << EOF
+# Agent Routing Configuration
+# Generated by setup.sh v3.3 - $(date +%Y-%m-%d)
+# Workflow: $WORKFLOW_TYPE | Preset: $PERFORMANCE_PRESET
+
+version: "1.0"
+workflow_type: "$WORKFLOW_TYPE"
+performance_preset: "$PERFORMANCE_PRESET"
+
+# Agent Definitions
+agents:
+  orchestrator:
+    provider: "$PROVIDER_ORCHESTRATOR"
+    model: "$MODEL_ORCHESTRATOR"
+    role: "Planning, code generation, skill interpretation"
+    tools:
+      - Read
+      - Write
+      - Edit
+      - Glob
+      - Grep
+      - Task
+      - TodoWrite
+
+  analyst:
+    provider: "$PROVIDER_ANALYST"
+    model: "$MODEL_ANALYST"
+    role: "Large-scale analysis, research, code review"
+    mcp_tool: "ask-gemini"
+    enabled: $HAS_GEMINI_MCP
+    capabilities:
+      - "1M+ token context"
+      - "Deep code analysis"
+      - "Architecture review"
+      - "Research synthesis"
+
+  executor:
+    provider: "$PROVIDER_EXECUTOR"
+    model: "$MODEL_EXECUTOR"
+    role: "Command execution, builds, deployments"
+    mcp_tool: "shell"
+    enabled: $HAS_CODEX_MCP
+    capabilities:
+      - "Sandboxed execution"
+      - "Long-running tasks"
+      - "Docker/K8s operations"
+      - "CI/CD pipelines"
+
+# Task Routing Rules
+routing:
+  # Analysis tasks → Analyst (Gemini)
+  analysis:
+    patterns:
+      - "분석"
+      - "리뷰"
+      - "코드 리뷰"
+      - "아키텍처"
+      - "전체.*분석"
+      - "패턴.*분석"
+    agent: "analyst"
+    fallback: "orchestrator"
+
+  # Execution tasks → Executor (Codex)
+  execution:
+    patterns:
+      - "실행"
+      - "빌드"
+      - "테스트"
+      - "배포"
+      - "docker"
+      - "npm"
+      - "git"
+    agent: "executor"
+    fallback: "orchestrator"
+
+  # Planning/coding → Orchestrator (Claude)
+  orchestration:
+    patterns:
+      - "계획"
+      - "설계"
+      - "구현"
+      - "작성"
+      - "생성"
+      - "수정"
+    agent: "orchestrator"
+
+# Workflow Templates
+templates:
+  api-development:
+    name: "API Development"
+    steps:
+      - agent: orchestrator
+        action: "Load api-design skill, create spec"
+      - agent: analyst
+        action: "Analyze existing API patterns"
+        condition: "if codebase > 10 files"
+      - agent: orchestrator
+        action: "Implement API code"
+      - agent: executor
+        action: "Run tests and build"
+      - agent: orchestrator
+        action: "Generate documentation"
+
+  code-review:
+    name: "Code Review"
+    steps:
+      - agent: analyst
+        action: "Deep code analysis with gemini"
+      - agent: orchestrator
+        action: "Summarize findings, suggest improvements"
+
+  deployment:
+    name: "Deployment Pipeline"
+    steps:
+      - agent: orchestrator
+        action: "Prepare deployment config"
+      - agent: executor
+        action: "Run build and tests"
+      - agent: executor
+        action: "Deploy to environment"
+      - agent: orchestrator
+        action: "Verify deployment status"
+
+# Fallback Behavior
+fallback:
+  when_gemini_unavailable: "Use Claude Sonnet for analysis"
+  when_codex_unavailable: "Use Claude Bash tool for execution"
+  retry_attempts: 2
+  timeout_seconds: 30
+EOF
+
+    print_success "agent-routing.yaml 생성됨"
+}
+
+# ============================================================
+# 2.9 System Diagnostics
+# ============================================================
+run_diagnostics() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${CYAN}🔍 Agent Skills System Diagnostics v3.3${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    # 1. Environment Check
+    print_header "1. Environment Check"
+    echo ""
+    echo "  OS: $(uname -s) $(uname -r)"
+    echo "  Shell: $SHELL"
+    echo "  PWD: $(pwd)"
+    echo "  Agent Skills: $AGENT_SKILLS_DIR"
+    echo ""
+
+    # 2. Dependencies
+    print_header "2. Dependencies"
+    echo ""
+    print_status "bash" "$(command -v bash &>/dev/null && echo true || echo false)"
+    print_status "python3" "$HAS_PYTHON3"
+    print_status "node/npm" "$(command -v node &>/dev/null && echo true || echo false)"
+    print_status "git" "$(command -v git &>/dev/null && echo true || echo false)"
+    echo ""
+
+    # 3. MCP Environment
+    detect_mcp_environment
+
+    # 4. Health Check
+    if $HAS_CLAUDE_CLI; then
+        verify_mcp_servers
+    fi
+
+    # 5. Configuration Files
+    echo ""
+    print_header "5. Configuration Files"
+    echo ""
+    print_status "model-config.env" "$([ -f \"$AGENT_SKILLS_DIR/model-config.env\" ] && echo true || echo false)"
+    print_status "agent-routing.yaml" "$([ -f \"$AGENT_SKILLS_DIR/agent-routing.yaml\" ] && echo true || echo false)"
+    print_status "mcp-shell-config.sh" "$([ -f \"$AGENT_SKILLS_DIR/mcp-shell-config.sh\" ] && echo true || echo false)"
+    print_status "CLAUDE.md" "$([ -f \"$PROJECT_DIR/CLAUDE.md\" ] && echo true || echo false)"
+    echo ""
+
+    # 6. Skills Statistics
+    print_header "6. Skills Statistics"
+    echo ""
+    local skill_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
+    local toon_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.toon" 2>/dev/null | wc -l | tr -d ' ')
+    local compact_count=$(find "$AGENT_SKILLS_DIR" -name "SKILL.compact.md" 2>/dev/null | wc -l | tr -d ' ')
+    echo "  SKILL.md files: $skill_count"
+    echo "  SKILL.toon files: $toon_count"
+    echo "  SKILL.compact.md files: $compact_count"
+    echo ""
+
+    # 7. Workflow Summary
+    print_header "7. Workflow Summary"
+    echo ""
+    echo -e "  Workflow Type: ${CYAN}$WORKFLOW_TYPE${NC}"
+    echo -e "  Performance Preset: ${CYAN}$PERFORMANCE_PRESET${NC}"
+    echo ""
+    echo "  Agent Configuration:"
+    echo "    Orchestrator: $PROVIDER_ORCHESTRATOR / $MODEL_ORCHESTRATOR"
+    echo "    Analyst: $PROVIDER_ANALYST / $MODEL_ANALYST"
+    echo "    Executor: $PROVIDER_EXECUTOR / $MODEL_EXECUTOR"
+    echo ""
+
+    # 8. Recommendations
+    print_header "8. Recommendations"
+    echo ""
+
+    local recommendations=()
+
+    if ! $HAS_CLAUDE_CLI; then
+        recommendations+=("Install Claude CLI: npm install -g @anthropic-ai/claude-code")
+    fi
+    if ! $HAS_GEMINI_MCP && $HAS_CLAUDE_CLI; then
+        recommendations+=("Add Gemini MCP for enhanced analysis: claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool")
+    fi
+    if ! $HAS_CODEX_MCP && $HAS_CLAUDE_CLI; then
+        recommendations+=("Add Codex MCP for execution: claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp")
+    fi
+    if [ ! -f "$AGENT_SKILLS_DIR/agent-routing.yaml" ]; then
+        recommendations+=("Generate routing config: Run setup.sh --auto")
+    fi
+    if [ "$toon_count" -lt "$skill_count" ]; then
+        recommendations+=("Generate token-optimized skills: python3 scripts/generate_compact_skills.py")
+    fi
+
+    if [ ${#recommendations[@]} -eq 0 ]; then
+        print_success "All systems optimal!"
+    else
+        for rec in "${recommendations[@]}"; do
+            echo -e "  ${YELLOW}→${NC} $rec"
+        done
+    fi
+    echo ""
+
+    print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    print_success "Diagnostics Complete"
+    print_success "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+# ============================================================
+# 2.10 Workflow Template Selection
+# ============================================================
+select_workflow_template() {
+    echo ""
+    print_header "Workflow Template Selection"
+    echo ""
+    echo "프로젝트 유형에 맞는 워크플로우를 선택하세요:"
+    echo ""
+    echo "  1) API Development (API 개발)"
+    echo "     → API 설계 → 패턴 분석 → 구현 → 테스트"
+    echo ""
+    echo "  2) Code Review (코드 리뷰)"
+    echo "     → 대용량 분석 → 개선점 요약"
+    echo ""
+    echo "  3) Deployment Pipeline (배포 파이프라인)"
+    echo "     → 설정 → 빌드 → 배포 → 검증"
+    echo ""
+    echo "  4) Custom (사용자 정의)"
+    echo ""
+    read -p "선택 (1-4): " template_choice
+
+    case "$template_choice" in
+        1) echo "API Development 템플릿 적용" ;;
+        2) echo "Code Review 템플릿 적용" ;;
+        3) echo "Deployment Pipeline 템플릿 적용" ;;
+        4) echo "Custom 워크플로우 - agent-routing.yaml 직접 편집" ;;
+        *) echo "기본 워크플로우 사용" ;;
+    esac
+    echo ""
 }
 
 # ============================================================
@@ -930,7 +1300,7 @@ auto_configure_workflow() {
     print_header "Auto-Configure Workflow"
     echo ""
 
-    local STEPS_TOTAL=6
+    local STEPS_TOTAL=7
     local STEP=0
 
     # Step 1: Token Optimization
@@ -1014,7 +1384,13 @@ auto_configure_workflow() {
     # Recalculate workflow type after changes
     determine_workflow_type
 
-    # Step 6: Generate CLAUDE.md
+    # Step 6: Generate agent-routing.yaml
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] agent-routing.yaml 생성..."
+    generate_agent_routing_config
+    echo ""
+
+    # Step 7: Generate CLAUDE.md
     STEP=$((STEP + 1))
     print_info "[$STEP/$STEPS_TOTAL] CLAUDE.md 생성..."
     generate_claude_md_dynamic
@@ -1168,9 +1544,11 @@ utilities_menu() {
     echo "  4) 스킬 유효성 검사"
     echo "  5) MCP 환경 재감지"
     echo -e "  ${GREEN}6) 모델 설정 (Model Config)${NC}"
-    echo "  7) 돌아가기"
+    echo -e "  ${CYAN}7) 시스템 진단 (Diagnostics)${NC}"
+    echo -e "  ${YELLOW}8) MCP 서버 헬스 체크${NC}"
+    echo "  9) 돌아가기"
     echo ""
-    read -p "선택 (1-7): " util_choice
+    read -p "선택 (1-9): " util_choice
 
     case "$util_choice" in
         1)
@@ -1211,8 +1589,19 @@ utilities_menu() {
         6)
             configure_models_interactive
             generate_model_config_file
+            generate_agent_routing_config
             ;;
         7)
+            run_diagnostics
+            ;;
+        8)
+            if $HAS_CLAUDE_CLI; then
+                verify_mcp_servers
+            else
+                print_warning "Claude CLI 필요"
+            fi
+            ;;
+        9)
             return 0
             ;;
     esac
@@ -1227,6 +1616,12 @@ parse_arguments "$@"
 
 # Auto-detect environment on start
 detect_mcp_environment
+
+# Run diagnostics if requested
+if $RUN_DIAGNOSE; then
+    run_diagnostics
+    exit 0
+fi
 
 # Non-interactive modes
 if [ "$INSTALL_MODE" = "auto" ] || [ "$INSTALL_MODE" = "quick" ] || [ "$INSTALL_MODE" = "silent" ]; then
