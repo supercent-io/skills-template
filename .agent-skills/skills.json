@@ -1,14 +1,15 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 37,
+  "skill_count": 38,
   "categories": {
     "infrastructure": [
       "deployment-automation",
       "firebase-ai-logic",
       "security-best-practices",
       "system-environment-setup",
-      "monitoring-observability"
+      "monitoring-observability",
+      "looker-studio-bigquery"
     ],
     "search-analysis": [
       "log-analysis",
@@ -1453,6 +1454,38 @@
       ],
       "allowed_tools": [],
       "commands": []
+    },
+    {
+      "name": "looker-studio-bigquery",
+      "description": "Design and configure Looker Studio dashboards with BigQuery data sources. Use when creating analytics dashboards, connecting BigQuery to visualization tools, or optimizing data pipeline performance. Handles BigQuery connections, custom SQL queries, scheduled queries, dashboard design, and performance optimization.",
+      "category": "infrastructure",
+      "path": "infrastructure/looker-studio-bigquery/SKILL.md",
+      "tags": [
+        "Looker-Studio",
+        "BigQuery",
+        "dashboard",
+        "analytics",
+        "visualization",
+        "GCP",
+        "data-studio",
+        "SQL"
+      ],
+      "platforms": [
+        "Claude",
+        "ChatGPT",
+        "Gemini"
+      ],
+      "allowed_tools": [],
+      "commands": [
+        {
+          "command": "gcloud projects create my-analytics-project",
+          "source": "infrastructure/looker-studio-bigquery/SKILL.md"
+        },
+        {
+          "command": "gcloud services enable bigquery.googleapis.com",
+          "source": "infrastructure/looker-studio-bigquery/SKILL.md"
+        }
+      ]
     }
   ],
   "codex_integration": {
