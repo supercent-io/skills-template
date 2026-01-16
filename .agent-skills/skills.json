@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 38,
+  "skill_count": 39,
   "categories": {
     "infrastructure": [
       "deployment-automation",
@@ -30,7 +30,8 @@
       "git-workflow",
       "workflow-automation",
       "skill-standardization",
-      "file-organization"
+      "file-organization",
+      "project-init-memory"
     ],
     "backend": [
       "authentication-setup",
@@ -958,6 +959,34 @@
         "Read",
         "Write",
         "Glob",
+        "Bash"
+      ],
+      "commands": []
+    },
+    {
+      "name": "project-init-memory",
+      "description": "Automatically remember and apply skillset configuration when first running a project. Use when initializing projects in .skills-template or any project requiring consistent AI agent setup. Handles CLAUDE.md generation, skill loading, and environment persistence.",
+      "category": "utilities",
+      "path": "utilities/project-init-memory/SKILL.md",
+      "tags": [
+        "project-init",
+        "memory",
+        "skillset",
+        "configuration",
+        "automation",
+        "claude-code"
+      ],
+      "platforms": [
+        "Claude",
+        "ChatGPT",
+        "Gemini"
+      ],
+      "allowed_tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Glob",
+        "Grep",
         "Bash"
       ],
       "commands": []
