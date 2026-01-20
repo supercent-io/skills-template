@@ -1,7 +1,7 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "generated": true,
-  "skill_count": 43,
+  "skill_count": 50,
   "categories": {
     "claude-code": [
       "claude-code-principles",
@@ -27,30 +27,37 @@
       "code-review",
       "debugging",
       "code-refactoring",
-      "performance-optimization"
+      "performance-optimization",
+      "agent-evaluation"
     ],
     "utilities": [
       "agentic-development-principles",
       "mcp-codex-integration",
       "environment-setup",
       "git-workflow",
+      "git-submodule",
       "workflow-automation",
       "skill-standardization",
       "file-organization",
-      "project-init-memory"
+      "project-init-memory",
+      "npm-git-install",
+      "opencode-authentication"
     ],
     "backend": [
       "authentication-setup",
       "backend-testing",
       "database-schema-design",
       "api-design",
-      "cs-tool-dashboard"
+      "cs-tool-dashboard",
+      "kling-ai"
     ],
     "project-management": [
       "sprint-retrospective",
       "standup-meeting",
       "task-planning",
-      "task-estimation"
+      "task-estimation",
+      "ultrathink-multiagent-workflow",
+      "subagent-creation"
     ],
     "frontend": [
       "responsive-design",

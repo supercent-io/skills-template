@@ -4,7 +4,7 @@
 > **Claude Code 완전 가이드 70가지 팁 적용** - 에이전틱 개발 정책 강화
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-49-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-50-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 [![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-quick-start)
@@ -125,27 +125,31 @@ npx cc-safe .
 
 ## For AI Agents (AI 에이전트용 설정)
 
-> **Claude Code를 실행한 후 아래 프롬프트를 복사해서 입력하세요.**
+> **LLM 기반 설치만 지원합니다.** Claude Code, Gemini, ChatGPT 등 AI 에이전트에게 아래 프롬프트를 입력하세요.
 
-### 방법 1: One-Line 프롬프트 (권장)
+### LLM 설치 프롬프트 (권장)
 
 ```
 https://github.com/supercent-io/skills-template 저장소에서 .agent-skills 폴더를 현재 디렉토리로 복사하고 setup.sh를 silent 모드로 실행해. 설정 완료 후 클론한 임시 폴더는 삭제해.
 ```
 
-### 방법 2: 수동 명령어 (터미널에서 직접 실행)
+### AI Agent별 설치 상태
+
+| AI Agent | 설치 방법 | 상태 |
+|----------|----------|------|
+| **Claude Code** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
+| **Gemini** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
+| **ChatGPT** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
+
+### MCP 서버 연동 (Claude Code 전용)
 
 ```bash
-git clone https://github.com/supercent-io/skills-template.git _tmp_skills && \
-mv _tmp_skills/.agent-skills . && rm -rf _tmp_skills && \
-cd .agent-skills && chmod +x setup.sh && ./setup.sh --silent
-```
+# Gemini-CLI MCP 추가 (대용량 분석)
+claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool
 
-| AI Agent | 설정 방법 | 상태 |
-|----------|----------|------|
-| **Claude Code** | 위 프롬프트 실행 → 자동 설치 | ✅ 자동 |
-| **Gemini-CLI** | `claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool` | ⚡ MCP 연동 |
-| **Codex-CLI** | `claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp` | ⚡ MCP 연동 |
+# Codex-CLI MCP 추가 (명령 실행)
+claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
+```
 
 ---
 
@@ -196,35 +200,33 @@ graph TB
 
 ---
 
-## Skills Overview (49 Total)
+## Skills Overview (50 Total)
 
 ```mermaid
 pie showData
     title Skills by Category
-    "Backend" : 5
+    "Backend" : 6
     "Frontend" : 4
     "Code-Quality" : 6
-    "Infrastructure" : 5
+    "Infrastructure" : 6
     "Documentation" : 4
     "Project-Mgmt" : 6
     "Search-Analysis" : 4
-    "Utilities" : 9
-    "Templates" : 3
+    "Utilities" : 11
     "Claude-Code" : 3
 ```
 
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
 | **Claude-Code** | 3 | `claude-code-principles` `claude-code-workflow` `claude-code-configuration` |
-| **Backend** | 5 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `kling-ai` |
+| **Backend** | 6 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `kling-ai` `cs-tool-dashboard` |
 | **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
 | **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
-| **Infrastructure** | 5 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` |
+| **Infrastructure** | 6 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 6 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 9 | `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` |
-| **Templates** | 3 | `basic` `advanced` `multiplatform` |
+| **Utilities** | 11 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` |
 
 ---
 
@@ -345,10 +347,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.4.0 | **Updated**: 2026-01-20 | **Skills**: 49 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.5.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.4.0**:
-- Claude Code 전용 스킬 3종 추가 (principles, workflow, configuration)
-- Claude Code 완전 가이드 70가지 팁 기반 정책 강화
-- 보안 정책 섹션 추가
-- 컨텍스트 최적화 지표 추가
+**Changelog v3.5.0**:
+- LLM 기반 설치 방식 전용으로 개선 (수동 설치 제거)
+- setup.sh에 claude-code, templates 카테고리 추가
+- 스킬 카운트 정확도 개선 (49 → 50)
+- 새 스킬 추가: cs-tool-dashboard, looker-studio-bigquery, project-init-memory

@@ -120,8 +120,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGENT_SKILLS_DIR="$SCRIPT_DIR"
 PROJECT_DIR="$(dirname "$AGENT_SKILLS_DIR")"
 
-# Skill categories
-SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities)
+# Skill categories (모든 스킬 카테고리 포함)
+SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities claude-code templates)
 
 # ============================================================
 # Global State Variables (Auto-detected)
