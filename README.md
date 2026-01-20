@@ -136,7 +136,23 @@ npx cc-safe .
 ### LLM 설치 프롬프트 (권장)
 
 ```
-https://github.com/supercent-io/skills-template 저장소에서 .agent-skills 폴더를 현재 디렉토리로 복사하고 setup.sh를 silent 모드로 실행해. 설정 완료 후 클론한 임시 폴더는 삭제해.
+https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해 (기존 폴더가 있으면 덮어쓰기). 그 후 setup.sh를 --silent 모드로 실행하고, 임시 클론 폴더는 삭제해.
+```
+
+### AI Agent 예상 실행 단계
+
+```bash
+# 1. 저장소 클론
+git clone https://github.com/supercent-io/skills-template.git _tmp_skills
+
+# 2. 기존 폴더 있으면 삭제 후 복사
+rm -rf .agent-skills 2>/dev/null; cp -r _tmp_skills/.agent-skills .
+
+# 3. setup.sh 실행 (silent 모드)
+cd .agent-skills && chmod +x setup.sh && ./setup.sh --silent
+
+# 4. 임시 폴더 삭제
+cd .. && rm -rf _tmp_skills
 ```
 
 ### AI Agent별 설치 상태
@@ -151,7 +167,7 @@ https://github.com/supercent-io/skills-template 저장소에서 .agent-skills �
 
 ```bash
 # Gemini-CLI MCP 추가 (대용량 분석)
-claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool
+claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
 
 # Codex-CLI MCP 추가 (명령 실행)
 claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
@@ -353,8 +369,9 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.6.1 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.7.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.6.1**:
-- Gemini CLI: gemini-3-pro (2M 컨텍스트)
-- Codex CLI: gpt-5.2-codex (최신 코딩 모델)
+**Changelog v3.7.0**:
+- LLM 설치 프롬프트 개선 (기존 폴더 덮어쓰기 지원)
+- AI Agent 예상 실행 단계 명시
+- MCP 연동 명령어 표준화
