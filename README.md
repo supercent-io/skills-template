@@ -201,8 +201,8 @@ graph TB
 | Agent | Role | Model | Best For |
 |-------|------|-------|----------|
 | **Claude Code** | Orchestrator | `claude-opus-4-5-20251101` | 계획 수립, 코드 생성, 스킬 해석 |
-| **Gemini-CLI** | Analyst | `gemini-2.5-pro` | 대용량 분석 (1M+ 토큰), 리서치 |
-| **Codex CLI** | Executor | `o3-mini` | 명령 실행, 빌드, 배포 |
+| **Gemini CLI** | Analyst | `gemini-3.0-pro` | 대용량 분석 (2M+ 토큰), 리서치 |
+| **Codex CLI** | Executor | `gpt-5.2-codex` | 명령 실행, 빌드, 배포 |
 
 ---
 
@@ -353,9 +353,8 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.6.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.6.1 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.6.0**:
-- Gemini CLI, Codex CLI 2026년 모델 및 설치 방식 업데이트
-- Agent Roles 모델명 최신화 (gemini-2.5-pro, o3-mini)
-- MCP 연동 명령어 표준화
+**Changelog v3.6.1**:
+- Gemini CLI: gemini-3.0-pro (2M 컨텍스트)
+- Codex CLI: gpt-5.2-codex (최신 코딩 모델)
