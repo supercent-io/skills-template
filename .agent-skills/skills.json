@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "generated": true,
-  "skill_count": 42,
+  "skill_count": 43,
   "categories": {
     "claude-code": [
       "claude-code-principles",
@@ -30,6 +30,7 @@
       "performance-optimization"
     ],
     "utilities": [
+      "agentic-development-principles",
       "mcp-codex-integration",
       "environment-setup",
       "git-workflow",
@@ -713,6 +714,16 @@
           "source": "code-quality/performance-optimization/SKILL.md"
         }
       ]
+    },
+    {
+      "name": "agentic-development-principles",
+      "description": "AI 에이전트와 협업하는 에이전틱 개발의 범용 원칙. 분해정복, 컨텍스트 관리, 추상화 수준 선택, 자동화 철학을 정의. 모든 AI 코딩 도구에 적용 가능.",
+      "category": "utilities",
+      "path": "utilities/agentic-development-principles/SKILL.md",
+      "tags": ["agentic-development", "principles", "context-management", "automation", "ai-collaboration", "universal"],
+      "platforms": ["Claude", "ChatGPT", "Gemini"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
+      "commands": []
     },
     {
       "name": "mcp-codex-integration",
