@@ -26,30 +26,36 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 ```
 
-### Gemini CLI 설치
+### Gemini CLI 설치 (2026)
 
 ```bash
-# npm으로 설치
-npm install -g @anthropic-ai/gemini-cli
+# npm으로 설치 (Google 공식)
+npm install -g @google/gemini-cli
 
-# 또는 MCP로 연동
-claude mcp add gemini-cli -s user -- npx -y gemini-mcp-tool
+# 설치 확인
+gemini --version
 
 # API 키 설정
-export GOOGLE_API_KEY=your_api_key
+export GEMINI_API_KEY=your_api_key
+
+# Claude Code MCP 연동 (선택)
+claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
 ```
 
-### Codex CLI 설치
+### Codex CLI 설치 (2026)
 
 ```bash
-# npm으로 설치
-npm install -g @openai/codex-cli
+# npm으로 설치 (OpenAI 공식)
+npm install -g @openai/codex
 
-# 또는 MCP로 연동
-claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
+# 설치 확인
+codex --version
 
 # API 키 설정
 export OPENAI_API_KEY=your_api_key
+
+# Claude Code MCP 연동 (선택)
+claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
 ```
 
 ---
@@ -190,13 +196,13 @@ graph TB
     style TN fill:#fff3e0
 ```
 
-### Agent Roles
+### Agent Roles (2026 Models)
 
 | Agent | Role | Model | Best For |
 |-------|------|-------|----------|
-| **Claude Code** | Orchestrator | `claude-opus-4-5` | 계획 수립, 코드 생성, 스킬 해석 |
+| **Claude Code** | Orchestrator | `claude-opus-4-5-20251101` | 계획 수립, 코드 생성, 스킬 해석 |
 | **Gemini-CLI** | Analyst | `gemini-2.5-pro` | 대용량 분석 (1M+ 토큰), 리서치 |
-| **Codex-CLI** | Executor | `gpt-4.1` | 명령 실행, 빌드, 배포 |
+| **Codex CLI** | Executor | `o3-mini` | 명령 실행, 빌드, 배포 |
 
 ---
 
@@ -347,10 +353,9 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.5.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.6.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.5.0**:
-- LLM 기반 설치 방식 전용으로 개선 (수동 설치 제거)
-- setup.sh에 claude-code, templates 카테고리 추가
-- 스킬 카운트 정확도 개선 (49 → 50)
-- 새 스킬 추가: cs-tool-dashboard, looker-studio-bigquery, project-init-memory
+**Changelog v3.6.0**:
+- Gemini CLI, Codex CLI 2026년 모델 및 설치 방식 업데이트
+- Agent Roles 모델명 최신화 (gemini-2.5-pro, o3-mini)
+- MCP 연동 명령어 표준화
