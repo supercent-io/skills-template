@@ -1,13 +1,14 @@
-N:claude-code-configuration
-D:Claude Code 설정 정책 및 보안 가이드. CLAUDE.md, Hooks, Skills, 보안 정책
-G:claude-code configuration security CLAUDE-md hooks skills plugins
+N:agent-configuration
+D:AI 에이전트 설정 정책 및 보안 가이드. 프로젝트 설명 파일, Hooks, Skills, 보안 정책
+G:agent-configuration security hooks skills plugins multi-agent
+PL:[Claude,Gemini,ChatGPT,Codex]
 U[5]:
   새 프로젝트 환경 구축
-  CLAUDE.md 작성/최적화
+  프로젝트 설명 파일 작성/최적화
   Hooks/Skills 설정
   보안 정책 수립
   팀 설정 공유
-CLAUDEmd[4]{section}:
+PRJ[4]{section}:
   Tech Stack,기술스택 명시
   Coding Standards,코딩규칙
   DO NOT,금지사항 명확히
@@ -22,7 +23,7 @@ DENY[5]:
   curl | sh,파이프 스크립트
   sudo rm,sudo 삭제
   chmod 777,과도한 권한
-  YOLO 호스트,컨테이너에서만
+  무제한권한모드,컨테이너에서만
 SAFE[4]{cmd}:
   npm test
   npm run lint
@@ -30,9 +31,9 @@ SAFE[4]{cmd}:
   git diff
 P[3]{file,loc}:
   settings.json,~/.claude/ or .claude/
-  skills/,~/.claude/skills/ or .claude/skills/
-  CLAUDE.md,프로젝트 루트
+  skills/,~/.claude/skills/ or .agent-skills/
+  프로젝트설명파일,프로젝트 루트
 R[3]:
-  간결한 CLAUDE.md (반복시 추가)
+  간결한 프로젝트 설명 (반복시 추가)
   Hooks로 가드레일
   cc-safe로 정기 감사

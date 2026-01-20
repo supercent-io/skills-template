@@ -1,12 +1,13 @@
 ---
-name: claude-code-configuration
-description: Claude Code 설정 정책 및 보안 가이드
-tags: [claude-code, configuration, security, hooks, skills]
+name: agent-configuration
+description: AI 에이전트 설정 정책 및 보안 가이드
+tags: [agent-configuration, security, hooks, skills, multi-agent]
+platforms: [Claude, Gemini, ChatGPT, Codex]
 ---
 
-# Claude Code 설정 정책
+# AI 에이전트 설정 정책
 
-## CLAUDE.md 작성
+## 프로젝트 설명 파일 작성
 
 ### 필수 섹션
 ```markdown
@@ -27,7 +28,7 @@ tags: [claude-code, configuration, security, hooks, skills]
 
 ### 원칙: 간결하게, 반복 시에만 추가
 
-## Hooks 보안 설정
+## Hooks 보안 설정 (Claude Code)
 
 ```json
 {
@@ -41,21 +42,21 @@ tags: [claude-code, configuration, security, hooks, skills]
 }
 ```
 
-## Skills vs Slash Commands
+## Skills vs 기타 설정
 
 | 기능 | 로딩 | 사용자 |
 |------|------|--------|
-| CLAUDE.md | 항상 | 프로젝트 |
-| Skills | 필요 시 | Claude 자동 |
+| 프로젝트 설명 파일 | 항상 | 프로젝트 |
+| Skills | 필요 시 | AI 자동 |
 | Slash Commands | 호출 시 | 개발자 |
 
 ## 보안 정책
 
 ### 금지
-- ❌ 호스트에서 YOLO 모드
-- ❌ rm -rf / 자동 승인
-- ❌ .env 커밋
-- ❌ API 키 하드코딩
+- 호스트에서 무제한 권한 모드
+- rm -rf / 자동 승인
+- .env 커밋
+- API 키 하드코딩
 
 ### 안전한 자동 승인
 ```bash
@@ -68,10 +69,15 @@ tags: [claude-code, configuration, security, hooks, skills]
 npx cc-safe .
 ```
 
-## 팀 설정
+## 팀 설정 구조
 ```
 .claude/
 ├── team-settings.json
 ├── hooks/
 └── skills/
+
+.agent-skills/
+├── backend/
+├── frontend/
+└── ...
 ```

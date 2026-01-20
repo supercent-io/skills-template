@@ -230,25 +230,23 @@ pie showData
     "Backend" : 6
     "Frontend" : 4
     "Code-Quality" : 6
-    "Infrastructure" : 6
+    "Infrastructure" : 7
     "Documentation" : 4
-    "Project-Mgmt" : 6
+    "Project-Mgmt" : 7
     "Search-Analysis" : 4
-    "Utilities" : 11
-    "Claude-Code" : 3
+    "Utilities" : 12
 ```
 
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
-| **Claude-Code** | 3 | `claude-code-principles` `claude-code-workflow` `claude-code-configuration` |
 | **Backend** | 6 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `kling-ai` `cs-tool-dashboard` |
 | **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
 | **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
-| **Infrastructure** | 6 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` |
+| **Infrastructure** | 7 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` `agent-configuration` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
-| **Project-Mgmt** | 6 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` |
+| **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 11 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` |
+| **Utilities** | 12 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` |
 
 ---
 
@@ -369,9 +367,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.7.0 | **Updated**: 2026-01-20 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.8.0 | **Updated**: 2026-01-21 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.7.0**:
-- LLM 설치 프롬프트 개선 (기존 폴더 덮어쓰기 지원)
-- AI Agent 예상 실행 단계 명시
-- MCP 연동 명령어 표준화
+**Changelog v3.8.0**:
+- Claude-Code 전용 스킬을 범용 카테고리로 재구성
+  - `claude-code-principles` → `project-management/agentic-principles`
+  - `claude-code-workflow` → `utilities/agentic-workflow`
+  - `claude-code-configuration` → `infrastructure/agent-configuration`
+- 모든 스킬에 Multi-Agent 플랫폼 지원 추가 (Claude, Gemini, ChatGPT, Codex)

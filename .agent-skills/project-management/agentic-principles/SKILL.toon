@@ -1,0 +1,25 @@
+N:agentic-principles
+D:AI 에이전트 협업 핵심 원칙. 분해정복, 컨텍스트 관리, 추상화 선택, 자동화 철학
+G:agentic-development principles context-management automation multi-agent
+PL:[Claude,Gemini,ChatGPT,Codex]
+U[5]:
+  AI 에이전트 세션 시작 시
+  복잡한 작업 전 접근법 결정
+  컨텍스트 관리 전략 수립
+  생산성 향상 점검
+  팀 온보딩
+P[6]{n,원칙,핵심}:
+  1,분해정복,큰 문제→작은 단계로 분할, 각 단계 독립 검증
+  2,컨텍스트관리,신선하게 유지, HANDOFF.md, 단일목적대화
+  3,추상화선택,Vibe Coding(높음) vs Deep Dive(낮음) 상황별
+  4,자동화²,3회반복→자동화, 자동화과정도 자동화
+  5,계획/실행,계획90%기본, 실행모드는 안전한환경에서만
+  6,검증회고,테스트작성, Draft PR, 자기검증요청
+AG[3]{agent,role}:
+  Claude,Orchestrator-계획/코드생성
+  Gemini,Analyst-대용량분석/리서치
+  Codex,Executor-명령실행/빌드
+R[3]:
+  활성도구 최소화
+  대화길어지면→HANDOFF.md
+  계획모드90%,실행10%
