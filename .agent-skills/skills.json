@@ -1,8 +1,13 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "generated": true,
-  "skill_count": 39,
+  "skill_count": 42,
   "categories": {
+    "claude-code": [
+      "claude-code-principles",
+      "claude-code-workflow",
+      "claude-code-configuration"
+    ],
     "infrastructure": [
       "deployment-automation",
       "firebase-ai-logic",
@@ -60,6 +65,36 @@
     ]
   },
   "skills": [
+    {
+      "name": "claude-code-principles",
+      "description": "Claude Code 에이전틱 개발의 핵심 원칙. 분해정복, 컨텍스트 관리, 추상화 수준 선택, 자동화 철학을 정의. Claude Code 사용 시 항상 참조하여 최적의 협업 패턴 적용.",
+      "category": "claude-code",
+      "path": "claude-code/claude-code-principles/SKILL.md",
+      "tags": ["claude-code", "agentic-development", "principles", "context-management", "automation"],
+      "platforms": ["Claude"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
+      "commands": []
+    },
+    {
+      "name": "claude-code-workflow",
+      "description": "Claude Code 실전 워크플로우와 생산성 기법. 명령어, 단축키, Git 통합, MCP 활용, 세션 관리 등 일상 개발 작업의 최적화 패턴 제공.",
+      "category": "claude-code",
+      "path": "claude-code/claude-code-workflow/SKILL.md",
+      "tags": ["claude-code", "workflow", "productivity", "git", "mcp", "commands"],
+      "platforms": ["Claude"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
+      "commands": []
+    },
+    {
+      "name": "claude-code-configuration",
+      "description": "Claude Code 설정 정책 및 보안 가이드. CLAUDE.md 작성법, Hooks/Skills/Plugins 설정, 보안 정책, 팀 공유 워크플로우 정의.",
+      "category": "claude-code",
+      "path": "claude-code/claude-code-configuration/SKILL.md",
+      "tags": ["claude-code", "configuration", "security", "CLAUDE-md", "hooks", "skills", "plugins"],
+      "platforms": ["Claude"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
+      "commands": []
+    },
     {
       "name": "deployment-automation",
       "description": "Automate application deployment to cloud platforms and servers. Use when setting up CI/CD pipelines, deploying to Docker/Kubernetes, or configuring cloud infrastructure. Handles GitHub Actions, Docker, Kubernetes, AWS, Vercel, and deployment best practices.",
