@@ -1,26 +1,9 @@
 N:agentic-development-principles
-D:AI 에이전트 협업의 범용 원칙. 분해정복, 컨텍스트 관리, 추상화 선택, 자동화 철학
-G:agentic-development principles context-management automation ai-collaboration universal
-U[6]:
-  AI 협업 세션 시작 시
-  복잡한 작업 전 접근법 결정
+D:AI 에이전트와 협업하는 에이전틱 개발의 범용 원칙. 분해정복, 컨텍스트 관리, 추상화 수준 선택, 자동화 철학을 정의. 모든 AI 코딩 도구에 적용 가능.
+G:agentic-development principles context-management automation ai-collaboration
+U[7]:
+  AI 에이전트와 협업 세션 시작 시
+  복잡한 작업 시작 전 접근 방식 결정
   컨텍스트 관리 전략 수립
-  생산성 향상 점검
-  팀 온보딩
-  새 AI 도구 도입 시
-P[6]{n,원칙,핵심}:
-  1,분해정복,큰 문제→작은 명확한 단계, 독립 검증 가능
-  2,컨텍스트관리,신선하게 유지, HANDOFF.md, 단일목적대화
-  3,추상화선택,Vibe Coding(높음) vs Deep Dive(낮음) 상황별
-  4,자동화²,3회반복→자동화, 자동화과정도 자동화
-  5,계획/실행균형,계획70-90%기본, 실행은 안전환경에서
-  6,검증회고,테스트작성, 코드리뷰, 자기검증요청
-G[3]{rule}:
-  명확하게(Specific)
-  단계별로(Step-by-step)
-  검증가능하게(Verifiable)
-R[4]:
-  단일목적대화
-  길어지면HANDOFF.md
-  계획모드70-90%
-  3회반복→자동화
+  생산성 향상을 위한 워크플로우 점검
+  팀원에게 AI 협업 사용법 온보딩

@@ -1,6 +1,6 @@
 # looker-studio-bigquery
 
-> Design and configure Looker Studio dashboards with BigQuery data sources. Use when creating analytics dashboards, connecting BigQuery to visualization tools, or optimizing data pipeline performance.
+> Design and configure Looker Studio dashboards with BigQuery data sources. Use when creating analytics dashboards, connecting BigQuery to visualizat...
 
 ## When to use this skill
 • **분석 대시보드 생성**: BigQuery 데이터를 시각화하여 비즈니스 인사이트 도출
@@ -11,58 +11,85 @@
 
 ## Instructions
 ▶ S1: GCP BigQuery 환경 준비
-프로젝트 생성, BigQuery API 활성화, 데이터셋/테이블 생성
-IAM 권한: BigQuery Data Viewer, BigQuery User, BigQuery Job User
-```bash
-gcloud projects create my-analytics-project
-gcloud services enable bigquery.googleapis.com
-```
-
-▶ S2: Looker Studio에서 BigQuery 연결
-네이티브 커넥터: + 만들기 → 데이터 소스 → BigQuery 선택 → 프로젝트/테이블 선택
-맞춤 SQL 쿼리: 복잡한 변환, 조인, 집계를 SQL로 처리
-```sql
-SELECT event_date, COUNT(DISTINCT user_id) as users, SUM(event_value) as revenue
-FROM `project.dataset.events`
-WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-GROUP BY event_date
-```
-
+**프로젝트 생성 및 활성화**
+Google Cloud Console에서 새 프로젝트를 생성하고 BigQuery API를 활성화합니다.
+**데이터셋 및 테이블 생성**
+**IAM 권한 설정**
+Looker Studio에서 BigQuery에 접근할 수 있도록 IAM 권한을 부여합니다:
+| 역할 | 설명 |
+|------|------|
+| `BigQuery Data Viewer` | 테이블 조회 권한 |
+| `BigQuery User` | 쿼리 실행 권한 |
+| `BigQuery Job User` | 작업 실행 권한 |
+▶ S2: Looker Studio에서 BigQuery 연결하기
+**네이티브 BigQuery 커넥터 사용 (권장)**
+1. Looker Studio 홈페이지에서 **+ 만들기** → **데이터 소스** 클릭
+2. "BigQuery"로 검색하여 Google BigQuery 커넥터 선택
+3. Google 계정으로 인증
+4. 프로젝트, 데이터셋, 테이블 선택
+5. **연결**을 클릭하여 데이터 소스 생성
+**맞춤 SQL 쿼리 방식**
+복잡한 데이터 변환이 필요할 때 SQL을 직접 작성합니다:
+**장점:**
+• 복잡한 데이터 변환을 SQL에서 처리
+• BigQuery에서 데이터를 미리 집계하여 쿼리 비용 절감
+• 매번 모든 데이터를 로드하지 않아 성능 향상
+**여러 테이블 조인 방식**
 ▶ S3: 스케줄된 쿼리로 성능 최적화
-미리 집계된 테이블 생성 → Looker Studio 연결 → 로딩 시간 50-80% 단축
-```sql
-CREATE OR REPLACE TABLE `project.looker_data.daily_summary` AS
-SELECT event_date, event_name, COUNT(DISTINCT user_id) as users, SUM(revenue) as revenue
-FROM `project.analytics.events`
-WHERE event_date = CURRENT_DATE() - 1
-GROUP BY event_date, event_name;
-```
-
+라이브 쿼리 대신 **스케줄된 쿼리**를 사용하여 주기적으로 데이터를 미리 계산합니다:
+BigQuery UI에서 **스케줄된 쿼리**로 설정:
+• 매일 자동 실행
+• 결과를 새로운 테이블에 저장
+• Looker Studio는 미리 계산된 테이블에 연결
+**장점:**
+• Looker Studio 로딩 시간 단축 (50-80%)
+• BigQuery 비용 절감 (스캔 데이터 감소)
+• 대시보드 새로고침 속도 향상
 ▶ S4: 대시보드 레이아웃 설계
-F-패턴: 헤더(필터) → KPI 타일(3-4개) → 주요 차트 → 상세 테이블 → 추가 인사이트
-차트 종류: 스코어카드(KPI), 라인(추세), 막대(비교), 테이블(상세), 맵(지역)
-
-▶ S5: 인터랙티브 필터
-필수: 날짜 범위 필터 (모든 차트에 반영)
-추가: 드롭다운(국가/카테고리), 체크박스, 슬라이더
-
+**F-패턴 레이아웃**
+사용자의 자연스러운 읽기 흐름을 따르는 F-패턴을 사용합니다:
+**대시보드 구성 요소**
+| 요소 | 목적 | 예시 |
+|------|------|------|
+| **헤더** | 대시보드 제목, 로고, 필터 배치 | "2026년 Q1 판매 분석" |
+| **KPI 타일** | 주요 지표 한눈에 표시 | 총 매출, 전월 대비 성장률, 활성 사용자 |
+| **추세 차트** | 시간 경과에 따른 변화 | 라인 차트로 일일/주간 매출 추이 |
+| **비교 차트** | 카테고리 간 비교 | 막대 차트로 지역/상품별 판매량 비교 |
+| **분포 차트** | 데이터 분포 시각화 | 히트맵, 산점도, 버블 차트 |
+| **상세 테이블** | 정확한 수치 제공 | 조건부 서식으로 임계값 강조 |
+| **맵** | 지리적 데이터 | 국가/지역별 매출 분포 |
+**실제 예시: 전자상거래 대시보드**
+▶ S5: 인터랙티브 필터 및 컨트롤
+**필터 종류**
+**1. 날짜 범위 필터** (필수)
+• 캘린더로 특정 기간 선택
+• "지난 7일", "이번 달" 같은 사전 정의 옵션
+• 데이터셋과 연결하여 모든 차트에 자동 반영
+**2. 드롭다운 필터**
+**3. 고급 필터** (SQL 기반)
+**필터 구현 예시**
 ▶ S6: 쿼리 성능 최적화
-파티션 키 사용, SELECT * 지양, 캐싱 활용 (Looker 3시간, BigQuery 6시간)
-대시보드당 차트 20-25개 이하
-
-▶ S7: Community Connector (고급)
-Apps Script로 커스텀 데이터 소스 개발
-서비스 계정 사용, 커스텀 캐싱, 파라미터화
-
+**1. 파티션 키 사용**
+**2. 데이터 추출 (Extract and Load)**
+매일 밤 Looker Studio 전용 테이블에 데이터를 추출합니다:
+**3. 캐싱 전략**
+• **Looker Studio 기본 캐싱**: 자동으로 3시간 동안 캐시
+• **BigQuery 캐싱**: 동일한 쿼리는 이전 결과 재사용 (6시간)
+• **스케줄된 쿼리 활용**: 야간에 미리 계산
+**4. 대시보드 복잡도 관리**
+• 한 대시보드에 최대 20-25개 차트만 사용
+• 차트가 많으면 여러 탭(페이지)으로 분산
+• 상관없는 메트릭끼리 그룹화하지 않기
+▶ S7: Community Connector 개발 (고급)
+더 복잡한 요구사항이 있다면 Community Connector를 개발합니다:
+**Community Connector의 장점:**
+• 중앙 집중식 청구 (서비스 계정 사용)
+• 커스텀 캐싱 로직
+• 사전 정의된 쿼리 템플릿
+• 사용자 설정 파라미터화
 ▶ S8: 보안 및 접근 제어
-BigQuery: GRANT, Row-Level Security
-Looker Studio: Viewer/Editor 권한, 데이터 소스별 권한 관리
-
-## Best practices
-1. 스케줄된 쿼리로 야간에 데이터 집계
-2. 파티션 키 직접 사용 (DATE 함수 대신)
-3. 대시보드당 차트 25개 이하
-4. 날짜 필터 필수, 추가 필터 3-5개
-5. 브랜드 색상 3-4가지로 통일
-6. 평균 로딩 시간 2-3초 목표
-7. 월 BigQuery 스캔량 5TB 이내
+**BigQuery 수준의 보안**
+**Looker Studio 수준의 보안**
+• 대시보드 공유 시 뷰어 권한 설정 (Viewer/Editor)
+• 특정 사용자/그룹에만 공유
+• 데이터 소스별 권한 관리

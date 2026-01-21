@@ -1,85 +1,25 @@
----
-name: project-init-memory
-description: Auto-remember and apply skillset configuration on project init
-tags: [project-init, memory, skillset, configuration, automation]
-platforms: [Claude, ChatGPT, Gemini]
----
+# project-init-memory
 
-# Project Init Memory
+> Automatically remember and apply skillset configuration when first running a project. Use when initializing projects in .skills-template or any pro...
 
-## When to Use
-- First project run in .skills-template
-- Session restoration needed
-- Team onboarding with consistent setup
-- Multi-project context switching
+## When to use this skill
+• **New Project Setup**: First time running Claude Code in a project
+• **Skillset Consistency**: Ensure same skillset is loaded across sessions
+• **Team Onboarding**: New team members get identical AI configuration
+• **Multi-Project Management**: Maintain different skillsets per project
+• **Session Restoration**: Resume work with previous context
 
-## Core Concept
+## Instructions
+▶ S1: Check for Existing Configuration
+If no configuration exists, proceed to Step 2.
+▶ S2: Detect Available Skills
+▶ S3: Initialize Project Memory
+Create `.claude/project-memory.json`:
+▶ S4: Generate CLAUDE.md with Memory
 
-Store project config in `.claude/project-memory.json`:
-```json
-{
-  "version": "1.0.0",
-  "skillset": {
-    "source": ".skills-template/.agent-skills",
-    "token_mode": "toon",
-    "active_skills": []
-  },
-  "environment": {
-    "workflow_type": "full-multiagent",
-    "mcp_servers": ["gemini-cli", "codex-cli"]
-  },
-  "project_context": {
-    "name": "", "type": "", "language": ""
-  },
-  "session_history": []
-}
-```
-
-## Workflow
-
-### Initialize (No Memory Exists)
-```bash
-[ ! -f .claude/project-memory.json ] && {
-  mkdir -p .claude
-  [ -d .skills-template/.agent-skills ] && \
-    cd .skills-template/.agent-skills && ./setup.sh --silent
-  # Create memory file
-}
-```
-
-### Restore (Memory Exists)
-```bash
-[ -f .claude/project-memory.json ] && {
-  SKILLSET=$(jq -r '.skillset.source' .claude/project-memory.json)
-  source "$SKILLSET/mcp-shell-config.sh"
-}
-```
-
-### Update (On Changes)
-```bash
-# Update lastUpdated timestamp
-# Append to session_history
-# Preserve user customizations
-```
-
-## Rules
-
-| MUST | MUST NOT |
-|------|----------|
-| Check before overwrite | Store secrets in memory |
-| Use toon mode default | Delete user history |
-| Version memory file | Modify outside .claude/ |
-| ISO 8601 timestamps | Overwrite without backup |
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Memory not loading | `mkdir -p .claude && rm -f .claude/project-memory.json` |
-| Wrong skillset | Update `.skillset.source` in memory JSON |
-| Token mode ignored | Force `jq '.skillset.token_mode = "toon"'` |
-
-## Related Skills
-- environment-setup
-- skill-standardization
-- mcp-codex-integration
+## Best practices
+1. Always Check First
+2. Use toon Mode by Default
+3. Version Your Memory
+4. Session History Rotation
+5. Sensitive Data Handling

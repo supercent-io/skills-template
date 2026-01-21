@@ -1,39 +1,9 @@
 N:agent-configuration
-D:AI 에이전트 설정 정책 및 보안 가이드. 프로젝트 설명 파일, Hooks, Skills, 보안 정책
-G:agent-configuration security hooks skills plugins multi-agent
-PL:[Claude,Gemini,ChatGPT,Codex]
-U[5]:
-  새 프로젝트 환경 구축
-  프로젝트 설명 파일 작성/최적화
-  Hooks/Skills 설정
+D:AI 에이전트 설정 정책 및 보안 가이드. 프로젝트 설명 파일 작성법, Hooks/Skills/Plugins 설정, 보안 정책, 팀 공유 워크플로우 정의.
+G:agent-configuration security hooks skills plugins
+U[6]:
+  새 프로젝트에 AI 에이전트 환경 구축
+  프로젝트 설명 파일 작성 및 최적화
+  Hooks/Skills/Plugins 설정
   보안 정책 수립
   팀 설정 공유
-PRJ[4]{section}:
-  Tech Stack,기술스택 명시
-  Coding Standards,코딩규칙
-  DO NOT,금지사항 명확히
-  Common Commands,주요 명령어
-H[4]{hook,용도}:
-  PreToolUse,위험 명령어 차단
-  PostToolUse,로그/알림
-  PermissionRequest,자동 승인/거부
-  SubagentStop,결과 수집
-DENY[5]:
-  rm -rf /,루트삭제
-  curl | sh,파이프 스크립트
-  sudo rm,sudo 삭제
-  chmod 777,과도한 권한
-  무제한권한모드,컨테이너에서만
-SAFE[4]{cmd}:
-  npm test
-  npm run lint
-  git status
-  git diff
-P[3]{file,loc}:
-  settings.json,~/.claude/ or .claude/
-  skills/,~/.claude/skills/ or .agent-skills/
-  프로젝트설명파일,프로젝트 루트
-R[3]:
-  간결한 프로젝트 설명 (반복시 추가)
-  Hooks로 가드레일
-  cc-safe로 정기 감사

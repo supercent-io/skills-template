@@ -4,7 +4,7 @@
 > **Claude Code 완전 가이드 70가지 팁 적용** - 에이전틱 개발 정책 강화
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-51-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-52-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 [![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-quick-start)
@@ -243,7 +243,7 @@ graph TB
 
 ---
 
-## Skills Overview (51 Total)
+## Skills Overview (52 Total)
 
 ```mermaid
 pie showData
@@ -255,7 +255,7 @@ pie showData
     "Documentation" : 4
     "Project-Mgmt" : 7
     "Search-Analysis" : 4
-    "Utilities" : 13
+    "Utilities" : 14
 ```
 
 | Category | Count | Skills |
@@ -267,7 +267,7 @@ pie showData
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 13 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` |
+| **Utilities** | 14 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` |
 
 ---
 
@@ -388,12 +388,16 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.9.0 | **Updated**: 2026-01-21 | **Skills**: 51 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.10.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+
+**Changelog v3.10.0**:
+- **Prompt Repetition 스킬 추가**: 경량 모델(haiku, flash, mini) 정확도 67% 향상
+  - `utilities/prompt-repetition` 스킬 및 Python 변환기 추가
+  - 경량 모델 자동 적용 (claude-haiku, gemini-flash, gpt-4o-mini)
+  - Google Research 2025 논문 기반 (47/70 벤치마크 개선, 0 패배)
+  - 마커 기반 중복 적용 방지로 Multi-Agent 환경 지원
 
 **Changelog v3.9.0**:
 - **OpenContext 통합**: AI 에이전트 영구 메모리/컨텍스트 관리 기능 추가
-  - `utilities/opencontext` 스킬 추가
-  - setup.sh에 OpenContext MCP 자동 설치 지원
-  - 일일 워크플로우: 작업 전(context) → 작업 중(search) → 작업 후(iterate)
 - Claude-Code 전용 스킬을 범용 카테고리로 재구성 완료
 - Multi-Agent 플랫폼 지원 확장 (Claude, Gemini, ChatGPT, Codex, Cursor)

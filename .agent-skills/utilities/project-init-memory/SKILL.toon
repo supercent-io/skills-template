@@ -1,50 +1,14 @@
-# project-init-memory [toon]
-
-## WHEN
-- First project run in .skills-template
-- Session restore needed
-- Team onboarding
-- Multi-project switching
-
-## CORE
-```
-.claude/project-memory.json = {
-  skillset: { source, token_mode: "toon", active_skills },
-  environment: { workflow_type, mcp_servers },
-  project_context: { name, type, language, frameworks },
-  session_history: []
-}
-```
-
-## FLOW
-1. Check `.claude/project-memory.json` exists
-2. If NO: detect skills -> run setup.sh --silent -> create memory
-3. If YES: load skillset -> restore context -> apply settings
-4. Update session_history on changes
-
-## INIT
-```bash
-# Auto-init pattern
-[ ! -f .claude/project-memory.json ] && {
-  mkdir -p .claude
-  [ -d .skills-template/.agent-skills ] && cd .skills-template/.agent-skills && ./setup.sh --silent
-  echo '{"version":"1.0.0","skillset":{"token_mode":"toon"}}' > .claude/project-memory.json
-}
-```
-
-## RESTORE
-```bash
-# Load saved config
-[ -f .claude/project-memory.json ] && {
-  source $(jq -r '.skillset.source' .claude/project-memory.json)/mcp-shell-config.sh
-}
-```
-
-## RULES
-- MUST check before overwrite
-- MUST use toon mode default
-- NEVER store secrets
-- UPDATE timestamp each session
-
-## RELATED
-environment-setup, skill-standardization, mcp-codex-integration
+N:project-init-memory
+D:Automatically remember and apply skillset configuration when first running a project. Use when in...
+G:project-init memory skillset configuration automation
+U[5]:
+  **New Project Setup**: First time running Claude Code in a p
+  **Skillset Consistency**: Ensure same skillset is loaded acr
+  **Team Onboarding**: New team members get identical AI confi
+  **Multi-Project Management**: Maintain different skillsets p
+  **Session Restoration**: Resume work with previous context
+S[4]{n,action}:
+  1,Check for Existing Configuration
+  2,Detect Available Skills
+  3,Initialize Project Memory
+  4,Generate CLAUDE.md with Memory

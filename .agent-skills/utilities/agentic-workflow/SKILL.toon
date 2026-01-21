@@ -1,45 +1,9 @@
 N:agentic-workflow
-D:AI 에이전트 실전 워크플로우. 명령어, 단축키, Git, MCP, 세션 관리 최적화 패턴
-G:agentic-workflow productivity git mcp commands multi-agent
-PL:[Claude,Gemini,ChatGPT,Codex]
-U[5]:
-  일상 AI 에이전트 작업 최적화
+D:AI 에이전트 실전 워크플로우와 생산성 기법. 명령어, 단축키, Git 통합, MCP 활용, 세션 관리 등 일상 개발 작업의 최적화 패턴 제공.
+G:agentic-workflow productivity git mcp commands
+U[6]:
+  일상적인 AI 에이전트 작업 최적화
   Git/GitHub 워크플로우 통합
   MCP 서버 활용
   세션 관리 및 복구
-  생산성 향상
-C[8]{cmd,func}:
-  /init,프로젝트 설명 파일 생성
-  /clear,컨텍스트 초기화
-  /context,사용량 X-Ray
-  /usage,토큰 확인
-  /clone,대화 복제
-  /mcp,MCP 서버 관리
-  /sandbox,자동승인 설정
-  !cmd,즉시 실행
-K[6]{key,func}:
-  EscEsc,작업취소
-  Ctrl+R,히스토리검색
-  Shift+Tab×2,계획모드
-  Ctrl+B,백그라운드
-  Ctrl+G,외부에디터
-  Tab,제안수락
-S[5]{alias}:
-  c=claude
-  cc=claude --continue
-  g=gemini
-  cx=codex
-MA[3]{agent,role}:
-  Claude,Orchestrator-계획/코드생성
-  Gemini,Analyst-대용량분석
-  Codex,Executor-명령실행
-M[5]{mcp,func}:
-  Playwright,웹브라우저제어
-  Supabase,DB쿼리
-  Gemini-CLI,대용량분석
-  Codex-CLI,명령실행
-  Firecrawl,웹크롤링
-R[3]:
-  MCP<10,도구<80
-  실험→컨테이너에서
-  컨텍스트과다→/clear
+  생산성 향상 기법 적용

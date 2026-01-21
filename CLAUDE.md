@@ -1,7 +1,7 @@
 # Agent Skills - Full Multi-Agent Workflow
 
 > 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
-> Generated: 2026-01-13 | Workflow: full-multiagent | Preset: balanced
+> Generated: 2026-01-21 | Workflow: full-multiagent | Preset: balanced
 
 ## Agent Roles & Status
 
