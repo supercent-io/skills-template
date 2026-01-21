@@ -10,6 +10,7 @@
 | **Claude Code** | Orchestrator | ✅ Integrated | 계획 수립, 코드 생성, 스킬 해석 |
 | **Gemini-CLI** | Analyst | ✅ Integrated | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
 | **Codex-CLI** | Executor | ✅ Integrated | 명령 실행, 빌드, 배포, Docker/K8s |
+| **OpenContext** | Memory | ✅ Integrated | 영구 컨텍스트 저장, 프로젝트 문서 관리 |
 
 ## Model Configuration (balanced)
 
@@ -70,5 +71,51 @@ gemini-skill "query" compact          # compact mode (88% 절감)
 gemini-skill "query" full             # 상세 모드
 ```
 
+## OpenContext (Persistent Memory)
+
+프로젝트 문서와 컨텍스트를 영구 저장하고 검색할 수 있습니다.
+
+### 기본 사용법
+```bash
+# 문서 검색
+oc_search "API 설계 패턴"
+
+# 폴더 생성
+oc_folder_create "project-name/docs"
+
+# 문서 생성 및 저장
+oc_create_doc "project-name/docs" "api-spec.md" "API 스펙 문서"
+
+# 문서 목록 조회
+oc_list_docs "project-name/docs"
+
+# stable link로 문서 참조
+oc_get_link "project-name/docs/api-spec.md"
+```
+
+### 컨텍스트 저장 위치
+```
+~/.opencontext/contexts/
+├── .ideas/inbox/     # 아이디어 저장소
+└── [project-name]/   # 프로젝트별 문서
+```
+
+### 검색 활성화 (OpenAI API 키 필요)
+```bash
+# 환경변수 또는 config.toml 설정
+export OPENAI_API_KEY="sk-..."
+# 또는: ~/.opencontext/config.toml 편집
+```
+
+### 자동 설정 (setup.sh)
+```bash
+# OpenContext 환경 자동 설정
+cd .agent-skills && ./setup.sh --auto
+
+# 또는 유틸리티 메뉴에서 OpenContext 프로젝트 초기화
+./setup.sh
+# → 3) 유틸리티 → 9) OpenContext 프로젝트 초기화
+```
+
 ---
-**Version**: 3.0.0 | **Generated**: $(date +%Y-%m-%d)
+**Version**: 3.1.0 | **Generated**: 2026-01-21

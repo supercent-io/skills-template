@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.4.0
+# Agent Skills Setup Script v3.5.0
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
-# Supports: Claude Code, Gemini-CLI, Codex-CLI, OpenContext
+# Supports: Claude Code, Gemini-CLI, Codex-CLI, OpenContext (Enhanced)
 #
 # Usage:
 #   ./setup.sh              # Interactive mode
@@ -67,7 +67,7 @@ parse_arguments() {
 
 show_help() {
     cat << 'EOF'
-Agent Skills Setup Script v3.4.0
+Agent Skills Setup Script v3.5.0
 
 Usage:
   ./setup.sh                Interactive mode (default)
@@ -839,6 +839,9 @@ run_diagnostics() {
     if ! $HAS_CODEX_MCP && $HAS_CLAUDE_CLI; then
         recommendations+=("Add Codex MCP for execution: claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp")
     fi
+    if ! $HAS_OPENCONTEXT && $HAS_CLAUDE_CLI; then
+        recommendations+=("Add OpenContext for persistent memory: claude mcp add opencontext -s user -- npx -y @anthropic-ai/opencontext-mcp")
+    fi
     if [ ! -f "$AGENT_SKILLS_DIR/agent-routing.yaml" ]; then
         recommendations+=("Generate routing config: Run setup.sh --auto")
     fi
@@ -1066,6 +1069,10 @@ generate_claude_md_dynamic() {
     local workflow_label=""
     local gemini_status="❌ Not Integrated"
     local codex_status="❌ Not Integrated"
+    local opencontext_status="❌ Not Integrated"
+
+    # Check OpenContext status
+    $HAS_OPENCONTEXT && opencontext_status="✅ Integrated"
 
     # Determine labels
     case "$WORKFLOW_TYPE" in
@@ -1103,6 +1110,7 @@ generate_claude_md_dynamic() {
 | **Claude Code** | Orchestrator | ✅ Integrated | 계획 수립, 코드 생성, 스킬 해석 |
 | **Gemini-CLI** | Analyst | $gemini_status | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
 | **Codex-CLI** | Executor | $codex_status | 명령 실행, 빌드, 배포, Docker/K8s |
+| **OpenContext** | Memory | $opencontext_status | 영구 컨텍스트 저장, 프로젝트 문서 관리 |
 
 ## Model Configuration ($PERFORMANCE_PRESET)
 
@@ -1255,14 +1263,60 @@ EOF
 | `utilities/` | Git, 환경 설정 |
 
 ### Skill Query (Token-Optimized)
-```bash
+\`\`\`bash
 gemini-skill "API 설계해줘"           # toon mode (95% 절감)
 gemini-skill "query" compact          # compact mode (88% 절감)
 gemini-skill "query" full             # 상세 모드
+\`\`\`
+
+EOF
+
+    # Add OpenContext section if available
+    if $HAS_OPENCONTEXT; then
+        cat >> "$PROJECT_DIR/CLAUDE.md" << 'EOF'
+## OpenContext (Persistent Memory)
+
+프로젝트 문서와 컨텍스트를 영구 저장하고 검색할 수 있습니다.
+
+### 기본 사용법
+```bash
+# 문서 검색
+oc_search "API 설계 패턴"
+
+# 폴더 생성
+oc_folder_create "project-name/docs"
+
+# 문서 생성 및 저장
+oc_create_doc "project-name/docs" "api-spec.md" "API 스펙 문서"
+
+# 문서 목록 조회
+oc_list_docs "project-name/docs"
+
+# stable link로 문서 참조
+oc_get_link "project-name/docs/api-spec.md"
 ```
 
+### 컨텍스트 저장 위치
+```
+~/.opencontext/contexts/
+├── .ideas/inbox/     # 아이디어 저장소
+└── [project-name]/   # 프로젝트별 문서
+```
+
+### 검색 활성화 (OpenAI API 키 필요)
+```bash
+# 환경변수 또는 config.toml 설정
+export OPENAI_API_KEY="sk-..."
+# 또는: ~/.opencontext/config.toml 편집
+```
+
+EOF
+    fi
+
+    # Add final version line
+    cat >> "$PROJECT_DIR/CLAUDE.md" << EOF
 ---
-**Version**: 3.0.0 | **Generated**: $(date +%Y-%m-%d)
+**Version**: 3.1.0 | **Generated**: $(date +%Y-%m-%d)
 EOF
 
     print_success "CLAUDE.md 생성 완료 ($workflow_label)"
@@ -1313,29 +1367,118 @@ add_opencontext_mcp() {
         return 0
     fi
 
-    # Check if opencontext CLI is installed
-    if ! command -v oc &> /dev/null; then
-        print_info "OpenContext CLI 설치 중..."
-        if npm install -g @aicontextlab/cli 2>/dev/null; then
-            print_success "OpenContext CLI 설치 완료"
-        else
-            print_warning "OpenContext CLI 설치 실패"
-            print_info "수동 설치: npm install -g @aicontextlab/cli"
-            return 1
-        fi
-    fi
-
     print_info "opencontext MCP 서버 추가 중..."
-    # Use 'oc mcp' command (OpenContext CLI provides MCP server)
-    if claude mcp add opencontext -s user -- oc mcp 2>/dev/null; then
+    # OpenContext MCP uses npx
+    if claude mcp add opencontext -s user -- npx -y @anthropic-ai/opencontext-mcp 2>/dev/null; then
         HAS_OPENCONTEXT=true
-        print_success "opencontext 추가 완료"
+        print_success "opencontext MCP 추가 완료"
+        # Initialize OpenContext after adding MCP
+        setup_opencontext_environment
         return 0
     else
-        print_error "opencontext 추가 실패"
-        print_info "수동 설치: claude mcp add opencontext -s user -- oc mcp"
+        print_error "opencontext MCP 추가 실패"
+        print_info "수동 설치: claude mcp add opencontext -s user -- npx -y @anthropic-ai/opencontext-mcp"
         return 1
     fi
+}
+
+# ============================================================
+# 8.1 OpenContext Environment Setup
+# ============================================================
+setup_opencontext_environment() {
+    local OC_DIR="$HOME/.opencontext"
+    local OC_CONTEXTS="$OC_DIR/contexts"
+    local OC_CONFIG="$OC_DIR/config.toml"
+
+    print_info "OpenContext 환경 설정 중..."
+
+    # Create base directories
+    mkdir -p "$OC_CONTEXTS"
+    mkdir -p "$OC_DIR/agents"
+    mkdir -p "$OC_DIR/lancedb"
+
+    # Create config.toml if not exists
+    if [ ! -f "$OC_CONFIG" ]; then
+        cat > "$OC_CONFIG" << 'OCCONFIG'
+# OpenContext Configuration
+# https://github.com/anthropics/opencontext
+
+[embedding]
+# OpenAI API 키 설정 (검색 인덱스 활성화에 필요)
+# 아래 값을 실제 API 키로 교체하세요
+api_key = ""
+
+# 사용할 임베딩 모델 (기본값)
+model = "text-embedding-3-small"
+
+[search]
+# 검색 결과 기본 개수
+default_limit = 10
+
+# 검색 모드: hybrid, vector, keyword
+default_mode = "hybrid"
+
+[contexts]
+# 컨텍스트 저장 경로 (기본값)
+path = "~/.opencontext/contexts"
+OCCONFIG
+        print_success "config.toml 생성됨: $OC_CONFIG"
+    fi
+
+    # Create default folder structure
+    mkdir -p "$OC_CONTEXTS/.ideas/inbox"
+
+    # Create project folder if in git repo
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        local PROJECT_NAME=$(basename "$PROJECT_DIR")
+        mkdir -p "$OC_CONTEXTS/$PROJECT_NAME"
+        print_success "프로젝트 폴더 생성됨: $OC_CONTEXTS/$PROJECT_NAME"
+    fi
+
+    # Check if API key is configured
+    if grep -q 'api_key = ""' "$OC_CONFIG" 2>/dev/null; then
+        echo ""
+        print_warning "OpenContext 검색 기능 활성화를 위해 OpenAI API 키 설정이 필요합니다."
+        echo ""
+        echo "  설정 방법:"
+        echo "  1) 환경변수: export OPENAI_API_KEY=\"sk-...\""
+        echo "  2) config 파일: $OC_CONFIG 편집"
+        echo ""
+    fi
+
+    print_success "OpenContext 환경 설정 완료"
+}
+
+# ============================================================
+# 8.2 Initialize OpenContext for Current Project
+# ============================================================
+init_opencontext_project() {
+    local OC_CONTEXTS="$HOME/.opencontext/contexts"
+    local PROJECT_NAME=$(basename "$PROJECT_DIR")
+    local PROJECT_OC_DIR="$OC_CONTEXTS/$PROJECT_NAME"
+
+    print_info "OpenContext 프로젝트 초기화: $PROJECT_NAME"
+
+    # Create project folder structure
+    mkdir -p "$PROJECT_OC_DIR"
+
+    # Create project manifest
+    cat > "$PROJECT_OC_DIR/.manifest.json" << EOF
+{
+  "name": "$PROJECT_NAME",
+  "description": "OpenContext documents for $PROJECT_NAME project",
+  "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "folders": []
+}
+EOF
+
+    print_success "프로젝트 폴더 생성됨: $PROJECT_OC_DIR"
+    echo ""
+    echo "  OpenContext 사용법:"
+    echo "  - 문서 검색: oc_search \"검색어\""
+    echo "  - 폴더 생성: oc_folder_create \"$PROJECT_NAME/docs\""
+    echo "  - 문서 생성: oc_create_doc \"$PROJECT_NAME/docs\" \"README.md\""
+    echo ""
 }
 
 # ============================================================
@@ -1600,9 +1743,10 @@ utilities_menu() {
     echo -e "  ${GREEN}6) 모델 설정 (Model Config)${NC}"
     echo -e "  ${CYAN}7) 시스템 진단 (Diagnostics)${NC}"
     echo -e "  ${YELLOW}8) MCP 서버 헬스 체크${NC}"
-    echo "  9) 돌아가기"
+    echo -e "  ${BLUE}9) OpenContext 프로젝트 초기화${NC}"
+    echo "  0) 돌아가기"
     echo ""
-    read -p "선택 (1-9): " util_choice
+    read -p "선택 (0-9): " util_choice
 
     case "$util_choice" in
         1)
@@ -1656,6 +1800,19 @@ utilities_menu() {
             fi
             ;;
         9)
+            if $HAS_OPENCONTEXT; then
+                init_opencontext_project
+            else
+                print_warning "OpenContext MCP가 설치되어 있지 않습니다."
+                echo ""
+                read -p "지금 설치하시겠습니까? [y/n]: " install_oc
+                if [[ "$install_oc" =~ ^[Yy]$ ]]; then
+                    add_opencontext_mcp
+                    init_opencontext_project
+                fi
+            fi
+            ;;
+        0)
             return 0
             ;;
     esac
