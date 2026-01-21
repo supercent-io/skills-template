@@ -7,7 +7,94 @@
 [![Skills](https://img.shields.io/badge/Skills-52-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
-[![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-quick-start)
+[![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-ai-agent-installation)
+
+---
+
+## AI Agent Installation
+
+> **LLM 기반 설치를 지원합니다.** AI 에이전트에게 아래 프롬프트를 입력하세요.
+
+### One-Liner 설치 프롬프트 (권장)
+
+AI 에이전트(Claude Code, Gemini, ChatGPT 등)에게 다음 프롬프트를 입력하세요:
+
+```
+https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해 (기존 폴더가 있으면 덮어쓰기). 그 후 setup.sh를 --silent 모드로 실행하고, 임시 클론 폴더는 삭제해.
+```
+
+### 설치 모드별 옵션
+
+| 모드 | 프롬프트 | 설명 |
+|------|---------|------|
+| **Silent (권장)** | `setup.sh --silent` | 자동 감지, 기본값 적용 |
+| **Auto** | `setup.sh --auto` | 대화형 없이 전체 설정 |
+| **Quick** | `setup.sh --quick` | 토큰 최적화 파일만 생성 |
+| **Interactive** | `setup.sh` | 단계별 대화형 설정 |
+
+### AI Agent별 설치 가이드
+
+#### Claude Code
+```bash
+# 1. 프롬프트 입력 후 AI가 자동 설치
+# 2. 설치 완료 후 확인
+cd .agent-skills && ./setup.sh --diagnose
+```
+
+#### Gemini CLI
+```bash
+# Gemini에서 동일한 프롬프트 사용
+# Shell 도구로 자동 설치 수행
+```
+
+#### ChatGPT (Code Interpreter)
+```bash
+# 프롬프트 입력 → ChatGPT가 shell 명령 실행
+# Knowledge Base에 스킬 ZIP 업로드도 가능
+```
+
+### 수동 설치 (개발자용)
+
+```bash
+# 1. 저장소 클론
+git clone https://github.com/supercent-io/skills-template.git /tmp/skills-template
+
+# 2. .agent-skills 복사
+cp -rf /tmp/skills-template/.agent-skills .
+
+# 3. 설정 실행
+chmod +x .agent-skills/setup.sh && .agent-skills/setup.sh --silent
+
+# 4. 정리
+rm -rf /tmp/skills-template
+```
+
+### 설치 후 검증
+
+```bash
+# 시스템 진단
+.agent-skills/setup.sh --diagnose
+
+# 예상 출력:
+# ✅ Python3
+# ✅ Claude CLI
+# ✅ gemini-cli MCP Server
+# ✅ codex-cli MCP Server
+# Workflow Type: full-multiagent
+```
+
+### MCP 서버 연동 (Claude Code 전용)
+
+```bash
+# Gemini-CLI MCP 추가 (대용량 분석)
+claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
+
+# Codex-CLI MCP 추가 (명령 실행)
+claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
+
+# OpenContext MCP 추가 (영구 메모리)
+claude mcp add opencontext -s user -- oc mcp
+```
 
 ---
 
@@ -26,7 +113,7 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 ```
 
-### Gemini CLI 설치 (2026)
+### Gemini CLI 설치
 
 ```bash
 # npm으로 설치 (Google 공식)
@@ -37,12 +124,9 @@ gemini --version
 
 # API 키 설정
 export GEMINI_API_KEY=your_api_key
-
-# Claude Code MCP 연동 (선택)
-claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
 ```
 
-### Codex CLI 설치 (2026)
+### Codex CLI 설치
 
 ```bash
 # npm으로 설치 (OpenAI 공식)
@@ -53,9 +137,6 @@ codex --version
 
 # API 키 설정
 export OPENAI_API_KEY=your_api_key
-
-# Claude Code MCP 연동 (선택)
-claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
 ```
 
 ### OpenContext CLI 설치 (AI 영구 메모리)
@@ -66,9 +147,6 @@ npm install -g @aicontextlab/cli
 
 # 프로젝트 초기화
 cd your-project && oc init
-
-# Claude Code MCP 연동 (선택)
-claude mcp add opencontext -s user -- oc mcp
 ```
 
 **OpenContext 핵심 명령어:**
@@ -77,121 +155,6 @@ claude mcp add opencontext -s user -- oc mcp
 /opencontext-search     # 기존 문서 검색
 /opencontext-create     # 새 문서 작성
 /opencontext-iterate    # 결론 저장
-```
-
----
-
-## Claude Code 완전 정복 정책
-
-> 70가지 팁 기반의 에이전틱 개발 정책 (ykdojo + Ado Kukic 검증)
-
-### 핵심 6대 원칙
-
-| 원칙 | 핵심 내용 | 적용 방법 |
-|------|----------|----------|
-| **1. 분해정복** | 큰 문제 → 작은 단계 | 각 단계 독립 검증 가능하게 분할 |
-| **2. 컨텍스트 관리** | 신선하게 유지 | 단일 목적 대화, HANDOFF.md, `/clear` |
-| **3. 추상화 선택** | 상황별 깊이 조절 | Vibe Coding ↔ Deep Dive |
-| **4. 자동화²** | 반복 → 자동화 | 3회 반복 시 자동화 방법 탐색 |
-| **5. 계획/YOLO** | 기본 계획 모드 | 계획 90%, YOLO는 컨테이너에서만 |
-| **6. 검증 회고** | 출력 검증 필수 | 테스트, Draft PR, 자기 검증 |
-
-### 필수 명령어 정책
-
-```bash
-# 세션 시작 시 (필수)
-/usage          # 토큰 한도 확인
-
-# 작업 중 (상시)
-/context        # 컨텍스트 상태 확인 (성능 저하 시)
-Esc Esc         # 잘못된 작업 즉시 취소
-
-# 컨텍스트 관리 (50k 토큰 초과 시)
-/clear          # 컨텍스트 초기화
-# 또는 HANDOFF.md 생성 후 새 세션
-```
-
-### 보안 정책 (필수 준수)
-
-#### ❌ 절대 금지
-```
-- 호스트 시스템에서 --dangerously-skip-permissions 사용
-- rm -rf /, sudo rm 등 위험 명령어 자동 승인
-- .env, credentials.json 등 시크릿 파일 커밋
-- API 키 하드코딩
-```
-
-#### ⚠️ 주의 필요
-```
-- curl | sh 형태의 스크립트 실행
-- chmod 777 과도한 권한 설정
-- 알 수 없는 MCP 서버 연결
-```
-
-#### ✅ 권장 사항
-```bash
-# 안전한 자동 승인만 설정
-/sandbox "npm test"
-/sandbox "npm run lint"
-/sandbox "git status"
-
-# 정기적 보안 감사
-npx cc-safe .
-```
-
-### 컨텍스트 최적화 지표
-
-| 지표 | 권장 값 | 조치 |
-|------|---------|------|
-| MCP 서버 | < 10개 | 불필요한 MCP 비활성화 |
-| 활성 도구 | < 80개 | `/mcp`로 관리 |
-| 대화 토큰 | < 50k | HANDOFF.md 또는 `/clear` |
-| 계획 모드 비율 | 90% | 기본값으로 사용 |
-
----
-
-## For AI Agents (AI 에이전트용 설정)
-
-> **LLM 기반 설치만 지원합니다.** Claude Code, Gemini, ChatGPT 등 AI 에이전트에게 아래 프롬프트를 입력하세요.
-
-### LLM 설치 프롬프트 (권장)
-
-```
-https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해 (기존 폴더가 있으면 덮어쓰기). 그 후 setup.sh를 --silent 모드로 실행하고, 임시 클론 폴더는 삭제해.
-```
-
-### AI Agent 예상 실행 단계
-
-```bash
-# 1. 저장소 클론
-git clone https://github.com/supercent-io/skills-template.git _tmp_skills
-
-# 2. 기존 폴더 있으면 삭제 후 복사
-rm -rf .agent-skills 2>/dev/null; cp -r _tmp_skills/.agent-skills .
-
-# 3. setup.sh 실행 (silent 모드)
-cd .agent-skills && chmod +x setup.sh && ./setup.sh --silent
-
-# 4. 임시 폴더 삭제
-cd .. && rm -rf _tmp_skills
-```
-
-### AI Agent별 설치 상태
-
-| AI Agent | 설치 방법 | 상태 |
-|----------|----------|------|
-| **Claude Code** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
-| **Gemini** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
-| **ChatGPT** | 위 프롬프트 입력 → AI가 자동 설치 | ✅ 자동 |
-
-### MCP 서버 연동 (Claude Code 전용)
-
-```bash
-# Gemini-CLI MCP 추가 (대용량 분석)
-claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
-
-# Codex-CLI MCP 추가 (명령 실행)
-claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
 ```
 
 ---
@@ -233,13 +196,23 @@ graph TB
     style TN fill:#fff3e0
 ```
 
-### Agent Roles (2026 Models)
+### Agent Roles
 
 | Agent | Role | Model | Best For |
 |-------|------|-------|----------|
-| **Claude Code** | Orchestrator | `claude-opus-4-5-20251101` | 계획 수립, 코드 생성, 스킬 해석 |
+| **Claude Code** | Orchestrator | `claude-opus-4-5` | 계획 수립, 코드 생성, 스킬 해석 |
 | **Gemini CLI** | Analyst | `gemini-3-pro` | 대용량 분석 (2M+ 토큰), 리서치 |
 | **Codex CLI** | Executor | `gpt-5.2-codex` | 명령 실행, 빌드, 배포 |
+
+### Workflow Types (Auto-Detected)
+
+| Type | 조건 | 설명 |
+|------|------|------|
+| `standalone` | CLI 없음 | 기본 스킬만 사용 |
+| `claude-only` | Claude만 있음 | 내장 Bash 사용 |
+| `claude-gemini` | +Gemini | 대용량 분석/리서치 |
+| `claude-codex` | +Codex | 실행/배포 자동화 |
+| `full-multiagent` | 모두 있음 | 풀 오케스트레이션 |
 
 ---
 
@@ -267,7 +240,7 @@ pie showData
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 14 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` |
+| **Utilities** | 14 | `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` `agentic-development-principles` |
 
 ---
 
@@ -277,36 +250,69 @@ pie showData
 
 | Mode | File | Avg Tokens | Reduction | Use Case |
 |:-----|:-----|:-----------|:----------|:---------|
-| **full** | SKILL.md | ~2,000 | - | 상세 예시 필요 시 |
-| **compact** | SKILL.compact.md | ~250 | 88% | 일반 작업 |
-| **toon** | SKILL.toon | ~110 | 95% | 빠른 참조 (기본값) |
+| **full** | SKILL.md | ~2,198 | - | 상세 예시 필요 시 |
+| **compact** | SKILL.compact.md | ~270 | 87.7% | 일반 작업 |
+| **toon** | SKILL.toon | ~112 | 94.9% | 빠른 참조 (기본값) |
 
 ```bash
 # 토큰 최적화 파일 생성
 python3 .agent-skills/scripts/generate_compact_skills.py
+
+# 토큰 통계 확인
+python3 .agent-skills/skill-query-handler.py stats
 ```
 
 ---
 
-## Quick Reference Card
+## Claude Code 정책
 
-### Claude Code 필수 명령어
+> 70가지 팁 기반의 에이전틱 개발 정책 (ykdojo + Ado Kukic 검증)
+
+### 핵심 6대 원칙
+
+| 원칙 | 핵심 내용 | 적용 방법 |
+|------|----------|----------|
+| **1. 분해정복** | 큰 문제 → 작은 단계 | 각 단계 독립 검증 가능하게 분할 |
+| **2. 컨텍스트 관리** | 신선하게 유지 | 단일 목적 대화, HANDOFF.md, `/clear` |
+| **3. 추상화 선택** | 상황별 깊이 조절 | Vibe Coding ↔ Deep Dive |
+| **4. 자동화²** | 반복 → 자동화 | 3회 반복 시 자동화 방법 탐색 |
+| **5. 계획/YOLO** | 기본 계획 모드 | 계획 90%, YOLO는 컨테이너에서만 |
+| **6. 검증 회고** | 출력 검증 필수 | 테스트, Draft PR, 자기 검증 |
+
+### 필수 명령어
 
 ```bash
-# 세션 관리
-/usage          토큰 사용량 확인
-/context        컨텍스트 X-Ray
-/clear          컨텍스트 초기화
-/init           CLAUDE.md 생성
+# 세션 시작 시
+/usage          # 토큰 한도 확인
 
-# 대화 관리
-/clone          대화 복제
-/rename         세션 이름 변경
-/export         마크다운 내보내기
+# 작업 중
+/context        # 컨텍스트 상태 확인
+Esc Esc         # 잘못된 작업 즉시 취소
 
-# 즉시 실행
-!git status     Claude 처리 없이 즉시 실행
+# 컨텍스트 관리 (50k 토큰 초과 시)
+/clear          # 컨텍스트 초기화
 ```
+
+### 보안 정책
+
+#### ❌ 절대 금지
+```
+- --dangerously-skip-permissions 사용
+- rm -rf /, sudo rm 등 위험 명령어
+- .env, credentials.json 시크릿 커밋
+- API 키 하드코딩
+```
+
+#### ✅ 권장 사항
+```bash
+/sandbox "npm test"
+/sandbox "npm run lint"
+npx cc-safe .  # 정기적 보안 감사
+```
+
+---
+
+## Quick Reference
 
 ### 필수 단축키
 
@@ -332,40 +338,89 @@ claude -p "prompt"      Headless 모드
 alias c='claude'
 alias cc='claude --continue'
 alias cr='claude --resume'
-alias ch='claude --chrome'
+```
+
+---
+
+## Multi-Agent Workflow Guide
+
+멀티에이전트 조합으로 작업 효율을 극대화하세요.
+
+### Agent 역할 분담
+
+| Agent | 강점 | 맡길 작업 |
+|-------|------|----------|
+| **Claude** | 창의적 코드 생성, 아키텍처 설계 | 복잡한 로직 구현, 리팩토링, 설계 문서 |
+| **Gemini** | 대용량 분석, 빠른 검색 | 코드베이스 분석, API 조사, 프로토타이핑 |
+| **Codex** | 정형화된 실행, 명령 처리 | 빌드, 테스트, 배포, 스크립트 실행 |
+
+### 워크플로우 예시: API 개발
+
+```
+1. [Claude] "사용자 인증 API 설계해줘" → 아키텍처 + 스펙 생성
+2. [Gemini] "기존 auth 코드 패턴 분석해줘" → 대용량 코드 분석
+3. [Claude] 분석 결과 반영하여 코드 구현
+4. [Codex] "npm test && npm run build" → 테스트 및 빌드
+5. [Claude] 결과 종합 및 문서화
+```
+
+### 스킬 호출 예시
+
+```bash
+# 자연어로 스킬 쿼리
+python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
+
+# 특정 스킬 직접 로드 (토큰 절약)
+python3 .agent-skills/skill-query-handler.py query "코드 리뷰" --mode toon
+
+# 스킬 매칭 확인
+python3 .agent-skills/skill-query-handler.py match "데이터베이스"
 ```
 
 ---
 
 ## Troubleshooting
 
-### 시스템 진단 실행
+### 시스템 진단
 
 ```bash
 cd .agent-skills && ./setup.sh --diagnose
 ```
 
-### 컨텍스트 과다
+> **참고**: `--diagnose`의 Configuration Files 섹션이 ❌로 표시되더라도, 설정 파일은 정상적으로 생성됩니다. 다음 명령으로 직접 확인하세요:
+> ```bash
+> ls -la .agent-skills/model-config.env .agent-skills/agent-routing.yaml
+> ```
+
+### 스킬 쿼리 테스트
 
 ```bash
-/context  # 사용량 확인
-/clear    # 컨텍스트 초기화
-# 또는 HANDOFF.md 생성 후 새 세션
-```
+# 스킬 매칭 테스트
+python3 .agent-skills/skill-query-handler.py match "API 설계"
+# 출력: [3] backend/api-design
 
-### 보안 감사
+# 스킬 목록
+python3 .agent-skills/skill_loader.py list
 
-```bash
-# 위험한 승인 명령어 검사
-npx cc-safe .
+# 토큰 통계 확인
+python3 .agent-skills/skill-query-handler.py stats
 ```
 
 ### MCP 서버 문제
 
 ```bash
-claude mcp list  # 상태 확인
-claude mcp remove <name>  # 제거
+claude mcp list            # 상태 확인
+claude mcp remove <name>   # 제거
 claude mcp add <name> ...  # 재설치
+```
+
+### 설정 파일 수동 확인
+
+```bash
+# 생성된 설정 파일 확인
+cat .agent-skills/model-config.env    # 모델 설정
+cat .agent-skills/agent-routing.yaml  # 라우팅 규칙
+cat CLAUDE.md                         # 프로젝트 가이드
 ```
 
 ---
@@ -377,7 +432,6 @@ claude mcp add <name> ...  # 재설치
 | Claude Code 공식 | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
 | Claude Code Best Practices | [Anthropic Engineering](https://www.anthropic.com/engineering/claude-code-best-practices) |
 | ykdojo claude-code-tips | [GitHub](https://github.com/ykdojo/claude-code-tips) |
-| Ado's Advent of Claude | [adocomplete.com](https://adocomplete.com/advent-of-claude-2025/) |
 | Agent Skills 공식 | [agentskills.io](https://agentskills.io/) |
 
 ---
@@ -388,16 +442,16 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.10.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.12.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.10.0**:
-- **Prompt Repetition 스킬 추가**: 경량 모델(haiku, flash, mini) 정확도 67% 향상
-  - `utilities/prompt-repetition` 스킬 및 Python 변환기 추가
-  - 경량 모델 자동 적용 (claude-haiku, gemini-flash, gpt-4o-mini)
-  - Google Research 2025 논문 기반 (47/70 벤치마크 개선, 0 패배)
-  - 마커 기반 중복 적용 방지로 Multi-Agent 환경 지원
+**Changelog v3.12.0**:
+- **Multi-Agent Workflow Guide 추가**: Claude/Gemini/Codex 역할 분담 가이드
+- 워크플로우 예시 시나리오 추가 (API 개발)
+- `--diagnose` 버그 문서화 및 수동 확인 방법 안내
+- 스킬 호출 예시 보강
+- 설정 파일 수동 확인 섹션 추가
 
-**Changelog v3.9.0**:
-- **OpenContext 통합**: AI 에이전트 영구 메모리/컨텍스트 관리 기능 추가
-- Claude-Code 전용 스킬을 범용 카테고리로 재구성 완료
-- Multi-Agent 플랫폼 지원 확장 (Claude, Gemini, ChatGPT, Codex, Cursor)
+**Changelog v3.11.0**:
+- **README 재구성**: AI Agent 설치 방법을 최상단으로 이동
+- 설치 모드별 옵션 테이블 추가 (Silent, Auto, Quick, Interactive)
+- 토큰 최적화 통계 실측값 반영 (87.7% / 94.9%)
