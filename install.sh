@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Agent Skills One-Liner Installer v1.2.0
+# Agent Skills One-Liner Installer v1.3.0
 # Usage: curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
 #
 # Options (via environment variables):
@@ -25,7 +25,7 @@ set -euo pipefail
 REPO_URL="https://github.com/supercent-io/skills-template.git"
 TEMP_DIR="/tmp/_skills_setup_temp_$$"
 AGENT_SKILLS_DIR=".agent-skills"
-VERSION="1.2.0"
+VERSION="1.3.0"
 
 # Environment variable defaults
 INSTALL_MCP="${INSTALL_MCP:-true}"
@@ -177,31 +177,38 @@ main() {
         print_warning "Setup completed with warnings. Check the output above."
     fi
 
-    # 5. Final message
-    echo ""
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${BOLD}${GREEN}Installation Complete!${NC}"
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo ""
-    echo -e "${BOLD}For AI Agents:${NC}"
-    echo "  Installation is complete. No additional steps needed."
-    echo "  AI agents access MCP tools through registered configs (not shell environment)."
-    echo ""
-    echo -e "${BOLD}For Developers (optional):${NC}"
-    echo "  To enable shell aliases (gemini-skill, mcp-status, etc.):"
-    echo "    source ~/.zshrc   # or ~/.bashrc"
-    echo "  Note: This is for terminal convenience only, not required for agent workflows."
-    echo ""
-    echo -e "${BOLD}Verification:${NC}"
-    if [ "$HAS_CLAUDE" = "true" ]; then
-        echo "  claude mcp list                          # Check MCP servers"
+    # 5. Final message (skip in silent mode for AI agents)
+    if [ "$INSTALL_MODE" = "silent" ]; then
+        # Silent mode: minimal output for AI agents
+        echo ""
+        print_success "Installation complete. Agent Skills ready."
+    else
+        # Interactive/auto/quick mode: show full guide for developers
+        echo ""
+        echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}${GREEN}Installation Complete!${NC}"
+        echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        echo -e "${BOLD}For AI Agents:${NC}"
+        echo "  Installation is complete. No additional steps needed."
+        echo "  AI agents access MCP tools through registered configs (not shell environment)."
+        echo ""
+        echo -e "${BOLD}For Developers (optional):${NC}"
+        echo "  To enable shell aliases (gemini-skill, mcp-status, etc.):"
+        echo "    source ~/.zshrc   # or ~/.bashrc"
+        echo "  Note: This is for terminal convenience only, not required for agent workflows."
+        echo ""
+        echo -e "${BOLD}Verification:${NC}"
+        if [ "$HAS_CLAUDE" = "true" ]; then
+            echo "  claude mcp list                          # Check MCP servers"
+        fi
+        echo "  ./$AGENT_SKILLS_DIR/setup.sh --diagnose  # System diagnostics"
+        echo ""
+        echo -e "${BOLD}Documentation:${NC}"
+        echo "  README.md                # Full documentation"
+        echo "  CLAUDE.md                # Agent configuration"
+        echo ""
     fi
-    echo "  ./$AGENT_SKILLS_DIR/setup.sh --diagnose  # System diagnostics"
-    echo ""
-    echo -e "${BOLD}Documentation:${NC}"
-    echo "  README.md                # Full documentation"
-    echo "  CLAUDE.md                # Agent configuration"
-    echo ""
 }
 
 main "$@"
