@@ -68,7 +68,7 @@ npm install -g @aicontextlab/cli
 cd your-project && oc init
 
 # Claude Code MCP 연동 (선택)
-claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp
+claude mcp add opencontext -s user -- oc mcp
 ```
 
 **OpenContext 핵심 명령어:**

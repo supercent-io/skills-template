@@ -1319,18 +1319,21 @@ add_opencontext_mcp() {
         if npm install -g @aicontextlab/cli 2>/dev/null; then
             print_success "OpenContext CLI 설치 완료"
         else
-            print_warning "OpenContext CLI 설치 실패 (npx로 대체 가능)"
+            print_warning "OpenContext CLI 설치 실패"
+            print_info "수동 설치: npm install -g @aicontextlab/cli"
+            return 1
         fi
     fi
 
     print_info "opencontext MCP 서버 추가 중..."
-    if claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp 2>/dev/null; then
+    # Use 'oc mcp' command (OpenContext CLI provides MCP server)
+    if claude mcp add opencontext -s user -- oc mcp 2>/dev/null; then
         HAS_OPENCONTEXT=true
         print_success "opencontext 추가 완료"
         return 0
     else
         print_error "opencontext 추가 실패"
-        print_info "수동 설치: claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp"
+        print_info "수동 설치: claude mcp add opencontext -s user -- oc mcp"
         return 1
     fi
 }
