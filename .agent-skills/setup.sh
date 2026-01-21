@@ -11,7 +11,7 @@
 #   ./setup.sh --diagnose   # Run system diagnostics
 #   ./setup.sh --help       # Show help
 
-set -e
+set -eo pipefail
 
 # ============================================================
 # Command Line Arguments
@@ -22,6 +22,8 @@ SKIP_SHELL_RC_PROMPT=false
 SKIP_SHELL_RC=false
 SILENT_MODE=false
 RUN_DIAGNOSE=false
+INSTALL_MCPS=false
+FORCE_OPENCONTEXT=true  # OpenContext is required by default
 
 parse_arguments() {
     while [[ $# -gt 0 ]]; do
@@ -54,6 +56,14 @@ parse_arguments() {
                 RUN_DIAGNOSE=true
                 shift
                 ;;
+            --install-mcp)
+                INSTALL_MCPS=true
+                shift
+                ;;
+            --no-opencontext)
+                FORCE_OPENCONTEXT=false
+                shift
+                ;;
             --help|-h)
                 show_help
                 exit 0
@@ -83,11 +93,13 @@ Options:
   --quick        Same as --auto but for quick setup
   --silent       Silent mode: no output, skips shell RC modification
                  Best for AI agents (Claude, etc.)
+  --install-mcp  Auto-install MCP servers (opencontext required, gemini/codex optional)
   --diagnose     Run comprehensive system diagnostics:
                  - MCP server health checks
                  - Connection tests (gemini-cli, codex-cli)
                  - Configuration validation
   --no-shell-rc  Skip shell RC modification (can combine with --auto)
+  --no-opencontext  Skip OpenContext requirement (not recommended)
 
 One-Liner Installation (for developers):
   git clone https://github.com/supercent-io/skills-template.git _tmp && \
@@ -743,6 +755,36 @@ templates:
         action: "Deploy to environment"
       - agent: orchestrator
         action: "Verify deployment status"
+
+# Performance Tweaks
+performance_tweaks:
+  # Prompt Repetition (ralph-loop) - Google Research 2025
+  # Improves accuracy for lightweight models by 67% on benchmarks
+  prompt_repetition:
+    enabled: true
+    default_repetitions: 2
+    position_repetitions: 3  # For index/position tasks
+    max_context_ratio: 0.8
+    # Auto-apply on these lightweight models
+    auto_apply_on_models:
+      - "claude-haiku"
+      - "claude-3-haiku"
+      - "$CLAUDE_HAIKU"
+      - "gemini-flash"
+      - "gemini-flash-lite"
+      - "gemini-2.0-flash"
+      - "$GEMINI_3_FLASH"
+      - "$GEMINI_25_FLASH"
+      - "gpt-4o-mini"
+      - "gpt-low"
+      - "$GPT5_CODEX_MINI"
+      - "$GPT41_MINI"
+    # Skip if CoT patterns detected
+    skip_patterns:
+      - "step by step"
+      - "think through"
+      - "let's think"
+      - "chain of thought"
 
 # Fallback Behavior
 fallback:
@@ -1489,7 +1531,7 @@ auto_configure_workflow() {
     print_header "Auto-Configure Workflow"
     echo ""
 
-    local STEPS_TOTAL=7
+    local STEPS_TOTAL=8
     local STEP=0
 
     # Step 1: Token Optimization
@@ -1537,20 +1579,71 @@ auto_configure_workflow() {
     fi
     echo ""
 
-    # Step 5: MCP Servers (with prompt or skip)
+    # Step 5: MCP Servers (with prompt or skip or auto-install)
     STEP=$((STEP + 1))
     print_info "[$STEP/$STEPS_TOTAL] MCP 서버 설정..."
 
     if $HAS_CLAUDE_CLI; then
-        if $SKIP_MCP_PROMPTS; then
-            # Non-interactive: skip MCP additions (keep existing)
+        if $INSTALL_MCPS; then
+            # Auto-install MCP servers (--install-mcp flag)
+            print_info "MCP 서버 자동 설치 모드..."
+            echo ""
+
+            # OpenContext is required (unless --no-opencontext)
+            if $FORCE_OPENCONTEXT && ! $HAS_OPENCONTEXT; then
+                print_info "OpenContext MCP 자동 설치 중 (필수)..."
+                add_opencontext_mcp
+            elif $HAS_OPENCONTEXT; then
+                print_success "  opencontext: 이미 설정됨"
+            fi
+
+            # Gemini and Codex are optional but recommended
+            if ! $HAS_GEMINI_MCP; then
+                print_info "gemini-cli MCP 자동 설치 중..."
+                add_gemini_mcp
+            else
+                print_success "  gemini-cli: 이미 설정됨"
+            fi
+
+            if ! $HAS_CODEX_MCP; then
+                print_info "codex-cli MCP 자동 설치 중..."
+                add_codex_mcp
+            else
+                print_success "  codex-cli: 이미 설정됨"
+            fi
+
+            # Re-detect environment after installations
+            detect_mcp_environment
+
+        elif $SKIP_MCP_PROMPTS; then
+            # Non-interactive: skip MCP additions but ensure OpenContext if required
+            if $FORCE_OPENCONTEXT && ! $HAS_OPENCONTEXT; then
+                print_info "OpenContext MCP 자동 설치 중 (필수)..."
+                add_opencontext_mcp
+            elif $HAS_OPENCONTEXT; then
+                print_success "  opencontext: 이미 설정됨"
+            else
+                print_info "  opencontext: 건너뜀 (수동 추가 가능)"
+            fi
             $HAS_GEMINI_MCP && print_success "  gemini-cli: 이미 설정됨" || print_info "  gemini-cli: 건너뜀 (수동 추가 가능)"
             $HAS_CODEX_MCP && print_success "  codex-cli: 이미 설정됨" || print_info "  codex-cli: 건너뜀 (수동 추가 가능)"
-            $HAS_OPENCONTEXT && print_success "  opencontext: 이미 설정됨" || print_info "  opencontext: 건너뜀 (수동 추가 가능)"
         else
             echo ""
             echo "MCP 서버를 추가하시겠습니까?"
             echo ""
+
+            # OpenContext first (required by default)
+            if ! $HAS_OPENCONTEXT; then
+                if $FORCE_OPENCONTEXT; then
+                    print_info "OpenContext MCP 자동 설치 중 (필수)..."
+                    add_opencontext_mcp
+                else
+                    read -p "  opencontext 추가? (영구 메모리/컨텍스트 관리) [y/n]: " add_oc
+                    [[ "$add_oc" =~ ^[Yy]$ ]] && add_opencontext_mcp
+                fi
+            else
+                print_success "  opencontext: 이미 설정됨"
+            fi
 
             if ! $HAS_GEMINI_MCP; then
                 read -p "  gemini-cli 추가? (분석/리서치 강화) [y/n]: " add_gemini
@@ -1564,13 +1657,6 @@ auto_configure_workflow() {
                 [[ "$add_codex" =~ ^[Yy]$ ]] && add_codex_mcp
             else
                 print_success "  codex-cli: 이미 설정됨"
-            fi
-
-            if ! $HAS_OPENCONTEXT; then
-                read -p "  opencontext 추가? (영구 메모리/컨텍스트 관리) [y/n]: " add_oc
-                [[ "$add_oc" =~ ^[Yy]$ ]] && add_opencontext_mcp
-            else
-                print_success "  opencontext: 이미 설정됨"
             fi
         fi
     else
@@ -1593,8 +1679,98 @@ auto_configure_workflow() {
     generate_claude_md_dynamic
     echo ""
 
+    # Step 8: Verify and Apply Configuration
+    STEP=$((STEP + 1))
+    print_info "[$STEP/$STEPS_TOTAL] 설정 검증 및 적용..."
+    verify_and_apply_configuration
+    echo ""
+
     # Final Summary
     print_summary
+}
+
+# ============================================================
+# 9.1 Verify and Apply Configuration
+# ============================================================
+verify_and_apply_configuration() {
+    $SILENT_MODE || print_header "Configuration Verification"
+    local needs_update=false
+    local verification_passed=true
+
+    # 1. Re-detect environment to get latest state
+    if $HAS_CLAUDE_CLI; then
+        local mcp_list=""
+        mcp_list=$(claude mcp list 2>/dev/null || echo "")
+
+        # Update MCP status
+        echo "$mcp_list" | grep -q "gemini-cli" && HAS_GEMINI_MCP=true || HAS_GEMINI_MCP=false
+        echo "$mcp_list" | grep -q "codex-cli" && HAS_CODEX_MCP=true || HAS_CODEX_MCP=false
+        echo "$mcp_list" | grep -q "opencontext" && HAS_OPENCONTEXT=true || HAS_OPENCONTEXT=false
+    fi
+
+    # 2. Verify OpenContext (required)
+    if $FORCE_OPENCONTEXT && $HAS_CLAUDE_CLI && ! $HAS_OPENCONTEXT; then
+        print_warning "OpenContext MCP 미설치 - 자동 설치 시도..."
+        if add_opencontext_mcp; then
+            HAS_OPENCONTEXT=true
+            needs_update=true
+            print_success "OpenContext MCP 설치 완료"
+        else
+            verification_passed=false
+            print_error "OpenContext MCP 설치 실패 - 수동 설치 필요"
+        fi
+    elif $HAS_OPENCONTEXT; then
+        $SILENT_MODE || print_status "OpenContext MCP" "true"
+    fi
+
+    # 3. Verify configuration files exist
+    if [ ! -f "$AGENT_SKILLS_DIR/agent-routing.yaml" ]; then
+        print_warning "agent-routing.yaml 누락 - 재생성..."
+        generate_agent_routing_config
+        needs_update=true
+    else
+        $SILENT_MODE || print_status "agent-routing.yaml" "true"
+    fi
+
+    if [ ! -f "$AGENT_SKILLS_DIR/model-config.env" ]; then
+        print_warning "model-config.env 누락 - 재생성..."
+        generate_model_config_file
+        needs_update=true
+    else
+        $SILENT_MODE || print_status "model-config.env" "true"
+    fi
+
+    if [ ! -f "$PROJECT_DIR/CLAUDE.md" ]; then
+        print_warning "CLAUDE.md 누락 - 재생성..."
+        generate_claude_md_dynamic
+        needs_update=true
+    else
+        $SILENT_MODE || print_status "CLAUDE.md" "true"
+    fi
+
+    # 4. Verify prompt-repetition skill is accessible
+    if [ -f "$AGENT_SKILLS_DIR/utilities/prompt-repetition/SKILL.md" ]; then
+        $SILENT_MODE || print_status "prompt-repetition 스킬" "true"
+    else
+        print_warning "prompt-repetition 스킬 누락"
+        verification_passed=false
+    fi
+
+    # 5. Recalculate workflow if changes were made
+    if $needs_update; then
+        determine_workflow_type
+        $SILENT_MODE || print_info "워크플로우 타입 재설정: $WORKFLOW_TYPE"
+    fi
+
+    # 6. Final status
+    $SILENT_MODE || echo ""
+    if $verification_passed; then
+        $SILENT_MODE || print_success "모든 설정 검증 완료"
+    else
+        $SILENT_MODE || print_warning "일부 설정에 문제가 있습니다. --diagnose로 상세 확인하세요."
+    fi
+
+    return 0
 }
 
 # ============================================================

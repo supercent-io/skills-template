@@ -13,24 +13,65 @@
 
 ## AI Agent Installation
 
-> **LLM 기반 설치를 지원합니다.** AI 에이전트에게 아래 프롬프트를 입력하세요.
+> **LLM 기반 설치를 지원합니다.** 원라이너 명령 또는 AI 에이전트 프롬프트로 설치하세요.
 
-### One-Liner 설치 프롬프트 (권장)
+### One-Liner 설치 (권장)
 
-AI 에이전트(Claude Code, Gemini, ChatGPT 등)에게 다음 프롬프트를 입력하세요:
+```bash
+# 터미널에서 바로 실행 (MCP 서버 자동 설치 포함)
+curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
+```
+
+**환경 변수 옵션:**
+```bash
+# MCP 서버 자동 설치 비활성화
+INSTALL_MCP=false curl -fsSL ... | bash
+
+# 기존 폴더 백업 건너뛰기
+SKIP_BACKUP=true curl -fsSL ... | bash
+```
+
+### 보안 중시 설치 (2단계)
+
+스크립트를 먼저 확인한 후 실행하고 싶다면:
+
+```bash
+# 1. 스크립트 다운로드
+curl -fsSLO https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh
+
+# 2. 스크립트 내용 확인 (선택)
+cat install.sh
+
+# 3. 실행
+bash install.sh
+```
+
+### AI 에이전트용 프롬프트
+
+Claude Code, Gemini, ChatGPT 등에게 다음 프롬프트를 입력하세요:
 
 ```
-https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해 (기존 폴더가 있으면 덮어쓰기). 그 후 setup.sh를 --silent 모드로 실행하고, 임시 클론 폴더는 삭제해.
+https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해. 그 후 setup.sh를 --silent --install-mcp 모드로 실행하고, 임시 클론 폴더는 삭제해.
 ```
 
 ### 설치 모드별 옵션
 
-| 모드 | 프롬프트 | 설명 |
-|------|---------|------|
-| **Silent (권장)** | `setup.sh --silent` | 자동 감지, 기본값 적용 |
+| 모드 | 명령어 | 설명 |
+|------|--------|------|
+| **Silent + MCP (권장)** | `setup.sh --silent --install-mcp` | 완전 자동화, MCP 서버 자동 설치 |
+| **Silent** | `setup.sh --silent` | 자동 감지, 기본값 적용 |
 | **Auto** | `setup.sh --auto` | 대화형 없이 전체 설정 |
 | **Quick** | `setup.sh --quick` | 토큰 최적화 파일만 생성 |
 | **Interactive** | `setup.sh` | 단계별 대화형 설정 |
+
+### 새로운 기능
+
+| 기능 | 설명 |
+|------|------|
+| `--install-mcp` | MCP 서버 자동 설치 (OpenContext 필수, Gemini/Codex 선택) |
+| OpenContext 필수 | 영구 메모리 MCP가 기본 필수 설정으로 포함 |
+| ralph-loop 자동 적용 | 경량 모델(haiku, flash, mini)에서 프롬프트 반복 자동 적용 |
+| 설정 검증 | 설치 후 자동 검증 및 누락 설정 자동 적용 |
 
 ### AI Agent별 설치 가이드
 
@@ -442,7 +483,15 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.12.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.13.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+
+**Changelog v3.13.0**:
+- **원라이너 설치 스크립트 추가**: `curl -fsSL ... | bash` 형태로 완전 자동화 설치
+- **`--install-mcp` 플래그 추가**: MCP 서버 자동 설치 (OpenContext/Gemini/Codex)
+- **OpenContext 필수 설정**: 영구 메모리 MCP가 기본 필수 설정으로 포함
+- **ralph-loop (prompt-repetition) 기본 적용**: 경량 모델에서 자동으로 프롬프트 반복 적용
+- **설정 검증 기능 추가**: 설치 후 자동 검증 및 누락 설정 자동 적용
+- **agent-routing.yaml 개선**: performance_tweaks 섹션 추가
 
 **Changelog v3.12.0**:
 - **Multi-Agent Workflow Guide 추가**: Claude/Gemini/Codex 역할 분담 가이드
