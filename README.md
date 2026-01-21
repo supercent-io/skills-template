@@ -1,10 +1,10 @@
 # Agent Skills
 
-> Claude Code 중심의 Multi-Agent 워크플로우 시스템 (Gemini-CLI + Codex-CLI 통합)
+> Claude Code 중심의 Multi-Agent 워크플로우 시스템 (Gemini-CLI + Codex-CLI + OpenContext 통합)
 > **Claude Code 완전 가이드 70가지 팁 적용** - 에이전틱 개발 정책 강화
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-50-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-51-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 [![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-quick-start)
@@ -56,6 +56,27 @@ export OPENAI_API_KEY=your_api_key
 
 # Claude Code MCP 연동 (선택)
 claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
+```
+
+### OpenContext CLI 설치 (AI 영구 메모리)
+
+```bash
+# npm으로 설치
+npm install -g @aicontextlab/cli
+
+# 프로젝트 초기화
+cd your-project && oc init
+
+# Claude Code MCP 연동 (선택)
+claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp
+```
+
+**OpenContext 핵심 명령어:**
+```bash
+/opencontext-context    # 작업 전 배경 로드 (권장)
+/opencontext-search     # 기존 문서 검색
+/opencontext-create     # 새 문서 작성
+/opencontext-iterate    # 결론 저장
 ```
 
 ---
@@ -222,7 +243,7 @@ graph TB
 
 ---
 
-## Skills Overview (50 Total)
+## Skills Overview (51 Total)
 
 ```mermaid
 pie showData
@@ -234,7 +255,7 @@ pie showData
     "Documentation" : 4
     "Project-Mgmt" : 7
     "Search-Analysis" : 4
-    "Utilities" : 12
+    "Utilities" : 13
 ```
 
 | Category | Count | Skills |
@@ -246,7 +267,7 @@ pie showData
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 12 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` |
+| **Utilities** | 13 | `agentic-development-principles` `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` |
 
 ---
 
@@ -367,11 +388,12 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.8.0 | **Updated**: 2026-01-21 | **Skills**: 50 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.9.0 | **Updated**: 2026-01-21 | **Skills**: 51 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.8.0**:
-- Claude-Code 전용 스킬을 범용 카테고리로 재구성
-  - `claude-code-principles` → `project-management/agentic-principles`
-  - `claude-code-workflow` → `utilities/agentic-workflow`
-  - `claude-code-configuration` → `infrastructure/agent-configuration`
-- 모든 스킬에 Multi-Agent 플랫폼 지원 추가 (Claude, Gemini, ChatGPT, Codex)
+**Changelog v3.9.0**:
+- **OpenContext 통합**: AI 에이전트 영구 메모리/컨텍스트 관리 기능 추가
+  - `utilities/opencontext` 스킬 추가
+  - setup.sh에 OpenContext MCP 자동 설치 지원
+  - 일일 워크플로우: 작업 전(context) → 작업 중(search) → 작업 후(iterate)
+- Claude-Code 전용 스킬을 범용 카테고리로 재구성 완료
+- Multi-Agent 플랫폼 지원 확장 (Claude, Gemini, ChatGPT, Codex, Cursor)

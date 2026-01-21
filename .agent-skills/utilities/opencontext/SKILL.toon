@@ -1,0 +1,42 @@
+N:opencontext
+D:OpenContext AI 에이전트 영구 메모리. 세션/레포 간 컨텍스트 유지, 결론 저장, 문서 검색
+G:opencontext context-management memory knowledge-base multi-agent
+PL:[Claude,Gemini,ChatGPT,Codex,Cursor]
+U[5]:
+  세션 간 컨텍스트 유지
+  프로젝트 배경/결정사항 기록
+  이전 결론/교훈 검색
+  Multi-Agent 지식 공유
+  반복 설명 제거
+I[2]{cmd}:
+  npm install -g @aicontextlab/cli
+  cd project && oc init
+SC[4]{cmd,use}:
+  /opencontext-context,작업전 배경로드(권장)
+  /opencontext-search,기존문서검색
+  /opencontext-create,새문서작성
+  /opencontext-iterate,결론저장
+C[5]{cmd,func}:
+  oc folder ls --all,폴더목록
+  oc doc ls <folder>,문서목록
+  oc search "query",검색
+  oc doc create,문서생성
+  oc context manifest,매니페스트
+M[6]{tool,func}:
+  oc_list_folders,폴더목록
+  oc_list_docs,문서목록
+  oc_search,검색
+  oc_manifest,매니페스트
+  oc_create_doc,문서생성
+  oc_get_link,링크생성
+W[3]{when,cmd}:
+  작업전1분,/opencontext-context
+  작업중,/opencontext-search
+  작업후2분,/opencontext-iterate
+P[2]{loc}:
+  ~/.opencontext/contexts
+  ~/.opencontext/opencontext.db
+R[3]:
+  컨텍스트로드→작업→결론저장
+  keyword검색:임베딩불필요
+  hybrid/vector:인덱스필요

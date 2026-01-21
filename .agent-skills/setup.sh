@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.3.1
+# Agent Skills Setup Script v3.4.0
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
-# Supports: Claude Code, Gemini-CLI, Codex-CLI
+# Supports: Claude Code, Gemini-CLI, Codex-CLI, OpenContext
 #
 # Usage:
 #   ./setup.sh              # Interactive mode
@@ -67,7 +67,7 @@ parse_arguments() {
 
 show_help() {
     cat << 'EOF'
-Agent Skills Setup Script v3.3.1
+Agent Skills Setup Script v3.4.0
 
 Usage:
   ./setup.sh                Interactive mode (default)
@@ -121,7 +121,7 @@ AGENT_SKILLS_DIR="$SCRIPT_DIR"
 PROJECT_DIR="$(dirname "$AGENT_SKILLS_DIR")"
 
 # Skill categories (모든 스킬 카테고리 포함)
-SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities claude-code templates)
+SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation project-management search-analysis utilities templates)
 
 # ============================================================
 # Global State Variables (Auto-detected)
@@ -129,6 +129,7 @@ SKILL_CATEGORIES=(backend frontend code-quality infrastructure documentation pro
 HAS_CLAUDE_CLI=false
 HAS_GEMINI_MCP=false
 HAS_CODEX_MCP=false
+HAS_OPENCONTEXT=false
 HAS_PYTHON3=false
 WORKFLOW_TYPE="standalone"  # standalone, claude-only, claude-gemini, claude-codex, full-multiagent
 PERFORMANCE_PRESET="balanced"  # high-performance, balanced, cost-effective
@@ -220,6 +221,15 @@ detect_mcp_environment() {
         else
             HAS_CODEX_MCP=false
             print_status "codex-cli MCP Server" "false"
+        fi
+
+        # Check OpenContext MCP
+        if echo "$mcp_list" | grep -q "opencontext"; then
+            HAS_OPENCONTEXT=true
+            print_status "opencontext MCP Server" "true"
+        else
+            HAS_OPENCONTEXT=false
+            print_status "opencontext MCP Server" "false"
         fi
     else
         HAS_CLAUDE_CLI=false
@@ -1297,6 +1307,34 @@ add_codex_mcp() {
     fi
 }
 
+add_opencontext_mcp() {
+    if $HAS_OPENCONTEXT; then
+        print_info "opencontext 이미 등록됨"
+        return 0
+    fi
+
+    # Check if opencontext CLI is installed
+    if ! command -v oc &> /dev/null; then
+        print_info "OpenContext CLI 설치 중..."
+        if npm install -g @aicontextlab/cli 2>/dev/null; then
+            print_success "OpenContext CLI 설치 완료"
+        else
+            print_warning "OpenContext CLI 설치 실패 (npx로 대체 가능)"
+        fi
+    fi
+
+    print_info "opencontext MCP 서버 추가 중..."
+    if claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp 2>/dev/null; then
+        HAS_OPENCONTEXT=true
+        print_success "opencontext 추가 완료"
+        return 0
+    else
+        print_error "opencontext 추가 실패"
+        print_info "수동 설치: claude mcp add opencontext -s user -- npx -y @aicontextlab/mcp"
+        return 1
+    fi
+}
+
 # ============================================================
 # 9. Auto-Configure Workflow (Progressive)
 # ============================================================
@@ -1362,6 +1400,7 @@ auto_configure_workflow() {
             # Non-interactive: skip MCP additions (keep existing)
             $HAS_GEMINI_MCP && print_success "  gemini-cli: 이미 설정됨" || print_info "  gemini-cli: 건너뜀 (수동 추가 가능)"
             $HAS_CODEX_MCP && print_success "  codex-cli: 이미 설정됨" || print_info "  codex-cli: 건너뜀 (수동 추가 가능)"
+            $HAS_OPENCONTEXT && print_success "  opencontext: 이미 설정됨" || print_info "  opencontext: 건너뜀 (수동 추가 가능)"
         else
             echo ""
             echo "MCP 서버를 추가하시겠습니까?"
@@ -1379,6 +1418,13 @@ auto_configure_workflow() {
                 [[ "$add_codex" =~ ^[Yy]$ ]] && add_codex_mcp
             else
                 print_success "  codex-cli: 이미 설정됨"
+            fi
+
+            if ! $HAS_OPENCONTEXT; then
+                read -p "  opencontext 추가? (영구 메모리/컨텍스트 관리) [y/n]: " add_oc
+                [[ "$add_oc" =~ ^[Yy]$ ]] && add_opencontext_mcp
+            else
+                print_success "  opencontext: 이미 설정됨"
             fi
         fi
     else
@@ -1647,6 +1693,7 @@ while true; do
     print_status "Claude CLI" "$HAS_CLAUDE_CLI"
     print_status "gemini-cli MCP" "$HAS_GEMINI_MCP"
     print_status "codex-cli MCP" "$HAS_CODEX_MCP"
+    print_status "opencontext MCP" "$HAS_OPENCONTEXT"
     echo -e "  ${BOLD}Workflow:${NC} ${CYAN}$WORKFLOW_TYPE${NC}"
     echo ""
     echo "───────────────────────────────────────────────"
