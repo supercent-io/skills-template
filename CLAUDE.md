@@ -17,7 +17,7 @@
 | Role | Provider | Model | Use Case |
 |------|----------|-------|----------|
 | **Orchestrator** | claude | `claude-opus-4-5-20251101` | 계획 수립, 코드 생성 |
-| **Analyst** | gemini | `gemini-3-pro` | 대용량 분석, 리서치 |
+| **Analyst** | gemini | `gemini-2.5-pro` | 대용량 분석, 리서치 |
 | **Executor** | openai | `gpt-5.2-codex` | 명령 실행, 빌드 |
 
 ### Claude Task Tool Model Hints

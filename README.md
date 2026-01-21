@@ -201,7 +201,7 @@ graph TB
 | Agent | Role | Model | Best For |
 |-------|------|-------|----------|
 | **Claude Code** | Orchestrator | `claude-opus-4-5` | 계획 수립, 코드 생성, 스킬 해석 |
-| **Gemini CLI** | Analyst | `gemini-3-pro` | 대용량 분석 (2M+ 토큰), 리서치 |
+| **Gemini CLI** | Analyst | `gemini-2.5-pro` | 대용량 분석 (2M+ 토큰), 리서치 |
 | **Codex CLI** | Executor | `gpt-5.2-codex` | 명령 실행, 빌드, 배포 |
 
 ### Workflow Types (Auto-Detected)
