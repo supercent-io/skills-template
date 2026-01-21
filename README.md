@@ -64,6 +64,14 @@ https://github.com/supercent-io/skills-template 저장소를 임시로 클론하
 | **Quick** | `setup.sh --quick` | 토큰 최적화 파일만 생성 |
 | **Interactive** | `setup.sh` | 단계별 대화형 설정 |
 
+> **참고: Shell RC 설정은 개발자 편의 기능**
+>
+> `.zshrc`/`.bashrc` 수정은 **개발자가 터미널에서 직접 사용**할 때만 필요합니다.
+> AI 에이전트는 MCP 등록 설정을 통해 도구에 접근하므로 Shell RC 수정이 불필요합니다.
+>
+> - **AI 에이전트**: `--silent` 사용 (자동으로 Shell RC 수정 건너뜀)
+> - **개발자**: Interactive 모드에서 `gemini-skill`, `mcp-status` 등 편리한 alias 설정
+
 ### 새로운 기능
 
 | 기능 | 설명 |
@@ -483,7 +491,13 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.13.0 | **Updated**: 2026-01-21 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.14.0 | **Updated**: 2026-01-22 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+
+**Changelog v3.14.0**:
+- **Shell RC 설정 문서화 개선**: `.zshrc`/`.bashrc` 수정이 개발자 편의 기능임을 명확히 문서화
+- **AI 에이전트 vs 개발자 구분 명확화**: `--silent` 모드가 AI 에이전트에 권장되는 이유 설명
+- **setup.sh 주석 개선**: Shell RC 설정이 MCP 워크플로우에 불필요함을 코드 주석에 명시
+- **2회 검증 기반 개선**: Gemini 분석을 통한 반대 논거 검토 후 결론 도출
 
 **Changelog v3.13.0**:
 - **원라이너 설치 스크립트 추가**: `curl -fsSL ... | bash` 형태로 완전 자동화 설치

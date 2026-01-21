@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Agent Skills Setup Script v3.5.0
+# Agent Skills Setup Script v3.6.0
 # Multi-Agent Workflow with Auto-Detection, Progressive Configuration & Model Mapping
 # Supports: Claude Code, Gemini-CLI, Codex-CLI, OpenContext (Enhanced)
+#
+# IMPORTANT: Shell RC (.zshrc/.bashrc) configuration is for DEVELOPER CONVENIENCE only.
+# AI agents access MCP tools through registered configs, NOT shell environment.
+# Use --silent for AI agents (automatically skips shell RC modification).
 #
 # Usage:
 #   ./setup.sh              # Interactive mode
@@ -77,7 +81,7 @@ parse_arguments() {
 
 show_help() {
     cat << 'EOF'
-Agent Skills Setup Script v3.5.0
+Agent Skills Setup Script v3.6.0
 
 Usage:
   ./setup.sh                Interactive mode (default)
@@ -100,6 +104,13 @@ Options:
                  - Configuration validation
   --no-shell-rc  Skip shell RC modification (can combine with --auto)
   --no-opencontext  Skip OpenContext requirement (not recommended)
+
+IMPORTANT: Shell RC (.zshrc/.bashrc) Configuration
+  The shell RC modification is a DEVELOPER CONVENIENCE feature only.
+  AI agents do NOT need it - they access MCP tools through registered configs.
+
+  - AI Agents: Use --silent (automatically skips shell RC)
+  - Developers: Interactive mode adds useful aliases (gemini-skill, mcp-status)
 
 One-Liner Installation (for developers):
   git clone https://github.com/supercent-io/skills-template.git _tmp && \
@@ -1063,6 +1074,16 @@ EOFCONFIG
 
 # ============================================================
 # 6. Shell RC Configuration (Idempotent)
+# ============================================================
+# NOTE: This is a DEVELOPER CONVENIENCE feature, NOT required for AI agent workflows.
+#
+# AI agents (Claude Code, Gemini, Codex) access MCP tools through their registered
+# configurations, NOT through shell environment variables or aliases.
+#
+# - AI Agents: Use --silent or --no-shell-rc (skips this entirely)
+# - Human Developers: This provides useful aliases like `gemini-skill`, `mcp-status`
+#
+# The shell aliases are only useful when developers manually run commands in terminal.
 # ============================================================
 configure_shell_rc() {
     local auto_configure="$1"
