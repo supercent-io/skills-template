@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# Agent Skills One-Liner Installer v1.1.0
+# Agent Skills One-Liner Installer v1.2.0
 # Usage: curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
 #
 # Options (via environment variables):
 #   INSTALL_MCP=true      - Auto-install MCP servers (opencontext required, gemini/codex optional)
 #   SKIP_BACKUP=true      - Skip backup of existing .agent-skills
 #   INSTALL_MODE=silent   - silent, auto, quick, interactive (default: silent)
+#
+# IMPORTANT: Shell RC Configuration
+#   The Shell RC (.zshrc/.bashrc) modification is for DEVELOPER CONVENIENCE only.
+#   AI agents access MCP tools through registered configs, NOT shell environment.
+#   Default mode (silent) automatically skips Shell RC modification.
 #
 # Security Note:
 #   For security-conscious users, download and inspect the script first:
@@ -20,7 +25,7 @@ set -euo pipefail
 REPO_URL="https://github.com/supercent-io/skills-template.git"
 TEMP_DIR="/tmp/_skills_setup_temp_$$"
 AGENT_SKILLS_DIR=".agent-skills"
-VERSION="1.0.0"
+VERSION="1.2.0"
 
 # Environment variable defaults
 INSTALL_MCP="${INSTALL_MCP:-true}"
@@ -178,14 +183,18 @@ main() {
     echo -e "${BOLD}${GREEN}Installation Complete!${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "${BOLD}Quick Start:${NC}"
-    echo "  1. Restart your terminal or run: source ~/.zshrc"
-    echo "  2. Run diagnostics: cd $AGENT_SKILLS_DIR && ./setup.sh --diagnose"
+    echo -e "${BOLD}For AI Agents:${NC}"
+    echo "  Installation is complete. No additional steps needed."
+    echo "  AI agents access MCP tools through registered configs (not shell environment)."
     echo ""
-    echo -e "${BOLD}Available Commands:${NC}"
+    echo -e "${BOLD}For Developers (optional):${NC}"
+    echo "  To enable shell aliases (gemini-skill, mcp-status, etc.):"
+    echo "    source ~/.zshrc   # or ~/.bashrc"
+    echo "  Note: This is for terminal convenience only, not required for agent workflows."
+    echo ""
+    echo -e "${BOLD}Verification:${NC}"
     if [ "$HAS_CLAUDE" = "true" ]; then
-        echo "  claude                    # Start Claude Code"
-        echo "  claude mcp list          # Check MCP servers"
+        echo "  claude mcp list                          # Check MCP servers"
     fi
     echo "  ./$AGENT_SKILLS_DIR/setup.sh --diagnose  # System diagnostics"
     echo ""
