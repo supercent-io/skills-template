@@ -1,8 +1,8 @@
 ---
-name: ultrathink-multiagent-workflow
-description: Design principles for ultrathink multi-agent workflows using the Ralph Wiggum technique. Use when orchestrating multiple AI agents (Opus/Sonnet/Gemini/Codex) for complex autonomous development tasks with extended thinking and iterative improvement loops.
-tags: [ultrathink, multi-agent, ralph-wiggum, orchestration, autonomous, extended-thinking, opus, sonnet]
-platforms: [Claude, ChatGPT, Gemini, Opencode]
+name: agent-workflow
+description: Design principles for multi-agent workflows with validation gates using the Ralph Wiggum technique. Use when orchestrating multiple AI agents (Opus/Sonnet/Gemini/Codex) for complex autonomous development tasks with skill stacking, extended thinking, and iterative improvement loops.
+tags: [agent-workflow, multi-agent, ralph-wiggum, orchestration, autonomous, extended-thinking, opus, sonnet, validation-gates, skill-stack]
+platforms: [Claude, ChatGPT, Gemini, Opencode, Codex]
 allowed-tools:
   - Task
   - Bash
@@ -10,9 +10,11 @@ allowed-tools:
   - Write
   - Grep
   - Glob
+  - mcp__gemini-cli__ask-gemini
+  - mcp__codex-cli__shell
 ---
 
-# Ultrathink Multi-Agent Workflow Design Principles
+# Agent Workflow Design Principles
 
 Ralph Wiggum 기법 기반의 멀티 에이전트 워크플로우 설계 원칙입니다. 여러 AI 에이전트(Opus/Sonnet/Gemini/Codex)를 조율하여 복잡한 자율 개발 작업을 수행하는 방법론을 다룹니다.
 
@@ -278,6 +280,144 @@ ralph-loop --plan IMPLEMENTATION_PLAN.md \
   --max-iterations 200 \
   --checkpoint-interval 10 \
   --task "User Dashboard 기능 구현"
+```
+
+---
+
+## 6.5 Skill Stack Orchestration (Validation Gates)
+
+### Full-Stack Delivery Workflow
+
+복잡한 프로젝트에서 여러 스킬을 시퀀싱하여 엔드투엔드 딜리버리:
+
+```markdown
+## Skill Stack Sequence
+
+### Step 1: Define Outcome
+- Target deliverable: [launch, campaign, product]
+- Time constraints: [deadline]
+- Quality constraints: [standards]
+
+### Step 2: Sequence Skills
+1) Marketing strategy → messaging, positioning
+2) Frontend design → UI/UX, design tokens
+3) Image generation → visual assets
+4) Video production → promo content
+5) Code simplification → refactoring, cleanup
+6) Presentation deck → final pitch
+```
+
+### Validation Gates
+
+각 단계 사이에 검증 게이트를 배치:
+
+```yaml
+validation_gates:
+  gate_a:
+    name: "Messaging & Positioning Review"
+    after_skill: "marketing-strategy"
+    checklist:
+      - Brand voice consistency
+      - Target audience alignment
+      - Value proposition clarity
+    owner: "Analyst"
+
+  gate_b:
+    name: "Design System Consistency"
+    after_skill: "frontend-design"
+    checklist:
+      - Token usage validation
+      - Accessibility compliance
+      - Responsive behavior
+    owner: "Analyst"
+
+  gate_c:
+    name: "Asset QA"
+    after_skill: "image-generation, video-production"
+    checklist:
+      - Brand alignment
+      - Resolution/format correctness
+      - File naming convention
+    owner: "Executor"
+
+  gate_d:
+    name: "Code Quality"
+    after_skill: "code-refactoring"
+    checklist:
+      - Tests passing
+      - Lint clean
+      - Behavior preserved
+    owner: "Executor"
+
+  gate_e:
+    name: "Deck Narrative & Polish"
+    after_skill: "presentation-builder"
+    checklist:
+      - Story arc coherent
+      - Visual consistency
+      - Speaker notes complete
+    owner: "Orchestrator"
+```
+
+### Multi-Agent Role Assignment
+
+```markdown
+## Role Assignment
+
+| Agent | Role | Responsibilities |
+|-------|------|------------------|
+| Claude (Opus) | Orchestrator | Plan, synthesize, approve gates |
+| Claude (Sonnet) | Worker | Execute skills, generate content |
+| Gemini | Analyst | Deep analysis, QA reviews |
+| Codex | Executor | Commands, builds, validation |
+```
+
+### Example: B2B SaaS Launch
+
+```bash
+# Full skill stack for 2-week launch
+
+# Week 1
+## Day 1-2: Strategy
+claude task "Run marketing-automation skill for positioning"
+# → Gate A: Messaging review
+
+## Day 3-4: Design
+claude task "Run frontend-design skill for landing page"
+# → Gate B: Design consistency check
+
+## Day 5: Assets
+claude task "Run image-generation skill for hero/social"
+# → Gate C: Asset QA
+
+# Week 2
+## Day 1-2: Development
+claude task "Run code-refactoring skill for codebase cleanup"
+# → Gate D: Code quality check
+
+## Day 3: Video
+claude task "Run video-production skill for promo video"
+# → Gate C: Asset QA
+
+## Day 4-5: Presentation
+claude task "Run presentation-builder skill for investor deck"
+# → Gate E: Deck review
+
+# Final: Launch readiness
+claude task --model opus "Synthesize all outputs, final launch checklist"
+```
+
+### Metrics Tracking
+
+```markdown
+## Delivery Metrics
+
+| Metric | Target | Actual |
+|--------|--------|--------|
+| Gate pass rate | 100% | - |
+| Skill completion | 6/6 | - |
+| Rework cycles | < 2 | - |
+| Total duration | 10 days | - |
 ```
 
 ---

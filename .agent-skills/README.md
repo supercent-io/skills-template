@@ -70,11 +70,12 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 │   ├── backend-testing/
 │   ├── kling-ai/
 │   └── cs-tool-dashboard/
-├── frontend/                          # 프론트엔드 스킬 (4)
+├── frontend/                          # 프론트엔드 스킬 (5)
 │   ├── ui-component-patterns/
 │   ├── state-management/
 │   ├── responsive-design/
-│   └── web-accessibility/
+│   ├── web-accessibility/
+│   └── design-system/                 # NEW: 디자인 토큰, 레이아웃, 접근성
 ├── code-quality/                      # 코드 품질 스킬 (6)
 │   ├── code-review/
 │   ├── code-refactoring/
@@ -90,17 +91,18 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 │   ├── firebase-ai-logic/
 │   ├── agent-configuration/
 │   └── looker-studio-bigquery/
-├── documentation/                     # 문서 스킬 (4)
+├── documentation/                     # 문서 스킬 (5)
 │   ├── technical-writing/
 │   ├── api-documentation/
 │   ├── user-guide-writing/
-│   └── changelog-maintenance/
+│   ├── changelog-maintenance/
+│   └── presentation-builder/          # NEW: PPTX 프레젠테이션 빌더
 ├── project-management/                # 프로젝트 관리 스킬 (7)
 │   ├── task-planning/
 │   ├── task-estimation/
 │   ├── sprint-retrospective/
 │   ├── standup-meeting/
-│   ├── ultrathink-multiagent-workflow/
+│   ├── agent-workflow/
 │   ├── subagent-creation/
 │   └── agentic-principles/
 ├── search-analysis/                   # 검색/분석 스킬 (4)
@@ -108,6 +110,11 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 │   ├── log-analysis/
 │   ├── data-analysis/
 │   └── pattern-detection/
+├── creative-media/                    # NEW: 크리에이티브 미디어 스킬 (2)
+│   ├── image-generation/              # MCP 기반 이미지 생성
+│   └── video-production/              # Remotion 비디오 제작
+├── marketing/                         # NEW: 마케팅 스킬 (1)
+│   └── marketing-automation/          # 23개 마케팅 서브스킬
 ├── utilities/                         # 유틸리티 스킬 (14)
 │   ├── git-workflow/
 │   ├── git-submodule/
@@ -129,7 +136,7 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
     └── toon-skill-template/
 ```
 
-## 사용 가능한 Skills (52개)
+## 사용 가능한 Skills (57개)
 
 ### Backend (6)
 | Skill | Description |
@@ -141,13 +148,14 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 | `kling-ai` | Kling AI 비디오 생성 |
 | `cs-tool-dashboard` | CS Tool 대시보드 |
 
-### Frontend (4)
+### Frontend (5)
 | Skill | Description |
 |-------|-------------|
 | `ui-component-patterns` | UI 컴포넌트 패턴 |
 | `state-management` | 상태 관리 |
 | `responsive-design` | 반응형 디자인 |
 | `web-accessibility` | 웹 접근성 |
+| `design-system` | **NEW** 디자인 토큰, 레이아웃, 접근성 |
 
 ### Code Quality (6)
 | Skill | Description |
@@ -170,13 +178,14 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 | `agent-configuration` | AI 에이전트 설정 정책 |
 | `looker-studio-bigquery` | Looker Studio + BigQuery |
 
-### Documentation (4)
+### Documentation (5)
 | Skill | Description |
 |-------|-------------|
 | `technical-writing` | 기술 문서 작성 |
 | `api-documentation` | API 문서화 |
 | `user-guide-writing` | 사용자 가이드 |
 | `changelog-maintenance` | 변경 이력 관리 |
+| `presentation-builder` | **NEW** PPTX 프레젠테이션 빌더 |
 
 ### Project Management (7)
 | Skill | Description |
@@ -185,7 +194,7 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 | `task-estimation` | 개발 시간 추정 |
 | `sprint-retrospective` | 회고 진행 |
 | `standup-meeting` | 스탠드업 준비 |
-| `ultrathink-multiagent-workflow` | 멀티 에이전트 워크플로우 |
+| `agent-workflow` | 멀티 에이전트 워크플로우 |
 | `subagent-creation` | 서브에이전트 생성 |
 | `agentic-principles` | AI 에이전트 협업 원칙 |
 
@@ -214,6 +223,17 @@ Agent Skills는 AI 에이전트의 기능을 확장하는 모듈식 기능입니
 | `opencontext` | OpenContext 메모리 관리 |
 | `project-init-memory` | 프로젝트 초기화 메모리 |
 | `prompt-repetition` | 프롬프트 반복 감지 |
+
+### Creative Media (2) - NEW
+| Skill | Description |
+|-------|-------------|
+| `image-generation` | **NEW** MCP 기반 이미지 생성 (Gemini) |
+| `video-production` | **NEW** Remotion 프로그래머블 비디오 |
+
+### Marketing (1) - NEW
+| Skill | Description |
+|-------|-------------|
+| `marketing-automation` | **NEW** 23개 마케팅 서브스킬 (CRO, SEO, 카피라이팅, 분석, 그로스) |
 
 ## Token Optimization
 
@@ -304,4 +324,4 @@ python3 skill_loader.py show api-design
 
 ---
 
-**Version**: 3.4.0 | **Updated**: 2026-01-21 | **Skills**: 52
+**Version**: 3.5.0 | **Updated**: 2026-01-21 | **Skills**: 57
