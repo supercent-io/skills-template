@@ -1,46 +1,22 @@
 # remotion-video-production
 
-> Produce programmable videos with Remotion using scene planning, asset orchestration, and validation.
+> Produce programmable videos with Remotion using scene planning, asset orchestration, and validation gates for automated, brand-consistent video con...
 
 ## When to use this skill
-- Automated video from text
-- Brand-consistent videos at scale
-- Programmatic narration + visuals
-- Marketing/onboarding content
+• **자동화된 비디오 생성**: 텍스트 지침에서 비디오 생성
+• **브랜드 비디오 제작**: 일관된 스타일의 대규모 비디오
+• **프로그래머블 콘텐츠**: 내레이션, 비주얼, 애니메이션 통합
+• **마케팅 콘텐츠**: 제품 소개, 온보딩, 프로모션 비디오
+---
 
 ## Instructions
-**S1: Define Spec**
-- Audience, goal, duration
-- Aspect ratio (16:9, 1:1, 9:16)
-- Tone, voice requirements
-
-**S2: Outline Scenes**
-- List scenes with timestamps
-- Visual + audio per scene
-- Define transitions
-
-**S3: Prepare Assets**
-- Logos, screenshots, images
-- Audio (bgm, narration)
-- Normalize sizes/formats
-
-**S4: Implement Remotion**
-- React components per scene
-- Animations, transitions, text timing
-- Audio sync
-
-**S5: Render & QA**
-- Preview (low quality) first
-- Fix pacing, clipping, sync
-- Final render MP4
+▶ S1: Define the Video Spec
+▶ S2: Outline Scenes
+씬 구조화 템플릿:
 
 ## Best practices
-1. Short scenes (5-10s each)
-2. Consistent typography scale
-3. Audio sync with cues
+1. Short scenes
+2. Consistent typography
+3. Audio sync
 4. Template reuse
-
-## Validation (Multi-Agent)
-- R1 (Orchestrator): Spec completeness
-- R2 (Analyst): Narrative coherence
-- R3 (Executor): Render readiness
+5. Safe zones

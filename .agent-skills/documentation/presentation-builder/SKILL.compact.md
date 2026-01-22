@@ -1,55 +1,20 @@
 # pptx-presentation-builder
 
-> Build professional PPTX presentations with brand-aligned layouts using structured deck briefs and validation.
+> Build professional PPTX presentations with brand-aligned layouts using structured deck briefs and validation steps for pitch, roadmap, and product ...
 
 ## When to use this skill
-- Professional slide deck from prompt
-- Brand-consistent slides
-- Repeatable templates (pitch, roadmap, product)
+• **전문 슬라이드 덱 필요**: 프롬프트에서 프레젠테이션 생성
+• **브랜드 일관성 필요**: 가이드라인에 맞춘 일관된 슬라이드
+• **반복 가능한 템플릿**: 제품, 피치, 로드맵 덱 템플릿화
+---
 
 ## Instructions
-**S1: Gather Brand Constraints**
-- Colors, fonts, logo usage
-- Slide layout preferences
-- Tone (minimal, bold, executive)
-
-**S2: Define Deck Structure**
-- Audience and goal
-- Number of slides
-- Key message per slide
-
-**S3: Generate Slides**
-- Content density per slide
-- Visual hierarchy
-- Speaker notes
-
-**S4: Review & Refine**
-- Layout balance, readability
-- Typography consistency
-- Data citations
-
-**S5: Export & Handoff**
-- PPTX export
-- Summary + editing notes
-
-## Slide Types
-| Type | Elements |
-|------|----------|
-| Title | Logo, Title, Subtitle |
-| Agenda | Numbered list |
-| Problem | Text + Visual split |
-| Features | 3-column icons |
-| Stats | Data cards |
-| Team | Grid layout |
-| CTA | Headline + Button |
+▶ S1: Gather Brand Constraints
+▶ S2: Define Deck Structure
 
 ## Best practices
 1. One idea per slide
 2. Visual hierarchy
-3. Speaker notes for detail
-4. Consistent theming
-
-## Validation (Multi-Agent)
-- R1 (Orchestrator): Narrative arc
-- R2 (Analyst): Layout consistency
-- R3 (Executor): Export readiness
+3. Use speaker notes
+4. Data clarity
+5. Consistent theming

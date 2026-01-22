@@ -1,7 +1,7 @@
 # Agent Skills - Full Multi-Agent Workflow
 
 > 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
-> Generated: 2026-01-21 | Workflow: full-multiagent | Preset: balanced
+> Generated: 2026-01-22 | Workflow: full-multiagent | Preset: balanced
 
 ## Agent Roles & Status
 
@@ -17,7 +17,7 @@
 | Role | Provider | Model | Use Case |
 |------|----------|-------|----------|
 | **Orchestrator** | claude | `claude-opus-4-5-20251101` | 계획 수립, 코드 생성 |
-| **Analyst** | gemini | `gemini-2.5-pro` | 대용량 분석, 리서치 |
+| **Analyst** | gemini | `gemini-3-pro` | 대용량 분석, 리서치 |
 | **Executor** | openai | `gpt-5.2-codex` | 명령 실행, 빌드 |
 
 ### Claude Task Tool Model Hints
@@ -65,11 +65,11 @@ shell "kubectl apply -f deployment.yaml"
 | `utilities/` | Git, 환경 설정 |
 
 ### Skill Query (Token-Optimized)
-```bash
+\`\`\`bash
 gemini-skill "API 설계해줘"           # toon mode (95% 절감)
 gemini-skill "query" compact          # compact mode (88% 절감)
 gemini-skill "query" full             # 상세 모드
-```
+\`\`\`
 
 ## OpenContext (Persistent Memory)
 
@@ -107,15 +107,5 @@ export OPENAI_API_KEY="sk-..."
 # 또는: ~/.opencontext/config.toml 편집
 ```
 
-### 자동 설정 (setup.sh)
-```bash
-# OpenContext 환경 자동 설정
-cd .agent-skills && ./setup.sh --auto
-
-# 또는 유틸리티 메뉴에서 OpenContext 프로젝트 초기화
-./setup.sh
-# → 3) 유틸리티 → 9) OpenContext 프로젝트 초기화
-```
-
 ---
-**Version**: 3.1.0 | **Generated**: 2026-01-21
+**Version**: 3.1.0 | **Generated**: 2026-01-22
