@@ -4,7 +4,7 @@
 > **Claude Code 완전 가이드 70가지 팁 적용** - 에이전틱 개발 정책 강화
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-52-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-55-green.svg)](.agent-skills/)
 [![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Claude%20%7C%20Gemini%20%7C%20Codex-blueviolet.svg)](CLAUDE.md)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 [![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-ai-agent-installation)
@@ -267,15 +267,15 @@ graph TB
 
 ---
 
-## Skills Overview (52 Total)
+## Skills Overview (55 Total)
 
 ```mermaid
 pie showData
     title Skills by Category
     "Backend" : 6
-    "Frontend" : 4
+    "Frontend" : 6
     "Code-Quality" : 6
-    "Infrastructure" : 7
+    "Infrastructure" : 8
     "Documentation" : 4
     "Project-Mgmt" : 7
     "Search-Analysis" : 4
@@ -285,9 +285,9 @@ pie showData
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
 | **Backend** | 6 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `kling-ai` `cs-tool-dashboard` |
-| **Frontend** | 4 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` |
+| **Frontend** | 6 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` `web-design-guidelines` `react-best-practices` |
 | **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
-| **Infrastructure** | 7 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` `agent-configuration` |
+| **Infrastructure** | 8 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` `agent-configuration` `vercel-deploy` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
 | **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
@@ -493,7 +493,14 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.14.0 | **Updated**: 2026-01-22 | **Skills**: 52 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.15.0 | **Updated**: 2026-01-22 | **Skills**: 55 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+
+**Changelog v3.15.0**:
+- **신규 스킬 3종 추가**: agent-skills-main에서 검증된 스킬 병합
+  - `frontend/web-design-guidelines` - Vercel Web Interface Guidelines 준수 리뷰
+  - `frontend/react-best-practices` - React/Next.js 성능 최적화 45규칙 (Vercel)
+  - `infrastructure/vercel-deploy` - 인증 불필요 Vercel 즉시 배포
+- **스킬 총 수**: 52 → 55개
 
 **Changelog v3.14.0**:
 - **Shell RC 설정 문서화 개선**: `.zshrc`/`.bashrc` 수정이 개발자 편의 기능임을 명확히 문서화
