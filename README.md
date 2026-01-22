@@ -9,6 +9,8 @@
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 [![Setup](https://img.shields.io/badge/Setup-One--Liner-orange.svg)](#-ai-agent-installation)
 
+![Agent Skills](AgentSkills.png)
+
 ---
 
 ## AI Agent Installation
