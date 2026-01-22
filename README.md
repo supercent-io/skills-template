@@ -430,6 +430,127 @@ python3 .agent-skills/skill-query-handler.py match "데이터베이스"
 
 ---
 
+## 실전 예제 시나리오 (Practical Scenarios)
+
+> 스킬을 조합하여 실제 프로젝트에 적용하는 3가지 워크플로우 예시
+
+### 시나리오 1: Full-Stack 프로젝트 구축
+
+**목표**: 디자인 레이아웃 → 백엔드 DB 스키마 → Docker 배포 → Git 관리까지 완전한 개발 파이프라인 구축
+
+```mermaid
+flowchart LR
+    A["요구사항 분석"] --> B["UI/UX 설계"]
+    B --> C["DB 스키마"]
+    C --> D["API 개발"]
+    D --> E["Docker 배포"]
+    E --> F["Git 관리"]
+```
+
+| 단계 | 스킬 | Agent | 핵심 산출물 |
+|------|------|-------|-------------|
+| **1. 디자인 레이아웃** | `frontend/design-system` `frontend/responsive-design` | Claude | 컴포넌트 구조도, 반응형 브레이크포인트 정의 |
+| **2. 구조 설계 원칙** | `frontend/ui-component-patterns` `frontend/web-design-guidelines` | Claude | Atomic Design 패턴, Vercel 디자인 가이드라인 준수 |
+| **3. DB 스키마 설계** | `backend/database-schema-design` `backend/api-design` | Claude | ERD, 테이블 정의서, REST/GraphQL 스펙 |
+| **4. Docker 연동** | `infrastructure/deployment-automation` `infrastructure/vercel-deploy` | Codex | Dockerfile, docker-compose.yml, CI/CD 파이프라인 |
+| **5. Git 관리** | `utilities/git-workflow` `utilities/git-submodule` | Codex | 브랜치 전략, PR 템플릿, 서브모듈 구성 |
+
+**실행 예시:**
+```bash
+# Step 1: 디자인 시스템 스킬 로드
+python3 .agent-skills/skill-query-handler.py query "디자인 시스템 설계해줘"
+
+# Step 2: DB 스키마 설계
+python3 .agent-skills/skill-query-handler.py query "PostgreSQL 스키마 설계"
+
+# Step 3: Docker 배포 설정
+python3 .agent-skills/skill-query-handler.py query "Docker Compose 설정"
+```
+
+---
+
+### 시나리오 2: 마케팅 데이터 분석 및 보고서 작성
+
+**목표**: KPI 정의 → 데이터 시각화 → PPT 보고서 자동 생성
+
+```mermaid
+flowchart LR
+    A["KPI 정의"] --> B["데이터 수집"]
+    B --> C["시각화"]
+    C --> D["PPT 생성"]
+```
+
+| 단계 | 스킬 | Agent | 핵심 산출물 |
+|------|------|-------|-------------|
+| **1. 평가지표 설계** | `marketing/marketing-automation` | Gemini | KPI 프레임워크, 퍼널 분석 구조 |
+| **2. 데이터 분석** | `search-analysis/data-analysis` | Gemini | SQL 쿼리, 통계 분석 리포트 |
+| **3. 데이터 시각화** | `infrastructure/looker-studio-bigquery` | Claude | Looker Studio 대시보드, BigQuery 연동 |
+| **4. PPT 작성** | `documentation/presentation-builder` | Claude | 브랜드 가이드라인 준수 슬라이드 덱 |
+
+**실행 예시:**
+```bash
+# Step 1: 마케팅 KPI 분석 요청
+python3 .agent-skills/skill-query-handler.py query "마케팅 퍼널 분석"
+
+# Step 2: BigQuery 데이터 시각화
+python3 .agent-skills/skill-query-handler.py query "Looker Studio 대시보드"
+
+# Step 3: PPT 보고서 생성
+python3 .agent-skills/skill-query-handler.py query "투자자 발표 PPT 만들어줘"
+```
+
+**Agent 조합 패턴:**
+```
+1. [Gemini] 대용량 마케팅 데이터 분석 (2M+ 토큰 처리)
+2. [Claude] 인사이트 도출 및 시각화 설계
+3. [Claude] PPT 스크립트 및 레이아웃 생성
+```
+
+---
+
+### 시나리오 3: AI 이미지/영상 프롬프트 및 디자인 가이드 문서화
+
+**목표**: 이미지 생성 프롬프트 작성 → 영상 프로덕션 가이드 → 디자인 시스템 문서화
+
+```mermaid
+flowchart LR
+    A["브랜드 정의"] --> B["이미지 프롬프트"]
+    B --> C["영상 가이드"]
+    C --> D["문서화"]
+```
+
+| 단계 | 스킬 | Agent | 핵심 산출물 |
+|------|------|-------|-------------|
+| **1. 이미지 생성 프롬프트** | `creative-media/image-generation` | Claude | Midjourney/DALL-E/Flux 최적화 프롬프트, 네거티브 프롬프트 |
+| **2. 영상 프로덕션 가이드** | `creative-media/video-production` | Claude | 스토리보드, 컷 구성, 모션 그래픽 지침 |
+| **3. 디자인 가이드 문서** | `frontend/web-design-guidelines` `documentation/technical-writing` | Claude | 브랜드 스타일 가이드, 컬러/타이포그래피 규격 |
+| **4. API 문서화** | `documentation/api-documentation` | Claude | 프롬프트 API 레퍼런스, 파라미터 가이드 |
+
+**실행 예시:**
+```bash
+# Step 1: 이미지 생성 프롬프트 작성
+python3 .agent-skills/skill-query-handler.py query "Midjourney 프롬프트 작성"
+
+# Step 2: 영상 프로덕션 가이드
+python3 .agent-skills/skill-query-handler.py query "영상 스토리보드 작성"
+
+# Step 3: 디자인 가이드 문서화
+python3 .agent-skills/skill-query-handler.py query "브랜드 스타일 가이드 문서"
+```
+
+**프롬프트 엔지니어링 팁:**
+```
+[이미지 생성 프롬프트 구조]
+1. 주제(Subject): 핵심 대상 명시
+2. 스타일(Style): 예술 사조, 렌더링 방식
+3. 조명(Lighting): 광원 방향, 분위기
+4. 카메라(Camera): 앵글, 렌즈 효과
+5. 품질(Quality): 해상도, 디테일 수준
+6. 네거티브(Negative): 제외할 요소
+```
+
+---
+
 ## Troubleshooting
 
 ### 시스템 진단
