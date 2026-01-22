@@ -17,12 +17,54 @@
 
 > **LLM 기반 설치를 지원합니다.** 원라이너 명령 또는 AI 에이전트 프롬프트로 설치하세요.
 
-### One-Liner 설치 (권장)
+### 🚀 One-Liner 설치 (권장)
 
 ```bash
-# 터미널에서 바로 실행 (MCP 서버 자동 설치 포함)
 curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
 ```
+
+### 🤖 AI 에이전트용 프롬프트
+
+Claude Code, Gemini, ChatGPT 등에게 아래 프롬프트를 **복사-붙여넣기**하세요:
+
+#### 기본 설치 프롬프트
+```
+https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해. 그 후 setup.sh를 --silent --install-mcp 모드로 실행하고, 임시 클론 폴더는 삭제해.
+```
+
+#### 사용 예제 프롬프트
+
+| 목적 | 프롬프트 |
+|------|----------|
+| **스킬 검색** | `"API 설계" 관련 스킬을 찾아서 로드해줘` |
+| **코드 리뷰** | `code-review 스킬을 사용해서 src/ 폴더를 리뷰해줘` |
+| **DB 스키마 설계** | `database-schema-design 스킬로 사용자 관리 시스템 스키마를 설계해줘` |
+| **PPT 작성** | `presentation-builder 스킬을 로드하고 투자자 발표 자료 10슬라이드로 만들어줘` |
+| **이미지 프롬프트** | `image-generation 스킬로 Midjourney용 프롬프트를 작성해줘` |
+| **Docker 배포** | `deployment-automation 스킬을 사용해서 Docker Compose 설정을 만들어줘` |
+
+#### 스킬 호출 CLI 예시
+```bash
+# 자연어로 스킬 검색
+python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
+
+# 특정 스킬 직접 로드 (토큰 절약)
+python3 .agent-skills/skill-query-handler.py query "코드 리뷰" --mode toon
+
+# 스킬 목록 확인
+python3 .agent-skills/skill_loader.py list
+```
+
+<details>
+<summary><strong>📦 설치 모드별 옵션 (클릭하여 펼치기)</strong></summary>
+
+| 모드 | 명령어 | 설명 |
+|------|--------|------|
+| **Silent + MCP (권장)** | `setup.sh --silent --install-mcp` | 완전 자동화, MCP 서버 자동 설치 |
+| **Silent** | `setup.sh --silent` | 자동 감지, 기본값 적용 |
+| **Auto** | `setup.sh --auto` | 대화형 없이 전체 설정 |
+| **Quick** | `setup.sh --quick` | 토큰 최적화 파일만 생성 |
+| **Interactive** | `setup.sh` | 단계별 대화형 설정 |
 
 **환경 변수 옵션:**
 ```bash
@@ -33,7 +75,10 @@ INSTALL_MCP=false curl -fsSL ... | bash
 SKIP_BACKUP=true curl -fsSL ... | bash
 ```
 
-### 보안 중시 설치 (2단계)
+</details>
+
+<details>
+<summary><strong>🔒 보안 중시 설치 (2단계)</strong></summary>
 
 스크립트를 먼저 확인한 후 실행하고 싶다면:
 
@@ -48,42 +93,29 @@ cat install.sh
 bash install.sh
 ```
 
-### AI 에이전트용 프롬프트
+</details>
 
-Claude Code, Gemini, ChatGPT 등에게 다음 프롬프트를 입력하세요:
+<details>
+<summary><strong>🔧 수동 설치 (개발자용)</strong></summary>
 
+```bash
+# 1. 저장소 클론
+git clone https://github.com/supercent-io/skills-template.git /tmp/skills-template
+
+# 2. .agent-skills 복사
+cp -rf /tmp/skills-template/.agent-skills .
+
+# 3. 설정 실행
+chmod +x .agent-skills/setup.sh && .agent-skills/setup.sh --silent
+
+# 4. 정리
+rm -rf /tmp/skills-template
 ```
-https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해. 그 후 setup.sh를 --silent --install-mcp 모드로 실행하고, 임시 클론 폴더는 삭제해.
-```
 
-### 설치 모드별 옵션
+</details>
 
-| 모드 | 명령어 | 설명 |
-|------|--------|------|
-| **Silent + MCP (권장)** | `setup.sh --silent --install-mcp` | 완전 자동화, MCP 서버 자동 설치 |
-| **Silent** | `setup.sh --silent` | 자동 감지, 기본값 적용 |
-| **Auto** | `setup.sh --auto` | 대화형 없이 전체 설정 |
-| **Quick** | `setup.sh --quick` | 토큰 최적화 파일만 생성 |
-| **Interactive** | `setup.sh` | 단계별 대화형 설정 |
-
-> **참고: Shell RC 설정은 개발자 편의 기능**
->
-> `.zshrc`/`.bashrc` 수정은 **개발자가 터미널에서 직접 사용**할 때만 필요합니다.
-> AI 에이전트는 MCP 등록 설정을 통해 도구에 접근하므로 Shell RC 수정이 불필요합니다.
->
-> - **AI 에이전트**: `--silent` 사용 (자동으로 Shell RC 수정 건너뜀)
-> - **개발자**: Interactive 모드에서 `gemini-skill`, `mcp-status` 등 편리한 alias 설정
-
-### 새로운 기능
-
-| 기능 | 설명 |
-|------|------|
-| `--install-mcp` | MCP 서버 자동 설치 (OpenContext 필수, Gemini/Codex 선택) |
-| OpenContext 필수 | 영구 메모리 MCP가 기본 필수 설정으로 포함 |
-| ralph-loop 자동 적용 | 경량 모델(haiku, flash, mini)에서 프롬프트 반복 자동 적용 |
-| 설정 검증 | 설치 후 자동 검증 및 누락 설정 자동 적용 |
-
-### AI Agent별 설치 가이드
+<details>
+<summary><strong>🤖 AI Agent별 설치 가이드</strong></summary>
 
 #### Claude Code
 ```bash
@@ -104,23 +136,10 @@ cd .agent-skills && ./setup.sh --diagnose
 # Knowledge Base에 스킬 ZIP 업로드도 가능
 ```
 
-### 수동 설치 (개발자용)
+</details>
 
-```bash
-# 1. 저장소 클론
-git clone https://github.com/supercent-io/skills-template.git /tmp/skills-template
-
-# 2. .agent-skills 복사
-cp -rf /tmp/skills-template/.agent-skills .
-
-# 3. 설정 실행
-chmod +x .agent-skills/setup.sh && .agent-skills/setup.sh --silent
-
-# 4. 정리
-rm -rf /tmp/skills-template
-```
-
-### 설치 후 검증
+<details>
+<summary><strong>✅ 설치 후 검증</strong></summary>
 
 ```bash
 # 시스템 진단
@@ -134,7 +153,10 @@ rm -rf /tmp/skills-template
 # Workflow Type: full-multiagent
 ```
 
-### MCP 서버 연동 (Claude Code 전용)
+</details>
+
+<details>
+<summary><strong>🔌 MCP 서버 연동 (Claude Code 전용)</strong></summary>
 
 ```bash
 # Gemini-CLI MCP 추가 (대용량 분석)
@@ -146,6 +168,25 @@ claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
 # OpenContext MCP 추가 (영구 메모리)
 claude mcp add opencontext -s user -- oc mcp
 ```
+
+</details>
+
+<details>
+<summary><strong>🆕 새로운 기능</strong></summary>
+
+| 기능 | 설명 |
+|------|------|
+| `--install-mcp` | MCP 서버 자동 설치 (OpenContext 필수, Gemini/Codex 선택) |
+| OpenContext 필수 | 영구 메모리 MCP가 기본 필수 설정으로 포함 |
+| ralph-loop 자동 적용 | 경량 모델(haiku, flash, mini)에서 프롬프트 반복 자동 적용 |
+| 설정 검증 | 설치 후 자동 검증 및 누락 설정 자동 적용 |
+
+> **참고: Shell RC 설정은 개발자 편의 기능**
+>
+> `.zshrc`/`.bashrc` 수정은 **개발자가 터미널에서 직접 사용**할 때만 필요합니다.
+> AI 에이전트는 MCP 등록 설정을 통해 도구에 접근하므로 Shell RC 수정이 불필요합니다.
+
+</details>
 
 ---
 
