@@ -324,9 +324,6 @@ npm install -g @google/gemini-cli
 
 # 설치 확인
 gemini --version
-
-# API 키 설정
-export GEMINI_API_KEY=your_api_key
 ```
 
 ### Codex CLI 설치 (Executor - 명령 실행)
@@ -337,9 +334,6 @@ npm install -g @openai/codex
 
 # 설치 확인
 codex --version
-
-# API 키 설정
-export OPENAI_API_KEY=your_api_key
 ```
 
 ### OpenContext CLI 설치 (AI 영구 메모리)

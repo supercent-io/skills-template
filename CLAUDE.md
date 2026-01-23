@@ -100,11 +100,10 @@ oc_get_link "project-name/docs/api-spec.md"
 └── [project-name]/   # 프로젝트별 문서
 ```
 
-### 검색 활성화 (OpenAI API 키 필요)
+### 검색 활성화
 ```bash
-# 환경변수 또는 config.toml 설정
-export OPENAI_API_KEY="sk-..."
-# 또는: ~/.opencontext/config.toml 편집
+# ~/.opencontext/config.toml 설정 필요
+# 자세한 내용: oc help config
 ```
 
 ---
