@@ -15,60 +15,168 @@
 
 ## Prerequisites (사전 요구사항)
 
-<details>
-<summary><strong>macOS (필수 - 클릭하여 펼치기)</strong></summary>
+> ⚠️ **중요**: 아래 요구사항이 충족되지 않으면 설치가 실패합니다.
+
+### macOS (필수)
 
 ```bash
-# Xcode Command Line Tools (필수)
+# 1. Xcode Command Line Tools (필수 - 없으면 npm/git 등이 동작하지 않음)
 xcode-select --install
 
-# Node.js (Homebrew 권장)
+# 2. Node.js (Homebrew 권장)
 brew install node
+
+# 3. 설치 확인
+node --version && npm --version
+```
+
+<details>
+<summary><strong>❓ xcode-select 설치 실패 시</strong></summary>
+
+**증상**: `xcode-select: error: command line tools are already installed` 또는 설치 창이 안 뜸
+
+**해결 방법**:
+```bash
+# 방법 1: 기존 설치 제거 후 재설치
+sudo rm -rf /Library/Developer/CommandLineTools
+xcode-select --install
+
+# 방법 2: Apple 개발자 사이트에서 직접 다운로드
+open https://developer.apple.com/download/more/
+# "Command Line Tools for Xcode" 검색 후 다운로드
 ```
 
 </details>
 
 <details>
-<summary><strong>Linux (Debian/Ubuntu)</strong></summary>
+<summary><strong>❓ Homebrew가 없는 경우</strong></summary>
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y build-essential curl git
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# Homebrew 설치
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# PATH 설정 (Apple Silicon Mac)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
 </details>
 
+### Linux (Debian/Ubuntu)
+
+```bash
+# 1. 빌드 도구 설치
+sudo apt-get update
+sudo apt-get install -y build-essential curl git
+
+# 2. Node.js 20.x 설치
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 3. 설치 확인
+node --version && npm --version
+```
+
 <details>
-<summary><strong>Windows (WSL2 권장)</strong></summary>
+<summary><strong>❓ sudo 권한이 없는 경우 (nvm 사용)</strong></summary>
+
+```bash
+# nvm 설치
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc
+
+# Node.js 설치
+nvm install 20
+nvm use 20
+```
+
+</details>
+
+### Windows (WSL2 권장)
 
 ```powershell
+# 1. WSL2 설치
 wsl --install
-# Ubuntu 설치 후 Linux 가이드 따르기
+
+# 2. Ubuntu 설치 후 재부팅
+# 3. Ubuntu 터미널에서 Linux 가이드 따르기
 ```
+
+<details>
+<summary><strong>❓ WSL 없이 Windows에서 직접 사용</strong></summary>
+
+```powershell
+# Node.js 설치 (공식 사이트)
+# https://nodejs.org/en/download/ 에서 LTS 버전 다운로드
+
+# Git Bash 설치
+# https://git-scm.com/download/win 에서 다운로드
+
+# PowerShell에서 실행 정책 설정
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+> ⚠️ Windows 네이티브는 일부 스크립트가 호환되지 않을 수 있습니다. WSL2 사용을 권장합니다.
 
 </details>
 
 ---
 
-## AI Agent Installation
+## 🚀 AI Agent Installation
 
 > **LLM 기반 설치를 지원합니다.** 원라이너 명령 또는 AI 에이전트 프롬프트로 설치하세요.
 
-### 🚀 One-Liner 설치 (권장)
+### One-Liner 설치 (권장)
 
 #### 글로벌 설치 (~/.agent-skills) - 기본값
 ```bash
 curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
 ```
 
-> **설치 후**: `echo 'source ~/.agent-skills/mcp-shell-config.sh' >> ~/.zshrc && source ~/.zshrc`
+> **설치 후 필수**: 
+> ```bash
+> echo 'source ~/.agent-skills/mcp-shell-config.sh' >> ~/.zshrc && source ~/.zshrc
+> ```
 
 #### 프로젝트 로컬 설치 (선택)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | INSTALL_GLOBAL=false bash
 ```
+
+<details>
+<summary><strong>❓ curl 명령이 실패하는 경우</strong></summary>
+
+**증상**: `curl: (7) Failed to connect` 또는 `SSL certificate problem`
+
+**해결 방법**:
+```bash
+# 방법 1: HTTPS 인증서 문제 우회 (임시)
+curl -fsSLk https://raw.githubusercontent.com/... | bash
+
+# 방법 2: 수동 다운로드 후 실행
+wget https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh
+chmod +x install.sh && ./install.sh
+```
+
+</details>
+
+<details>
+<summary><strong>❓ npm 권한 오류 (EACCES)</strong></summary>
+
+**증상**: `npm ERR! Error: EACCES: permission denied`
+
+**해결 방법**:
+```bash
+# npm 글로벌 디렉토리 변경
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zshrc
+source ~/.zshrc
+
+# 다시 설치 시도
+curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
+```
+
+</details>
 
 ### 🤖 AI 에이전트용 프롬프트
 
@@ -89,27 +197,30 @@ https://github.com/supercent-io/skills-template 저장소를 임시로 클론하
 ~/.zshrc에 추가해야 한다고 안내해줘.
 ```
 
-#### 사용 예제 프롬프트
+### ✅ 설치 후 검증 (LLM 프롬프트)
 
-| 목적 | 프롬프트 |
-|------|----------|
-| **스킬 검색** | `"API 설계" 관련 스킬을 찾아서 로드해줘` |
-| **코드 리뷰** | `code-review 스킬을 사용해서 src/ 폴더를 리뷰해줘` |
-| **DB 스키마 설계** | `database-schema-design 스킬로 사용자 관리 시스템 스키마를 설계해줘` |
-| **PPT 작성** | `presentation-builder 스킬을 로드하고 투자자 발표 자료 10슬라이드로 만들어줘` |
-| **이미지 프롬프트** | `image-generation 스킬로 Midjourney용 프롬프트를 작성해줘` |
-| **Docker 배포** | `deployment-automation 스킬을 사용해서 Docker Compose 설정을 만들어줘` |
+설치 완료 후, AI 에이전트에게 아래 프롬프트를 입력하여 설정을 확인하세요:
 
-#### 스킬 호출 CLI 예시
-```bash
-# 자연어로 스킬 검색
-python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
+```
+.agent-skills 폴더 설치를 확인해줘. 다음 항목을 검증하고 리포트해:
 
-# 특정 스킬 직접 로드 (토큰 절약)
-python3 .agent-skills/skill-query-handler.py query "코드 리뷰" --mode toon
+1. **스킬 시스템 확인**:
+   - .agent-skills/skills/ 폴더에 스킬이 존재하는지
+   - python3 .agent-skills/skill-query-handler.py stats 실행 결과
 
-# 스킬 목록 확인
-python3 .agent-skills/skill_loader.py list
+2. **MCP 서버 확인**:
+   - claude mcp list 실행하여 등록된 MCP 서버 목록
+   - gemini-cli, codex-cli, opencontext 중 설치된 것 표시
+
+3. **서브에이전트 설정 확인**:
+   - CLAUDE.md 파일이 존재하는지
+   - model-config.env 설정 내용
+
+4. **누락된 설정 자동 적용**:
+   - 누락된 MCP 서버가 있다면 설치 명령 제안
+   - 설정 파일이 없다면 기본 설정 생성
+
+검증 결과를 표 형태로 요약하고, 해결이 필요한 항목이 있다면 수정해줘.
 ```
 
 <details>
@@ -171,114 +282,13 @@ rm -rf /tmp/skills-template
 
 </details>
 
-<details>
-<summary><strong>🤖 AI Agent별 설치 가이드</strong></summary>
-
-#### Claude Code
-```bash
-# 1. 프롬프트 입력 후 AI가 자동 설치
-# 2. 설치 완료 후 확인
-cd .agent-skills && ./setup.sh --diagnose
-```
-
-#### Gemini CLI
-```bash
-# Gemini에서 동일한 프롬프트 사용
-# Shell 도구로 자동 설치 수행
-```
-
-#### ChatGPT (Code Interpreter)
-```bash
-# 프롬프트 입력 → ChatGPT가 shell 명령 실행
-# Knowledge Base에 스킬 ZIP 업로드도 가능
-```
-
-</details>
-
-<details>
-<summary><strong>✅ 설치 후 검증</strong></summary>
-
-```bash
-# 시스템 진단
-.agent-skills/setup.sh --diagnose
-
-# 예상 출력:
-# ✅ Python3
-# ✅ Claude CLI
-# ✅ gemini-cli MCP Server
-# ✅ codex-cli MCP Server
-# Workflow Type: full-multiagent
-```
-
-</details>
-
-<details>
-<summary><strong>🤖 LLM 검증 프롬프트 (설치 후 AI에게 요청)</strong></summary>
-
-설치 완료 후, AI 에이전트에게 아래 프롬프트를 입력하여 설정을 확인하세요:
-
-```
-.agent-skills 폴더 설치를 확인해줘. 다음 항목을 검증하고 리포트해:
-
-1. **스킬 시스템 확인**:
-   - .agent-skills/skills/ 폴더에 스킬이 존재하는지
-   - python3 .agent-skills/skill-query-handler.py stats 실행 결과
-
-2. **MCP 서버 확인**:
-   - claude mcp list 실행하여 등록된 MCP 서버 목록
-   - gemini-cli, codex-cli, opencontext 중 설치된 것 표시
-
-3. **서브에이전트 설정 확인**:
-   - CLAUDE.md 파일이 존재하는지
-   - model-config.env 설정 내용
-
-4. **누락된 설정 자동 적용**:
-   - 누락된 MCP 서버가 있다면 설치 명령 제안
-   - 설정 파일이 없다면 기본 설정 생성
-
-검증 결과를 표 형태로 요약하고, 해결이 필요한 항목이 있다면 수정해줘.
-```
-
-</details>
-
-<details>
-<summary><strong>🔌 MCP 서버 연동 (Claude Code 전용)</strong></summary>
-
-```bash
-# Gemini-CLI MCP 추가 (대용량 분석)
-claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
-
-# Codex-CLI MCP 추가 (명령 실행)
-claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
-
-# OpenContext MCP 추가 (영구 메모리)
-claude mcp add opencontext -s user -- oc mcp
-```
-
-</details>
-
-<details>
-<summary><strong>🆕 새로운 기능</strong></summary>
-
-| 기능 | 설명 |
-|------|------|
-| `--install-mcp` | MCP 서버 자동 설치 (OpenContext 필수, Gemini/Codex 선택) |
-| OpenContext 필수 | 영구 메모리 MCP가 기본 필수 설정으로 포함 |
-| ralph-loop 자동 적용 | 경량 모델(haiku, flash, mini)에서 프롬프트 반복 자동 적용 |
-| 설정 검증 | 설치 후 자동 검증 및 누락 설정 자동 적용 |
-
-> **참고: Shell RC 설정은 개발자 편의 기능**
->
-> `.zshrc`/`.bashrc` 수정은 **개발자가 터미널에서 직접 사용**할 때만 필요합니다.
-> AI 에이전트는 MCP 등록 설정을 통해 도구에 접근하므로 Shell RC 수정이 불필요합니다.
-
-</details>
-
 ---
 
 ## LLM CLI 설치 가이드
 
-### Claude Code 설치
+> 최소 1개 이상의 LLM CLI가 필요합니다. Claude Code를 권장합니다.
+
+### Claude Code 설치 (Orchestrator - 필수 권장)
 
 ```bash
 # macOS/Linux
@@ -291,7 +301,22 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 ```
 
-### Gemini CLI 설치
+<details>
+<summary><strong>❓ claude 명령어를 찾을 수 없는 경우</strong></summary>
+
+```bash
+# PATH 확인
+echo $PATH
+
+# npm 글로벌 bin 경로 추가
+export PATH="$(npm config get prefix)/bin:$PATH"
+echo 'export PATH="$(npm config get prefix)/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+</details>
+
+### Gemini CLI 설치 (Analyst - 대용량 분석)
 
 ```bash
 # npm으로 설치 (Google 공식)
@@ -304,7 +329,7 @@ gemini --version
 export GEMINI_API_KEY=your_api_key
 ```
 
-### Codex CLI 설치
+### Codex CLI 설치 (Executor - 명령 실행)
 
 ```bash
 # npm으로 설치 (OpenAI 공식)
@@ -335,9 +360,139 @@ cd your-project && oc init
 /opencontext-iterate    # 결론 저장
 ```
 
+<details>
+<summary><strong>🔌 MCP 서버 연동 (Claude Code 전용)</strong></summary>
+
+```bash
+# Gemini-CLI MCP 추가 (대용량 분석)
+claude mcp add gemini-cli -s user -- npx -y @anthropic-ai/gemini-mcp
+
+# Codex-CLI MCP 추가 (명령 실행)
+claude mcp add codex-cli -s user -- npx -y @openai/codex-mcp
+
+# OpenContext MCP 추가 (영구 메모리)
+claude mcp add opencontext -s user -- oc mcp
+```
+
+</details>
+
 ---
 
-## Architecture
+## 📁 스킬/서브에이전트 설정 위치
+
+> 설치 후 커스터마이징이 필요한 설정 파일들의 위치와 역할입니다.
+
+### 설정 파일 경로
+
+| 파일 | 위치 | 역할 |
+|:-----|:-----|:-----|
+| **CLAUDE.md** | 프로젝트 루트 | Claude Code 시스템 프롬프트, 프로젝트 컨텍스트 |
+| **model-config.env** | `.agent-skills/` | 에이전트별 모델 설정 (orchestrator/analyst/executor) |
+| **agent-routing.yaml** | `.agent-skills/` | 작업 유형별 에이전트 라우팅 규칙 |
+| **skills.json** | `.agent-skills/` | 전체 스킬 매니페스트 (자동 생성) |
+| **skills.toon** | `.agent-skills/` | 토큰 최적화된 스킬 요약 (자동 생성) |
+
+### 서브에이전트 설정 방법
+
+#### 1. model-config.env 수정
+
+```bash
+# 에이전트별 모델 지정
+ORCHESTRATOR_MODEL=claude-opus-4-5
+ANALYST_MODEL=gemini-2.5-pro
+EXECUTOR_MODEL=gpt-5.2-codex
+
+# 토큰 최적화 설정
+DEFAULT_SKILL_MODE=toon
+MAX_CONTEXT_TOKENS=100000
+```
+
+#### 2. agent-routing.yaml 커스터마이징
+
+```yaml
+routing:
+  code_generation: orchestrator
+  large_analysis: analyst  # 2M+ 토큰 분석
+  command_execution: executor
+  documentation: orchestrator
+  
+performance_tweaks:
+  ralph_loop_enabled: true  # 경량 모델 프롬프트 반복
+  auto_context_compress: true
+```
+
+#### 3. CLAUDE.md 프로젝트 컨텍스트
+
+```markdown
+# Project Context
+
+## 프로젝트 설명
+[프로젝트 목적과 범위]
+
+## 기술 스택
+- Frontend: React 18, TypeScript
+- Backend: Node.js, Express
+
+## 코딩 컨벤션
+- ESLint + Prettier 사용
+- 함수형 컴포넌트 선호
+
+## 금지 사항
+- console.log 커밋 금지
+- any 타입 사용 금지
+```
+
+<details>
+<summary><strong>📋 설정 파일 생성 명령어</strong></summary>
+
+```bash
+# 시스템 진단 (설정 파일 자동 생성)
+.agent-skills/setup.sh --diagnose
+
+# 수동으로 기본 설정 생성
+.agent-skills/setup.sh --silent
+
+# 특정 설정 파일만 확인
+cat .agent-skills/model-config.env
+cat .agent-skills/agent-routing.yaml
+```
+
+</details>
+
+---
+
+## 사용 예제
+
+### 스킬 호출 CLI 예시
+
+```bash
+# 자연어로 스킬 검색
+python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
+
+# 특정 스킬 직접 로드 (토큰 절약)
+python3 .agent-skills/skill-query-handler.py query "코드 리뷰" --mode toon
+
+# 스킬 목록 확인
+python3 .agent-skills/skill_loader.py list
+
+# 토큰 통계 확인
+python3 .agent-skills/skill-query-handler.py stats
+```
+
+### AI 에이전트 프롬프트 예제
+
+| 목적 | 프롬프트 |
+|------|----------|
+| **스킬 검색** | `"API 설계" 관련 스킬을 찾아서 로드해줘` |
+| **코드 리뷰** | `code-review 스킬을 사용해서 src/ 폴더를 리뷰해줘` |
+| **DB 스키마 설계** | `database-schema-design 스킬로 사용자 관리 시스템 스키마를 설계해줘` |
+| **PPT 작성** | `presentation-builder 스킬을 로드하고 투자자 발표 자료 10슬라이드로 만들어줘` |
+| **Docker 배포** | `deployment-automation 스킬을 사용해서 Docker Compose 설정을 만들어줘` |
+
+---
+
+<details>
+<summary><h2>🏗️ Architecture (클릭하여 펼치기)</h2></summary>
 
 ```mermaid
 graph TB
@@ -392,9 +547,12 @@ graph TB
 | `claude-codex` | +Codex | 실행/배포 자동화 |
 | `full-multiagent` | 모두 있음 | 풀 오케스트레이션 |
 
+</details>
+
 ---
 
-## Skills Overview (55 Total)
+<details>
+<summary><h2>📊 Skills Overview - 55 Total (클릭하여 펼치기)</h2></summary>
 
 ```mermaid
 pie showData
@@ -420,9 +578,12 @@ pie showData
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
 | **Utilities** | 14 | `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `mcp-codex-integration` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` `agentic-development-principles` |
 
+</details>
+
 ---
 
-## Token Optimization
+<details>
+<summary><h2>🎯 Token Optimization (클릭하여 펼치기)</h2></summary>
 
 스킬 로딩 시 토큰 사용량을 최적화하는 3가지 모드:
 
@@ -440,9 +601,12 @@ python3 .agent-skills/scripts/generate_compact_skills.py
 python3 .agent-skills/skill-query-handler.py stats
 ```
 
+</details>
+
 ---
 
-## Claude Code 정책
+<details>
+<summary><h2>📋 Claude Code 정책 (클릭하여 펼치기)</h2></summary>
 
 > 70가지 팁 기반의 에이전틱 개발 정책 (ykdojo + Ado Kukic 검증)
 
@@ -488,9 +652,12 @@ Esc Esc         # 잘못된 작업 즉시 취소
 npx cc-safe .  # 정기적 보안 감사
 ```
 
+</details>
+
 ---
 
-## Quick Reference
+<details>
+<summary><h2>⌨️ Quick Reference (클릭하여 펼치기)</h2></summary>
 
 ### 필수 단축키
 
@@ -518,9 +685,12 @@ alias cc='claude --continue'
 alias cr='claude --resume'
 ```
 
+</details>
+
 ---
 
-## Multi-Agent Workflow Guide
+<details>
+<summary><h2>🤝 Multi-Agent Workflow Guide (클릭하여 펼치기)</h2></summary>
 
 멀티에이전트 조합으로 작업 효율을 극대화하세요.
 
@@ -542,143 +712,46 @@ alias cr='claude --resume'
 5. [Claude] 결과 종합 및 문서화
 ```
 
-### 스킬 호출 예시
-
-```bash
-# 자연어로 스킬 쿼리
-python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
-
-# 특정 스킬 직접 로드 (토큰 절약)
-python3 .agent-skills/skill-query-handler.py query "코드 리뷰" --mode toon
-
-# 스킬 매칭 확인
-python3 .agent-skills/skill-query-handler.py match "데이터베이스"
-```
+</details>
 
 ---
 
-## 실전 예제 시나리오 (Practical Scenarios)
-
-> 스킬을 조합하여 실제 프로젝트에 적용하는 3가지 워크플로우 예시
+<details>
+<summary><h2>📚 실전 예제 시나리오 (클릭하여 펼치기)</h2></summary>
 
 ### 시나리오 1: Full-Stack 프로젝트 구축
 
-**목표**: 디자인 레이아웃 → 백엔드 DB 스키마 → Docker 배포 → Git 관리까지 완전한 개발 파이프라인 구축
+**목표**: 디자인 레이아웃 → 백엔드 DB 스키마 → Docker 배포 → Git 관리까지
 
-```mermaid
-flowchart LR
-    A["요구사항 분석"] --> B["UI/UX 설계"]
-    B --> C["DB 스키마"]
-    C --> D["API 개발"]
-    D --> E["Docker 배포"]
-    E --> F["Git 관리"]
-```
+| 단계 | 스킬 | Agent |
+|------|------|-------|
+| **1. 디자인 레이아웃** | `frontend/design-system` `frontend/responsive-design` | Claude |
+| **2. DB 스키마 설계** | `backend/database-schema-design` `backend/api-design` | Claude |
+| **3. Docker 연동** | `infrastructure/deployment-automation` | Codex |
+| **4. Git 관리** | `utilities/git-workflow` | Codex |
 
-| 단계 | 스킬 | Agent | 핵심 산출물 |
-|------|------|-------|-------------|
-| **1. 디자인 레이아웃** | `frontend/design-system` `frontend/responsive-design` | Claude | 컴포넌트 구조도, 반응형 브레이크포인트 정의 |
-| **2. 구조 설계 원칙** | `frontend/ui-component-patterns` `frontend/web-design-guidelines` | Claude | Atomic Design 패턴, Vercel 디자인 가이드라인 준수 |
-| **3. DB 스키마 설계** | `backend/database-schema-design` `backend/api-design` | Claude | ERD, 테이블 정의서, REST/GraphQL 스펙 |
-| **4. Docker 연동** | `infrastructure/deployment-automation` `infrastructure/vercel-deploy` | Codex | Dockerfile, docker-compose.yml, CI/CD 파이프라인 |
-| **5. Git 관리** | `utilities/git-workflow` `utilities/git-submodule` | Codex | 브랜치 전략, PR 템플릿, 서브모듈 구성 |
+### 시나리오 2: 마케팅 데이터 분석
 
-**실행 예시:**
-```bash
-# Step 1: 디자인 시스템 스킬 로드
-python3 .agent-skills/skill-query-handler.py query "디자인 시스템 설계해줘"
+| 단계 | 스킬 | Agent |
+|------|------|-------|
+| **1. 데이터 분석** | `search-analysis/data-analysis` | Gemini |
+| **2. 데이터 시각화** | `infrastructure/looker-studio-bigquery` | Claude |
+| **3. PPT 작성** | `documentation/presentation-builder` | Claude |
 
-# Step 2: DB 스키마 설계
-python3 .agent-skills/skill-query-handler.py query "PostgreSQL 스키마 설계"
+### 시나리오 3: AI 이미지/영상 프롬프트
 
-# Step 3: Docker 배포 설정
-python3 .agent-skills/skill-query-handler.py query "Docker Compose 설정"
-```
+| 단계 | 스킬 | Agent |
+|------|------|-------|
+| **1. 이미지 생성 프롬프트** | `creative-media/image-generation` | Claude |
+| **2. 영상 프로덕션 가이드** | `creative-media/video-production` | Claude |
+| **3. 디자인 가이드 문서** | `frontend/web-design-guidelines` | Claude |
+
+</details>
 
 ---
 
-### 시나리오 2: 마케팅 데이터 분석 및 보고서 작성
-
-**목표**: KPI 정의 → 데이터 시각화 → PPT 보고서 자동 생성
-
-```mermaid
-flowchart LR
-    A["KPI 정의"] --> B["데이터 수집"]
-    B --> C["시각화"]
-    C --> D["PPT 생성"]
-```
-
-| 단계 | 스킬 | Agent | 핵심 산출물 |
-|------|------|-------|-------------|
-| **1. 평가지표 설계** | `marketing/marketing-automation` | Gemini | KPI 프레임워크, 퍼널 분석 구조 |
-| **2. 데이터 분석** | `search-analysis/data-analysis` | Gemini | SQL 쿼리, 통계 분석 리포트 |
-| **3. 데이터 시각화** | `infrastructure/looker-studio-bigquery` | Claude | Looker Studio 대시보드, BigQuery 연동 |
-| **4. PPT 작성** | `documentation/presentation-builder` | Claude | 브랜드 가이드라인 준수 슬라이드 덱 |
-
-**실행 예시:**
-```bash
-# Step 1: 마케팅 KPI 분석 요청
-python3 .agent-skills/skill-query-handler.py query "마케팅 퍼널 분석"
-
-# Step 2: BigQuery 데이터 시각화
-python3 .agent-skills/skill-query-handler.py query "Looker Studio 대시보드"
-
-# Step 3: PPT 보고서 생성
-python3 .agent-skills/skill-query-handler.py query "투자자 발표 PPT 만들어줘"
-```
-
-**Agent 조합 패턴:**
-```
-1. [Gemini] 대용량 마케팅 데이터 분석 (2M+ 토큰 처리)
-2. [Claude] 인사이트 도출 및 시각화 설계
-3. [Claude] PPT 스크립트 및 레이아웃 생성
-```
-
----
-
-### 시나리오 3: AI 이미지/영상 프롬프트 및 디자인 가이드 문서화
-
-**목표**: 이미지 생성 프롬프트 작성 → 영상 프로덕션 가이드 → 디자인 시스템 문서화
-
-```mermaid
-flowchart LR
-    A["브랜드 정의"] --> B["이미지 프롬프트"]
-    B --> C["영상 가이드"]
-    C --> D["문서화"]
-```
-
-| 단계 | 스킬 | Agent | 핵심 산출물 |
-|------|------|-------|-------------|
-| **1. 이미지 생성 프롬프트** | `creative-media/image-generation` | Claude | Midjourney/DALL-E/Flux 최적화 프롬프트, 네거티브 프롬프트 |
-| **2. 영상 프로덕션 가이드** | `creative-media/video-production` | Claude | 스토리보드, 컷 구성, 모션 그래픽 지침 |
-| **3. 디자인 가이드 문서** | `frontend/web-design-guidelines` `documentation/technical-writing` | Claude | 브랜드 스타일 가이드, 컬러/타이포그래피 규격 |
-| **4. API 문서화** | `documentation/api-documentation` | Claude | 프롬프트 API 레퍼런스, 파라미터 가이드 |
-
-**실행 예시:**
-```bash
-# Step 1: 이미지 생성 프롬프트 작성
-python3 .agent-skills/skill-query-handler.py query "Midjourney 프롬프트 작성"
-
-# Step 2: 영상 프로덕션 가이드
-python3 .agent-skills/skill-query-handler.py query "영상 스토리보드 작성"
-
-# Step 3: 디자인 가이드 문서화
-python3 .agent-skills/skill-query-handler.py query "브랜드 스타일 가이드 문서"
-```
-
-**프롬프트 엔지니어링 팁:**
-```
-[이미지 생성 프롬프트 구조]
-1. 주제(Subject): 핵심 대상 명시
-2. 스타일(Style): 예술 사조, 렌더링 방식
-3. 조명(Lighting): 광원 방향, 분위기
-4. 카메라(Camera): 앵글, 렌즈 효과
-5. 품질(Quality): 해상도, 디테일 수준
-6. 네거티브(Negative): 제외할 요소
-```
-
----
-
-## Troubleshooting
+<details>
+<summary><h2>🔧 Troubleshooting (클릭하여 펼치기)</h2></summary>
 
 ### 시스템 진단
 
@@ -686,23 +759,16 @@ python3 .agent-skills/skill-query-handler.py query "브랜드 스타일 가이�
 cd .agent-skills && ./setup.sh --diagnose
 ```
 
-> **참고**: `--diagnose`의 Configuration Files 섹션이 ❌로 표시되더라도, 설정 파일은 정상적으로 생성됩니다. 다음 명령으로 직접 확인하세요:
-> ```bash
-> ls -la .agent-skills/model-config.env .agent-skills/agent-routing.yaml
-> ```
+> **참고**: `--diagnose`의 Configuration Files 섹션이 ❌로 표시되더라도, 설정 파일은 정상적으로 생성됩니다.
 
 ### 스킬 쿼리 테스트
 
 ```bash
 # 스킬 매칭 테스트
 python3 .agent-skills/skill-query-handler.py match "API 설계"
-# 출력: [3] backend/api-design
 
 # 스킬 목록
 python3 .agent-skills/skill_loader.py list
-
-# 토큰 통계 확인
-python3 .agent-skills/skill-query-handler.py stats
 ```
 
 ### MCP 서버 문제
@@ -713,18 +779,25 @@ claude mcp remove <name>   # 제거
 claude mcp add <name> ...  # 재설치
 ```
 
-### 설정 파일 수동 확인
+### Python 모듈 오류
 
 ```bash
-# 생성된 설정 파일 확인
-cat .agent-skills/model-config.env    # 모델 설정
-cat .agent-skills/agent-routing.yaml  # 라우팅 규칙
-cat CLAUDE.md                         # 프로젝트 가이드
+cd .agent-skills && pip3 install -r requirements.txt
 ```
+
+### 글로벌 설치 후 스킬 못 찾는 경우
+
+```bash
+# 직접 경로 지정
+python3 ~/.agent-skills/skill-query-handler.py query "API 설계"
+```
+
+</details>
 
 ---
 
-## References
+<details>
+<summary><h2>📖 References (클릭하여 펼치기)</h2></summary>
 
 | Resource | Link |
 |:---------|:-----|
@@ -732,6 +805,8 @@ cat CLAUDE.md                         # 프로젝트 가이드
 | Claude Code Best Practices | [Anthropic Engineering](https://www.anthropic.com/engineering/claude-code-best-practices) |
 | ykdojo claude-code-tips | [GitHub](https://github.com/ykdojo/claude-code-tips) |
 | Agent Skills 공식 | [agentskills.io](https://agentskills.io/) |
+
+</details>
 
 ---
 
@@ -741,44 +816,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.16.0 | **Updated**: 2026-01-23 | **Skills**: 55 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.17.0 | **Updated**: 2026-01-23 | **Skills**: 55 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
 
-**Changelog v3.16.0**:
-- **Prerequisites 섹션 신설**: xcode-select, Node.js, OS별 가이드 (macOS/Linux/Windows)
-- **글로벌 설치를 기본값으로 변경**: `~/.agent-skills`에 설치 (로컬 설치는 `INSTALL_GLOBAL=false`)
-- **LLM 검증 프롬프트 추가**: 설치 후 AI가 스킬/MCP/설정 자동 확인
-- **Shell 메시지 출력 수정**: zsh에서 source 시 함수 정의 출력 문제 해결
-- **mcp-shell-config.sh 개선**: stdout/stderr 완전 억제
-
-**Changelog v3.15.0**:
-- **신규 스킬 3종 추가**: agent-skills-main에서 검증된 스킬 병합
-  - `frontend/web-design-guidelines` - Vercel Web Interface Guidelines 준수 리뷰
-  - `frontend/react-best-practices` - React/Next.js 성능 최적화 45규칙 (Vercel)
-  - `infrastructure/vercel-deploy` - 인증 불필요 Vercel 즉시 배포
-- **스킬 총 수**: 52 → 55개
-
-**Changelog v3.14.0**:
-- **Shell RC 설정 문서화 개선**: `.zshrc`/`.bashrc` 수정이 개발자 편의 기능임을 명확히 문서화
-- **AI 에이전트 vs 개발자 구분 명확화**: `--silent` 모드가 AI 에이전트에 권장되는 이유 설명
-- **setup.sh 주석 개선**: Shell RC 설정이 MCP 워크플로우에 불필요함을 코드 주석에 명시
-- **2회 검증 기반 개선**: Gemini 분석을 통한 반대 논거 검토 후 결론 도출
-
-**Changelog v3.13.0**:
-- **원라이너 설치 스크립트 추가**: `curl -fsSL ... | bash` 형태로 완전 자동화 설치
-- **`--install-mcp` 플래그 추가**: MCP 서버 자동 설치 (OpenContext/Gemini/Codex)
-- **OpenContext 필수 설정**: 영구 메모리 MCP가 기본 필수 설정으로 포함
-- **ralph-loop (prompt-repetition) 기본 적용**: 경량 모델에서 자동으로 프롬프트 반복 적용
-- **설정 검증 기능 추가**: 설치 후 자동 검증 및 누락 설정 자동 적용
-- **agent-routing.yaml 개선**: performance_tweaks 섹션 추가
-
-**Changelog v3.12.0**:
-- **Multi-Agent Workflow Guide 추가**: Claude/Gemini/Codex 역할 분담 가이드
-- 워크플로우 예시 시나리오 추가 (API 개발)
-- `--diagnose` 버그 문서화 및 수동 확인 방법 안내
-- 스킬 호출 예시 보강
-- 설정 파일 수동 확인 섹션 추가
-
-**Changelog v3.11.0**:
-- **README 재구성**: AI Agent 설치 방법을 최상단으로 이동
-- 설치 모드별 옵션 테이블 추가 (Silent, Auto, Quick, Interactive)
-- 토큰 최적화 통계 실측값 반영 (87.7% / 94.9%)
+**Changelog v3.17.0**:
+- **README 전면 개편**: 설치 가이드 중심으로 재구성
+- **예외 케이스 처리 강화**: xcode-select, npm 권한, curl 실패 등 상세 안내
+- **스킬/서브에이전트 설정 위치 섹션 신설**: model-config.env, agent-routing.yaml, CLAUDE.md 설정 가이드
+- **접이식(collapsible) UI 적용**: 핵심 설치 가이드 외 내용은 접이식으로 정리
+- **친절한 Troubleshooting**: 각 예외 케이스별 해결 방법 세분화
