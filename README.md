@@ -13,23 +13,80 @@
 
 ---
 
+## Prerequisites (사전 요구사항)
+
+<details>
+<summary><strong>macOS (필수 - 클릭하여 펼치기)</strong></summary>
+
+```bash
+# Xcode Command Line Tools (필수)
+xcode-select --install
+
+# Node.js (Homebrew 권장)
+brew install node
+```
+
+</details>
+
+<details>
+<summary><strong>Linux (Debian/Ubuntu)</strong></summary>
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential curl git
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+</details>
+
+<details>
+<summary><strong>Windows (WSL2 권장)</strong></summary>
+
+```powershell
+wsl --install
+# Ubuntu 설치 후 Linux 가이드 따르기
+```
+
+</details>
+
+---
+
 ## AI Agent Installation
 
 > **LLM 기반 설치를 지원합니다.** 원라이너 명령 또는 AI 에이전트 프롬프트로 설치하세요.
 
 ### 🚀 One-Liner 설치 (권장)
 
+#### 글로벌 설치 (~/.agent-skills) - 기본값
 ```bash
 curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | bash
+```
+
+> **설치 후**: `echo 'source ~/.agent-skills/mcp-shell-config.sh' >> ~/.zshrc && source ~/.zshrc`
+
+#### 프로젝트 로컬 설치 (선택)
+```bash
+curl -fsSL https://raw.githubusercontent.com/supercent-io/skills-template/main/install.sh | INSTALL_GLOBAL=false bash
 ```
 
 ### 🤖 AI 에이전트용 프롬프트
 
 Claude Code, Gemini, ChatGPT 등에게 아래 프롬프트를 **복사-붙여넣기**하세요:
 
-#### 기본 설치 프롬프트
+#### 프로젝트 로컬 설치 프롬프트
 ```
 https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고, .agent-skills 폴더를 현재 디렉토리로 복사해. 그 후 setup.sh를 --silent --install-mcp 모드로 실행하고, 임시 클론 폴더는 삭제해.
+```
+
+#### 글로벌 설치 프롬프트
+```
+https://github.com/supercent-io/skills-template 저장소를 임시로 클론하고,
+.agent-skills 폴더를 ~/.agent-skills 로 복사해줘.
+그 후, ~/.agent-skills/setup.sh를 --silent --install-mcp 모드로 실행하고,
+임시 클론 폴더는 삭제해.
+설치가 완료되면, "source ~/.agent-skills/mcp-shell-config.sh" 명령을
+~/.zshrc에 추가해야 한다고 안내해줘.
 ```
 
 #### 사용 예제 프롬프트
@@ -151,6 +208,35 @@ cd .agent-skills && ./setup.sh --diagnose
 # ✅ gemini-cli MCP Server
 # ✅ codex-cli MCP Server
 # Workflow Type: full-multiagent
+```
+
+</details>
+
+<details>
+<summary><strong>🤖 LLM 검증 프롬프트 (설치 후 AI에게 요청)</strong></summary>
+
+설치 완료 후, AI 에이전트에게 아래 프롬프트를 입력하여 설정을 확인하세요:
+
+```
+.agent-skills 폴더 설치를 확인해줘. 다음 항목을 검증하고 리포트해:
+
+1. **스킬 시스템 확인**:
+   - .agent-skills/skills/ 폴더에 스킬이 존재하는지
+   - python3 .agent-skills/skill-query-handler.py stats 실행 결과
+
+2. **MCP 서버 확인**:
+   - claude mcp list 실행하여 등록된 MCP 서버 목록
+   - gemini-cli, codex-cli, opencontext 중 설치된 것 표시
+
+3. **서브에이전트 설정 확인**:
+   - CLAUDE.md 파일이 존재하는지
+   - model-config.env 설정 내용
+
+4. **누락된 설정 자동 적용**:
+   - 누락된 MCP 서버가 있다면 설치 명령 제안
+   - 설정 파일이 없다면 기본 설정 생성
+
+검증 결과를 표 형태로 요약하고, 해결이 필요한 항목이 있다면 수정해줘.
 ```
 
 </details>
@@ -655,7 +741,14 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.15.0 | **Updated**: 2026-01-22 | **Skills**: 55 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+**Version**: 3.16.0 | **Updated**: 2026-01-23 | **Skills**: 55 | **Workflow**: Multi-Agent (Auto-Detect) | **Token**: 95% Reduction
+
+**Changelog v3.16.0**:
+- **Prerequisites 섹션 신설**: xcode-select, Node.js, OS별 가이드 (macOS/Linux/Windows)
+- **글로벌 설치를 기본값으로 변경**: `~/.agent-skills`에 설치 (로컬 설치는 `INSTALL_GLOBAL=false`)
+- **LLM 검증 프롬프트 추가**: 설치 후 AI가 스킬/MCP/설정 자동 확인
+- **Shell 메시지 출력 수정**: zsh에서 source 시 함수 정의 출력 문제 해결
+- **mcp-shell-config.sh 개선**: stdout/stderr 완전 억제
 
 **Changelog v3.15.0**:
 - **신규 스킬 3종 추가**: agent-skills-main에서 검증된 스킬 병합

@@ -89,14 +89,14 @@ build_manifest() {
     python3 "$AGENT_SKILLS_PATH/scripts/skill_manifest_builder.py"
 }
 
-# Export functions
-export -f load_skill
-export -f list_skills
-export -f load_skill_with_context
-export -f search_skills
-export -f execute_skill_codex
-export -f show_manifest
-export -f build_manifest
+# Export functions (suppress output for zsh compatibility)
+export -f load_skill 2>/dev/null || true
+export -f list_skills 2>/dev/null || true
+export -f load_skill_with_context 2>/dev/null || true
+export -f search_skills 2>/dev/null || true
+export -f execute_skill_codex 2>/dev/null || true
+export -f show_manifest 2>/dev/null || true
+export -f build_manifest 2>/dev/null || true
 
 # Print usage if called directly
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
