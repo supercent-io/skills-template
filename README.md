@@ -31,52 +31,11 @@ npx skills add https://github.com/supercent-io/skills-template --category fronte
 
 ### 수동 설치
 
-```bash
-# 1. 저장소 클론
-git clone https://github.com/supercent-io/skills-template.git
-
-# 2. 프로젝트에 스킬 복사
-cp -r skills-template/.agent-skills your-project/
-
-# 3. 정리
-rm -rf skills-template
-```
-
-### AI 에이전트 프롬프트로 설치
-
-Claude Code, Gemini, ChatGPT 등에게 아래 프롬프트를 복사-붙여넣기하세요:
-
-```
-https://github.com/supercent-io/skills-template 저장소에서 .agent-skills 폴더를
-현재 프로젝트로 복사해줘.
-```
-
 ---
 
 ## 스킬 사용법
 
-### CLI로 스킬 조회
-
-```bash
-# 자연어로 스킬 검색
-python3 .agent-skills/skill-query-handler.py query "API 설계해줘"
-
-# 스킬 목록 확인
-python3 .agent-skills/skill_loader.py list
-
-# 토큰 통계 확인
-python3 .agent-skills/skill-query-handler.py stats
-```
-
 ### AI 에이전트 프롬프트 예제
-
-| 목적 | 프롬프트 |
-|------|----------|
-| **스킬 검색** | `"API 설계" 관련 스킬을 찾아서 로드해줘` |
-| **코드 리뷰** | `code-review 스킬을 사용해서 src/ 폴더를 리뷰해줘` |
-| **DB 스키마 설계** | `database-schema-design 스킬로 사용자 관리 시스템 스키마를 설계해줘` |
-| **PPT 작성** | `presentation-builder 스킬로 투자자 발표 자료 10슬라이드로 만들어줘` |
-| **Docker 배포** | `deployment-automation 스킬을 사용해서 Docker Compose 설정을 만들어줘` |
 
 ---
 
@@ -134,51 +93,6 @@ E[2]{desc,in,out}:                     # 예제 (Examples)
 
 ---
 
-## 새 스킬 만들기
-
-### 1. 템플릿 복사
-
-```bash
-cp -r .agent-skills/templates/toon-skill-template .agent-skills/[category]/[skill-name]
-```
-
-### 2. SKILL.toon 수정
-
-```
-N:my-new-skill
-D:이 스킬이 하는 일과 언제 사용해야 하는지 2-3문장으로 설명합니다.
-G:keyword1 keyword2 category-tag
-
-U[5]:
-  사용 사례 1
-  사용 사례 2
-  사용 사례 3
-  사용 사례 4
-  사용 사례 5
-
-S[4]{n,action,details}:
-  1,분석,사용자 요청 이해
-  2,계획,접근 방식 수립
-  3,실행,단계별 구현
-  4,검증,결과 확인
-
-R[3]:
-  모범 사례 1
-  모범 사례 2
-  피해야 할 안티패턴
-
-E[1]{desc,in,out}:
-  "기본 사용법","입력 예시","출력 예시"
-```
-
-### 3. 스킬 매니페스트 업데이트
-
-```bash
-python3 .agent-skills/scripts/generate_compact_skills.py
-```
-
----
-
 ## 아키텍처
 
 ```
@@ -210,27 +124,20 @@ python3 .agent-skills/scripts/generate_compact_skills.py
 
 ## Troubleshooting
 
-### 스킬을 찾을 수 없는 경우
+---
+
+## 추가 스킬 탐색
+
+더 많은 AI 에이전트 스킬을 찾고 계신가요?
+
+**[skills.sh](https://skills.sh/)** 에서 커뮤니티가 만든 다양한 스킬을 탐색하고 설치할 수 있습니다.
 
 ```bash
-# 스킬 매칭 테스트
-python3 .agent-skills/skill-query-handler.py match "API 설계"
+# skills.sh에서 스킬 검색
+npx skills search "code review"
 
-# 스킬 목록 확인
-python3 .agent-skills/skill_loader.py list
-```
-
-### Python 모듈 오류
-
-```bash
-cd .agent-skills && pip3 install -r requirements.txt
-```
-
-### 글로벌 설치 후 스킬을 찾지 못하는 경우
-
-```bash
-# 직접 경로 지정
-python3 ~/.agent-skills/skill-query-handler.py query "API 설계"
+# skills.sh에서 스킬 설치
+npx skills add <skill-name>
 ```
 
 ---
