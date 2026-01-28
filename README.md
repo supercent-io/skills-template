@@ -1,10 +1,10 @@
 # Agent Skills
 
 > AI 에이전트를 위한 모듈식 스킬 시스템
-> **68개 스킬** | **토큰 95% 절감** | **TOON 포맷 기본 적용**
+> **69개 스킬** | **토큰 95% 절감** | **TOON 포맷 기본 적용**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-68-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-69-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
 ![Agent Skills](AgentSkills.png)
@@ -26,6 +26,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill \
   agentic-workflow \
   prompt-repetition \
   subagent-creation \
+  superwork \
   api-design \
   api-documentation \
   authentication-setup \
@@ -94,7 +95,7 @@ npx skills add https://github.com/supercent-io/skills-template --category fronte
 
 ---
 
-## 스킬 개요 (68개)
+## 스킬 개요 (69개)
 
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
@@ -103,7 +104,7 @@ npx skills add https://github.com/supercent-io/skills-template --category fronte
 | **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
 | **Infrastructure** | 8 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` `agent-configuration` `vercel-deploy` |
 | **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
-| **Project-Mgmt** | 7 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` |
+| **Project-Mgmt** | 8 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` `superwork` |
 | **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
 | **Utilities** | 14 | `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` `agentic-development-principles` |
 
@@ -199,7 +200,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.1.0 | **Updated**: 2026-01-28 | **Skills**: 68 | **Format**: TOON (Default)
+**Version**: 4.2.0 | **Updated**: 2026-01-28 | **Skills**: 69 | **Format**: TOON (Default)
+
+**Changelog v4.2.0**:
+- **superwork 스킬 추가**: Opus extended thinking 활용 분석/종합/의사결정 에이전트
+- **spw 별칭 지원**: `superwork`, `spw`, `super-work`, `opus-work` 키워드로 호출 가능
 
 **Changelog v4.0.0**:
 - **설치 방식 변경**: `npx skills add` 포맷으로 통일
