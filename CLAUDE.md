@@ -1,7 +1,44 @@
 # Agent Skills - Full Multi-Agent Workflow
 
 > 이 문서는 현재 MCP 환경에 맞춰 자동 생성되었습니다.
-> Generated: 2026-01-22 | Workflow: full-multiagent | Preset: balanced
+> Generated: 2026-01-28 | Workflow: full-multiagent | Preset: balanced
+
+---
+
+## CRITICAL: 매 프롬프트마다 OpenContext 자동 실행
+
+**모든 프롬프트 시작 시 아래 단계를 반드시 수행하세요:**
+
+### 1. 프롬프트 시작 시 (자동 컨텍스트 로드)
+```bash
+# MCP Tool 사용 (자동)
+oc_manifest folder="[project-folder]" --limit 10
+
+# 또는 관련 문서 검색
+oc_search "현재 작업과 관련된 키워드"
+```
+
+### 2. 작업 완료 시 (결론 저장)
+```bash
+# 중요한 결정사항/결론이 있을 때
+oc_create_doc folder="[project-folder]" title="[날짜]-[주제].md" description="결론 내용"
+```
+
+### 3. 프로젝트 폴더 설정 (최초 1회)
+```bash
+# 프로젝트 전용 폴더 생성
+oc_folder_create folder="my-project" description="프로젝트 설명"
+```
+
+### OpenContext 자동화 규칙
+| 시점 | 액션 | MCP Tool |
+|------|------|----------|
+| **프롬프트 시작** | 프로젝트 컨텍스트 로드 | `oc_manifest` 또는 `oc_search` |
+| **불확실할 때** | 기존 결론/문서 검색 | `oc_search` |
+| **작업 완료** | 결정사항/교훈 저장 | `oc_create_doc` |
+| **참조 필요** | 안정적 링크 생성 | `oc_get_link` |
+
+---
 
 ## Agent Roles & Status
 
@@ -75,22 +112,43 @@ gemini-skill "query" full             # 상세 모드
 
 프로젝트 문서와 컨텍스트를 영구 저장하고 검색할 수 있습니다.
 
-### 기본 사용법
+### MCP Tools 전체 목록
 ```bash
-# 문서 검색
-oc_search "API 설계 패턴"
+oc_list_folders    # 폴더 목록 조회
+oc_list_docs       # 문서 목록 조회
+oc_manifest        # 매니페스트 생성 (AI가 읽을 파일 목록)
+oc_search          # 문서 검색
+oc_create_doc      # 문서 생성
+oc_set_doc_desc    # 문서 설명 업데이트
+oc_folder_create   # 폴더 생성
+oc_get_link        # 안정적 링크 생성
+oc_resolve         # stable link 해석
+oc_index_status    # 인덱스 상태 확인
+```
 
-# 폴더 생성
-oc_folder_create "project-name/docs"
+### 매 프롬프트 워크플로우
+```bash
+# 1. 작업 시작 - 컨텍스트 로드
+oc_manifest folder="project-name" --limit 10
+# 또는
+oc_search query="현재 작업 키워드"
 
-# 문서 생성 및 저장
-oc_create_doc "project-name/docs" "api-spec.md" "API 스펙 문서"
+# 2. 작업 중 - 필요시 검색
+oc_search query="API 설계 패턴"
 
-# 문서 목록 조회
-oc_list_docs "project-name/docs"
+# 3. 작업 완료 - 결론 저장
+oc_create_doc folder="project-name" title="결론-제목.md" description="중요 결론 내용"
+```
 
-# stable link로 문서 참조
-oc_get_link "project-name/docs/api-spec.md"
+### 프로젝트 초기 설정
+```bash
+# 새 프로젝트 폴더 생성
+oc_folder_create folder="my-project" description="프로젝트 설명"
+
+# 하위 폴더 구조 생성 (권장)
+oc_folder_create folder="my-project/decisions" description="결정사항 기록"
+oc_folder_create folder="my-project/pitfalls" description="발견된 함정/주의사항"
+oc_folder_create folder="my-project/api" description="API 스펙 및 계약"
 ```
 
 ### 컨텍스트 저장 위치
@@ -98,13 +156,17 @@ oc_get_link "project-name/docs/api-spec.md"
 ~/.opencontext/contexts/
 ├── .ideas/inbox/     # 아이디어 저장소
 └── [project-name]/   # 프로젝트별 문서
+    ├── decisions/    # 결정사항
+    ├── pitfalls/     # 함정/주의사항
+    └── api/          # API 스펙
 ```
 
-### 검색 활성화
+### 검색 활성화 (시맨틱 검색용)
 ```bash
-# ~/.opencontext/config.toml 설정 필요
-# 자세한 내용: oc help config
+# CLI로 설정
+oc config set EMBEDDING_API_KEY "your-openai-key"
+oc index build
 ```
 
 ---
-**Version**: 3.1.0 | **Generated**: 2026-01-22
+**Version**: 3.2.0 | **Generated**: 2026-01-28
