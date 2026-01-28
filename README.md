@@ -1,10 +1,10 @@
 # Agent Skills
 
 > AI 에이전트를 위한 모듈식 스킬 시스템
-> **55개 스킬** | **토큰 95% 절감** | **TOON 포맷 기본 적용**
+> **68개 스킬** | **토큰 95% 절감** | **TOON 포맷 기본 적용**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-55-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-68-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,30 +16,85 @@
 ### NPX를 사용한 스킬 설치 (권장)
 
 ```bash
-# 전체 스킬 설치
-npx skills add https://github.com/supercent-io/skills-template
+# 전체 스킬 한번에 설치 (68개)
+npx skills add https://github.com/supercent-io/skills-template --skill \
+  agent-configuration \
+  agent-evaluation \
+  agent-workflow \
+  agentic-development-principles \
+  agentic-principles \
+  agentic-workflow \
+  prompt-repetition \
+  subagent-creation \
+  api-design \
+  api-documentation \
+  authentication-setup \
+  backend-testing \
+  database-schema-design \
+  code-refactoring \
+  code-review \
+  debugging \
+  performance-optimization \
+  testing-strategies \
+  image-generation-mcp \
+  remotion-video-production \
+  changelog-maintenance \
+  pptx-presentation-builder \
+  technical-writing \
+  user-guide-writing \
+  frontend-design-system \
+  vercel-react-best-practices \
+  responsive-design \
+  state-management \
+  ui-component-patterns \
+  web-accessibility \
+  web-design-guidelines \
+  deployment-automation \
+  firebase-ai-logic \
+  looker-studio-bigquery \
+  monitoring-observability \
+  security-best-practices \
+  system-environment-setup \
+  marketing-skills-collection \
+  sprint-retrospective \
+  standup-meeting \
+  task-estimation \
+  task-planning \
+  codebase-search \
+  data-analysis \
+  log-analysis \
+  pattern-detection \
+  advanced-skill-template \
+  basic-skill-template \
+  environment-setup \
+  file-organization \
+  git-submodule \
+  git-workflow \
+  kling-ai \
+  mcp-codex-integration \
+  npm-git-install \
+  opencode-authentication \
+  opencontext \
+  skill-standardization \
+  vercel-deploy \
+  workflow-automation
+```
 
+### 개별 스킬 설치
+
+```bash
 # 특정 스킬만 설치
 npx skills add https://github.com/supercent-io/skills-template --skill api-design
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
-npx skills add https://github.com/supercent-io/skills-template --skill database-schema-design
 
 # 카테고리별 설치
 npx skills add https://github.com/supercent-io/skills-template --category backend
 npx skills add https://github.com/supercent-io/skills-template --category frontend
 ```
 
-### 수동 설치
-
 ---
 
-## 스킬 사용법
-
-### AI 에이전트 프롬프트 예제
-
----
-
-## 스킬 개요 (55개)
+## 스킬 개요 (68개)
 
 | Category | Count | Skills |
 |:---------|:-----:|:-------|
@@ -122,10 +177,6 @@ E[2]{desc,in,out}:                     # 예제 (Examples)
 
 ---
 
-## Troubleshooting
-
----
-
 ## 추가 스킬 탐색
 
 더 많은 AI 에이전트 스킬을 찾고 계신가요?
@@ -148,7 +199,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.0.0 | **Updated**: 2026-01-28 | **Skills**: 55 | **Format**: TOON (Default)
+**Version**: 4.1.0 | **Updated**: 2026-01-28 | **Skills**: 68 | **Format**: TOON (Default)
 
 **Changelog v4.0.0**:
 - **설치 방식 변경**: `npx skills add` 포맷으로 통일
