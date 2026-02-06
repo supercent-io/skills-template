@@ -1,175 +1,173 @@
 # Agent Skills Repository
 
-AI 에이전트를 위한 모듈식 스킬 모음입니다. Claude, Gemini, ChatGPT 등 모든 AI 플랫폼에서 사용 가능합니다.
+Modular skill collection for AI agents. Works with Claude, Gemini, ChatGPT, and all AI platforms.
 
 ---
 
-## 설치
+## Installation
 
-### NPX를 사용한 설치 (권장)
+### Using NPX (Recommended)
 
 ```bash
-# 전체 스킬 설치
+# Install all skills
 npx skills add https://github.com/supercent-io/skills-template
 
-# 특정 스킬만 설치
+# Install specific skills
 npx skills add https://github.com/supercent-io/skills-template --skill api-design
-
-# 카테고리별 설치
-npx skills add https://github.com/supercent-io/skills-template --category backend
+npx skills add https://github.com/supercent-io/skills-template --skill code-review
 ```
 
-### AI 에이전트 프롬프트
+### 🌟 Explore More Skills
+
+**Want additional skills?** Check out **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** - 100+ community skills for automation, development, and productivity!
+
+```bash
+# Install from Awesome Claude Skills
+npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill github-automation
+npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack-automation
+```
+
+### AI Agent Prompt
 
 ```
-https://github.com/supercent-io/skills-template 저장소에서 .agent-skills 폴더를
-현재 프로젝트로 복사해줘.
+Copy the .agent-skills folder from the https://github.com/supercent-io/skills-template
+repository to the current project.
 ```
 
 ---
 
-## 폴더 구조
+## Folder Structure (Flat - Categories Removed)
 
 ```
 .agent-skills/
-├── README.md                      # 이 파일
-├── skill_loader.py                # 스킬 로더
-├── skill-query-handler.py         # 자연어 쿼리 처리
-├── skills.json                    # 스킬 매니페스트 (자동 생성)
-├── skills.toon                    # TOON 요약 (자동 생성)
+├── README.md                      # This file
+├── skill_loader.py                # Skill loader
+├── skill-query-handler.py         # Natural language query handler
+├── skills.json                    # Skill manifest (auto-generated)
+├── skills.toon                    # TOON summary (auto-generated)
 │
-├── agent-develop/                 # 에이전트 개발 (10)
-├── backend/                       # 백엔드 (6)
-├── frontend/                      # 프론트엔드 (7)
-├── code-quality/                  # 코드 품질 (5)
-├── infrastructure/                # 인프라 (6)
-├── documentation/                 # 문서화 (4)
-├── project-management/            # 프로젝트 관리 (4)
-├── search-analysis/               # 검색/분석 (4)
-├── creative-media/                # 크리에이티브 (2)
-├── marketing/                     # 마케팅 (1)
-├── utilities/                     # 유틸리티 (10)
+├── agent-configuration/           # All 57 skill folders at root level
+├── api-design/
+├── authentication-setup/
+├── ... (all skills at same level)
 │
-├── templates/                     # 스킬 템플릿
-│   ├── toon-skill-template/       # TOON 포맷 (기본)
-│   ├── basic-skill-template/
-│   └── advanced-skill-template/
-│
-└── scripts/
-    └── generate_compact_skills.py # 스킬 생성 도구
+└── templates/                     # Skill templates
+    ├── toon-skill-template/       # TOON format (default)
+    ├── basic-skill-template/
+    └── advanced-skill-template/
 ```
+
+> **v4.3.0 Changes**: Category folders removed, all skills flattened to root level
 
 ---
 
-## 스킬 목록
+## Skills List (57 Total)
 
-### Agent Develop (10)
+### Agent Development (6)
 | Skill | Description |
 |-------|-------------|
-| `agent-configuration` | AI 에이전트 설정 정책 |
-| `agent-evaluation` | AI 에이전트 평가 |
-| `agent-workflow` | 멀티 에이전트 워크플로우 |
-| `agentic-development-principles` | 에이전틱 개발 원칙 |
-| `agentic-principles` | AI 에이전트 협업 원칙 |
-| `agentic-workflow` | AI 에이전트 워크플로우 |
-| `prompt-repetition` | 프롬프트 반복 감지 |
-| `subagent-creation` | 서브에이전트 생성 |
+| `agent-configuration` | AI agent configuration & security policies |
+| `agent-evaluation` | AI agent evaluation systems |
+| `agentic-development-principles` | Universal agentic development principles |
+| `agentic-principles` | Core AI agent collaboration principles |
+| `agentic-workflow` | Practical AI agent workflows & productivity |
+| `prompt-repetition` | Prompt repetition for LLM accuracy |
 
-### Backend (6)
+### Backend (5)
 | Skill | Description |
 |-------|-------------|
-| `api-design` | REST/GraphQL API 설계 |
-| `api-documentation` | API 문서화 |
-| `database-schema-design` | DB 스키마 설계 |
-| `authentication-setup` | 인증/인가 구현 |
-| `backend-testing` | 백엔드 테스트 전략 |
+| `api-design` | REST/GraphQL API design |
+| `api-documentation` | API documentation generation |
+| `authentication-setup` | Authentication & authorization setup |
+| `backend-testing` | Backend testing strategies |
+| `database-schema-design` | Database schema design |
 
 ### Frontend (7)
 | Skill | Description |
 |-------|-------------|
-| `ui-component-patterns` | UI 컴포넌트 패턴 |
-| `state-management` | 상태 관리 |
-| `responsive-design` | 반응형 디자인 |
-| `web-accessibility` | 웹 접근성 |
-| `web-design-guidelines` | 웹 디자인 가이드 |
-| `design-system` | 디자인 시스템 |
-| `react-best-practices` | React 모범 사례 |
+| `design-system` | Design system implementation |
+| `react-best-practices` | React & Next.js best practices |
+| `responsive-design` | Responsive web design |
+| `state-management` | State management patterns |
+| `ui-component-patterns` | UI component patterns |
+| `web-accessibility` | Web accessibility (a11y) |
+| `web-design-guidelines` | Web design guidelines |
 
 ### Code Quality (5)
 | Skill | Description |
 |-------|-------------|
-| `code-review` | 코드 리뷰 |
-| `code-refactoring` | 리팩토링 전략 |
-| `testing-strategies` | 테스트 전략 |
-| `performance-optimization` | 성능 최적화 |
-| `debugging` | 디버깅 기법 |
+| `code-refactoring` | Code refactoring strategies |
+| `code-review` | Code review practices |
+| `debugging` | Systematic debugging |
+| `performance-optimization` | Performance optimization |
+| `testing-strategies` | Testing strategies |
 
-### Infrastructure (6)
+### Infrastructure (7)
 | Skill | Description |
 |-------|-------------|
-| `system-environment-setup` | 시스템 환경 설정 |
-| `deployment-automation` | 배포 자동화 |
-| `monitoring-observability` | 모니터링 설정 |
-| `security-best-practices` | 보안 구성 |
-| `firebase-ai-logic` | Firebase AI Logic |
+| `deployment-automation` | CI/CD & deployment automation |
+| `firebase-ai-logic` | Firebase AI Logic integration |
 | `looker-studio-bigquery` | Looker Studio + BigQuery |
+| `monitoring-observability` | Monitoring & observability |
+| `security-best-practices` | Security best practices |
+| `system-environment-setup` | Environment configuration |
+| `vercel-deploy` | Vercel deployment |
 
 ### Documentation (4)
 | Skill | Description |
 |-------|-------------|
-| `technical-writing` | 기술 문서 작성 |
-| `user-guide-writing` | 사용자 가이드 |
-| `changelog-maintenance` | 변경 이력 관리 |
-| `presentation-builder` | 프레젠테이션 빌더 |
+| `changelog-maintenance` | Changelog management |
+| `presentation-builder` | Presentation builder |
+| `technical-writing` | Technical documentation |
+| `user-guide-writing` | User guides & tutorials |
 
 ### Project Management (4)
 | Skill | Description |
 |-------|-------------|
-| `task-planning` | 작업 계획 |
-| `task-estimation` | 개발 시간 추정 |
-| `sprint-retrospective` | 회고 진행 |
-| `standup-meeting` | 스탠드업 준비 |
+| `sprint-retrospective` | Sprint retrospective facilitation |
+| `standup-meeting` | Daily standup management |
+| `task-estimation` | Task estimation techniques |
+| `task-planning` | Task planning & organization |
 
 ### Search & Analysis (4)
 | Skill | Description |
 |-------|-------------|
-| `codebase-search` | 코드베이스 검색 |
-| `log-analysis` | 로그 분석 |
-| `data-analysis` | 데이터 분석 |
-| `pattern-detection` | 패턴 감지 |
+| `codebase-search` | Codebase search & navigation |
+| `data-analysis` | Data analysis & insights |
+| `log-analysis` | Log analysis & debugging |
+| `pattern-detection` | Pattern detection |
 
 ### Creative Media (2)
 | Skill | Description |
 |-------|-------------|
-| `image-generation` | 이미지 생성 |
-| `video-production` | 비디오 제작 |
+| `image-generation` | AI image generation |
+| `video-production` | Video production workflows |
 
 ### Marketing (1)
 | Skill | Description |
 |-------|-------------|
-| `marketing-automation` | 마케팅 자동화 |
+| `marketing-automation` | Marketing automation |
 
-### Utilities (10)
+### Utilities (11)
 | Skill | Description |
 |-------|-------------|
-| `git-workflow` | Git 워크플로우 |
-| `git-submodule` | Git 서브모듈 관리 |
-| `environment-setup` | 환경 설정 |
-| `file-organization` | 파일 정리 |
-| `workflow-automation` | 자동화 스크립트 |
-| `skill-standardization` | 스킬 표준화 |
-| `opencode-authentication` | OpenCode OAuth 인증 |
-| `npm-git-install` | GitHub에서 npm 설치 |
-| `opencontext` | OpenContext 메모리 관리 |
-| `kling-ai` | Kling AI 비디오 생성 |
-| `mcp-codex` | MCP Codex 통합 |
-| `vercel-deploy` | Vercel 배포 |
+| `environment-setup` | Environment setup |
+| `file-organization` | File & folder organization |
+| `git-submodule` | Git submodule management |
+| `git-workflow` | Git workflow management |
+| `kling-ai` | Kling AI video generation |
+| `mcp-codex` | MCP Codex integration |
+| `npm-git-install` | Install npm from GitHub |
+| `opencontext` | AI agent persistent memory |
+| `skill-standardization` | SKILL.md standardization |
+| `vercel-deploy` | Vercel deployment |
+| `workflow-automation` | Workflow automation |
 
 ---
 
-## TOON 포맷 (기본)
+## TOON Format (Default)
 
-모든 스킬은 **TOON 포맷**을 기본으로 사용합니다 (토큰 95% 절감).
+All skills use **TOON format** by default (95% token reduction).
 
 | Mode | File | Avg Tokens | Reduction |
 |:-----|:-----|:-----------|:----------|
@@ -177,80 +175,80 @@ https://github.com/supercent-io/skills-template 저장소에서 .agent-skills �
 | **toon** | SKILL.toon | ~111 | **94.7%** |
 
 ```bash
-# 스킬 쿼리 (toon 모드 기본)
-python3 skill-query-handler.py query "API 설계해줘"
+# Skill query (toon mode default)
+python3 skill-query-handler.py query "API design"
 
-# full 모드 지정
-python3 skill-query-handler.py query "API 설계해줘" --mode full
+# Specify full mode
+python3 skill-query-handler.py query "API design" --mode full
 ```
 
 ---
 
-## CLI 도구
+## CLI Tools
 
 ### skill-query-handler.py
 
 ```bash
-# 스킬 목록
+# List skills
 python3 skill-query-handler.py list
 
-# 쿼리 매칭
+# Match query
 python3 skill-query-handler.py match "REST API"
 
-# 프롬프트 생성
-python3 skill-query-handler.py query "API 설계해줘"
+# Generate prompt
+python3 skill-query-handler.py query "API design"
 
-# 통계 확인
+# View statistics
 python3 skill-query-handler.py stats
 ```
 
 ### skill_loader.py
 
 ```bash
-# 스킬 목록
+# List skills
 python3 skill_loader.py list
 
-# 스킬 검색
+# Search skills
 python3 skill_loader.py search "api"
 
-# 스킬 상세
+# Show skill details
 python3 skill_loader.py show api-design
 ```
 
 ---
 
-## 새 스킬 추가
+## Adding New Skills
 
-### 1. 템플릿 복사
+### 1. Copy Template
 
 ```bash
-cp -r templates/toon-skill-template [category]/[skill-name]
+cp -r templates/toon-skill-template [skill-name]
 ```
 
-### 2. SKILL.toon 수정
+### 2. Edit SKILL.toon
 
 ```
 N:my-new-skill
-D:스킬 설명 2-3문장
+D:Skill description in 2-3 sentences
 G:keyword1 keyword2
 
 U[3]:
-  사용 사례 1
-  사용 사례 2
-  사용 사례 3
+  Use case 1
+  Use case 2
+  Use case 3
 
 S[4]{n,action,details}:
-  1,분석,사용자 요청 이해
-  2,계획,접근 방식 수립
-  3,실행,단계별 구현
-  4,검증,결과 확인
+  1,Analyze,Understand user request
+  2,Plan,Create approach
+  3,Execute,Implement step by step
+  4,Verify,Confirm results
 
 R[2]:
-  모범 사례 1
-  모범 사례 2
+  Best practice 1
+  Best practice 2
 ```
 
-### 3. 매니페스트 업데이트
+### 3. Update Manifest
 
 ```bash
 python3 scripts/generate_compact_skills.py
@@ -258,20 +256,22 @@ python3 scripts/generate_compact_skills.py
 
 ---
 
-## 추가 스킬 탐색
+## Explore More Skills
 
-더 많은 AI 에이전트 스킬을 찾고 계신가요?
+Looking for more AI agent skills?
 
-**[skills.sh](https://skills.sh/)** 에서 커뮤니티가 만든 다양한 스킬을 탐색하고 설치할 수 있습니다.
+**[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** offers 100+ community-created skills for exploration and installation.
 
 ```bash
-# skills.sh에서 스킬 검색
+# Search skills
 npx skills search "code review"
 
-# skills.sh에서 스킬 설치
+# Install skills
 npx skills add <skill-name>
+
+# Browse: https://github.com/ComposioHQ/awesome-claude-skills
 ```
 
 ---
 
-**Version**: 4.0.0 | **Updated**: 2026-01-28 | **Format**: TOON (Default)
+**Version**: 4.3.0 | **Updated**: 2026-02-06 | **Format**: TOON (Default) | **Structure**: Flat

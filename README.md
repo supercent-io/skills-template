@@ -1,32 +1,29 @@
 # Agent Skills
 
-> AI 에이전트를 위한 모듈식 스킬 시스템
-> **69개 스킬** | **토큰 95% 절감** | **TOON 포맷 기본 적용**
+> Modular skill system for AI agents
+> **57 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-69-green.svg)](.agent-skills/)
-[![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/scripts/generate_compact_skills.py)
+[![Skills](https://img.shields.io/badge/Skills-57-green.svg)](.agent-skills/)
+[![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
 
 ---
 
-## 설치 방법
+## Installation
 
-### NPX를 사용한 스킬 설치 (권장)
+### Install Skills Using NPX (Recommended)
 
 ```bash
-# 전체 스킬 한번에 설치 (68개)
+# Install all skills at once (57 skills)
 npx skills add https://github.com/supercent-io/skills-template --skill \
   agent-configuration \
   agent-evaluation \
-  agent-workflow \
   agentic-development-principles \
   agentic-principles \
   agentic-workflow \
   prompt-repetition \
-  subagent-creation \
-  superwork \
   api-design \
   api-documentation \
   authentication-setup \
@@ -37,14 +34,12 @@ npx skills add https://github.com/supercent-io/skills-template --skill \
   debugging \
   performance-optimization \
   testing-strategies \
-  image-generation-mcp \
-  remotion-video-production \
   changelog-maintenance \
-  pptx-presentation-builder \
+  presentation-builder \
   technical-writing \
   user-guide-writing \
-  frontend-design-system \
-  vercel-react-best-practices \
+  design-system \
+  react-best-practices \
   responsive-design \
   state-management \
   ui-component-patterns \
@@ -56,7 +51,8 @@ npx skills add https://github.com/supercent-io/skills-template --skill \
   monitoring-observability \
   security-best-practices \
   system-environment-setup \
-  marketing-skills-collection \
+  vercel-deploy \
+  marketing-automation \
   sprint-retrospective \
   standup-meeting \
   task-estimation \
@@ -65,82 +61,162 @@ npx skills add https://github.com/supercent-io/skills-template --skill \
   data-analysis \
   log-analysis \
   pattern-detection \
-  advanced-skill-template \
-  basic-skill-template \
+  image-generation \
+  video-production \
   environment-setup \
   file-organization \
   git-submodule \
   git-workflow \
   kling-ai \
-  mcp-codex-integration \
+  mcp-codex \
   npm-git-install \
-  opencode-authentication \
   opencontext \
   skill-standardization \
-  vercel-deploy \
   workflow-automation
 ```
 
-### 개별 스킬 설치
+### Individual Skill Installation
 
 ```bash
-# 특정 스킬만 설치
+# Install specific skills
 npx skills add https://github.com/supercent-io/skills-template --skill api-design
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
-
-# 카테고리별 설치
-npx skills add https://github.com/supercent-io/skills-template --category backend
-npx skills add https://github.com/supercent-io/skills-template --category frontend
 ```
 
 ---
 
-## 스킬 개요 (69개)
+### 🌟 Explore More Skills from the Community
 
-| Category | Count | Skills |
-|:---------|:-----:|:-------|
-| **Backend** | 6 | `api-design` `database-schema-design` `authentication-setup` `backend-testing` `kling-ai` `cs-tool-dashboard` |
-| **Frontend** | 6 | `ui-component-patterns` `state-management` `responsive-design` `web-accessibility` `web-design-guidelines` `react-best-practices` |
-| **Code-Quality** | 6 | `code-review` `code-refactoring` `testing-strategies` `performance-optimization` `debugging` `agent-evaluation` |
-| **Infrastructure** | 8 | `system-environment-setup` `deployment-automation` `monitoring-observability` `security-best-practices` `firebase-ai-logic` `looker-studio-bigquery` `agent-configuration` `vercel-deploy` |
-| **Documentation** | 4 | `technical-writing` `api-documentation` `user-guide-writing` `changelog-maintenance` |
-| **Project-Mgmt** | 8 | `task-planning` `task-estimation` `sprint-retrospective` `standup-meeting` `ultrathink-multiagent-workflow` `subagent-creation` `agentic-principles` `superwork` |
-| **Search-Analysis** | 4 | `codebase-search` `log-analysis` `data-analysis` `pattern-detection` |
-| **Utilities** | 14 | `git-workflow` `git-submodule` `environment-setup` `file-organization` `workflow-automation` `skill-standardization` `opencode-authentication` `npm-git-install` `project-init-memory` `agentic-workflow` `opencontext` `prompt-repetition` `agentic-development-principles` |
+**Want even more Claude skills?** Check out the **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** repository - a curated collection of 100+ skills covering automation, development, and productivity workflows!
+
+**Quick install from Awesome Claude Skills:**
+```bash
+# Example: Install GitHub automation skill
+npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill github-automation
+
+# Example: Install Slack automation skill  
+npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack-automation
+
+# Browse all skills at: https://github.com/ComposioHQ/awesome-claude-skills
+```
 
 ---
 
-## TOON 포맷 (기본 적용)
+## Skills Overview (57 Total - Flat Structure)
 
-스킬은 **TOON 포맷**을 기본으로 사용하여 토큰 사용량을 95% 절감합니다.
+All skills are now at the root level (no category folders).
 
-### TOON 포맷 구조
+### Backend (5 skills)
+- `api-design` - RESTful and GraphQL API design
+- `api-documentation` - API documentation generation
+- `authentication-setup` - Authentication & authorization systems
+- `backend-testing` - Backend testing strategies
+- `database-schema-design` - Database schema design & optimization
+
+### Frontend (7 skills)
+- `design-system` - Design system implementation
+- `react-best-practices` - React & Next.js best practices
+- `responsive-design` - Responsive web design
+- `state-management` - State management patterns
+- `ui-component-patterns` - UI component patterns
+- `web-accessibility` - Web accessibility (a11y) standards
+- `web-design-guidelines` - Web design guidelines compliance
+
+### Code Quality (5 skills)
+- `code-refactoring` - Code refactoring strategies
+- `code-review` - Code review practices
+- `debugging` - Systematic debugging methodologies
+- `performance-optimization` - Performance optimization techniques
+- `testing-strategies` - Comprehensive testing strategies
+
+### Infrastructure (7 skills)
+- `deployment-automation` - CI/CD and deployment automation
+- `firebase-ai-logic` - Firebase AI Logic integration
+- `looker-studio-bigquery` - Looker Studio & BigQuery integration
+- `monitoring-observability` - Monitoring and observability setup
+- `security-best-practices` - Security best practices
+- `system-environment-setup` - Environment configuration
+- `vercel-deploy` - Vercel deployment automation
+
+### Documentation (4 skills)
+- `changelog-maintenance` - Changelog management
+- `presentation-builder` - Presentation builder
+- `technical-writing` - Technical documentation writing
+- `user-guide-writing` - User guide & tutorial writing
+
+### Project Management (4 skills)
+- `sprint-retrospective` - Sprint retrospective facilitation
+- `standup-meeting` - Daily standup management
+- `task-estimation` - Task estimation techniques
+- `task-planning` - Task planning & organization
+
+### Search & Analysis (4 skills)
+- `codebase-search` - Codebase search & navigation
+- `data-analysis` - Data analysis & insights
+- `log-analysis` - Log analysis & debugging
+- `pattern-detection` - Pattern detection in code/data
+
+### Creative Media (2 skills)
+- `image-generation` - AI image generation
+- `video-production` - Video production workflows
+
+### Marketing (1 skill)
+- `marketing-automation` - Marketing automation workflows
+
+### Agent Development (6 skills)
+- `agent-configuration` - AI agent configuration & security policies
+- `agent-evaluation` - AI agent evaluation systems
+- `agentic-development-principles` - Universal agentic development principles
+- `agentic-principles` - Core AI agent collaboration principles
+- `agentic-workflow` - Practical AI agent workflows & productivity
+- `prompt-repetition` - Prompt repetition techniques for LLM accuracy
+
+### Utilities (11 skills)
+- `environment-setup` - Development environment setup
+- `file-organization` - File & folder organization
+- `git-submodule` - Git submodule management
+- `git-workflow` - Git workflow management
+- `kling-ai` - Kling AI video generation
+- `mcp-codex` - MCP Codex integration
+- `npm-git-install` - Install npm packages from GitHub
+- `opencontext` - AI agent persistent memory with OpenContext
+- `skill-standardization` - SKILL.md standardization
+- `vercel-deploy` - Vercel deployment
+- `workflow-automation` - Workflow automation scripts
+
+---
+
+## TOON Format (Default)
+
+Skills use the **TOON format** by default, achieving 95% token reduction.
+
+### TOON Format Structure
 
 ```
-N:skill-name                           # 스킬 이름
-D:Description in 2-3 sentences...      # 설명
-G:keyword1 keyword2 keyword3           # 검색 키워드
+N:skill-name                           # Skill name
+D:Description in 2-3 sentences...      # Description
+G:keyword1 keyword2 keyword3           # Search keywords
 
-U[5]:                                  # 사용 사례 (Use cases)
+U[5]:                                  # Use cases
   Use case 1
   Use case 2
   ...
 
-S[6]{n,action,details}:                # 실행 단계 (Steps)
+S[6]{n,action,details}:                # Execution steps
   1,Analyze,Understand the request
   2,Plan,Create approach
   ...
 
-R[5]:                                  # 규칙/모범 사례 (Rules)
+R[5]:                                  # Rules/Best practices
   Best practice 1
   Best practice 2
   ...
 
-E[2]{desc,in,out}:                     # 예제 (Examples)
+E[2]{desc,in,out}:                     # Examples
   "Basic usage","Input","Output"
 ```
 
-### 토큰 최적화 비교
+### Token Optimization Comparison
 
 | Mode | File | Avg Tokens | Reduction |
 |:-----|:-----|:-----------|:----------|
@@ -149,47 +225,44 @@ E[2]{desc,in,out}:                     # 예제 (Examples)
 
 ---
 
-## 아키텍처
+## Architecture (Flat Structure)
 
 ```
 .agent-skills/
-├── skills.json              # 스킬 매니페스트 (자동 생성)
-├── skills.toon              # 토큰 최적화 요약 (자동 생성)
-├── skill_loader.py          # 스킬 로딩 코어
-├── skill-query-handler.py   # 자연어 쿼리 처리
+├── skills.json              # Skill manifest (auto-generated)
+├── skills.toon              # Token-optimized summary (auto-generated)
+├── skill_loader.py          # Skill loading core
+├── skill-query-handler.py   # Natural language query handler
 │
-├── backend/                 # 백엔드 스킬
-├── frontend/                # 프론트엔드 스킬
-├── code-quality/            # 코드 품질 스킬
-├── infrastructure/          # 인프라 스킬
-├── documentation/           # 문서화 스킬
-├── project-management/      # 프로젝트 관리 스킬
-├── search-analysis/         # 검색/분석 스킬
-├── utilities/               # 유틸리티 스킬
+├── agent-configuration/     # All 57 skill folders at root level
+├── api-design/
+├── authentication-setup/
+├── ... (all skills)
 │
-├── templates/               # 스킬 템플릿
-│   ├── toon-skill-template/ # TOON 포맷 (기본)
-│   ├── basic-skill-template/
-│   └── advanced-skill-template/
-│
-└── scripts/                 # 유틸리티 스크립트
-    └── generate_compact_skills.py
+└── templates/               # Skill templates
+    ├── toon-skill-template/ # TOON format (default)
+    ├── basic-skill-template/
+    └── advanced-skill-template/
 ```
+
+> **v4.3.0 Change**: Category folders removed, all skills flattened to root level
 
 ---
 
-## 추가 스킬 탐색
+## Explore Additional Skills
 
-더 많은 AI 에이전트 스킬을 찾고 계신가요?
+Looking for more AI agent skills?
 
-**[skills.sh](https://skills.sh/)** 에서 커뮤니티가 만든 다양한 스킬을 탐색하고 설치할 수 있습니다.
+Visit **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** to explore and install 100+ community-created skills.
 
 ```bash
-# skills.sh에서 스킬 검색
+# Search skills
 npx skills search "code review"
 
-# skills.sh에서 스킬 설치
-npx skills add <skill-name>
+# Install from Awesome Claude Skills
+npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill github-automation
+
+# Browse all: https://github.com/ComposioHQ/awesome-claude-skills
 ```
 
 ---
@@ -200,14 +273,20 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.2.0 | **Updated**: 2026-01-28 | **Skills**: 69 | **Format**: TOON (Default)
+**Version**: 4.3.0 | **Updated**: 2026-02-06 | **Skills**: 57 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.0**:
+- **Flat structure**: Removed category folders, all 57 skills at root level
+- **English translations**: Translated all agentic skills to English
+- **Awesome Claude Skills integration**: Added prominent installation guide for community skills
+- **Documentation update**: Comprehensive README updates reflecting new structure
 
 **Changelog v4.2.0**:
-- **superwork 스킬 추가**: Opus extended thinking 활용 분석/종합/의사결정 에이전트
-- **spw 별칭 지원**: `superwork`, `spw`, `super-work`, `opus-work` 키워드로 호출 가능
+- **Superwork skill added**: Opus extended thinking for analysis/synthesis/decision-making
+- **Alias support**: `superwork`, `spw`, `super-work`, `opus-work` keywords
 
 **Changelog v4.0.0**:
-- **설치 방식 변경**: `npx skills add` 포맷으로 통일
-- **TOON 포맷 기본 적용**: 토큰 95% 절감
-- **compact 파일 제거**: TOON으로 통합
-- **README 간소화**: 핵심 내용만 유지
+- **Installation method change**: Unified to `npx skills add` format
+- **TOON format by default**: 95% token reduction
+- **Compact file removal**: Integrated into TOON
+- **README simplification**: Core content only
