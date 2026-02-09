@@ -15,7 +15,13 @@ npx skills add https://github.com/supercent-io/skills-template
 # Install specific skills
 npx skills add https://github.com/supercent-io/skills-template --skill api-design
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
+npx skills add https://github.com/supercent-io/skills-template --skill oh-my-ag-mcp-integration
 ```
+
+### oh-my-ag MCP Setup
+
+- Guide: `../oh-my-ag-mcp-setup-guide.md`
+- Skill folder: `oh-my-ag-mcp-integration/`
 
 ### 🌟 Explore More Skills
 
@@ -156,6 +162,7 @@ repository to the current project.
 | `git-submodule` | Git submodule management |
 | `git-workflow` | Git workflow management |
 | `kling-ai` | Kling AI video generation |
+| `oh-my-ag-mcp-integration` | oh-my-ag MCP integration for ulw workflows |
 | `mcp-codex` | MCP Codex integration |
 | `npm-git-install` | Install npm from GitHub |
 | `opencontext` | AI agent persistent memory |

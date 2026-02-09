@@ -1,0 +1,22 @@
+N:oh-my-ag-mcp-integration
+D:Install and configure oh-my-ag MCP integration for ulw workflows. Includes setup, bridge mode, and verification via doctor.
+G:oh-my-ag mcp ulw serena bridge antigravity setup
+
+U[5]:
+  Integrate oh-my-ag with MCP in an existing project
+  Configure MCP mode for ulw execution
+  Enable bridge path for stdio-to-http environments
+  Verify MCP readiness after setup
+  Troubleshoot setup failures with explicit commands
+
+S[5]{n,action,details}:
+  1,Install,bunx oh-my-ag in target project root
+  2,Setup,Run /setup to validate CLIs and MCP config
+  3,Transport,Choose command mode or SSE mode
+  4,Bridge,Run bunx oh-my-ag bridge <url> when needed
+  5,Verify,Run bunx oh-my-ag doctor and check warnings
+
+R[3]:
+  Always run setup before production-like workflows
+  Verify with doctor after changing MCP configuration
+  Use bridge only when your environment requires it
