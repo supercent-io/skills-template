@@ -1,102 +1,49 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **57 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **59 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-57-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-59-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
 
 ---
 
-## Installation
+## Installation Guide
 
-### Install Skills Using NPX (Recommended)
-
-```bash
-# Install all skills at once (57 skills)
-npx skills add https://github.com/supercent-io/skills-template --skill \
-  agent-configuration \
-  agent-evaluation \
-  agentic-development-principles \
-  agentic-principles \
-  agentic-workflow \
-  prompt-repetition \
-  api-design \
-  api-documentation \
-  authentication-setup \
-  backend-testing \
-  database-schema-design \
-  code-refactoring \
-  code-review \
-  debugging \
-  performance-optimization \
-  testing-strategies \
-  changelog-maintenance \
-  presentation-builder \
-  technical-writing \
-  user-guide-writing \
-  design-system \
-  react-best-practices \
-  responsive-design \
-  state-management \
-  ui-component-patterns \
-  web-accessibility \
-  web-design-guidelines \
-  deployment-automation \
-  firebase-ai-logic \
-  looker-studio-bigquery \
-  monitoring-observability \
-  security-best-practices \
-  system-environment-setup \
-  vercel-deploy \
-  marketing-automation \
-  sprint-retrospective \
-  standup-meeting \
-  task-estimation \
-  task-planning \
-  codebase-search \
-  data-analysis \
-  log-analysis \
-  pattern-detection \
-  image-generation \
-  video-production \
-  environment-setup \
-  file-organization \
-  git-submodule \
-  git-workflow \
-  kling-ai \
-  mcp-codex \
-  npm-git-install \
-  opencontext \
-  skill-standardization \
-  workflow-automation
-```
-
-### Individual Skill Installation
+### Quick Install (All Skills)
 
 ```bash
-# Install specific skills
-npx skills add https://github.com/supercent-io/skills-template --skill api-design
-npx skills add https://github.com/supercent-io/skills-template --skill code-review
-npx skills add https://github.com/supercent-io/skills-template --skill oh-my-ag-mcp-integration
+# Install all 59 core skills at once
+npx skills add https://github.com/supercent-io/skills-template
 ```
 
-### oh-my-ag MCP Setup Guide
+### Specialized Installation Tables
 
-- Guide: `oh-my-ag-mcp-setup-guide.md`
-- Skill: `oh-my-ag-mcp-integration`
+#### Core Agent Skills
+| Skill Category | Command |
+|----------------|---------|
+| All Core Skills | `npx skills add https://github.com/supercent-io/skills-template` |
+| Basic Template | `npx skills add https://github.com/supercent-io/skills-template --skill basic-skill-template` |
+| Agentic Workflow | `npx skills add https://github.com/supercent-io/skills-template --skill agentic-workflow` |
 
-```bash
-# Install only oh-my-ag MCP integration skill
-npx skills add https://github.com/supercent-io/skills-template --skill oh-my-ag-mcp-integration
-```
+#### Special & Community Skills
+| Skill Name | Provider | Installation Command |
+|------------|----------|----------------------|
+| `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
+| `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
+
+#### Browser Macro Skills
+| Skill Name | source | Installation Command |
+|------------|--------|----------------------|
+| `Playwriter` | remorses | `npx -y skills add remorses/playwriter` |
+| `agent-browser` | vercel-labs | `npx skills add vercel-labs/agent-browser` |
 
 ---
 
-### 🌟 Explore More Skills from the Community
+## Installation Guide (By Category)
 
 **Want even more Claude skills?** Check out the **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** repository - a curated collection of 100+ skills covering automation, development, and productivity workflows!
 
@@ -113,7 +60,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (57 Total - Flat Structure)
+## Skills Overview (59 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -133,12 +80,13 @@ All skills are now at the root level (no category folders).
 - `web-accessibility` - Web accessibility (a11y) standards
 - `web-design-guidelines` - Web design guidelines compliance
 
-### Code Quality (5 skills)
+### Code Quality (6 skills)
 - `code-refactoring` - Code refactoring strategies
 - `code-review` - Code review practices
 - `debugging` - Systematic debugging methodologies
 - `performance-optimization` - Performance optimization techniques
 - `testing-strategies` - Comprehensive testing strategies
+- `agent-evaluation` - AI agent evaluation systems
 
 ### Infrastructure (7 skills)
 - `deployment-automation` - CI/CD and deployment automation
@@ -155,11 +103,12 @@ All skills are now at the root level (no category folders).
 - `technical-writing` - Technical documentation writing
 - `user-guide-writing` - User guide & tutorial writing
 
-### Project Management (4 skills)
+### Project Management (5 skills)
 - `sprint-retrospective` - Sprint retrospective facilitation
 - `standup-meeting` - Daily standup management
 - `task-estimation` - Task estimation techniques
 - `task-planning` - Task planning & organization
+- `agentic-principles` - Core AI agent collaboration principles
 
 ### Search & Analysis (4 skills)
 - `codebase-search` - Codebase search & navigation
@@ -182,18 +131,18 @@ All skills are now at the root level (no category folders).
 - `agentic-workflow` - Practical AI agent workflows & productivity
 - `prompt-repetition` - Prompt repetition techniques for LLM accuracy
 
-### Utilities (11 skills)
+### Utilities (12 skills)
 - `environment-setup` - Development environment setup
 - `file-organization` - File & folder organization
 - `git-submodule` - Git submodule management
 - `git-workflow` - Git workflow management
 - `kling-ai` - Kling AI video generation
-- `oh-my-ag-mcp-integration` - oh-my-ag MCP integration setup for ulw workflows
+- `ohmg` - Multi-agent orchestration for Antigravity workflows
+- `agent-browser` - Headless browser for AI agents
 - `mcp-codex` - MCP Codex integration
 - `npm-git-install` - Install npm packages from GitHub
 - `opencontext` - AI agent persistent memory with OpenContext
 - `skill-standardization` - SKILL.md standardization
-- `vercel-deploy` - Vercel deployment
 - `workflow-automation` - Workflow automation scripts
 
 ---
@@ -246,7 +195,7 @@ E[2]{desc,in,out}:                     # Examples
 ├── skill_loader.py          # Skill loading core
 ├── skill-query-handler.py   # Natural language query handler
 │
-├── agent-configuration/     # All 57 skill folders at root level
+├── agent-configuration/     # All 59 skill folders at root level
 ├── api-design/
 ├── authentication-setup/
 ├── ... (all skills)
@@ -285,7 +234,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.0 | **Updated**: 2026-02-06 | **Skills**: 57 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.0 | **Updated**: 2026-02-11 | **Skills**: 59 | **Format**: TOON (Default) | **Structure**: Flat
 
 **Changelog v4.3.0**:
 - **Flat structure**: Removed category folders, all 57 skills at root level
