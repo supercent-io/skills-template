@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **60 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **61 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-60-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-61-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,9 +16,28 @@
 ### Quick Install (All Skills)
 
 ```bash
-# Install all 60 core skills at once
+# Install all 61 core skills at once
 npx skills add https://github.com/supercent-io/skills-template
 ```
+
+### Installation Highlights (OpenCode & Oh My OpenCode)
+
+> **OpenCode (opencode.ai/ko) highlighted install**
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+> **Oh My OpenCode highlighted install flow (README Installation section)**
+
+```text
+Install and configure oh-my-opencode by following:
+https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
+```
+
+Reference links:
+- https://opencode.ai/ko
+- https://github.com/code-yeongyu/oh-my-opencode/tree/dev?tab=readme-ov-file
 
 ### Specialized Installation Tables
 
@@ -34,6 +53,7 @@ npx skills add https://github.com/supercent-io/skills-template
 |------------|----------|----------------------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
+| `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
 
 #### Browser Macro Skills
 | Skill Name | source | Installation Command |
@@ -60,7 +80,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (60 Total - Flat Structure)
+## Skills Overview (61 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -132,7 +152,7 @@ All skills are now at the root level (no category folders).
 - `agentic-workflow` - Practical AI agent workflows & productivity
 - `prompt-repetition` - Prompt repetition techniques for LLM accuracy
 
-### Utilities (12 skills)
+### Utilities (13 skills)
 - `environment-setup` - Development environment setup
 - `file-organization` - File & folder organization
 - `git-submodule` - Git submodule management
@@ -143,6 +163,7 @@ All skills are now at the root level (no category folders).
 - `mcp-codex` - MCP Codex integration
 - `npm-git-install` - Install npm packages from GitHub
 - `opencontext` - AI agent persistent memory with OpenContext
+- `ralph-loop` - Self-referential completion loop for OpenCode workflows
 - `skill-standardization` - SKILL.md standardization
 - `workflow-automation` - Workflow automation scripts
 
@@ -235,7 +256,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.1 | **Updated**: 2026-02-13 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.2 | **Updated**: 2026-02-13 | **Skills**: 61 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.2**:
+- **New skill: ralph-loop**: OpenCode completion loop skill guide
+- **README highlight update**: Added OpenCode and Oh My OpenCode installation highlights
 
 **Changelog v4.3.1**:
 - **New skill: pollinations-ai**: Free image generation using Pollinations.ai URL API
