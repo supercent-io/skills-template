@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **61 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **62 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-61-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-62-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,7 +16,7 @@
 ### Quick Install (All Skills)
 
 ```bash
-# Install all 61 core skills at once
+# Install all 62 core skills at once
 npx skills add https://github.com/supercent-io/skills-template
 ```
 
@@ -53,7 +53,17 @@ Reference links:
 |------------|----------|----------------------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
+| `bmad-orchestrator` | BMAD | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
+
+#### BMAD Execution (Highlight)
+
+After installing `bmad-orchestrator`, run:
+
+```text
+/workflow-init
+/workflow-status
+```
 
 #### Browser Macro Skills
 | Skill Name | source | Installation Command |
@@ -80,7 +90,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (61 Total - Flat Structure)
+## Skills Overview (62 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -152,13 +162,14 @@ All skills are now at the root level (no category folders).
 - `agentic-workflow` - Practical AI agent workflows & productivity
 - `prompt-repetition` - Prompt repetition techniques for LLM accuracy
 
-### Utilities (13 skills)
+### Utilities (14 skills)
 - `environment-setup` - Development environment setup
 - `file-organization` - File & folder organization
 - `git-submodule` - Git submodule management
 - `git-workflow` - Git workflow management
 - `kling-ai` - Kling AI video generation
 - `ohmg` - Multi-agent orchestration for Antigravity workflows
+- `bmad-orchestrator` - BMAD workflow orchestration and phase routing
 - `agent-browser` - Headless browser for AI agents
 - `mcp-codex` - MCP Codex integration
 - `npm-git-install` - Install npm packages from GitHub
@@ -256,7 +267,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.2 | **Updated**: 2026-02-13 | **Skills**: 61 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.3 | **Updated**: 2026-02-13 | **Skills**: 62 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.3**:
+- **New skill: bmad-orchestrator**: BMAD workflow initialization and status orchestration guide
+- **README update**: Added bmad-orchestrator install and BMAD execution highlights (`/workflow-init`, `/workflow-status`)
 
 **Changelog v4.3.2**:
 - **New skill: ralph-loop**: OpenCode completion loop skill guide
