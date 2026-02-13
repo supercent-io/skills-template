@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **59 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **60 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-59-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-60-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,7 +16,7 @@
 ### Quick Install (All Skills)
 
 ```bash
-# Install all 59 core skills at once
+# Install all 60 core skills at once
 npx skills add https://github.com/supercent-io/skills-template
 ```
 
@@ -60,7 +60,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (59 Total - Flat Structure)
+## Skills Overview (60 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -116,8 +116,9 @@ All skills are now at the root level (no category folders).
 - `log-analysis` - Log analysis & debugging
 - `pattern-detection` - Pattern detection in code/data
 
-### Creative Media (2 skills)
+### Creative Media (3 skills)
 - `image-generation` - AI image generation
+- `pollinations-ai` - Free Pollinations.ai image generation with URL API
 - `video-production` - Video production workflows
 
 ### Marketing (1 skill)
@@ -234,7 +235,12 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.0 | **Updated**: 2026-02-11 | **Skills**: 59 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.1 | **Updated**: 2026-02-13 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.1**:
+- **New skill: pollinations-ai**: Free image generation using Pollinations.ai URL API
+- **File saving capability**: Python examples for automated image download
+- **No signup required**: Zero-friction image generation workflow
 
 **Changelog v4.3.0**:
 - **Flat structure**: Removed category folders, all 57 skills at root level
