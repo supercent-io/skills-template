@@ -48,6 +48,7 @@ oc_folder_create folder="my-project" description="프로젝트 설명"
 | **Gemini-CLI** | Analyst | ✅ Integrated | 대용량 분석 (1M+ 토큰), 리서치, 코드 리뷰 |
 | **Codex-CLI** | Executor | ✅ Integrated | 명령 실행, 빌드, 배포, Docker/K8s |
 | **OpenContext** | Memory | ✅ Integrated | 영구 컨텍스트 저장, 프로젝트 문서 관리 |
+| **ohmg** | Orchestrator | ✅ Integrated | Multi-agent orchestration, Serena Memory |
 
 ## Model Configuration (balanced)
 
@@ -100,6 +101,7 @@ shell "kubectl apply -f deployment.yaml"
 | `infrastructure/` | 배포, 모니터링, 보안 |
 | `documentation/` | 기술 문서, API 문서 |
 | `utilities/` | Git, 환경 설정 |
+| `orchestration/` | ohmg (Multi-agent orchestration) |
 
 ### Skill Query (Token-Optimized)
 \`\`\`bash
