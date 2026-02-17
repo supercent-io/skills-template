@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **58 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **59 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-58-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-59-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -53,6 +53,7 @@ Reference links:
 |------------|----------|----------------------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
+| `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
 | `bmad` | bmad orchestrator | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
 
@@ -90,7 +91,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (58 Total - Flat Structure)
+## Skills Overview (59 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -160,12 +161,13 @@ All skills are now at the root level (no category folders).
 - `agentic-workflow` - Practical AI agent workflows & productivity
 - `prompt-repetition` - Prompt repetition techniques for LLM accuracy
 
-### Utilities (12 skills)
+### Utilities (13 skills)
 - `environment-setup` - Development environment setup
 - `file-organization` - File & folder organization
 - `git-submodule` - Git submodule management
 - `git-workflow` - Git workflow management
 - `ohmg` - Multi-agent orchestration for Antigravity workflows
+- `oh-my-codex` - Multi-agent orchestration for OpenAI Codex CLI
 - `bmad-orchestrator` - BMAD workflow orchestration and phase routing
 - `agent-browser` - Headless browser for AI agents
 - `npm-git-install` - Install npm packages from GitHub
@@ -263,7 +265,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.4 | **Updated**: 2026-02-13 | **Skills**: 58 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.5 | **Updated**: 2026-02-18 | **Skills**: 59 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.5**:
+- **New skill: oh-my-codex**: Multi-agent orchestration layer for OpenAI Codex CLI with 30 agents, 40+ skills, team mode, and MCP servers
 
 **Changelog v4.3.4**:
 - **Cleanup**: Fixed skill count (62 -> 58), removed duplicates and non-existent entries (mcp-codex, kling-ai)

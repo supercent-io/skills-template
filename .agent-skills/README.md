@@ -16,6 +16,7 @@ npx skills add https://github.com/supercent-io/skills-template
 npx skills add https://github.com/supercent-io/skills-template --skill api-design
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
 npx skills add https://github.com/supercent-io/skills-template --skill ohmg
+npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 ```
 
 ### oh-my-ag MCP Setup
@@ -66,7 +67,7 @@ repository to the current project.
 
 ---
 
-## Skills List (59 Total)
+## Skills List (60 Total)
 
 ### Agent Development (6)
 | Skill | Description |
@@ -153,7 +154,7 @@ repository to the current project.
 |-------|-------------|
 | `marketing-automation` | Marketing automation |
 
-### Utilities (12)
+### Utilities (13)
 | Skill | Description |
 |-------|-------------|
 | `agent-browser` | Fast headless browser CLI for AI agents |
@@ -163,6 +164,7 @@ repository to the current project.
 | `git-workflow` | Git workflow management |
 | `kling-ai` | Kling AI video generation |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows |
+| `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
 | `mcp-codex` | MCP Codex integration |
 | `npm-git-install` | Install npm from GitHub |
 | `opencontext` | AI agent persistent memory |
@@ -281,4 +283,4 @@ npx skills add <skill-name>
 
 ---
 
-**Version**: 4.3.0 | **Updated**: 2026-02-11 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.5 | **Updated**: 2026-02-18 | **Format**: TOON (Default) | **Structure**: Flat

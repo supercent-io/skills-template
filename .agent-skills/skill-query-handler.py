@@ -141,6 +141,16 @@ SKILL_KEYWORDS = {
     "pattern-detection": ["pattern", "detect", "패턴"],
     "git-workflow": ["git", "commit", "branch", "merge", "깃", "커밋", "브랜치"],
     "skill-standardization": ["skill", "standardize", "convert skill", "스킬 변환"],
+    "bmad": [
+        "bmad",
+        "bmad-method",
+        "agile ai",
+        "multi-agent orchestration",
+        "vibe coding",
+        "spec-driven development",
+        "sdd",
+        "phase based development",
+    ],
     "ohmg": [
         "ohmg",
         "multi-agent",
