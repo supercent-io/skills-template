@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **59 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **60 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-59-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-60-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,7 +16,7 @@
 ### Quick Install (All Skills)
 
 ```bash
-# Install all 58 core skills at once
+# Install all 60 core skills at once
 npx skills add https://github.com/supercent-io/skills-template
 ```
 
@@ -91,7 +91,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (59 Total - Flat Structure)
+## Skills Overview (60 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -118,9 +118,10 @@ All skills are now at the root level (no category folders).
 - `performance-optimization` - Performance optimization techniques
 - `testing-strategies` - Comprehensive testing strategies
 
-### Infrastructure (6 skills)
+### Infrastructure (8 skills)
 - `deployment-automation` - CI/CD and deployment automation
 - `firebase-ai-logic` - Firebase AI Logic integration
+- `genkit` - Firebase Genkit AI workflow framework (flows, agents, RAG, streaming, multi-model)
 - `looker-studio-bigquery` - Looker Studio & BigQuery integration
 - `monitoring-observability` - Monitoring and observability setup
 - `security-best-practices` - Security best practices
@@ -265,7 +266,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.5 | **Updated**: 2026-02-18 | **Skills**: 59 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.6 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.6**:
+- **New skill: genkit**: Firebase Genkit AI workflow framework — type-safe flows, tool-calling agents, RAG pipelines, streaming, multi-agent systems, and one-command deployment to Firebase/Cloud Run. Supports Gemini, OpenAI, Anthropic, Ollama, and Vertex AI plugins with a built-in Developer UI at localhost:4000.
 
 **Changelog v4.3.5**:
 - **New skill: oh-my-codex**: Multi-agent orchestration layer for OpenAI Codex CLI with 30 agents, 40+ skills, team mode, and MCP servers
