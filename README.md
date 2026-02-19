@@ -11,360 +11,206 @@
 
 ---
 
-## Installation Guide
+## AI CLI Tools — Universal Model Hub
 
-### Quick Install (All Skills)
+> **OpenCode** and **oh-my-opencode** function as model-agnostic CLI hubs, just like Claude Code, Codex CLI, and Gemini-CLI — but with the ability to route to **any model** from any provider in a single session.
 
-```bash
-# Install all 60 core skills at once
-npx skills add https://github.com/supercent-io/skills-template
-```
+| CLI Tool | Role | Models |
+|----------|------|--------|
+| **Claude Code** | Orchestrator + Coder | Claude family |
+| **Codex CLI** | Executor + Builder | OpenAI / GPT family |
+| **Gemini-CLI** | Analyst + Researcher | Gemini / Google family |
+| **OpenCode** | Universal Hub | All providers |
+| **oh-my-opencode** | Universal Hub + Loop | All providers |
 
-### Installation Highlights (OpenCode, Firebase Genkit & oh-my-ag)
+These tools are **interoperable** — Agent Skills work across all of them via the same keyword system.
 
-> **OpenCode (opencode.ai/ko) highlighted install**
+---
 
-```bash
-curl -fsSL https://opencode.ai/install | bash
-```
+## Harness Engineering — Orchestrator Skills
 
-> **Oh My OpenCode highlighted install flow (README Installation section)**
+> Three specialized orchestration skills, each engineered as a harness for a specific CLI and model ecosystem.
+
+| Keyword | Skill | Best With | Harness For |
+|---------|-------|-----------|-------------|
+| `ohmg` | oh-my-ag | Gemini-CLI | Google models (Gemini, Gemma) — multi-domain agent coordination via Serena Memory |
+| `omx` | oh-my-codex | Codex CLI | OpenAI models — 30 agents, 40+ workflow skills, tmux team mode, MCP servers |
+| `bmad` | bmad-orchestrator | Claude Code | Claude models — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) |
+
+### How to Activate
+
+> **Important**: `ohmg`, `omx`, `bmad`, `playwriter`, `agent-browser` require **explicit skill activation** before first use.
+
+Tell your AI agent to set up the skill by ending your request with **"기억해"** (remember):
 
 ```text
-Install and configure oh-my-opencode by following:
-https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
+# Example activation pattern
+ohmg 스킬을 설정하고 사용해줘. 기억해.
+omx 스킬을 설정하고 사용해줘. 기억해.
+bmad 스킬을 설정하고 사용해줘. 기억해.
+playwriter 스킬을 설정하고 사용해줘. 기억해.
+agent-browser 스킬을 설정하고 사용해줘. 기억해.
 ```
 
-Reference links:
-- https://opencode.ai/ko
-- https://github.com/code-yeongyu/oh-my-opencode/tree/dev?tab=readme-ov-file
+> Without "기억해", the agent will use the skill for the current session only and may not retain configuration.
 
-> **Firebase Genkit highlighted install**
+---
+
+## ralph-loop — Completion Loop
+
+> **ralph-loop** enforces task completion across all CLI tools. Enabling it activates `ohmg`, `omx`, `bmad`, `playwriter`, and `agent-browser` as usable keywords in your workflow.
+
+```text
+/ralph-loop "<task>" [--completion-promise=DONE] [--max-iterations=100]
+```
+
+| Keyword | Availability |
+|---------|-------------|
+| `ralph-loop` | OpenCode, oh-my-opencode, Claude Code, Gemini-CLI |
+| `ohmg` | Available when ralph-loop is active |
+| `omx` | Available when ralph-loop is active |
+| `bmad` | Available when ralph-loop is active |
+| `playwriter` | Available for browser verification |
+| `agent-browser` | Available for headless verification |
+
+---
+
+## Quick Install
 
 ```bash
-# Step 1: Install Genkit CLI
-npm install -g genkit-cli
-# (or: curl -sL cli.genkit.dev | bash)
+# All 60 core skills
+npx skills add https://github.com/supercent-io/skills-template
 
-# Step 2: Initialize TypeScript project
-mkdir my-genkit-app && cd my-genkit-app
-npm init -y && npm install -D typescript tsx && npx tsc --init
-mkdir src && touch src/index.ts
-
-# Step 3: Install Genkit core + Google AI (Gemini) plugin
-npm install genkit @genkit-ai/google-genai
-
-# Step 4: Set API key and start Developer UI
-export GEMINI_API_KEY=your_key_here
-genkit start -- npx tsx --watch src/index.ts
-# → opens http://localhost:4000 (flow runner, trace inspector, prompt playground)
+# Individual skill
+npx skills add https://github.com/supercent-io/skills-template --skill <skill-name>
 ```
 
-Install the genkit skill:
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill genkit
-```
+---
 
-Reference links:
-- https://genkit.dev/docs/overview/
-- https://github.com/firebase/genkit
+## Skills (60 Total)
 
-> **oh-my-ag (ohmg) highlighted install**
+### Orchestration & Utilities (13)
+| Skill | Keyword | Description |
+|-------|---------|-------------|
+| `ohmg` | `ohmg` | Multi-agent orchestration — Gemini + Google models harness |
+| `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
+| `bmad-orchestrator` | `bmad` | BMAD phase routing — Claude Code harness |
+| `ralph-loop` | `ralph-loop` | Completion enforcement loop for all CLIs |
+| `agent-browser` | `agent-browser` | Headless browser for AI agents |
+| `opencontext` | — | Persistent memory across sessions |
+| `workflow-automation` | — | Workflow automation scripts |
+| `environment-setup` | — | Dev environment setup |
+| `file-organization` | — | File & folder organization |
+| `git-submodule` | — | Git submodule management |
+| `git-workflow` | — | Git workflow management |
+| `npm-git-install` | — | Install npm packages from GitHub |
+| `skill-standardization` | — | SKILL.md standardization |
 
-```bash
-# Step 1: Install oh-my-ag (requires Bun)
-bunx oh-my-ag
+### Backend (5)
+`api-design` · `api-documentation` · `authentication-setup` · `backend-testing` · `database-schema-design`
 
-# Step 2: System check and repair
-bunx oh-my-ag doctor
+### Frontend (7)
+`design-system` · `react-best-practices` · `responsive-design` · `state-management` · `ui-component-patterns` · `web-accessibility` · `web-design-guidelines`
 
-# Step 3: Start observability dashboard
-bunx oh-my-ag dashboard
-```
+### Code Quality (5)
+`code-refactoring` · `code-review` · `debugging` · `performance-optimization` · `testing-strategies`
 
-Install the ohmg skill:
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill ohmg
-```
+### Infrastructure (8)
+`deployment-automation` · `firebase-ai-logic` · `genkit` · `looker-studio-bigquery` · `monitoring-observability` · `security-best-practices` · `system-environment-setup` · `vercel-deploy`
 
-Reference links:
-- https://github.com/first-fluke/oh-my-ag
+### Agent Development (6)
+`agent-configuration` · `agent-evaluation` · `agentic-development-principles` · `agentic-principles` · `agentic-workflow` · `prompt-repetition`
 
-### Specialized Installation Tables
+### Documentation (4)
+`changelog-maintenance` · `presentation-builder` · `technical-writing` · `user-guide-writing`
 
-#### Core Agent Skills
-| Skill Category | Command |
-|----------------|---------|
-| All Core Skills | `npx skills add https://github.com/supercent-io/skills-template` |
-| Basic Template | `npx skills add https://github.com/supercent-io/skills-template --skill basic-skill-template` |
-| Agentic Workflow | `npx skills add https://github.com/supercent-io/skills-template --skill agentic-workflow` |
-| Firebase Genkit | `npx skills add https://github.com/supercent-io/skills-template --skill genkit` |
+### Project Management (4)
+`sprint-retrospective` · `standup-meeting` · `task-estimation` · `task-planning`
 
-#### Special & Community Skills
-| Skill Name | Provider | Installation Command |
-|------------|----------|----------------------|
+### Search & Analysis (4)
+`codebase-search` · `data-analysis` · `log-analysis` · `pattern-detection`
+
+### Creative Media (3)
+`image-generation` · `pollinations-ai` · `video-production`
+
+### Marketing (1)
+`marketing-automation`
+
+---
+
+## Community & Specialized Skills
+
+| Skill | Provider | Install |
+|-------|----------|---------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
 | `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
 | `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
-
-#### BMAD Execution (Highlight)
-
-After installing `bmad-orchestrator`, run:
-
-```text
-/workflow-init
-/workflow-status
-```
-
-#### Browser Macro Skills
-| Skill Name | source | Installation Command |
-|------------|--------|----------------------|
 | `Playwriter` | remorses | `npx -y skills add remorses/playwriter` |
 | `agent-browser` | vercel-labs | `npx skills add vercel-labs/agent-browser` |
 
----
-
-## Installation Guide (By Category)
-
-**Want even more Claude skills?** Check out the **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** repository - a curated collection of 100+ skills covering automation, development, and productivity workflows!
-
-**Quick install from Awesome Claude Skills:**
-```bash
-# Example: Install GitHub automation skill
-npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill github-automation
-
-# Example: Install Slack automation skill  
-npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack-automation
-
-# Browse all skills at: https://github.com/ComposioHQ/awesome-claude-skills
-```
+> **100+ community skills**: [Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)
 
 ---
 
-## Skills Overview (60 Total - Flat Structure)
-
-All skills are now at the root level (no category folders).
-
-### Backend (5 skills)
-- `api-design` - RESTful and GraphQL API design
-- `api-documentation` - API documentation generation
-- `authentication-setup` - Authentication & authorization systems
-- `backend-testing` - Backend testing strategies
-- `database-schema-design` - Database schema design & optimization
-
-### Frontend (7 skills)
-- `design-system` - Design system implementation
-- `react-best-practices` - React & Next.js best practices
-- `responsive-design` - Responsive web design
-- `state-management` - State management patterns
-- `ui-component-patterns` - UI component patterns
-- `web-accessibility` - Web accessibility (a11y) standards
-- `web-design-guidelines` - Web design guidelines compliance
-
-### Code Quality (5 skills)
-- `code-refactoring` - Code refactoring strategies
-- `code-review` - Code review practices
-- `debugging` - Systematic debugging methodologies
-- `performance-optimization` - Performance optimization techniques
-- `testing-strategies` - Comprehensive testing strategies
-
-### Infrastructure (8 skills)
-- `deployment-automation` - CI/CD and deployment automation
-- `firebase-ai-logic` - Firebase AI Logic integration
-- `genkit` - Firebase Genkit AI workflow orchestration (flows, RAG, agents, streaming, multi-model)
-- `looker-studio-bigquery` - Looker Studio & BigQuery integration
-- `monitoring-observability` - Monitoring and observability setup
-- `security-best-practices` - Security best practices
-- `system-environment-setup` - Environment configuration
-- `vercel-deploy` - Vercel deployment automation
-
-### Documentation (4 skills)
-- `changelog-maintenance` - Changelog management
-- `presentation-builder` - Presentation builder
-- `technical-writing` - Technical documentation writing
-- `user-guide-writing` - User guide & tutorial writing
-
-### Project Management (4 skills)
-- `sprint-retrospective` - Sprint retrospective facilitation
-- `standup-meeting` - Daily standup management
-- `task-estimation` - Task estimation techniques
-- `task-planning` - Task planning & organization
-
-### Search & Analysis (4 skills)
-- `codebase-search` - Codebase search & navigation
-- `data-analysis` - Data analysis & insights
-- `log-analysis` - Log analysis & debugging
-- `pattern-detection` - Pattern detection in code/data
-
-### Creative Media (3 skills)
-- `image-generation` - AI image generation
-- `pollinations-ai` - Free Pollinations.ai image generation with URL API
-- `video-production` - Video production workflows
-
-### Marketing (1 skill)
-- `marketing-automation` - Marketing automation workflows
-
-### Agent Development (6 skills)
-- `agent-configuration` - AI agent configuration & security policies
-- `agent-evaluation` - AI agent evaluation systems
-- `agentic-development-principles` - Universal agentic development principles
-- `agentic-principles` - Core AI agent collaboration principles
-- `agentic-workflow` - Practical AI agent workflows & productivity
-- `prompt-repetition` - Prompt repetition techniques for LLM accuracy
-
-### Utilities (13 skills)
-- `environment-setup` - Development environment setup
-- `file-organization` - File & folder organization
-- `git-submodule` - Git submodule management
-- `git-workflow` - Git workflow management
-- `ohmg` - Multi-agent orchestration for Antigravity workflows
-- `oh-my-codex` - Multi-agent orchestration for OpenAI Codex CLI
-- `bmad-orchestrator` - BMAD workflow orchestration and phase routing
-- `agent-browser` - Headless browser for AI agents
-- `npm-git-install` - Install npm packages from GitHub
-- `opencontext` - AI agent persistent memory with OpenContext
-- `ralph-loop` - Self-referential completion loop for OpenCode workflows
-- `skill-standardization` - SKILL.md standardization
-- `workflow-automation` - Workflow automation scripts
-
----
-
-## TOON Format (Default)
-
-Skills use the **TOON format** by default, achieving 95% token reduction.
-
-### TOON Format Structure
+## TOON Format (Default — 95% Token Reduction)
 
 ```
-N:skill-name                           # Skill name
-D:Description in 2-3 sentences...      # Description
-G:keyword1 keyword2 keyword3           # Search keywords
-
-U[5]:                                  # Use cases
-  Use case 1
-  Use case 2
-  ...
-
-S[6]{n,action,details}:                # Execution steps
-  1,Analyze,Understand the request
-  2,Plan,Create approach
-  ...
-
-R[5]:                                  # Rules/Best practices
-  Best practice 1
-  Best practice 2
-  ...
-
-E[2]{desc,in,out}:                     # Examples
-  "Basic usage","Input","Output"
+N:skill-name          # Name
+D:Description...      # Description
+G:keyword1 keyword2   # Search keywords
+U[5]:                 # Use cases
+S[6]{n,action,details}: # Steps
+R[5]:                 # Rules
+E[2]{desc,in,out}:    # Examples
 ```
-
-### Token Optimization Comparison
 
 | Mode | File | Avg Tokens | Reduction |
 |:-----|:-----|:-----------|:----------|
-| **full** | SKILL.md | ~2,198 | - |
+| **full** | SKILL.md | ~2,198 | — |
 | **toon** | SKILL.toon | ~112 | **94.9%** |
 
 ---
 
-## Architecture (Flat Structure)
+## Architecture
 
 ```
 .agent-skills/
-├── skills.json              # Skill manifest (auto-generated)
-├── skills.toon              # Token-optimized summary (auto-generated)
-├── skill_loader.py          # Skill loading core
-├── skill-query-handler.py   # Natural language query handler
-│
-├── agent-configuration/     # All 60 skill folders at root level
-├── api-design/
-├── authentication-setup/
-├── ... (all skills)
-│
-└── templates/               # Skill templates
-    ├── toon-skill-template/ # TOON format (default)
-    ├── basic-skill-template/
-    └── advanced-skill-template/
+├── skills.json              # Skill manifest
+├── skills.toon              # Token-optimized summary
+├── skill_loader.py
+├── skill-query-handler.py
+└── [60 skill folders]       # All skills at root level
 ```
 
-> **v4.3.0 Change**: Category folders removed, all skills flattened to root level
-
----
-
-## Explore Additional Skills
-
-Looking for more AI agent skills?
-
-Visit **[Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)** to explore and install 100+ community-created skills.
-
-```bash
-# Search skills
-npx skills search "code review"
-
-# Install from Awesome Claude Skills
-npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill github-automation
-
-# Browse all: https://github.com/ComposioHQ/awesome-claude-skills
-```
+> **v4.3.0+**: All skills flattened to root level (no category subfolders)
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.8 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.4.0 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default)
+
+**Changelog v4.4.0**:
+- **Harness Engineering**: Documented ohmg→Gemini, omx→Codex, bmad→Claude as specialized harnesses
+- **Keyword System**: Added keyword aliases (`ohmg`, `omx`, `bmad`) and "기억해" activation requirement
+- **CLI Hub**: Positioned OpenCode and oh-my-opencode as universal model-agnostic hubs
+- **ralph-loop integration**: Clarified ralph-loop as gateway for ohmg/omx/bmad/playwriter/agent-browser
+- **README**: Streamlined to list/usability format, removed verbose installation guides
 
 **Changelog v4.3.8**:
-- **Primary Orchestrator**: Integrated `ohmg` (oh-my-ag) as the default multi-agent orchestration skill for Antigravity workflows
-- **README Highlight**: Added `oh-my-ag` installation and setup guidance to the highlights section
-- **Sync**: Updated installation highlights to group major framework integrations (OpenCode, Genkit, oh-my-ag)
+- **Primary Orchestrator**: Integrated `ohmg` (oh-my-ag) as default multi-agent orchestration skill
 
 **Changelog v4.3.7**:
-- **Cleanup**: Removed legacy `bmad` skill files and standardized naming to `bmad-orchestrator`
-- **README sync**: Updated special/community skills table to match current repository structure
+- **Cleanup**: Removed legacy `bmad` skill files, standardized to `bmad-orchestrator`
 
 **Changelog v4.3.6**:
-- **New skill: genkit**: Firebase Genkit AI workflow orchestration — type-safe flows, RAG pipelines, tool-calling agents, streaming, multi-agent systems, Firebase/Cloud Run deployment
-- **README update**: Added Firebase Genkit highlighted install section (below Oh My OpenCode) and updated skill count (59 → 60)
+- **New skill: genkit**: Firebase Genkit AI workflow orchestration
 
 **Changelog v4.3.5**:
-- **New skill: oh-my-codex**: Multi-agent orchestration layer for OpenAI Codex CLI with 30 agents, 40+ skills, team mode, and MCP servers
-
-**Changelog v4.3.4**:
-- **Cleanup**: Fixed skill count (62 -> 58), removed duplicates and non-existent entries (mcp-codex, kling-ai)
-- **Sync**: Finalized README with actual .agent-skills folder content
-
-**Changelog v4.3.3**:
-- **New skill: bmad-orchestrator**: BMAD workflow initialization and status orchestration guide
-- **README update**: Added bmad-orchestrator install and BMAD execution highlights (`/workflow-init`, `/workflow-status`)
-
-**Changelog v4.3.2**:
-- **New skill: ralph-loop**: OpenCode completion loop skill guide
-- **README highlight update**: Added OpenCode and Oh My OpenCode installation highlights
-
-**Changelog v4.3.1**:
-- **New skill: pollinations-ai**: Free image generation using Pollinations.ai URL API
-- **File saving capability**: Python examples for automated image download
-- **No signup required**: Zero-friction image generation workflow
-
-**Changelog v4.3.0**:
-- **Flat structure**: Removed category folders, all 57 skills at root level
-- **English translations**: Translated all agentic skills to English
-- **Awesome Claude Skills integration**: Added prominent installation guide for community skills
-- **Documentation update**: Comprehensive README updates reflecting new structure
-
-**Changelog v4.2.0**:
-- **Superwork skill added**: Opus extended thinking for analysis/synthesis/decision-making
-- **Alias support**: `superwork`, `spw`, `super-work`, `opus-work` keywords
-
-**Changelog v4.0.0**:
-- **Installation method change**: Unified to `npx skills add` format
-- **TOON format by default**: 95% token reduction
-- **Compact file removal**: Integrated into TOON
-- **README simplification**: Core content only
+- **New skill: oh-my-codex**: Multi-agent orchestration for OpenAI Codex CLI
