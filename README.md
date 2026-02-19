@@ -9,6 +9,19 @@
 
 ![Agent Skills](AgentSkills.png)
 
+
+---
+
+## Quick Install
+
+```bash
+# All 60 core skills
+npx skills add https://github.com/supercent-io/skills-template
+
+# Individual skill
+npx skills add https://github.com/supercent-io/skills-template --skill <skill-name>
+```
+
 ---
 
 ## AI CLI Tools — Universal Model Hub
@@ -105,17 +118,6 @@ ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 | `playwriter` | Available for browser verification |
 | `agent-browser` | Available for headless verification |
 
----
-
-## Quick Install
-
-```bash
-# All 60 core skills
-npx skills add https://github.com/supercent-io/skills-template
-
-# Individual skill
-npx skills add https://github.com/supercent-io/skills-template --skill <skill-name>
-```
 
 ---
 
