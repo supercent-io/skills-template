@@ -20,24 +20,13 @@
 npx skills add https://github.com/supercent-io/skills-template
 ```
 
-### Installation Highlights (OpenCode, Oh My OpenCode & Firebase Genkit)
+### Installation Highlights (OpenCode, Firebase Genkit & oh-my-ag)
 
 > **OpenCode (opencode.ai/ko) highlighted install**
 
 ```bash
 curl -fsSL https://opencode.ai/install | bash
 ```
-
-> **Oh My OpenCode highlighted install flow (README Installation section)**
-
-```text
-Install and configure oh-my-opencode by following:
-https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
-```
-
-Reference links:
-- https://opencode.ai/ko
-- https://github.com/code-yeongyu/oh-my-opencode/tree/dev?tab=readme-ov-file
 
 > **Firebase Genkit highlighted install**
 
@@ -68,6 +57,27 @@ npx skills add https://github.com/supercent-io/skills-template --skill genkit
 Reference links:
 - https://genkit.dev/docs/overview/
 - https://github.com/firebase/genkit
+
+> **oh-my-ag (ohmg) highlighted install**
+
+```bash
+# Step 1: Install oh-my-ag (requires Bun)
+bunx oh-my-ag
+
+# Step 2: System check and repair
+bunx oh-my-ag doctor
+
+# Step 3: Start observability dashboard
+bunx oh-my-ag dashboard
+```
+
+Install the ohmg skill:
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill ohmg
+```
+
+Reference links:
+- https://github.com/first-fluke/oh-my-ag
 
 ### Specialized Installation Tables
 
@@ -297,7 +307,12 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.7 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.8 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.8**:
+- **Primary Orchestrator**: Integrated `ohmg` (oh-my-ag) as the default multi-agent orchestration skill for Antigravity workflows
+- **README Highlight**: Added `oh-my-ag` installation and setup guidance to the highlights section
+- **Sync**: Updated installation highlights to group major framework integrations (OpenCode, Genkit, oh-my-ag)
 
 **Changelog v4.3.7**:
 - **Cleanup**: Removed legacy `bmad` skill files and standardized naming to `bmad-orchestrator`
