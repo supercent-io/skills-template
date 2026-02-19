@@ -15,13 +15,13 @@
 
 > **OpenCode** and **oh-my-opencode** function as model-agnostic CLI hubs, just like Claude Code, Codex CLI, and Gemini-CLI — but with the ability to route to **any model** from any provider in a single session.
 
-| CLI Tool | Role | Models |
-|----------|------|--------|
-| **Claude Code** | Orchestrator + Coder | Claude family |
-| **Codex CLI** | Executor + Builder | OpenAI / GPT family |
-| **Gemini-CLI** | Analyst + Researcher | Gemini / Google family |
-| **OpenCode** | Universal Hub | All providers |
-| **oh-my-opencode** | Universal Hub + Loop | All providers |
+| CLI Tool | Role | Models | Setup |
+|----------|------|--------|-------|
+| **Claude Code** | Orchestrator + Coder | Claude family | [docs](https://docs.anthropic.com/en/docs/claude-code/getting-started) |
+| **Codex CLI** | Executor + Builder | OpenAI / GPT family | [docs](https://github.com/openai/codex) |
+| **Gemini-CLI** | Analyst + Researcher | Gemini / Google family | [docs](https://github.com/google-gemini/gemini-cli) |
+| **OpenCode** | Universal Hub | All providers | [opencode.ai](https://opencode.ai) · `curl -fsSL https://opencode.ai/install \| bash` |
+| **oh-my-opencode** | Universal Hub + Loop | All providers | [guide](https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md) · [repo](https://github.com/code-yeongyu/oh-my-opencode) |
 
 These tools are **interoperable** — Agent Skills work across all of them via the same keyword system.
 
@@ -53,6 +53,38 @@ agent-browser 스킬을 설정하고 사용해줘. 기억해.
 ```
 
 > Without "기억해", the agent will use the skill for the current session only and may not retain configuration.
+
+### Keyword Usage Examples by CLI
+
+**Claude Code** — `bmad` harness (Claude models)
+```text
+# In Claude Code terminal
+bmad 스킬을 설정하고 사용해줘. 기억해.
+bmad로 이 프로젝트 API 설계해줘.
+/workflow-init
+```
+
+**Codex CLI** — `omx` harness (OpenAI models)
+```text
+# In Codex CLI terminal
+omx 스킬을 설정하고 사용해줘. 기억해.
+$autopilot 전체 인증 모듈 구현해줘
+$team 백엔드 API 개발 시작해줘
+```
+
+**Gemini-CLI** — `ohmg` harness (Google models)
+```text
+# In Gemini-CLI terminal
+ohmg 스킬을 설정하고 사용해줘. 기억해.
+/coordinate PM Agent에게 요구사항 분석 요청해줘
+```
+
+**OpenCode / oh-my-opencode** — all keywords available
+```text
+# Supports all harnesses in one session
+ralph-loop로 이 작업 완료될 때까지 반복해줘
+ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
+```
 
 ---
 
@@ -194,7 +226,11 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.4.0 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default)
+**Version**: 4.4.1 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default)
+
+**Changelog v4.4.1**:
+- **CLI Setup Links**: Added hyperlinks for OpenCode, oh-my-opencode, Claude Code, Codex CLI, Gemini-CLI setup guides
+- **Usage Examples**: Added per-CLI keyword usage examples (bmad→Claude Code, omx→Codex, ohmg→Gemini-CLI, all→OpenCode)
 
 **Changelog v4.4.0**:
 - **Harness Engineering**: Documented ohmg→Gemini, omx→Codex, bmad→Claude as specialized harnesses
