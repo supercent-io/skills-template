@@ -28,6 +28,17 @@ npx skills add https://github.com/supercent-io/skills-template
 curl -fsSL https://opencode.ai/install | bash
 ```
 
+> **Oh My OpenCode highlighted install flow (README Installation section)**
+
+```text
+Install and configure oh-my-opencode by following:
+https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
+```
+
+Reference links:
+- https://opencode.ai/ko
+- https://github.com/code-yeongyu/oh-my-opencode/tree/dev?tab=readme-ov-file
+
 > **Firebase Genkit highlighted install**
 
 ```bash
