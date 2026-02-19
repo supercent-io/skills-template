@@ -85,7 +85,7 @@ Reference links:
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
 | `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
-| `bmad` | bmad orchestrator | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
+| `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
 
 #### BMAD Execution (Highlight)
@@ -297,7 +297,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.6 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.7 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.7**:
+- **Cleanup**: Removed legacy `bmad` skill files and standardized naming to `bmad-orchestrator`
+- **README sync**: Updated special/community skills table to match current repository structure
 
 **Changelog v4.3.6**:
 - **New skill: genkit**: Firebase Genkit AI workflow orchestration — type-safe flows, RAG pipelines, tool-calling agents, streaming, multi-agent systems, Firebase/Cloud Run deployment
