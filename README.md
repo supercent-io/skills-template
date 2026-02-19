@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **59 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **60 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-59-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-60-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -16,11 +16,11 @@
 ### Quick Install (All Skills)
 
 ```bash
-# Install all 58 core skills at once
+# Install all 60 core skills at once
 npx skills add https://github.com/supercent-io/skills-template
 ```
 
-### Installation Highlights (OpenCode & Oh My OpenCode)
+### Installation Highlights (OpenCode, Oh My OpenCode & Firebase Genkit)
 
 > **OpenCode (opencode.ai/ko) highlighted install**
 
@@ -39,6 +39,36 @@ Reference links:
 - https://opencode.ai/ko
 - https://github.com/code-yeongyu/oh-my-opencode/tree/dev?tab=readme-ov-file
 
+> **Firebase Genkit highlighted install**
+
+```bash
+# Step 1: Install Genkit CLI
+npm install -g genkit-cli
+# (or: curl -sL cli.genkit.dev | bash)
+
+# Step 2: Initialize TypeScript project
+mkdir my-genkit-app && cd my-genkit-app
+npm init -y && npm install -D typescript tsx && npx tsc --init
+mkdir src && touch src/index.ts
+
+# Step 3: Install Genkit core + Google AI (Gemini) plugin
+npm install genkit @genkit-ai/google-genai
+
+# Step 4: Set API key and start Developer UI
+export GEMINI_API_KEY=your_key_here
+genkit start -- npx tsx --watch src/index.ts
+# → opens http://localhost:4000 (flow runner, trace inspector, prompt playground)
+```
+
+Install the genkit skill:
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill genkit
+```
+
+Reference links:
+- https://genkit.dev/docs/overview/
+- https://github.com/firebase/genkit
+
 ### Specialized Installation Tables
 
 #### Core Agent Skills
@@ -47,6 +77,7 @@ Reference links:
 | All Core Skills | `npx skills add https://github.com/supercent-io/skills-template` |
 | Basic Template | `npx skills add https://github.com/supercent-io/skills-template --skill basic-skill-template` |
 | Agentic Workflow | `npx skills add https://github.com/supercent-io/skills-template --skill agentic-workflow` |
+| Firebase Genkit | `npx skills add https://github.com/supercent-io/skills-template --skill genkit` |
 
 #### Special & Community Skills
 | Skill Name | Provider | Installation Command |
@@ -91,7 +122,7 @@ npx skills add https://github.com/ComposioHQ/awesome-claude-skills --skill slack
 
 ---
 
-## Skills Overview (59 Total - Flat Structure)
+## Skills Overview (60 Total - Flat Structure)
 
 All skills are now at the root level (no category folders).
 
@@ -118,9 +149,10 @@ All skills are now at the root level (no category folders).
 - `performance-optimization` - Performance optimization techniques
 - `testing-strategies` - Comprehensive testing strategies
 
-### Infrastructure (6 skills)
+### Infrastructure (8 skills)
 - `deployment-automation` - CI/CD and deployment automation
 - `firebase-ai-logic` - Firebase AI Logic integration
+- `genkit` - Firebase Genkit AI workflow orchestration (flows, RAG, agents, streaming, multi-model)
 - `looker-studio-bigquery` - Looker Studio & BigQuery integration
 - `monitoring-observability` - Monitoring and observability setup
 - `security-best-practices` - Security best practices
@@ -226,7 +258,7 @@ E[2]{desc,in,out}:                     # Examples
 ├── skill_loader.py          # Skill loading core
 ├── skill-query-handler.py   # Natural language query handler
 │
-├── agent-configuration/     # All 59 skill folders at root level
+├── agent-configuration/     # All 60 skill folders at root level
 ├── api-design/
 ├── authentication-setup/
 ├── ... (all skills)
@@ -265,7 +297,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.3.5 | **Updated**: 2026-02-18 | **Skills**: 59 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.3.6 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default) | **Structure**: Flat
+
+**Changelog v4.3.6**:
+- **New skill: genkit**: Firebase Genkit AI workflow orchestration — type-safe flows, RAG pipelines, tool-calling agents, streaming, multi-agent systems, Firebase/Cloud Run deployment
+- **README update**: Added Firebase Genkit highlighted install section (below Oh My OpenCode) and updated skill count (59 → 60)
 
 **Changelog v4.3.5**:
 - **New skill: oh-my-codex**: Multi-agent orchestration layer for OpenAI Codex CLI with 30 agents, 40+ skills, team mode, and MCP servers
