@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **62 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **65 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-62-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-65-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -15,7 +15,7 @@
 ## Quick Install
 
 ```bash
-# All 62 core skills
+# All 65 core skills
 npx skills add https://github.com/supercent-io/skills-template
 
 # Individual skill
@@ -203,9 +203,57 @@ $team 백엔드 API 개발 시작해줘
 
 ---
 
-## Skills (62 Total)
+## Conductor Pattern — Parallel AI Agent Execution
 
-### Orchestration & Utilities (15)
+> Run multiple AI agents (Claude/Codex/Gemini) in parallel on the same feature using **git worktree**. Each agent works in an isolated branch, then PRs are compared for the best implementation.
+
+```bash
+# One-time setup check
+bash scripts/pipeline-check.sh
+
+# Run parallel agents (with plan review)
+bash scripts/conductor-planview.sh my-feature main claude,codex
+
+# Or use the unified pipeline
+bash scripts/pipeline.sh my-feature --stages check,conductor,pr
+```
+
+→ [Full guide: pipeline flags, hooks, state resume, planview integration](docs/conductor-pattern/README.md)
+
+---
+
+## Vibe Kanban — AI Agent Kanban Board
+
+> Visual Kanban board for managing AI coding agents. Tasks flow: To Do → In Progress → Review → Done, with agents auto-assigned to cards.
+
+```bash
+npx vibe-kanban
+# Opens at localhost:3000
+```
+
+→ [Full guide: setup, workflow, planview integration, git worktree](docs/vibe-kanban/README.md)
+
+---
+
+## Copilot Coding Agent — Issue to Draft PR
+
+> Automate GitHub Copilot Coding Agent: add `ai-copilot` label to an issue → Copilot auto-assigns and creates a Draft PR.
+
+```bash
+# One-time setup
+bash scripts/copilot-setup-workflow.sh
+
+# Create issue for Copilot
+gh issue create --label ai-copilot --title "Add auth" --body "..."
+```
+
+→ [Full guide: setup, GraphQL API, GitHub Actions, planview integration](docs/copilot-coding-agent/README.md)
+
+---
+
+## Skills (65 Total)
+
+### Orchestration & Utilities (18)
 | Skill | Keyword | Description |
 |-------|---------|-------------|
 | `omc` | `omc` | oh-my-claudecode — Claude Code multi-agent orchestration (32 agents, Team/Autopilot/Ralph modes) |
@@ -223,6 +271,9 @@ $team 백엔드 API 개발 시작해줘
 | `git-workflow` | — | Git workflow management |
 | `npm-git-install` | — | Install npm packages from GitHub |
 | `skill-standardization` | — | SKILL.md standardization |
+| `conductor-pattern` | `conductor` | Parallel AI agents via git worktree — Claude/Codex/Gemini run same spec simultaneously, PRs compared |
+| `vibe-kanban` | `vibe-kanban` | Kanban board for AI agent management — To Do → In Progress → Review → Done |
+| `copilot-coding-agent` | `copilot` | GitHub Copilot issue-to-PR automation — label issue → Copilot creates Draft PR |
 
 ### Backend (5)
 `api-design` · `api-documentation` · `authentication-setup` · `backend-testing` · `database-schema-design`
@@ -300,7 +351,7 @@ E[2]{desc,in,out}:    # Examples
 ├── skills.toon              # Token-optimized summary
 ├── skill_loader.py
 ├── skill-query-handler.py
-└── [62 skill folders]       # All skills at root level
+└── [65 skill folders]       # All skills at root level
 ```
 
 > **v4.3.0+**: All skills flattened to root level (no category subfolders)
@@ -313,7 +364,12 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.7.0 | **Updated**: 2026-02-20 | **Skills**: 62 | **Format**: TOON (Default)
+**Version**: 4.8.0 | **Updated**: 2026-02-20 | **Skills**: 65 | **Format**: TOON (Default)
+
+**Changelog v4.8.0**:
+- **conductor-pattern**: Added Conductor Pattern skill — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume, planview integration
+- **vibe-kanban**: Added Vibe Kanban skill — visual Kanban board for AI agent task management with git worktree and planview integration
+- **copilot-coding-agent**: Added Copilot Coding Agent skill — GitHub issue-to-Draft-PR automation via GraphQL assignment and GitHub Actions
 
 **Changelog v4.7.0**:
 - **README restructured**: Moved detailed usage docs to `docs/` — `docs/omc/`, `docs/ralph/`, `docs/harness/`; README now links to detailed guides instead of embedding them
