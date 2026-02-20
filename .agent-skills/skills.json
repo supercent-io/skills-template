@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 54,
+  "skill_count": 62,
   "categories": {
     "documentation": [
       "technical-writing",
@@ -2298,6 +2298,29 @@
         {
           "command": "/plugin install plannotator@plannotator",
           "source": "utilities/planview/SKILL.md"
+        }
+      ]
+    },
+    {
+      "name": "omc",
+      "description": "oh-my-claudecode — Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agents, smart model routing, persistent execution loops, and real-time HUD visibility. Activate with `omc` keyword.",
+      "category": "utilities",
+      "tags": ["omc", "oh-my-claudecode", "claude-code", "multi-agent", "orchestration", "team", "autopilot", "ralph", "ultrawork"],
+      "platforms": ["Claude Code"],
+      "keyword": "omc",
+      "path": "utilities/omc/SKILL.md",
+      "install_commands": [
+        {
+          "command": "/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode",
+          "source": "utilities/omc/SKILL.md"
+        },
+        {
+          "command": "/plugin install oh-my-claudecode",
+          "source": "utilities/omc/SKILL.md"
+        },
+        {
+          "command": "/omc:omc-setup",
+          "source": "utilities/omc/SKILL.md"
         }
       ]
     }

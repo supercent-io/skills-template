@@ -147,7 +147,7 @@ ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
 ```
 
-**Step 2: Activate in Claude Code**
+**Step 2: Activate in your CLI** (Claude Code, Codex CLI, Gemini-CLI, OpenCode)
 ```text
 bmad 스킬을 설정하고 사용해줘. 기억해.
 ```
