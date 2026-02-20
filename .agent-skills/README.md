@@ -53,7 +53,7 @@ repository to the current project.
 ├── skills.json                    # Skill manifest (auto-generated)
 ├── skills.toon                    # TOON summary (auto-generated)
 │
-├── agent-configuration/           # All 60 skill folders at root level
+├── agent-configuration/           # All 67 skill folders at root level
 ├── api-design/
 ├── authentication-setup/
 ├── ... (all skills at same level)
@@ -68,9 +68,9 @@ repository to the current project.
 
 ---
 
-## Skills List (60 Total)
+## Skills List (67 Total)
 
-### Agent Development (6)
+### Agent Development (7)
 | Skill | Description |
 |-------|-------------|
 | `agent-configuration` | AI agent configuration & security policies |
@@ -78,6 +78,7 @@ repository to the current project.
 | `agentic-development-principles` | Universal agentic development principles |
 | `agentic-principles` | Core AI agent collaboration principles |
 | `agentic-workflow` | Practical AI agent workflows & productivity |
+| `bmad-orchestrator` | BMAD workflow orchestration (Analysis → Planning → Solutioning → Implementation) |
 | `prompt-repetition` | Prompt repetition for LLM accuracy |
 
 ### Backend (5)
@@ -109,11 +110,12 @@ repository to the current project.
 | `performance-optimization` | Performance optimization |
 | `testing-strategies` | Testing strategies |
 
-### Infrastructure (7)
+### Infrastructure (8)
 | Skill | Description |
 |-------|-------------|
 | `deployment-automation` | CI/CD & deployment automation |
 | `firebase-ai-logic` | Firebase AI Logic integration |
+| `genkit` | Firebase Genkit AI workflows (flows, agents, RAG, streaming) |
 | `looker-studio-bigquery` | Looker Studio + BigQuery |
 | `monitoring-observability` | Monitoring & observability |
 | `security-best-practices` | Security best practices |
@@ -144,10 +146,11 @@ repository to the current project.
 | `log-analysis` | Log analysis & debugging |
 | `pattern-detection` | Pattern detection |
 
-### Creative Media (2)
+### Creative Media (3)
 | Skill | Description |
 |-------|-------------|
-| `image-generation` | AI image generation |
+| `image-generation` | AI image generation (Gemini via MCP) |
+| `pollinations-ai` | Free image generation via Pollinations.ai (no signup) |
 | `video-production` | Video production workflows |
 
 ### Marketing (1)
@@ -155,23 +158,27 @@ repository to the current project.
 |-------|-------------|
 | `marketing-automation` | Marketing automation |
 
-### Utilities (15)
+### Utilities (19)
 | Skill | Description |
 |-------|-------------|
 | `agent-browser` | Fast headless browser CLI for AI agents |
+| `conductor-pattern` | Run AI agents in parallel git worktrees, compare PRs |
+| `copilot-coding-agent` | GitHub Copilot Coding Agent — Issue → Draft PR automation |
 | `environment-setup` | Environment setup |
 | `file-organization` | File & folder organization |
 | `git-submodule` | Git submodule management |
 | `git-workflow` | Git workflow management |
-| `kling-ai` | Kling AI video generation |
-| `planno` | Visual plan and diff review with Plannotator — annotate, approve, or request changes |
-| `ohmg` | Multi-agent orchestration for Antigravity workflows |
-| `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
 | `mcp-codex` | MCP Codex integration |
 | `npm-git-install` | Install npm from GitHub |
+| `ohmg` | Multi-agent orchestration for Antigravity workflows |
+| `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
+| `omc` | oh-my-claudecode — Teams-first multi-agent orchestration |
 | `opencontext` | AI agent persistent memory |
+| `planno` | Visual plan and diff review with Plannotator — annotate, approve, or request changes |
+| `ralph` | Self-referential completion loop for multi-turn agents |
 | `skill-standardization` | SKILL.md standardization |
 | `vercel-deploy` | Vercel deployment |
+| `vibe-kanban` | Kanban board for AI coding agents with git worktree automation |
 | `workflow-automation` | Workflow automation |
 
 ---
@@ -285,4 +292,4 @@ npx skills add <skill-name>
 
 ---
 
-**Version**: 4.3.5 | **Updated**: 2026-02-18 | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.4.0 | **Updated**: 2026-02-20 | **Format**: TOON (Default) | **Structure**: Flat
