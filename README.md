@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **60 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **61 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-60-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-61-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -15,12 +15,43 @@
 ## Quick Install
 
 ```bash
-# All 60 core skills
+# All 61 core skills
 npx skills add https://github.com/supercent-io/skills-template
 
 # Individual skill
 npx skills add https://github.com/supercent-io/skills-template --skill <skill-name>
 ```
+
+---
+
+## planview - Plannotator Guide
+
+Use the `planview` keyword to review coding plans and diffs visually with Plannotator.
+
+```bash
+# Install only planview skill
+npx skills add https://github.com/supercent-io/skills-template --skill planview
+```
+
+```text
+planview로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
+```
+
+Plannotator quick setup (official):
+
+```bash
+# macOS / Linux / WSL
+curl -fsSL https://plannotator.ai/install.sh | bash
+```
+
+Claude Code plugin:
+
+```bash
+/plugin marketplace add backnotprop/plannotator
+/plugin install plannotator@plannotator
+```
+
+For diff annotation, run `/plannotator-review`, add inline comments, then choose approve or request changes.
 
 ---
 
@@ -48,7 +79,9 @@ These tools are **interoperable** — Agent Skills work across all of them via t
 |---------|-------|-----------|-------------|
 | `ohmg` | oh-my-ag | Gemini-CLI | Google models (Gemini, Gemma) — multi-domain agent coordination via Serena Memory |
 | `omx` | oh-my-codex | Codex CLI | OpenAI models — 30 agents, 40+ workflow skills, tmux team mode, MCP servers |
-| `bmad` | bmad-orchestrator | Claude Code | Claude models — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · [detailed guide](docs/bmad/README.md) |
+| `bmad` | bmad-orchestrator | **All CLIs** | Universal — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) works across Claude Code, Codex, and Gemini-CLI · [detailed guide](docs/bmad/README.md) |
+
+> **Note on bmad**: While `bmad-orchestrator` is listed as a Claude Code harness above, the **BMAD methodology and core skills are fully universal** — they work with Claude Code, Codex CLI, Gemini-CLI, OpenCode, and any AI CLI tool. The skill encodes fundamental engineering principles, not Claude-specific APIs.
 
 ### How to Activate
 
@@ -101,9 +134,11 @@ ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 
 ---
 
-## bmad-orchestrator — Claude Code Harness
+## bmad-orchestrator — Universal Engineering Harness
 
-> **bmad-orchestrator** routes AI-driven development through four structured phases: Analysis → Planning → Solutioning → Implementation. The `bmad` keyword activates it in Claude Code.
+> **bmad-orchestrator** routes AI-driven development through four structured phases: Analysis → Planning → Solutioning → Implementation. The `bmad` keyword activates it across **all AI CLI tools** — Claude Code, Codex CLI, Gemini-CLI, and OpenCode.
+>
+> Unlike tool-specific orchestrators (`ohmg`, `omx`, `omc`), **bmad encodes universal engineering principles** — structured thinking, architectural discipline, and phase-gated delivery — that apply regardless of which AI model or CLI you're using.
 
 ### Quick Start
 
@@ -159,12 +194,20 @@ BMAD adapts to your project size automatically:
 
 ---
 
-## oh-my-claudecode — Claude Code Native Plugin
+## Claude Code 사용 케이스 — omc (oh-my-claudecode)
 
-> **oh-my-claudecode** is a Teams-first multi-agent orchestration layer for Claude Code. Install it as a native plugin and get 32 specialized agents, smart model routing, and a persistent execution loop — all without any learning curve.
+> **oh-my-claudecode**는 Claude Code 전용 Teams-first 멀티 에이전트 오케스트레이션 레이어입니다. `omc` 키워드로 활성화하며, 32개 전문 에이전트, 스마트 모델 라우팅, 지속 실행 루프를 제공합니다 — 별도 학습 없이 바로 사용 가능합니다.
+
+> **다른 CLI 사용자**: OpenAI Codex CLI → [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) (`omx` 키워드)
 
 [![GitHub Stars](https://img.shields.io/github/stars/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
 [![GitHub Forks](https://img.shields.io/github/forks/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
+
+### 키워드: `omc`
+
+```text
+omc 스킬을 설정하고 사용해줘. 기억해.
+```
 
 ### Installation (3 Steps)
 
@@ -244,7 +287,7 @@ swarm         # Legacy (routes to Team)
 ultrapilot    # Legacy (routes to Team)
 ```
 
-### Why oh-my-claudecode?
+### Why omc?
 
 - **Zero configuration** — Works out of the box with intelligent defaults
 - **Team-first orchestration** — Team is the canonical multi-agent surface
@@ -266,7 +309,7 @@ ultrapilot    # Legacy (routes to Team)
 | Gemini CLI | `npm install -g @google/gemini-cli` | Design review, UI consistency (1M token context) |
 | Codex CLI | `npm install -g @openai/codex` | Architecture validation, code review cross-check |
 
-→ [Full documentation](https://github.com/Yeachan-Heo/oh-my-claudecode) · [Migration Guide](https://github.com/Yeachan-Heo/oh-my-claudecode#migration-guide)
+→ [Full documentation](https://yeachan-heo.github.io/oh-my-claudecode-website) · [GitHub](https://github.com/Yeachan-Heo/oh-my-claudecode)
 
 ---
 
@@ -290,15 +333,17 @@ ultrapilot    # Legacy (routes to Team)
 
 ---
 
-## Skills (60 Total)
+## Skills (61 Total)
 
-### Orchestration & Utilities (13)
+### Orchestration & Utilities (15)
 | Skill | Keyword | Description |
 |-------|---------|-------------|
+| `omc` | `omc` | oh-my-claudecode — Claude Code multi-agent orchestration (32 agents, Team/Autopilot/Ralph modes) |
 | `ohmg` | `ohmg` | Multi-agent orchestration — Gemini + Google models harness |
 | `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
-| `bmad-orchestrator` | `bmad` | BMAD phase routing — Claude Code harness |
+| `bmad-orchestrator` | `bmad` | **Universal** — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · works with all CLIs |
 | `ralph` | `ralph` | Self-referential completion loop — iterates across agent turns until done |
+| `planview` | `planview` | Visual plan and diff review loop with Plannotator annotations |
 | `agent-browser` | `agent-browser` | Headless browser for AI agents |
 | `opencontext` | — | Persistent memory across sessions |
 | `workflow-automation` | — | Workflow automation scripts |
@@ -347,7 +392,7 @@ ultrapilot    # Legacy (routes to Team)
 |-------|----------|---------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
-| `oh-my-claudecode` | Yeachan-Heo | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` (Claude Code native plugin) |
+| `omc` | Yeachan-Heo | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` (Claude Code native plugin, keyword: `omc`) |
 | `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
 | `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph` | gemini-cli-extensions | `npx skills add https://github.com/supercent-io/skills-template --skill ralph` |
@@ -385,7 +430,7 @@ E[2]{desc,in,out}:    # Examples
 ├── skills.toon              # Token-optimized summary
 ├── skill_loader.py
 ├── skill-query-handler.py
-└── [60 skill folders]       # All skills at root level
+└── [61 skill folders]       # All skills at root level
 ```
 
 > **v4.3.0+**: All skills flattened to root level (no category subfolders)
@@ -398,7 +443,12 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.5.0 | **Updated**: 2026-02-20 | **Skills**: 60 | **Format**: TOON (Default)
+**Version**: 4.6.0 | **Updated**: 2026-02-20 | **Skills**: 62 | **Format**: TOON (Default)
+
+**Changelog v4.6.0**:
+- **omc skill**: Added `omc` skill (oh-my-claudecode) for Claude Code multi-agent orchestration — Team/Autopilot/Ralph/Ultrawork modes, 32 specialized agents, magic keywords; activate with `omc` keyword → `/omc:omc-setup`
+- **bmad universal**: Clarified `bmad-orchestrator` as a **universal** engineering harness — works across Claude Code, Codex CLI, Gemini-CLI, and OpenCode (not Claude Code exclusive)
+- **Claude Code 사용 케이스**: Reframed oh-my-claudecode section as Claude Code-specific use case with `omc` keyword
 
 **Changelog v4.5.0**:
 - **ralph**: Renamed `ralph-loop` → `ralph` keyword; rewrote skill based on [gemini-cli-extensions/ralph](https://github.com/gemini-cli-extensions/ralph) — self-referential loop across agent turns, fresh context per iteration, `--completion-promise` and `--max-iterations` options, `/ralph:cancel` and `/ralph:help` commands

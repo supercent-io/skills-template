@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 60,
+  "skill_count": 61,
   "categories": {
     "documentation": [
       "technical-writing",
@@ -33,22 +33,24 @@
       "cs-tool-dashboard"
     ],
     "utilities": [
-      "opencode-authentication",
-      "agentic-workflow",
-      "mcp-codex-integration",
-      "environment-setup",
-      "opencontext",
-      "git-workflow",
-      "workflow-automation",
-      "git-submodule",
-      "project-init-memory",
-      "npm-git-install",
-      "prompt-repetition",
-      "skill-standardization",
-      "file-organization",
       "agentic-development-principles",
+      "agentic-workflow",
       "bmad",
-      "ralph"
+      "environment-setup",
+      "file-organization",
+      "git-submodule",
+      "git-workflow",
+      "mcp-codex-integration",
+      "npm-git-install",
+      "opencode-authentication",
+      "opencontext",
+      "planview",
+      "project-init-memory",
+      "prompt-repetition",
+      "omc",
+      "ralph",
+      "skill-standardization",
+      "workflow-automation"
     ],
     "code-quality": [
       "testing-strategies",
@@ -2257,6 +2259,45 @@
         {
           "command": "/prd",
           "source": "bmad/SKILL.md"
+        }
+      ]
+    },
+    {
+      "name": "planview",
+      "description": "Review AI agent plans and git diffs visually with Plannotator. Add inline annotations, approve or request revisions, and send structured feedback back to your coding agent.",
+      "category": "utilities",
+      "path": "utilities/planview/SKILL.md",
+      "tags": [
+        "planview",
+        "plannotator",
+        "plan-review",
+        "diff-review",
+        "claude-code",
+        "opencode"
+      ],
+      "platforms": [
+        "Claude",
+        "ChatGPT",
+        "Gemini",
+        "Codex"
+      ],
+      "allowed_tools": [
+        "Read",
+        "Bash",
+        "Write"
+      ],
+      "commands": [
+        {
+          "command": "curl -fsSL https://plannotator.ai/install.sh | bash",
+          "source": "utilities/planview/SKILL.md"
+        },
+        {
+          "command": "/plugin marketplace add backnotprop/plannotator",
+          "source": "utilities/planview/SKILL.md"
+        },
+        {
+          "command": "/plugin install plannotator@plannotator",
+          "source": "utilities/planview/SKILL.md"
         }
       ]
     }
