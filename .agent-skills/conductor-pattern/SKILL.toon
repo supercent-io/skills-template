@@ -1,24 +1,16 @@
 N:conductor-pattern
-D:git worktree로 AI 에이전트(Claude/Codex/Gemini)를 병렬 실행하는 Conductor 패턴. planview 계획 검토 후 동일 스펙을 여러 에이전트가 동시 구현하고 PR로 비교.
-G:conductor git-worktree parallel-agents claude-code codex tmux pr-comparison planview multi-agent worktree-sandbox
-U[6]:
-  동일 스펙을 여러 AI가 병렬 구현하고 결과 비교
-  리팩터링 리스크 분산 (에이전트 실패 시 대안 확보)
-  역할 분담 병렬 작업 (Claude: 로직, Codex: 테스트)
-  planview 계획 승인 후 자동 병렬 에이전트 실행
-  여러 PR 비교 후 best-of-both 브랜치로 병합
-  tmux 세션으로 에이전트 실시간 모니터링
-S[5]{n,action,details}:
-  1,Plan Review,planview로 구현 계획 검토 및 승인 (Shift+Tab×2 → 계획 모드)
-  2,Create Worktrees,conductor.sh <feature> [base] 실행으로 에이전트별 worktree 자동 생성
-  3,Run Agents,tmux 세션에서 Claude/Codex/Gemini 동시 실행 및 로그 모니터링
-  4,Commit & PR,각 worktree에서 커밋 후 conductor-pr.sh로 PR 자동 생성
-  5,Merge Best,두 PR 비교 후 cherry-pick으로 best-of-both 브랜치 생성 및 병합
-R[4]:
-  planview로 계획 승인 후 conductor 실행 (구현 전 스펙 확정)
-  각 에이전트에 명확한 역할 지정 (중복 방지)
-  worktree 완료 후 반드시 정리 (git worktree remove)
-  Copilot/Vibe Kanban과 조합 가능 (후속 이슈 Copilot 위임)
-E[2]{desc,in,out}:
-  "병렬 실행","bash scripts/conductor.sh user-dashboard main","trees/feat-user-dashboard-claude + trees/feat-user-dashboard-codex 생성 및 tmux 세션 실행"
-  "planview 통합","bash scripts/conductor-planview.sh user-dashboard","planview 승인 후 자동으로 conductor 실행"
+D:[→kanbanview] Conductor 패턴은 vibe-kanban(kanbanview)에 통합. CLI 전용 사용: bash scripts/conductor.sh로 병렬 에이전트 실행, bash scripts/pipeline.sh로 전체 파이프라인. Kanban UI 포함 사용은 kanbanview 스킬 참조.
+G:conductor git-worktree parallel-agents pipeline kanbanview vibe-kanban merged cli-mode
+U[3]:
+  CLI 전용 병렬 실행: bash scripts/conductor.sh <feature> <base>
+  전체 파이프라인: bash scripts/pipeline.sh <feature> --stages check,conductor,pr
+  Kanban UI 포함 시각적 관리: kanbanview 스킬 사용 (vibe-kanban)
+S[3]{n,action,details}:
+  1,CLI Pipeline,bash scripts/pipeline.sh my-feature --stages check,conductor,pr
+  2,Direct Conductor,bash scripts/conductor.sh my-feature main claude,codex
+  3,Kanban UI,npx vibe-kanban (kanbanview 스킬 참조)
+R[2]:
+  Kanban UI가 필요하면 kanbanview 사용, CLI만 필요하면 pipeline.sh 직접 사용
+  planno로 계획 검토 후 실행 권장
+E[1]{desc,in,out}:
+  "파이프라인 실행","bash scripts/pipeline.sh user-auth --stages check,conductor,pr","사전점검→병렬 에이전트→PR 자동 생성"

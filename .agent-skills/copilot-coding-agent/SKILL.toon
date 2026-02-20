@@ -1,23 +1,23 @@
 N:copilot-coding-agent
-D:GitHub Copilot Coding Agent로 Issue → Draft PR 자동화. ai-copilot 라벨 하나로 GraphQL+Actions가 Copilot에 이슈 자동 할당 후 PR 생성. planview 이슈 스펙 검토 통합.
-G:copilot github-copilot github-actions issue-automation draft-pr graphql planview workflow-automation ai-label
+D:[copilotview] GitHub Copilot Coding Agent로 Issue→Draft PR 자동화. ai-copilot 라벨 하나로 GraphQL+Actions가 Copilot에 이슈 자동 할당 후 PR 생성. planno 이슈 스펙 검토 통합.
+G:copilotview copilot github-copilot github-actions issue-automation draft-pr graphql planno workflow-automation ai-label
 U[6]:
   ai-copilot 라벨로 Copilot 에이전트 자동 트리거
   백로그 리팩터링/문서화/테스트를 Copilot에 위임
   PM이 이슈 작성만 해도 Copilot이 자동 PR 생성
-  planview로 이슈 스펙 검토 후 Copilot 실행
-  Conductor/Vibe Kanban 결과물 후속 작업 자동 처리
+  planno로 이슈 스펙 검토 후 Copilot 실행
+  kanbanview(Vibe Kanban) 결과물 후속 작업 자동 처리
   Jira 등 외부 시스템 → GitHub Issue → Copilot PR 파이프라인
 S[5]{n,action,details}:
-  1,Setup,bash scripts/copilot-setup-workflow.sh 실행 (COPILOT_ASSIGN_TOKEN 시크릿 설정 + Actions 워크플로 배포)
-  2,Plan Review,planview로 이슈 스펙 검토 및 승인 (수락기준 명확화)
+  1,Setup,bash scripts/copilot-setup-workflow.sh (COPILOT_ASSIGN_TOKEN 시크릿 + Actions 배포)
+  2,Plan Review,planno로 이슈 스펙 검토 및 승인 (acceptance criteria 명확화)
   3,Create Issue,gh issue create --label ai-copilot → Actions가 자동으로 Copilot에 할당
-  4,Review PR,Copilot Draft PR 확인 → planview로 diff 검토 → 필요 시 피드백 코멘트
-  5,Approve & Merge,PR 첫 승인 (Actions 실행 허가) → CI 통과 → Merge
+  4,Review PR,Copilot Draft PR 확인 → planno로 diff 검토 → 필요시 피드백 코멘트
+  5,Approve & Merge,PR 첫 승인(Actions 실행 허가) → CI 통과 → Merge
 R[4]:
-  이슈 생성 전 planview로 acceptance criteria 명확화 (모호한 이슈 방지)
+  이슈 생성 전 planno로 acceptance criteria 명확화 (모호한 이슈 방지)
   첫 Copilot PR은 반드시 수동 승인 필요 (보안 정책)
-  Write 권한 있는 사람만 Copilot 할당 가능 (권한 관리)
+  Write 권한 있는 사람만 Copilot 할당 가능
   단일 레포/단일 PR 제약 인지 (멀티 레포 이슈 불가)
 E[2]{desc,in,out}:
   "이슈 라벨 트리거","gh issue edit 42 --add-label ai-copilot","GitHub Actions 실행 → Copilot 할당 → Draft PR 자동 생성"

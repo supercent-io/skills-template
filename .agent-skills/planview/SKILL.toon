@@ -1,6 +1,6 @@
-N:planview
-D:Review coding agent plans and diffs visually with Plannotator. Add inline annotations, approve or request changes, and return structured feedback to the agent.
-G:planview plannotator plan-review diff-review annotate feedback claude-code opencode 계획검토
+N:plannotator
+D:[planno] Review coding agent plans and diffs visually with Plannotator. Add inline annotations, approve or request changes, and return structured feedback to the agent.
+G:planno planview plannotator plan-review diff-review annotate feedback claude-code opencode 계획검토
 U[5]:
   Review implementation plans before coding starts
   Run inline diff annotation with /plannotator-review

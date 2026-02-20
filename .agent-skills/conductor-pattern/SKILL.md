@@ -6,9 +6,15 @@ tags: [conductor, git-worktree, parallel-agents, claude-code, codex, tmux, pr-co
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: claude-code-docs/worktrees, dev.to/qlerebours_
+deprecated: merged-into:vibe-kanban
 ---
 
-# Conductor 패턴 — 병렬 AI 에이전트 + git worktree
+# Conductor Pattern — (Merged into kanbanview)
+
+> ⚠️ **이 스킬은 `vibe-kanban` (keyword: `kanbanview`)에 통합되었습니다.**
+>
+> CLI 전용 사용: `bash scripts/conductor.sh` / `bash scripts/pipeline.sh`
+> Kanban UI 포함: `kanbanview` (vibe-kanban) 스킬 사용
 
 ## When to use this skill
 

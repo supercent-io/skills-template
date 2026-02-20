@@ -1,14 +1,18 @@
 ---
 name: vibe-kanban
-description: AI 코딩 에이전트를 Kanban 보드에서 통합 관리. 태스크 카드 → git worktree 자동 생성 → 에이전트 실행 → PR 생성까지 시각적으로 관리. planview 계획 검토와 통합 지원.
+keyword: kanbanview
+description: AI 코딩 에이전트를 Kanban 보드에서 통합 관리. Conductor 패턴(git worktree 병렬 실행) 내장. 태스크 카드 → git worktree 자동 생성 → 에이전트 실행 → PR 생성까지 시각적으로 관리. planview 계획 검토와 통합 지원.
 allowed-tools: [Read, Write, Bash]
-tags: [vibe-kanban, kanban, ai-agents, worktree, pr-management, claude-code, codex, gemini, planview, task-management]
+tags: [vibe-kanban, kanbanview, kanban, ai-agents, worktree, pr-management, claude-code, codex, gemini, planview, task-management, conductor, parallel-agents]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: BloopAI/vibe-kanban
 ---
 
-# Vibe Kanban — AI 에이전트 통합 Kanban 보드
+# Vibe Kanban — AI 에이전트 통합 Kanban 보드 (kanbanview)
+
+> Keyword: `kanbanview` | Includes: Conductor Pattern (parallel git worktree execution)
+> Part of the **AI Review Tools** family: planno · kanbanview · copilotview
 
 ## When to use this skill
 
@@ -72,6 +76,45 @@ bash scripts/vibe-kanban-start.sh
 | `VK_ALLOWED_ORIGINS` | 허용 오리진 (원격 접속 시 설정) |
 | `GITHUB_CLIENT_ID` | GitHub OAuth (self-host 시) |
 | `DISABLE_WORKTREE_ORPHAN_CLEANUP` | orphan worktree 자동 정리 끄기 (디버깅용) |
+
+---
+
+## Conductor Pattern (Built-in)
+
+Vibe Kanban은 Conductor 패턴을 내부적으로 통합합니다. UI 없이 CLI만으로도 동일한 병렬 워크트리 실행이 가능합니다.
+
+### UI 모드 (기본)
+
+카드가 **In Progress**로 이동할 때마다 자동으로:
+
+1. `git worktree add` 로 독립 샌드박스 생성
+2. 지정된 에이전트(Claude/Codex/Gemini) 실행
+3. 작업 완료 시 PR 자동 생성
+
+여러 카드가 동시에 In Progress 상태이면 각 카드가 별도 worktree에서 병렬로 실행됩니다 — 이것이 Conductor 패턴의 핵심입니다.
+
+### CLI 모드 (Kanban UI 없이)
+
+Kanban UI 없이 순수 CLI로 Conductor 패턴을 실행하려면:
+
+```bash
+# 단일 파이프라인 실행 (체크 → Conductor → PR)
+bash scripts/pipeline.sh <feature-name> --stages check,conductor,pr
+
+# Conductor만 직접 실행 (worktree 병렬 에이전트)
+bash scripts/conductor.sh <feature-name>
+```
+
+`scripts/conductor.sh` 는 태스크 목록을 읽어 각 태스크마다 git worktree를 생성하고 에이전트를 병렬로 실행합니다. `scripts/pipeline.sh` 는 사전 검사 → conductor → PR 생성 단계를 순서대로 연결합니다.
+
+### UI vs CLI 선택 기준
+
+| 상황 | 권장 모드 |
+|------|----------|
+| 팀 공유 보드, 시각적 진행 추적 필요 | UI 모드 (`npx vibe-kanban`) |
+| CI/CD 파이프라인, 자동화 스크립트 | CLI 모드 (`scripts/pipeline.sh`) |
+| 빠른 로컬 실험, UI 오버헤드 불필요 | CLI 모드 (`scripts/conductor.sh`) |
+| diff/로그를 브라우저에서 검토 필요 | UI 모드 |
 
 ---
 
@@ -204,3 +247,5 @@ plannotator review --branch vk/abc123-payment-ui
 - [공식 사이트: vibekanban.com](https://vibekanban.com)
 - [VirtusLab 분석: vibe-kanban architecture](https://virtuslab.com/blog/ai/vibe-kanban/)
 - [scripts/vibe-kanban-start.sh](../scripts/vibe-kanban-start.sh)
+- [scripts/conductor.sh](../scripts/conductor.sh)
+- [scripts/pipeline.sh](../scripts/pipeline.sh)

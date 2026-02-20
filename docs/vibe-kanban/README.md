@@ -60,6 +60,57 @@ npx vibe-kanban
 
 Opens the board at `http://localhost:3000`.
 
+---
+
+## Conductor Pattern (CLI Mode)
+
+Vibe Kanban uses the Conductor Pattern internally — each card moved to **In Progress** creates a git worktree and launches an agent in that isolated directory. The same mechanism is available as a pure CLI pipeline without the Kanban UI.
+
+### When to use CLI vs UI
+
+| Scenario | Mode |
+|----------|------|
+| Team shared board, visual progress tracking | UI mode (`npx vibe-kanban`) |
+| CI/CD pipelines, scripted automation | CLI mode (`scripts/pipeline.sh`) |
+| Quick local experiments, no UI needed | CLI mode (`scripts/conductor.sh`) |
+| Browser-based diff and log review | UI mode |
+
+### Running conductor.sh directly
+
+`scripts/conductor.sh` reads a task list and creates one git worktree per task, then launches agents in parallel:
+
+```bash
+# Run conductor for a feature branch
+bash scripts/conductor.sh <feature-name>
+```
+
+Each task gets its own worktree under `.vk/trees/`, the same structure Vibe Kanban UI creates when you drag a card to In Progress.
+
+### Running the full pipeline
+
+`scripts/pipeline.sh` chains multiple stages together: pre-checks, parallel agent execution via conductor, and automatic PR creation:
+
+```bash
+# Full pipeline: check → parallel agents → PR
+bash scripts/pipeline.sh <feature-name> --stages check,conductor,pr
+
+# Skip checks, run conductor and PR only
+bash scripts/pipeline.sh <feature-name> --stages conductor,pr
+```
+
+### Underlying mechanism
+
+Whether you use the Kanban UI or the CLI scripts, the git worktree mechanism is identical:
+
+```
+git worktree add .vk/trees/<task-slug> -b vk/<hash>-<task-slug> main
+<agent-cli> -p "<task-description>" --cwd .vk/trees/<task-slug>
+```
+
+Worktrees are isolated — multiple agents run concurrently without conflicting file edits. After the PR is merged, the worktree is cleaned up automatically.
+
+---
+
 ### 2. Plan Review with planview
 
 Before creating individual task cards, review the epic breakdown using planview:

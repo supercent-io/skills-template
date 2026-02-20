@@ -1,14 +1,17 @@
 ---
 name: copilot-coding-agent
+keyword: copilotview
 description: GitHub Copilot Coding Agent를 통한 Issue → Draft PR 자동화. GitHub Actions와 GraphQL API를 연계해 라벨 기반으로 이슈를 Copilot에 자동 할당하고 PR을 생성. planview로 이슈 스펙 검토 후 자동 처리 지원.
 allowed-tools: [Read, Write, Bash]
-tags: [copilot, github-copilot, github-actions, issue-automation, draft-pr, graphql, planview, workflow-automation]
+tags: [copilotview, github-copilot, github-actions, issue-automation, draft-pr, graphql, planview, workflow-automation]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: docs.github.com/copilot/coding-agent
 ---
 
 # GitHub Copilot Coding Agent — Issue → Draft PR 자동화
+
+> Keyword: `copilotview` | Part of the **AI Review Tools** family: planno · kanbanview · copilotview
 
 ## When to use this skill
 

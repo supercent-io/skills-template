@@ -1,14 +1,17 @@
 ---
-name: planview
+name: plannotator
+keyword: planno
 description: Review AI agent plans and git diffs visually with Plannotator. Add inline annotations, approve or request revisions, and send structured feedback back to your coding agent.
 allowed-tools: [Read, Bash, Write]
-tags: [planview, plannotator, plan-review, code-review, claude-code, opencode]
+tags: [planno, planview, plannotator, plan-review, code-review, claude-code, opencode]
 platforms: [Claude, OpenCode, Codex, Gemini]
 version: 0.1.0
 source: backnotprop/plannotator
 ---
 
-# planview - Visual Plan Review with Plannotator
+# plannotator — AI Review Tool (planno)
+
+> Keyword: `planno` (formerly `planview`)
 
 Use this skill when the user asks to review a coding plan visually, annotate a diff with feedback, or run an approval loop before implementation.
 

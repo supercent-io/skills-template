@@ -24,17 +24,19 @@ npx skills add https://github.com/supercent-io/skills-template --skill <skill-na
 
 ---
 
-## planview - Plannotator Guide
+## plannotator — AI Review Tool
 
-Use the `planview` keyword to review coding plans and diffs visually with Plannotator.
+> Keyword: `planno` (formerly `planview`) | [Full guide](docs/plannotator/README.md)
+
+Use the `planno` keyword to review coding plans and diffs visually with Plannotator.
 
 ```bash
-# Install only planview skill
+# Install only plannotator skill
 npx skills add https://github.com/supercent-io/skills-template --skill planview
 ```
 
 ```text
-planview로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
+planno로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
 ```
 
 Plannotator quick setup (official):
@@ -52,6 +54,8 @@ Claude Code plugin:
 ```
 
 For diff annotation, run `/plannotator-review`, add inline comments, then choose approve or request changes.
+
+→ [Full guide: plan review loop, diff annotation, env vars, integrations](docs/plannotator/README.md)
 
 ---
 
@@ -203,39 +207,33 @@ $team 백엔드 API 개발 시작해줘
 
 ---
 
-## Conductor Pattern — Parallel AI Agent Execution
+## AI Review Tools
 
-> Run multiple AI agents (Claude/Codex/Gemini) in parallel on the same feature using **git worktree**. Each agent works in an isolated branch, then PRs are compared for the best implementation.
+> Three tools for visually managing, reviewing, and automating AI agent workflows.
+
+| Tool | Keyword | Description | Guide |
+|------|---------|-------------|-------|
+| **plannotator** | `planno` | Visual plan/diff review with inline annotations | [docs](docs/plannotator/README.md) |
+| **vibe-kanban** | `kanbanview` | Kanban board for AI agents — includes Conductor Pattern | [docs](docs/vibe-kanban/README.md) |
+| **copilot-coding-agent** | `copilotview` | GitHub Copilot issue-to-Draft-PR automation | [docs](docs/copilot-coding-agent/README.md) |
+
+### kanbanview — Vibe Kanban + Conductor Pattern
+
+> Visual Kanban board for managing AI coding agents. Includes Conductor Pattern (parallel git worktree execution) built-in.
 
 ```bash
-# One-time setup check
-bash scripts/pipeline-check.sh
+# Launch Kanban UI
+npx vibe-kanban
 
-# Run parallel agents (with plan review)
-bash scripts/conductor-planview.sh my-feature main claude,codex
-
-# Or use the unified pipeline
+# CLI-only pipeline (no Kanban UI)
 bash scripts/pipeline.sh my-feature --stages check,conductor,pr
 ```
 
-→ [Full guide: pipeline flags, hooks, state resume, planview integration](docs/conductor-pattern/README.md)
+→ [Full guide: setup, conductor CLI mode, planno integration, git worktree](docs/vibe-kanban/README.md)
 
 ---
 
-## Vibe Kanban — AI Agent Kanban Board
-
-> Visual Kanban board for managing AI coding agents. Tasks flow: To Do → In Progress → Review → Done, with agents auto-assigned to cards.
-
-```bash
-npx vibe-kanban
-# Opens at localhost:3000
-```
-
-→ [Full guide: setup, workflow, planview integration, git worktree](docs/vibe-kanban/README.md)
-
----
-
-## Copilot Coding Agent — Issue to Draft PR
+### copilotview — Copilot Coding Agent
 
 > Automate GitHub Copilot Coding Agent: add `ai-copilot` label to an issue → Copilot auto-assigns and creates a Draft PR.
 
@@ -247,7 +245,7 @@ bash scripts/copilot-setup-workflow.sh
 gh issue create --label ai-copilot --title "Add auth" --body "..."
 ```
 
-→ [Full guide: setup, GraphQL API, GitHub Actions, planview integration](docs/copilot-coding-agent/README.md)
+→ [Full guide: setup, GraphQL API, GitHub Actions, planno integration](docs/copilot-coding-agent/README.md)
 
 ---
 
@@ -261,7 +259,7 @@ gh issue create --label ai-copilot --title "Add auth" --body "..."
 | `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
 | `bmad-orchestrator` | `bmad` | **Universal** — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · works with all CLIs |
 | `ralph` | `ralph` | Self-referential completion loop — iterates across agent turns until done |
-| `planview` | `planview` | Visual plan and diff review loop with Plannotator annotations |
+| `planview` | `planno` | Visual plan/diff review with Plannotator — annotate, approve, or request changes |
 | `agent-browser` | `agent-browser` | Headless browser for AI agents |
 | `opencontext` | — | Persistent memory across sessions |
 | `workflow-automation` | — | Workflow automation scripts |
@@ -271,9 +269,9 @@ gh issue create --label ai-copilot --title "Add auth" --body "..."
 | `git-workflow` | — | Git workflow management |
 | `npm-git-install` | — | Install npm packages from GitHub |
 | `skill-standardization` | — | SKILL.md standardization |
-| `conductor-pattern` | `conductor` | Parallel AI agents via git worktree — Claude/Codex/Gemini run same spec simultaneously, PRs compared |
-| `vibe-kanban` | `vibe-kanban` | Kanban board for AI agent management — To Do → In Progress → Review → Done |
-| `copilot-coding-agent` | `copilot` | GitHub Copilot issue-to-PR automation — label issue → Copilot creates Draft PR |
+| `conductor-pattern` | `conductor` | [→kanbanview] Conductor Pattern CLI — parallel agents via git worktree; merged into kanbanview (vibe-kanban) |
+| `vibe-kanban` | `kanbanview` | Kanban board for AI agent management — includes Conductor Pattern; To Do → In Progress → Review → Done |
+| `copilot-coding-agent` | `copilotview` | GitHub Copilot issue-to-PR automation — label issue → Copilot creates Draft PR |
 
 ### Backend (5)
 `api-design` · `api-documentation` · `authentication-setup` · `backend-testing` · `database-schema-design`
@@ -364,7 +362,14 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.8.0 | **Updated**: 2026-02-20 | **Skills**: 65 | **Format**: TOON (Default)
+**Version**: 4.9.0 | **Updated**: 2026-02-20 | **Skills**: 65 | **Format**: TOON (Default)
+
+**Changelog v4.9.0**:
+- **AI Review Tools**: Introduced new "AI Review Tools" category grouping planno, kanbanview, copilotview
+- **plannotator** (keyword: `planno`): Renamed from `planview` keyword; same Plannotator tool, cleaner keyword
+- **kanbanview** (keyword: `kanbanview`): Vibe Kanban now includes Conductor Pattern (parallel git worktree execution) built-in; CLI mode via `scripts/pipeline.sh`
+- **copilotview** (keyword: `copilotview`): Renamed from `copilot` keyword for clarity
+- **conductor-pattern**: Merged into `kanbanview` (vibe-kanban); CLI scripts (`conductor.sh`, `pipeline.sh`) remain available
 
 **Changelog v4.8.0**:
 - **conductor-pattern**: Added Conductor Pattern skill — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume, planview integration
@@ -399,3 +404,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 - **CLI Hub**: Positioned OpenCode and oh-my-opencode as universal model-agnostic hubs
 - **ralph integration**: Clarified ralph as gateway for ohmg/omx/bmad/playwriter/agent-browser
 - **README**: Streamlined to list/usability format, removed verbose installation guides
+
+<!-- plannotator-temp-check -->
