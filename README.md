@@ -30,7 +30,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill <skill-na
 
 | CLI Tool | Role | Models | Setup |
 |----------|------|--------|-------|
-| **Claude Code** | Orchestrator + Coder | Claude family | [docs](https://docs.anthropic.com/en/docs/claude-code/getting-started) |
+| **Claude Code** | Orchestrator + Coder | Claude family | [docs](https://docs.anthropic.com/en/docs/claude-code/getting-started) · [oh-my-claudecode plugin](https://github.com/Yeachan-Heo/oh-my-claudecode) |
 | **Codex CLI** | Executor + Builder | OpenAI / GPT family | [docs](https://github.com/openai/codex) |
 | **Gemini-CLI** | Analyst + Researcher | Gemini / Google family | [docs](https://github.com/google-gemini/gemini-cli) |
 | **OpenCode** | Universal Hub | All providers | [opencode.ai](https://opencode.ai) · `curl -fsSL https://opencode.ai/install \| bash` |
@@ -48,7 +48,7 @@ These tools are **interoperable** — Agent Skills work across all of them via t
 |---------|-------|-----------|-------------|
 | `ohmg` | oh-my-ag | Gemini-CLI | Google models (Gemini, Gemma) — multi-domain agent coordination via Serena Memory |
 | `omx` | oh-my-codex | Codex CLI | OpenAI models — 30 agents, 40+ workflow skills, tmux team mode, MCP servers |
-| `bmad` | bmad-orchestrator | Claude Code | Claude models — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) |
+| `bmad` | bmad-orchestrator | Claude Code | Claude models — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · [detailed guide](docs/bmad/README.md) |
 
 ### How to Activate
 
@@ -98,6 +98,175 @@ ohmg 스킬을 설정하고 사용해줘. 기억해.
 ralph-loop로 이 작업 완료될 때까지 반복해줘
 ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 ```
+
+---
+
+## bmad-orchestrator — Claude Code Harness
+
+> **bmad-orchestrator** routes AI-driven development through four structured phases: Analysis → Planning → Solutioning → Implementation. The `bmad` keyword activates it in Claude Code.
+
+### Quick Start
+
+**Step 1: Install**
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
+```
+
+**Step 2: Activate in Claude Code**
+```text
+bmad 스킬을 설정하고 사용해줘. 기억해.
+```
+
+**Step 3: Initialize your project**
+```text
+/workflow-init
+```
+
+### Core Commands
+
+| Command | Phase | Purpose |
+|---------|-------|---------|
+| `/workflow-init` | Setup | Initialize BMAD in project |
+| `/workflow-status` | Any | Check current phase & next step |
+| `/product-brief` | 1 Analysis | Define product vision |
+| `/prd` | 2 Planning | Product Requirements Document |
+| `/tech-spec` | 2 Planning | Technical Specification |
+| `/architecture` | 3 Solutioning | System architecture design |
+| `/sprint-planning` | 4 Implementation | Break into sprints & stories |
+| `/dev-story` | 4 Implementation | Implement a specific story |
+
+### Project Levels
+
+BMAD adapts to your project size automatically:
+
+| Level | Size | Examples | Required Phases |
+|-------|------|---------|----------------|
+| **0** | Single change | Bug fix, config tweak | Planning + Implementation |
+| **1** | Small feature | New API endpoint | Planning + Implementation |
+| **2** | Feature set | Auth system | All 4 phases |
+| **3** | Integration | Multi-tenant SaaS | All 4 phases (detailed) |
+| **4** | Enterprise | Platform migration | All 4 phases (extensive) |
+
+### Detailed Documentation
+
+| Document | Contents |
+|----------|---------|
+| [Overview](docs/bmad/README.md) | What is BMAD, quick start, phase overview |
+| [Installation & Setup](docs/bmad/installation.md) | Full install, `기억해` activation, troubleshooting |
+| [Workflow Guide](docs/bmad/workflow.md) | All 4 phases, commands, level decision matrix |
+| [Configuration Reference](docs/bmad/configuration.md) | Config files, status tracking, variable substitution |
+| [Practical Examples](docs/bmad/examples.md) | Bug fix → enterprise project walkthroughs |
+
+---
+
+## oh-my-claudecode — Claude Code Native Plugin
+
+> **oh-my-claudecode** is a Teams-first multi-agent orchestration layer for Claude Code. Install it as a native plugin and get 32 specialized agents, smart model routing, and a persistent execution loop — all without any learning curve.
+
+[![GitHub Stars](https://img.shields.io/github/stars/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
+[![GitHub Forks](https://img.shields.io/github/forks/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
+
+### Installation (3 Steps)
+
+**Step 1: Add from Plugin Marketplace**
+
+```bash
+/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+/plugin install oh-my-claudecode
+```
+
+**Step 2: Run Setup**
+
+```bash
+/omc:omc-setup
+```
+
+**Step 3: Start Building**
+
+```text
+autopilot: build a REST API for managing tasks
+```
+
+> **npm package name**: If installing via npm/bun, use `oh-my-claude-sisyphus`
+
+### Updating
+
+```bash
+# 1. Sync latest version from marketplace
+/plugin marketplace update omc
+
+# 2. Re-run setup to refresh configuration
+/omc:omc-setup
+
+# If you hit issues after update
+/omc:omc-doctor
+```
+
+> **Important**: If marketplace auto-update is not enabled, you must manually run `/plugin marketplace update omc` before setup.
+
+### Orchestration Modes
+
+| Mode | What it is | Use For |
+|------|-----------|---------|
+| **Team** (recommended) | Staged pipeline: `team-plan → team-prd → team-exec → team-verify → team-fix` | Coordinated agents on shared task list |
+| **Autopilot** | Autonomous single lead agent | End-to-end feature work |
+| **Ultrawork** | Maximum parallelism (non-team) | Burst parallel fixes/refactors |
+| **Ralph** | Persistent mode with verify/fix loops | Tasks that must complete fully |
+| **Pipeline** | Sequential staged processing | Multi-step transformations |
+| **Swarm/Ultrapilot** | Legacy facades → route to Team | Existing workflows |
+
+### Team Mode (Canonical)
+
+```bash
+/omc:team 3:executor "fix all TypeScript errors"
+```
+
+Enable Claude Code native teams in `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+### Magic Keywords
+
+```text
+team          # Canonical Team orchestration
+autopilot     # Full autonomous execution
+ralph         # Persistence mode
+ulw           # Maximum parallelism
+plan          # Planning interview
+ralplan       # Iterative planning consensus
+swarm         # Legacy (routes to Team)
+ultrapilot    # Legacy (routes to Team)
+```
+
+### Why oh-my-claudecode?
+
+- **Zero configuration** — Works out of the box with intelligent defaults
+- **Team-first orchestration** — Team is the canonical multi-agent surface
+- **Natural language interface** — No commands to memorize
+- **Automatic parallelization** — Complex tasks distributed across 32 specialized agents
+- **Persistent execution** — Won't stop until the job is verified complete
+- **Cost optimization** — Smart model routing saves 30–50% on tokens
+- **Real-time visibility** — HUD statusline shows what's happening under the hood
+
+### Requirements
+
+- Claude Code CLI
+- Claude Max/Pro subscription **or** Anthropic API key
+
+### Optional: Multi-AI Orchestration
+
+| Provider | Install | What it enables |
+|----------|---------|----------------|
+| Gemini CLI | `npm install -g @google/gemini-cli` | Design review, UI consistency (1M token context) |
+| Codex CLI | `npm install -g @openai/codex` | Architecture validation, code review cross-check |
+
+→ [Full documentation](https://github.com/Yeachan-Heo/oh-my-claudecode) · [Migration Guide](https://github.com/Yeachan-Heo/oh-my-claudecode#migration-guide)
 
 ---
 
@@ -178,6 +347,7 @@ ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 |-------|----------|---------|
 | `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
 | `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
+| `oh-my-claudecode` | Yeachan-Heo | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` (Claude Code native plugin) |
 | `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
 | `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
 | `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
@@ -228,7 +398,13 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.4.1 | **Updated**: 2026-02-19 | **Skills**: 60 | **Format**: TOON (Default)
+**Version**: 4.4.3 | **Updated**: 2026-02-20 | **Skills**: 60 | **Format**: TOON (Default)
+
+**Changelog v4.4.3**:
+- **bmad-orchestrator Guide**: Added comprehensive guide for `bmad` harness in README with quick start, core commands, and project level matrix; created detailed docs in `docs/bmad/` covering installation, workflow phases, configuration reference, and practical examples (bug fix → enterprise)
+
+**Changelog v4.4.2**:
+- **oh-my-claudecode Plugin Guide**: Added comprehensive guide for installing and using oh-my-claudecode as a Claude Code native plugin — covering installation, Team mode, orchestration modes, magic keywords, and multi-AI orchestration setup
 
 **Changelog v4.4.1**:
 - **CLI Setup Links**: Added hyperlinks for OpenCode, oh-my-opencode, Claude Code, Codex CLI, Gemini-CLI setup guides
