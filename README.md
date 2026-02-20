@@ -1,383 +1,159 @@
 # Agent Skills
 
-> Modular skill system for AI agents
-> **67 Skills** | **95% Token Reduction** | **TOON Format by Default**
-
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-67-green.svg)](.agent-skills/)
-[![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
-
-![Agent Skills](AgentSkills.png)
-
+> Modular skill system for AI agents.
+> **66 Skills** · **TOON Format** · **Flat Skill Layout**
 
 ---
 
-## Quick Install
+## Quick install
 
 ```bash
-# All 67 core skills
+# Install all skills
 npx skills add https://github.com/supercent-io/skills-template
 
-# Individual skill
-npx skills add https://github.com/supercent-io/skills-template --skill <skill-name>
-```
-
----
-
-## plannotator — AI Review Tool
-
-> Keyword: `planno` (formerly `planview`) | [Full guide](docs/plannotator/README.md)
-
-Use the `planno` keyword to review coding plans and diffs visually with Plannotator.
-
-```bash
-# Install only plannotator skill
-npx skills add https://github.com/supercent-io/skills-template --skill planno
-```
-
-```text
-planno로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
-```
-
-Plannotator quick setup (official):
-
-```bash
-# macOS / Linux / WSL
-curl -fsSL https://plannotator.ai/install.sh | bash
-```
-
-Claude Code plugin:
-
-```bash
-/plugin marketplace add backnotprop/plannotator
-/plugin install plannotator@plannotator
-```
-
-For diff annotation, run `/plannotator-review`, add inline comments, then choose approve or request changes.
-
-→ [Full guide: plan review loop, diff annotation, env vars, integrations](docs/plannotator/README.md)
-
----
-
-## AI CLI Tools — Universal Model Hub
-
-> **OpenCode** and **oh-my-opencode** function as model-agnostic CLI hubs, just like Claude Code, Codex CLI, and Gemini-CLI — but with the ability to route to **any model** from any provider in a single session.
-
-| CLI Tool | Role | Models | Setup |
-|----------|------|--------|-------|
-| **Claude Code** | Orchestrator + Coder | Claude family | [docs](https://docs.anthropic.com/en/docs/claude-code/getting-started) · [oh-my-claudecode plugin](https://github.com/Yeachan-Heo/oh-my-claudecode) |
-| **Codex CLI** | Executor + Builder | OpenAI / GPT family | [docs](https://github.com/openai/codex) |
-| **Gemini-CLI** | Analyst + Researcher | Gemini / Google family | [docs](https://github.com/google-gemini/gemini-cli) |
-| **OpenCode** | Universal Hub | All providers | [opencode.ai](https://opencode.ai) · `curl -fsSL https://opencode.ai/install \| bash` |
-| **oh-my-opencode** | Universal Hub + Loop | All providers | [guide](https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md) · [repo](https://github.com/code-yeongyu/oh-my-opencode) |
-
-These tools are **interoperable** — Agent Skills work across all of them via the same keyword system.
-
----
-
-## Harness Engineering — Orchestrator Skills
-
-> Three specialized orchestration skills, each engineered as a harness for a specific CLI and model ecosystem.
-
-| Keyword | Skill | Best With | Harness For |
-|---------|-------|-----------|-------------|
-| `ohmg` | oh-my-ag | Gemini-CLI | Google models (Gemini, Gemma) — multi-domain agent coordination via Serena Memory |
-| `omx` | oh-my-codex | Codex CLI | OpenAI models — 30 agents, 40+ workflow skills, tmux team mode, MCP servers |
-| `bmad` | bmad-orchestrator | **All CLIs** | Universal — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · [detailed guide](docs/bmad/README.md) |
-
-> **Note on bmad**: While `bmad-orchestrator` is listed as a Claude Code harness above, the **BMAD methodology and core skills are fully universal** — they work with Claude Code, Codex CLI, Gemini-CLI, OpenCode, and any AI CLI tool. The skill encodes fundamental engineering principles, not Claude-specific APIs.
-
-### Activation
-
-> **Important**: `ohmg`, `omx`, `bmad`, `playwriter`, `agent-browser` require **explicit skill activation** before first use.
-
-Tell your AI agent to set up the skill by ending your request with **"기억해"** (remember):
-
-```text
-<harness> 스킬을 설정하고 사용해줘. 기억해.
-```
-
-> Without "기억해", the agent will use the skill for the current session only and may not retain configuration.
-
-→ [Per-CLI activation examples & troubleshooting](docs/harness/README.md)
-
----
-
-## bmad-orchestrator — Universal Engineering Harness
-
-> **bmad-orchestrator** routes AI-driven development through four structured phases: Analysis → Planning → Solutioning → Implementation. The `bmad` keyword activates it across **all AI CLI tools** — Claude Code, Codex CLI, Gemini-CLI, and OpenCode.
->
-> Unlike tool-specific orchestrators (`ohmg`, `omx`, `omc`), **bmad encodes universal engineering principles** — structured thinking, architectural discipline, and phase-gated delivery — that apply regardless of which AI model or CLI you're using.
-
-### Quick Start
-
-**Step 1: Install**
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
-```
-
-**Step 2: Activate in your CLI** (Claude Code, Codex CLI, Gemini-CLI, OpenCode)
-```text
-bmad 스킬을 설정하고 사용해줘. 기억해.
-```
-
-**Step 3: Initialize your project**
-```text
-/workflow-init
-```
-
-→ [Full guide: commands, project levels, examples](docs/bmad/README.md)
-
----
-
-## Claude Code 사용 케이스 — omc (oh-my-claudecode)
-
-> **oh-my-claudecode**는 Claude Code 전용 Teams-first 멀티 에이전트 오케스트레이션 레이어입니다. `omc` 키워드로 활성화하며, 32개 전문 에이전트, 스마트 모델 라우팅, 지속 실행 루프를 제공합니다 — 별도 학습 없이 바로 사용 가능합니다.
-
-> **다른 CLI 사용자**: OpenAI Codex CLI → [oh-my-codex](#codex-cli-사용-케이스--omx-oh-my-codex) (`omx` 키워드)
-
-[![GitHub Stars](https://img.shields.io/github/stars/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
-[![GitHub Forks](https://img.shields.io/github/forks/Yeachan-Heo/oh-my-claudecode?style=flat)](https://github.com/Yeachan-Heo/oh-my-claudecode)
-
-### 키워드: `omc`
-
-```text
-omc 스킬을 설정하고 사용해줘. 기억해.
-```
-
-### Installation
-
-```bash
-/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
-/plugin install oh-my-claudecode
-/omc:omc-setup
-```
-
-> **npm alternative**: `npm install -g oh-my-claude-sisyphus`
-
-### Updating
-
-```bash
-/plugin marketplace update omc && /omc:omc-setup
-# If issues: /omc:omc-doctor
-```
-
-→ [Full guide: modes, keywords, team setup, multi-AI](docs/omc/README.md) · [GitHub](https://github.com/Yeachan-Heo/oh-my-claudecode)
-
----
-
-## Codex CLI 사용 케이스 — omx (oh-my-codex)
-
-> **oh-my-codex**는 Codex CLI 전용 멀티 에이전트 오케스트레이션 레이어입니다. `omx` 키워드로 활성화하며, 30개 전문 에이전트와 autopilot/team 모드, MCP 서버 통합을 제공합니다.
-
-> **다른 CLI 사용자**: Claude Code → [oh-my-claudecode](#claude-code-사용-케이스--omc-oh-my-claudecode) (`omc` 키워드)
-
-### 키워드: `omx`
-
-```text
-omx 스킬을 설정하고 사용해줘. 기억해.
-```
-
-### Installation
-
-```bash
+# Install one skill
+npx skills add https://github.com/supercent-io/skills-template --skill conductor-pattern
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 ```
 
-### Quick Usage
+---
 
-```text
-$autopilot 전체 인증 모듈 구현해줘
-$team 백엔드 API 개발 시작해줘
-```
+## Repository summary
 
-→ [GitHub](https://github.com/Yeachan-Heo/oh-my-codex)
+This repository stores the `agentskills` package used by this workspace.
+
+- `66` skills under `.agent-skills/`
+- TOON format is the default output mode
+- Flat skill layout (`.agent-skills/<skill-name>/`)
+- Orchestration + workflow tooling in `scripts/`
 
 ---
 
-## ralph — Completion Loop
+## Scripts in this project
 
-> **ralph** is a self-referential completion loop for AI CLI tools. It runs the agent on the same task across turns with fresh context each iteration, until the completion promise is detected or max iterations is reached.
-
-```text
-/ralph "<task>" [--completion-promise=DONE] [--max-iterations=5]
-```
-
-→ [Full guide: options, examples, prompt best practices](docs/ralph/README.md)
+| Script | Purpose |
+| --- | --- |
+| `scripts/pipeline-check.sh` | Pre-flight check for conductor requirements (agent binaries, git worktree, tmux, etc.) |
+| `scripts/conductor.sh` | Launch AI agents in parallel using git worktree |
+| `scripts/conductor-pr.sh` | Create branch/commit/push and open PR for each agent result |
+| `scripts/conductor-cleanup.sh` | Remove worktrees, tmux sessions, and local branches |
+| `scripts/pipeline.sh` | End-to-end pipeline: `check -> conductor -> pr` (with optional `plan`, `copilot`) |
+| `scripts/copilot-setup-workflow.sh` | Configure Copilot coding-agent workflow and required GitHub labels/secrets |
+| `scripts/copilot-assign-issue.sh` | Assign an existing issue to Copilot coding agent |
+| `scripts/vibe-kanban-start.sh` | Start Vibe Kanban UI |
+| `scripts/hooks/pre-conductor.sh` | Pre-hook example (defaults to blocking on failure) |
+| `scripts/hooks/post-conductor.sh` | Post-hook example (warn-only on failure) |
 
 ---
 
-## AI Review Tools
-
-> Three tools for visually managing, reviewing, and automating AI agent workflows.
-
-| Tool | Keyword | Description | Guide |
-|------|---------|-------------|-------|
-| **plannotator** | `planno` | Visual plan/diff review with inline annotations | [docs](docs/plannotator/README.md) |
-| **vibe-kanban** | `kanbanview` | Kanban board for AI agents — includes Conductor Pattern | [docs](docs/vibe-kanban/README.md) |
-| **copilot-coding-agent** | `copilotview` | GitHub Copilot issue-to-Draft-PR automation | [docs](docs/copilot-coding-agent/README.md) |
-
-### kanbanview — Vibe Kanban + Conductor Pattern
-
-> Visual Kanban board for managing AI coding agents. Includes Conductor Pattern (parallel git worktree execution) built-in.
+## Core command set
 
 ```bash
-# Launch Kanban UI
-npx vibe-kanban
+# 1) Pre-check
+bash scripts/pipeline-check.sh --agents=claude,codex
 
-# CLI-only pipeline (no Kanban UI)
-bash scripts/pipeline.sh my-feature --stages check,conductor,pr
-```
+# 2) Conductor workflow
+bash scripts/conductor.sh <feature-name> <base-branch> <agent-list>
+# ex) bash scripts/conductor.sh auth-refactor main claude,codex
 
-→ [Full guide: setup, conductor CLI mode, planno integration, git worktree](docs/vibe-kanban/README.md)
+bash scripts/conductor-pr.sh <feature-name> <base-branch>
+# ex) bash scripts/conductor-pr.sh auth-refactor main
 
----
+bash scripts/conductor-cleanup.sh <feature-name>
+# ex) bash scripts/conductor-cleanup.sh auth-refactor
 
-### copilotview — Copilot Coding Agent
+# 3) Full pipeline
+bash scripts/pipeline.sh <feature-name> --stages check,conductor,pr
+bash scripts/pipeline.sh <feature-name> --stages check,plan,conductor,pr --no-attach
+bash scripts/pipeline.sh <feature-name> --dry-run
 
-> Automate GitHub Copilot Coding Agent: add `ai-copilot` label to an issue → Copilot auto-assigns and creates a Draft PR.
-
-```bash
-# One-time setup
+# 4) Copilot + Kanban
 bash scripts/copilot-setup-workflow.sh
-
-# Create issue for Copilot
-gh issue create --label ai-copilot --title "Add auth" --body "..."
+bash scripts/copilot-assign-issue.sh <issue-number>
+bash scripts/vibe-kanban-start.sh --port 3001
 ```
-
-→ [Full guide: setup, GraphQL API, GitHub Actions, planno integration](docs/copilot-coding-agent/README.md)
 
 ---
 
-## Skills (67 Total)
+## Skills list (66 total)
 
-### Orchestration & Utilities (18)
-| Skill | Keyword | Description |
-|-------|---------|-------------|
-| `omc` | `omc` | oh-my-claudecode — Claude Code multi-agent orchestration (32 agents, Team/Autopilot/Ralph modes) |
-| `ohmg` | `ohmg` | Multi-agent orchestration — Gemini + Google models harness |
-| `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
-| `bmad-orchestrator` | `bmad` | **Universal** — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · works with all CLIs |
-| `ralph` | `ralph` | Self-referential completion loop — iterates across agent turns until done |
-| `planno` | `planno` | Visual plan/diff review with Plannotator — annotate, approve, or request changes |
-| `agent-browser` | `agent-browser` | Headless browser for AI agents |
-| `opencontext` | — | Persistent memory across sessions |
-| `workflow-automation` | — | Workflow automation scripts |
-| `environment-setup` | — | Dev environment setup |
-| `file-organization` | — | File & folder organization |
-| `git-submodule` | — | Git submodule management |
-| `git-workflow` | — | Git workflow management |
-| `npm-git-install` | — | Install npm packages from GitHub |
-| `skill-standardization` | — | SKILL.md standardization |
-| `conductor-pattern` | `conductor` | Conductor Pattern CLI — parallel AI agents via git worktree, compare PRs; independent of kanbanview |
-| `vibe-kanban` | `kanbanview` | Kanban board for AI agent management — includes Conductor Pattern; To Do → In Progress → Review → Done |
-| `copilot-coding-agent` | `copilotview` | GitHub Copilot issue-to-PR automation — label issue → Copilot creates Draft PR |
+### Orchestration & Workflow
+`agent-browser`, `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`, `bmad`, `bmad-orchestrator`, `changelog-maintenance`, `conductor-pattern`, `copilot-coding-agent`, `environment-setup`, `file-organization`, `git-submodule`, `git-workflow`, `npm-git-install`, `opencontext`, `oh-my-codex`, `ohmg`, `omc`, `plannotator`, `prompt-repetition`, `ralph`, `skill-standardization`, `workflow-automation`
 
-### Backend (5)
-`api-design` · `api-documentation` · `authentication-setup` · `backend-testing` · `database-schema-design`
+### API / Backend
+`api-design`, `api-documentation`, `authentication-setup`, `backend-testing`, `database-schema-design`
 
-### Frontend (7)
-`design-system` · `react-best-practices` · `responsive-design` · `state-management` · `ui-component-patterns` · `web-accessibility` · `web-design-guidelines`
+### Frontend
+`design-system`, `react-best-practices`, `responsive-design`, `state-management`, `ui-component-patterns`, `web-accessibility`, `web-design-guidelines`
 
-### Code Quality (5)
-`code-refactoring` · `code-review` · `debugging` · `performance-optimization` · `testing-strategies`
+### Code quality
+`code-refactoring`, `code-review`, `debugging`, `performance-optimization`, `testing-strategies`
 
-### Infrastructure (8)
-`deployment-automation` · `firebase-ai-logic` · `genkit` · `looker-studio-bigquery` · `monitoring-observability` · `security-best-practices` · `system-environment-setup` · `vercel-deploy`
+### Search & analysis
+`codebase-search`, `data-analysis`, `log-analysis`, `pattern-detection`
 
-### Agent Development (6)
-`agent-configuration` · `agent-evaluation` · `agentic-development-principles` · `agentic-principles` · `agentic-workflow` · `prompt-repetition`
+### Documentation
+`changelog-maintenance`, `presentation-builder`, `technical-writing`, `user-guide-writing`
 
-### Documentation (4)
-`changelog-maintenance` · `presentation-builder` · `technical-writing` · `user-guide-writing`
+### Project management
+`sprint-retrospective`, `standup-meeting`, `task-estimation`, `task-planning`
 
-### Project Management (4)
-`sprint-retrospective` · `standup-meeting` · `task-estimation` · `task-planning`
+### Infrastructure
+`deployment-automation`, `firebase-ai-logic`, `genkit`, `looker-studio-bigquery`, `monitoring-observability`, `security-best-practices`, `system-environment-setup`, `vercel-deploy`
 
-### Search & Analysis (4)
-`codebase-search` · `data-analysis` · `log-analysis` · `pattern-detection`
+### Creative
+`image-generation`, `pollinations-ai`, `video-production`
 
-### Creative Media (3)
-`image-generation` · `pollinations-ai` · `video-production`
-
-### Marketing (1)
+### Marketing
 `marketing-automation`
 
----
-
-## Community & Specialized Skills
-
-| Skill | Provider | Install |
-|-------|----------|---------|
-| `awesome-skills` | Composio | `npx skills add https://github.com/ComposioHQ/awesome-claude-skills` |
-| `ohmg` | first-fluke | `npx skills add https://github.com/supercent-io/skills-template --skill ohmg` |
-| `omc` | Yeachan-Heo | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` (Claude Code native plugin, keyword: `omc`) |
-| `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` (Codex CLI native plugin, keyword: `omx`) |
-| `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
-| `ralph` | gemini-cli-extensions | `npx skills add https://github.com/supercent-io/skills-template --skill ralph` |
-| `Playwriter` | remorses | `npx -y skills add remorses/playwriter` |
-| `agent-browser` | vercel-labs | `npx skills add vercel-labs/agent-browser` |
-
-> **100+ community skills**: [Awesome Claude Skills](https://github.com/ComposioHQ/awesome-claude-skills)
+> Full manifest + descriptions are in `.agent-skills/skills.json` and each folder’s `SKILL.md`.
 
 ---
 
-## TOON Format (Default — 95% Token Reduction)
+## Structure
 
-```
-N:skill-name          # Name
-D:Description...      # Description
-G:keyword1 keyword2   # Search keywords
-U[5]:                 # Use cases
-S[6]{n,action,details}: # Steps
-R[5]:                 # Rules
-E[2]{desc,in,out}:    # Examples
-```
-
-| Mode | File | Avg Tokens | Reduction |
-|:-----|:-----|:-----------|:----------|
-| **full** | SKILL.md | ~2,198 | — |
-| **toon** | SKILL.toon | ~112 | **94.9%** |
-
----
-
-## Architecture
-
-```
-.agent-skills/
-├── skills.json              # Skill manifest
-├── skills.toon              # Token-optimized summary
-├── skill_loader.py
-├── skill-query-handler.py
-└── [67 skill folders]       # All skills at root level
+```text
+.
+├── .agent-skills/
+│   ├── README.md
+│   ├── skill_loader.py
+│   ├── skill-query-handler.py
+│   ├── skills.json
+│   ├── skills.toon
+│   ├── [66 skill folders]
+│   └── react-best-practices/AGENTS.md
+├── docs/
+│   ├── installation.md
+│   ├── script-reference.md
+│   ├── usage-guide.md
+│   ├── bmad/
+│   ├── conductor-pattern/
+│   ├── copilot-coding-agent/
+│   ├── harness/
+│   ├── omc/
+│   ├── plannotator/
+│   ├── ralph/
+│   └── vibe-kanban/
+├── scripts/
+│   ├── hooks/
+│   └── *.sh
+├── install.sh / flatten_skills.py
+└── README.md
 ```
 
-> **v4.3.0+**: All skills flattened to root level (no category subfolders)
+---
+
+## Related docs
+
+- [Installation guide](docs/installation.md)
+- [Usage guide](docs/usage-guide.md)
+- [Script reference](docs/script-reference.md)
+- [Conductor Pattern docs](docs/conductor-pattern/README.md)
+- [Ralph loop docs](docs/ralph/README.md)
+- [Vibe Kanban docs](docs/vibe-kanban/README.md)
+- [Copilot coding agent docs](docs/copilot-coding-agent/README.md)
 
 ---
 
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-**Version**: 4.9.1 | **Updated**: 2026-02-20 | **Skills**: 67 | **Format**: TOON (Default)
-
-**Changelog v4.9.1**:
-- **Skills count**: Updated 65 → 67 (added `bmad-orchestrator`, `genkit`, `pollinations-ai`, and 4 new utility skills)
-- **planno**: Renamed skill identifier from `planview` → `planno` in install commands and tables
-- **conductor-pattern**: Removed incorrect "merged into kanbanview" label — conductor-pattern is independent of vibe-kanban
-
-**Changelog v4.9.0**:
-- **AI Review Tools**: Introduced new category grouping planno, kanbanview, copilotview
-- **plannotator** (keyword: `planno`): Renamed from `planview` keyword
-- **kanbanview** (keyword: `kanbanview`): Vibe Kanban includes Conductor Pattern (parallel git worktree) built-in; CLI via `scripts/pipeline.sh`
-- **copilotview** (keyword: `copilotview`): Renamed from `copilot` keyword for clarity
-
-**Changelog v4.8.0**:
-- **conductor-pattern**: Added — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume
-- **vibe-kanban**: Added — visual Kanban board for AI agent task management with git worktree
-- **copilot-coding-agent**: Added — GitHub issue-to-Draft-PR automation via GraphQL and GitHub Actions
-
-<!-- plannotator-temp-check -->
+**Version**: Local repository sync | **Updated**: 2026-02-20
