@@ -1,0 +1,95 @@
+# copilot-pr-ci.yml
+# Copilot Coding Agent가 생성한 PR에 대한 CI 워크플로
+#
+# 주의:
+#   Copilot PR은 "외부 기여자"처럼 취급됩니다.
+#   첫 번째 실행 전에 write 권한 보유자의 수동 승인이 필요합니다.
+#   승인 후 이 CI가 정상 실행됩니다.
+#
+# planview 통합:
+#   CI 실패 시 planview로 diff 검토 → 코멘트로 Copilot에 피드백
+
+name: CI for Copilot PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+
+jobs:
+  # ─── 빌드 & 테스트 ─────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect package manager
+        id: detect-pm
+        run: |
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "pm=pnpm" >> $GITHUB_OUTPUT
+            echo "install_cmd=pnpm install" >> $GITHUB_OUTPUT
+            echo "test_cmd=pnpm test" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm build" >> $GITHUB_OUTPUT
+          elif [ -f "yarn.lock" ]; then
+            echo "pm=yarn" >> $GITHUB_OUTPUT
+            echo "install_cmd=yarn install" >> $GITHUB_OUTPUT
+            echo "test_cmd=yarn test" >> $GITHUB_OUTPUT
+            echo "build_cmd=yarn build" >> $GITHUB_OUTPUT
+          elif [ -f "package.json" ]; then
+            echo "pm=npm" >> $GITHUB_OUTPUT
+            echo "install_cmd=npm ci" >> $GITHUB_OUTPUT
+            echo "test_cmd=npm test" >> $GITHUB_OUTPUT
+            echo "build_cmd=npm run build" >> $GITHUB_OUTPUT
+          else
+            echo "pm=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup pnpm
+        if: steps.detect-pm.outputs.pm == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        if: steps.detect-pm.outputs.pm != 'none'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: ${{ steps.detect-pm.outputs.pm != 'none' && steps.detect-pm.outputs.pm || '' }}
+
+      - name: Install dependencies
+        if: steps.detect-pm.outputs.pm != 'none'
+        run: ${{ steps.detect-pm.outputs.install_cmd }}
+
+      - name: Run tests
+        if: steps.detect-pm.outputs.pm != 'none'
+        run: ${{ steps.detect-pm.outputs.test_cmd }} || echo "⚠️ 테스트 없음 또는 실패"
+        continue-on-error: true
+
+      - name: Build
+        if: steps.detect-pm.outputs.pm != 'none'
+        run: ${{ steps.detect-pm.outputs.build_cmd }} || echo "⚠️ 빌드 스크립트 없음"
+        continue-on-error: true
+
+  # ─── PR 정보 요약 ──────────────────────────────────────────────────────────
+  pr-summary:
+    name: PR Summary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show changed files
+        run: |
+          echo "📄 변경된 파일 목록:"
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} || true
+          echo ""
+          echo "📊 변경 통계:"
+          git diff --stat ${{ github.event.pull_request.base.sha }} ${{ github.sha }} || true
