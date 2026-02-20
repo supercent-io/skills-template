@@ -1,8 +1,9 @@
 ---
 name: vibe-kanban
+keyword: kanbanview
 description: AI 코딩 에이전트를 시각적 Kanban 보드에서 관리. To Do→In Progress→Review→Done 흐름으로 병렬 에이전트 실행, git worktree 자동 격리, GitHub PR 자동 생성.
 allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [vibe-kanban, kanban, multi-agent, git-worktree, github-pr, task-management, claude-code, codex, gemini]
+tags: [vibe-kanban, kanban, kanbanview, multi-agent, git-worktree, github-pr, task-management, claude-code, codex, gemini]
 platforms: [Claude, Codex, Gemini]
 version: 1.0.0
 source: https://github.com/BloopAI/vibe-kanban

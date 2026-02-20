@@ -1,5 +1,6 @@
 ---
 name: ralph
+keyword: ralph
 description: Self-referential completion loop for AI CLI tools. Re-runs the agent on the same task across turns with fresh context each iteration, until the completion promise is detected or max iterations is reached.
 allowed-tools: [Read, Write, Bash, Grep, Glob]
 tags: [ralph, ralph-loop, loop, completion, gemini-cli, opencode, self-referential]

@@ -1,5 +1,6 @@
 ---
 name: conductor-pattern
+keyword: conductor
 description: git worktree로 Claude/Codex/Gemini 에이전트를 병렬 실행하는 Conductor 패턴. 동일 스펙을 여러 에이전트가 독립 브랜치에서 동시 구현하고 PR로 비교.
 allowed-tools: [Read, Write, Bash, Grep, Glob]
 tags: [conductor, git-worktree, parallel-agents, claude-code, codex, multi-agent, pr-comparison]
