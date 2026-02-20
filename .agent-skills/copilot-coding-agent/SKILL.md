@@ -1,9 +1,9 @@
 ---
 name: copilot-coding-agent
 keyword: copilotview
-description: GitHub Copilot Coding Agent를 통한 Issue → Draft PR 자동화. GitHub Actions와 GraphQL API를 연계해 라벨 기반으로 이슈를 Copilot에 자동 할당하고 PR을 생성. planview로 이슈 스펙 검토 후 자동 처리 지원.
+description: GitHub Copilot Coding Agent를 통한 Issue → Draft PR 자동화. GitHub Actions와 GraphQL API를 연계해 라벨 기반으로 이슈를 Copilot에 자동 할당하고 PR을 생성. planno(plannotator)로 이슈 스펙 독립 검토 지원 (선택적).
 allowed-tools: [Read, Write, Bash]
-tags: [copilotview, github-copilot, github-actions, issue-automation, draft-pr, graphql, planview, workflow-automation]
+tags: [copilotview, github-copilot, github-actions, issue-automation, draft-pr, graphql, planno, workflow-automation]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: docs.github.com/copilot/coding-agent
@@ -18,7 +18,7 @@ source: docs.github.com/copilot/coding-agent
 - GitHub Issue를 작성하면 Copilot이 자동으로 PR을 생성하게 하고 싶을 때
 - `ai-copilot` 라벨 하나로 Copilot 에이전트 작업을 트리거하고 싶을 때
 - 리팩터링, 문서화, 테스트 추가 등 백로그 작업을 Copilot에게 위임하고 싶을 때
-- planview로 이슈 스펙을 검토·승인한 뒤 Copilot이 구현하도록 자동화하고 싶을 때
+- planno로 이슈 스펙을 독립적으로 검토·승인한 뒤 Copilot이 구현하도록 자동화하고 싶을 때
 - Conductor / Vibe Kanban 패턴과 결합해 "잔업 → Copilot 위임" 파이프라인을 구축하고 싶을 때
 
 ---
@@ -57,13 +57,13 @@ bash scripts/copilot-setup-workflow.sh
 
 ---
 
-## Step 2: planview로 이슈 스펙 검토
+## Step 2: planno로 이슈 스펙 검토 (선택적 독립 단계)
 
-Copilot에게 이슈를 할당하기 전에 planview로 스펙을 검토합니다:
+Copilot에게 이슈를 할당하기 전에 planno(plannotator)로 스펙을 독립적으로 검토할 수 있습니다:
 
 ```bash
 # 에이전트가 이슈 상세 스펙 초안 작성 (Claude Code)
-# → planview로 이슈 내용 검토
+# → planno로 이슈 내용 검토 (선택적)
 
 plannotator review  # 이슈 스펙 어노테이션
 
@@ -74,7 +74,7 @@ gh issue create \
   --label "ai-copilot"
 ```
 
-planview 어노테이션 활용:
+planno 어노테이션 활용:
 - `comment`: Copilot이 참고할 구체적 지시사항 추가
 - `insert`: 누락된 acceptance criteria 삽입
 - `replace`: 모호한 스펙을 명확한 지시로 교체
@@ -142,10 +142,10 @@ Copilot이 Draft PR을 생성하면:
 3. **CI 실행**: 승인 후 `.github/workflows/copilot-pr-ci.yml` 실행
 4. **Merge**: CI 통과 후 merge
 
-### planview로 Copilot PR diff 검토
+### planno로 Copilot PR diff 검토 (선택적)
 
 ```bash
-# Copilot이 생성한 변경사항을 planview로 검토
+# Copilot이 생성한 변경사항을 planno(plannotator)로 검토
 gh pr checkout <pr-number>
 plannotator review  # diff 어노테이션
 
@@ -169,21 +169,21 @@ bash scripts/copilot-graphql-assign.sh "$ISSUE_NODE_ID"
 
 ---
 
-## planview 통합 워크플로우 전체
+## planno + Copilot 전체 워크플로우 (선택적 독립 구성)
 
 ```
 [이슈 초안 작성 (에이전트)]
     ↓
-[planview로 이슈 스펙 검토] ← Request Changes → 재작성
-    ↓ Approve
+[planno로 이슈 스펙 검토] ← Request Changes → 재작성  ← 선택적 독립 단계
+    ↓ Approve (또는 건너뜀)
 [gh issue create --label ai-copilot]
     ↓
 [GitHub Actions → Copilot 자동 할당]
     ↓
 [Copilot: 브랜치 생성 → 코드 작성 → Draft PR]
     ↓
-[planview로 PR diff 검토] ← Request Changes → Copilot 재작업
-    ↓ Approve
+[planno로 PR diff 검토] ← Request Changes → Copilot 재작업  ← 선택적 독립 단계
+    ↓ Approve (또는 건너뜀)
 [Actions 실행 승인 → CI 통과 → Merge]
 ```
 

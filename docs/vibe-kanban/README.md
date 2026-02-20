@@ -14,7 +14,7 @@ Key capabilities:
 - Parallel agent execution on independent tasks
 - Git worktree isolation per task card
 - Automatic PR creation on task completion
-- planview integration for epic-level review before card creation
+- planno (plannotator) integration for epic-level plan review before card creation (optional, independent)
 
 ---
 
@@ -111,19 +111,19 @@ Worktrees are isolated — multiple agents run concurrently without conflicting 
 
 ---
 
-### 2. Plan Review with planview
+### 2. Plan Review with planno (Optional, Independent)
 
-Before creating individual task cards, review the epic breakdown using planview:
+Before creating individual task cards, you can optionally review the epic breakdown using planno (plannotator) — a separate, independent skill:
 
 ```text
-planview로 이 기능의 구현 계획을 검토해줘
+planno로 이 기능의 구현 계획을 검토해줘
 ```
 
-planview breaks the feature spec into an ordered set of sub-tasks. Review and adjust the plan, then approve it. Approved specs become the source of truth for card creation.
+planno breaks the feature spec into an ordered set of sub-tasks. Review and adjust the plan, then approve it. Approved specs become the source of truth for card creation. planno operates independently — you can use Vibe Kanban without it.
 
 ### 3. Create Tasks
 
-Add task cards to the **To Do** column. Each card should represent a single, atomic unit of work derived from the approved planview spec.
+Add task cards to the **To Do** column. Each card should represent a single, atomic unit of work derived from the approved planno spec (or your own task breakdown if not using planno).
 
 ### 4. Assign Agents
 
@@ -147,19 +147,19 @@ Approve and merge the PR. The card advances to **Done**.
 
 ---
 
-## planview Integration
+## planno (plannotator) Integration — Optional, Independent
 
-planview is an epic-level planning step that sits before card creation. It prevents scope creep and ensures each card maps to a well-defined deliverable.
+planno is an independent skill for epic-level plan review. It is not required by Vibe Kanban — each tool operates on its own. Use planno when you want visual annotation and approval of the implementation plan before breaking it into cards.
 
-Typical flow:
+Typical flow (when using planno alongside Vibe Kanban):
 
 1. Describe the feature or epic in natural language.
-2. Ask planview to decompose it: `planview로 이 기능의 구현 계획을 검토해줘`
+2. Ask planno to decompose it: `planno로 이 기능의 구현 계획을 검토해줘`
 3. Review the generated breakdown — adjust ordering, scope, or dependencies.
 4. Approve the plan.
-5. Create one card per approved sub-task.
+5. Create one card per approved sub-task in Vibe Kanban.
 
-Skipping planview is fine for small, self-contained tasks. For larger features with multiple moving parts, planview significantly reduces rework.
+Skipping planno is perfectly fine for small, self-contained tasks. For larger features with many moving parts, planno helps prevent scope creep before card creation.
 
 ---
 
@@ -188,6 +188,6 @@ This isolation means multiple agents can work on different cards simultaneously 
 ## Tips
 
 - Keep card scope narrow. One card = one commit-worthy change. Broad cards lead to large, hard-to-review PRs.
-- Use planview for any feature touching more than two files.
+- Use planno (independent skill) for any feature touching more than two files.
 - Set `VIBE_KANBAN_REMOTE=true` only on trusted networks — it exposes the board and agent controls to all connections on the port.
 - If an agent stalls on a card, reassign to a different agent or break the card into smaller pieces.

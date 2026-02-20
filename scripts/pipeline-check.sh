@@ -165,9 +165,9 @@ fi
 
 # plannotator 체크
 if command -v plannotator &>/dev/null; then
-  check_pass "plannotator (planview 통합 가능)"
+  check_pass "plannotator (planno 독립 사용 가능)"
 else
-  check_warn "plannotator 미설치 (planview 없이 진행)"
+  check_warn "plannotator 미설치 (planno 스킬 없이 진행)"
 fi
 
 echo ""

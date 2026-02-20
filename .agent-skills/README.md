@@ -164,7 +164,7 @@ repository to the current project.
 | `git-submodule` | Git submodule management |
 | `git-workflow` | Git workflow management |
 | `kling-ai` | Kling AI video generation |
-| `planview` | Visual plan and diff review with Plannotator annotations |
+| `planno` | Visual plan and diff review with Plannotator — annotate, approve, or request changes |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows |
 | `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
 | `mcp-codex` | MCP Codex integration |

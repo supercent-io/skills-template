@@ -10,7 +10,7 @@
 #   --no-attach   : tmux 세션에 자동으로 attach하지 않음 (비대화형 실행용)
 #   --skip-hooks  : 모든 훅 우회 (CONDUCTOR_SKIP_HOOKS=1 과 동일)
 #
-# planview 통합: bash scripts/conductor-planview.sh <feature-name> 사용 권장
+# planno(plannotator) 통합: bash scripts/conductor-planno.sh <feature-name> 사용 권장
 set -euo pipefail
 
 # ─── 훅 라이브러리 로드 ───────────────────────────────────────────────────────

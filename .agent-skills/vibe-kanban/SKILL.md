@@ -1,9 +1,9 @@
 ---
 name: vibe-kanban
 keyword: kanbanview
-description: AI 코딩 에이전트를 Kanban 보드에서 통합 관리. Conductor 패턴(git worktree 병렬 실행) 내장. 태스크 카드 → git worktree 자동 생성 → 에이전트 실행 → PR 생성까지 시각적으로 관리. planview 계획 검토와 통합 지원.
+description: AI 코딩 에이전트를 Kanban 보드에서 통합 관리. Conductor 패턴(git worktree 병렬 실행) 내장. 태스크 카드 → git worktree 자동 생성 → 에이전트 실행 → PR 생성까지 시각적으로 관리. planno(plannotator)로 독립 계획 검토 지원 (선택적).
 allowed-tools: [Read, Write, Bash]
-tags: [vibe-kanban, kanbanview, kanban, ai-agents, worktree, pr-management, claude-code, codex, gemini, planview, task-management, conductor, parallel-agents]
+tags: [vibe-kanban, kanbanview, kanban, ai-agents, worktree, pr-management, claude-code, codex, gemini, planno, task-management, conductor, parallel-agents]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: BloopAI/vibe-kanban
@@ -19,7 +19,7 @@ source: BloopAI/vibe-kanban
 - 여러 AI 코딩 에이전트(Claude, Codex, Gemini)의 작업을 하나의 Kanban에서 시각적으로 관리하고 싶을 때
 - 에픽을 여러 독립 태스크로 쪼개 에이전트에게 병렬로 배분하고 싶을 때
 - To Do → In Progress → Review → Done 플로우로 AI 작업을 팀 GitHub PR 프로세스와 연결하고 싶을 때
-- planview로 태스크 스펙을 검토하고 승인된 태스크만 에이전트에게 실행시키고 싶을 때
+- planno로 태스크 스펙을 독립적으로 검토하고 승인된 태스크만 에이전트에게 실행시키고 싶을 때
 - diff/로그를 UI에서 확인하고 에이전트를 교체하거나 재시도하고 싶을 때
 
 ---
@@ -126,15 +126,15 @@ bash scripts/conductor.sh <feature-name>
 2. GitHub repo URL 또는 로컬 repo 경로 선택
 3. (옵션) GitHub OAuth로 브랜치/PR 생성 권한 연동
 
-### 2-2. 에픽 → 태스크 분해 (planview 통합)
+### 2-2. 에픽 → 태스크 분해 (planno 독립 검토 — 선택적)
 
-에픽을 독립 태스크로 쪼개기 전에 planview로 검토합니다:
+에픽을 독립 태스크로 쪼개기 전에 planno(plannotator)로 검토할 수 있습니다 (선택적):
 
 ```bash
 # 에이전트에게 에픽 분해 계획 생성 요청
 # Claude Code: Shift+Tab×2 → 계획 모드
 
-# planview로 분해 계획 검토
+# planno로 분해 계획 검토
 plannotator review
 
 # Approve 후 Vibe Kanban에서 태스크 생성
@@ -178,10 +178,10 @@ UI: 로그 실시간 스트리밍
 3. **재시도**: 결과가 만족스럽지 않으면 같은 에이전트로 재시도
 4. **에이전트 교체**: 다른 에이전트(예: Claude → Codex)로 교체 후 재실행
 
-### planview로 diff 검토
+### planno로 diff 검토 (선택적)
 
 ```bash
-# 에이전트가 생성한 diff를 planview로 상세 검토
+# 에이전트가 생성한 diff를 planno(plannotator)로 상세 검토
 plannotator review --branch vk/abc123-payment-ui
 
 # 어노테이션:
@@ -202,19 +202,19 @@ plannotator review --branch vk/abc123-payment-ui
 
 ---
 
-## planview 통합 워크플로우 전체
+## 전체 워크플로우 (planno는 선택적 독립 단계)
 
 ```
 [에픽 정의]
     ↓
-[planview로 에픽 분해 계획 검토] ← Request Changes
-    ↓ Approve
+[planno로 에픽 분해 계획 검토] ← Request Changes  ← 선택적 독립 단계
+    ↓ Approve (또는 건너뜀)
 [Vibe Kanban 태스크 카드 생성]
     ↓
 [In Progress → 에이전트 실행]
     ↓
-[planview로 diff 검토] ← Request Changes → 에이전트 재실행
-    ↓ Approve
+[planno로 diff 검토] ← Request Changes → 에이전트 재실행  ← 선택적 독립 단계
+    ↓ Approve (또는 건너뜀)
 [PR 생성] → [Done]
 ```
 

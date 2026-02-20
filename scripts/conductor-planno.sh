@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# conductor-planview.sh — planview 검토 후 Conductor 자동 실행
-# 사용법: bash scripts/conductor-planview.sh <feature-name> [base-branch] [agents]
+# conductor-planno.sh — plannotator(planno) 검토 후 Conductor 자동 실행
+# 사용법: bash scripts/conductor-planno.sh <feature-name> [base-branch] [agents]
 #
 # 동작 순서:
-#   1. plannotator가 설치되어 있으면 planview 검토 실행
+#   1. plannotator가 설치되어 있으면 planno(plannotator) 검토 실행
 #   2. 사용자 승인(Approve) 확인
 #   3. conductor.sh 실행
 set -euo pipefail
@@ -21,14 +21,14 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Conductor + planview 통합 워크플로우"
+echo "  Conductor + plannotator(planno) 통합 워크플로우"
 echo "  Feature : $FEATURE_NAME"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# ─── Step 1: planview 검토 (plannotator가 설치된 경우) ───────────────────────
+# ─── Step 1: plannotator(planno) 검토 (plannotator가 설치된 경우) ─────────────
 if command -v plannotator &>/dev/null; then
   echo ""
-  echo "📋 planview 계획 검토를 시작합니다..."
+  echo "📋 plannotator(planno) 계획 검토를 시작합니다..."
   echo "   에이전트가 생성한 구현 계획을 검토하고 Approve 또는 Request Changes를 선택하세요."
   echo ""
 

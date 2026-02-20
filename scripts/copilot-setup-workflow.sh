@@ -96,7 +96,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  ✅ 설정 완료!"
 echo ""
 echo "  사용법:"
-echo "  1. planview로 이슈 스펙 검토 후 승인"
+echo "  1. planno로 이슈 스펙 검토 후 승인 (선택적 독립 단계)"
 echo "  2. 이슈에 'ai-copilot' 라벨 부착:"
 echo "     gh issue create --label ai-copilot --title '...' --body '...'"
 echo "  3. GitHub Actions가 Copilot에 자동 할당"

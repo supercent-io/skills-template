@@ -31,10 +31,10 @@ fi
 #   fi
 # fi
 
-# ─── 예시 3: 플랜뷰 승인 여부 확인 ───────────────────────────────────────────
-# APPROVAL_FILE="$(git rev-parse --show-toplevel)/.conductor-planview-approved"
+# ─── 예시 3: planno 승인 여부 확인 (planno는 독립 선택 단계) ─────────────────
+# APPROVAL_FILE="$(git rev-parse --show-toplevel)/.conductor-planno-approved"
 # if [[ ! -f "$APPROVAL_FILE" ]]; then
-#   echo "  ❌ planview 승인이 없습니다. conductor-planview.sh를 먼저 실행하세요."
+#   echo "  ❌ planno 승인이 없습니다. conductor-planno.sh를 먼저 실행하세요."
 #   exit 1
 # fi
 

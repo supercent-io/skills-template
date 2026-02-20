@@ -23,8 +23,8 @@ Each agent works independently in its own worktree, producing a branch that can 
 # 1. Pre-flight check
 bash scripts/pipeline-check.sh --agents=claude,codex
 
-# 2. Run with planview review (recommended)
-bash scripts/conductor-planview.sh my-feature main claude,codex
+# 2. Optional: run planno review first (independent step)
+bash scripts/conductor-planno.sh my-feature main claude,codex
 
 # 3. Or run directly
 bash scripts/conductor.sh my-feature main claude,codex
@@ -97,16 +97,21 @@ CONDUCTOR_HOOKS_DIR=/path/to/hooks bash scripts/pipeline.sh ...
 
 ---
 
-## planview Integration
+## planno (plannotator) Integration — Optional
 
-planview reviews the implementation plan before running agents, catching problems before any code is written.
+planno (plannotator) is a separate, independent skill for reviewing implementation plans visually before agents start coding. It can be used alongside Conductor, but each operates independently.
 
 ```bash
-# Review plan first, then run conductor
-bash scripts/conductor-planview.sh my-feature main claude,codex
+# Optional: review plan with planno first, then run conductor
+bash scripts/conductor-planno.sh my-feature main claude,codex
+
+# Or use them independently:
+# 1. Use planno skill to review your plan:  planno로 구현 계획 검토해줘
+# 2. Then run conductor separately:
+bash scripts/conductor.sh my-feature main claude,codex
 ```
 
-Requires plannotator:
+Install plannotator (only needed for the plan review step):
 
 ```bash
 curl -fsSL https://plannotator.ai/install.sh | bash

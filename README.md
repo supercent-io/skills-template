@@ -372,8 +372,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 - **conductor-pattern**: Merged into `kanbanview` (vibe-kanban); CLI scripts (`conductor.sh`, `pipeline.sh`) remain available
 
 **Changelog v4.8.0**:
-- **conductor-pattern**: Added Conductor Pattern skill — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume, planview integration
-- **vibe-kanban**: Added Vibe Kanban skill — visual Kanban board for AI agent task management with git worktree and planview integration
+- **conductor-pattern**: Added Conductor Pattern skill — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume, planno(plannotator) optional integration
+- **vibe-kanban**: Added Vibe Kanban skill — visual Kanban board for AI agent task management with git worktree and planno(plannotator) optional integration
 - **copilot-coding-agent**: Added Copilot Coding Agent skill — GitHub issue-to-Draft-PR automation via GraphQL assignment and GitHub Actions
 
 **Changelog v4.7.0**:

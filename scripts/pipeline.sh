@@ -15,7 +15,7 @@
 #
 # 스테이지:
 #   check     : 사전 점검 (pipeline-check.sh)
-#   plan      : planview로 계획 검토 (conductor-planview.sh 호출)
+#   plan      : plannotator(planno)로 계획 검토 (conductor-planno.sh 호출)
 #   conductor : worktree 생성 및 에이전트 실행
 #   pr        : PR 생성 (conductor-pr.sh)
 #   copilot   : Copilot에 이슈 할당 (copilot-assign-issue.sh)
@@ -214,18 +214,18 @@ run_stage() {
       fi
       ;;
 
-    # ── planview 계획 검토 ─────────────────────────────────────────────────
+    # ── plannotator(planno) 계획 검토 (선택적 독립 단계) ─────────────────
     plan)
-      if [[ -f "$SCRIPT_DIR/conductor-planview.sh" ]]; then
-        if bash "$SCRIPT_DIR/conductor-planview.sh" "$FEATURE_NAME" "$BASE_BRANCH" "$AGENTS_ARG"; then
+      if [[ -f "$SCRIPT_DIR/conductor-planno.sh" ]]; then
+        if bash "$SCRIPT_DIR/conductor-planno.sh" "$FEATURE_NAME" "$BASE_BRANCH" "$AGENTS_ARG"; then
           save_state "$stage" "done"
         else
-          echo "  ⚠️  planview 검토 취소됨"
+          echo "  ⚠️  planno(plannotator) 검토 취소됨"
           save_state "$stage" "failed"
           return 1
         fi
       else
-        echo "  ⚠️  conductor-planview.sh 없음 — plan 스테이지 건너뜀"
+        echo "  ⚠️  conductor-planno.sh 없음 — plan 스테이지 건너뜀"
         save_state "$stage" "done"
       fi
       ;;

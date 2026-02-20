@@ -51,12 +51,12 @@ bash scripts/copilot-assign-issue.sh 42
 gh issue edit 42 --add-label ai-copilot
 ```
 
-## planview Integration
+## planno (plannotator) Integration — Optional, Independent
 
-Review the issue spec with planview before assigning to Copilot:
+Review the issue spec with planno (plannotator) before assigning to Copilot (optional, runs independently):
 
 ```text
-planview로 이슈 스펙을 검토하고 승인해줘
+planno로 이슈 스펙을 검토하고 승인해줘
 ```
 
 After approval, add the `ai-copilot` label to trigger automation.
