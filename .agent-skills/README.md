@@ -17,6 +17,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill api-desig
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
 npx skills add https://github.com/supercent-io/skills-template --skill ohmg
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
+npx skills add https://github.com/supercent-io/skills-template --skill planview
 ```
 
 ### oh-my-ag MCP Setup
@@ -52,7 +53,7 @@ repository to the current project.
 ├── skills.json                    # Skill manifest (auto-generated)
 ├── skills.toon                    # TOON summary (auto-generated)
 │
-├── agent-configuration/           # All 59 skill folders at root level
+├── agent-configuration/           # All 60 skill folders at root level
 ├── api-design/
 ├── authentication-setup/
 ├── ... (all skills at same level)
@@ -154,7 +155,7 @@ repository to the current project.
 |-------|-------------|
 | `marketing-automation` | Marketing automation |
 
-### Utilities (13)
+### Utilities (15)
 | Skill | Description |
 |-------|-------------|
 | `agent-browser` | Fast headless browser CLI for AI agents |
@@ -163,6 +164,7 @@ repository to the current project.
 | `git-submodule` | Git submodule management |
 | `git-workflow` | Git workflow management |
 | `kling-ai` | Kling AI video generation |
+| `planview` | Visual plan and diff review with Plannotator annotations |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows |
 | `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
 | `mcp-codex` | MCP Codex integration |

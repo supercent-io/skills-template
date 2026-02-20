@@ -1,5 +1,5 @@
 # Skills Manifest (TOON Format)
-# Count: 41
+# Count: 42
 # Fields: N=name, C=category, D=description, T=tools, P=path
 
 N:deployment-automation D:"Automate application deployment to cloud platforms and servers. Use when setting up CI/CD pipelines, deploying to Docker/Kubernetes, or configuring cloud infrastructure. Handles GitHub Actions, Docker, Kubernetes, AWS, Vercel, and deployment best practices." P:infrastructure/deployment-automation G:deployment|CI/CD|Docker|Kubernetes|AWS|GitHub-Actions|automation F:Claude|ChatGPT|Gemini

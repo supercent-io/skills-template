@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **61 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **62 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-61-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-62-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -15,7 +15,7 @@
 ## Quick Install
 
 ```bash
-# All 61 core skills
+# All 62 core skills
 npx skills add https://github.com/supercent-io/skills-template
 
 # Individual skill
@@ -333,7 +333,7 @@ ultrapilot    # Legacy (routes to Team)
 
 ---
 
-## Skills (61 Total)
+## Skills (62 Total)
 
 ### Orchestration & Utilities (15)
 | Skill | Keyword | Description |
@@ -430,7 +430,7 @@ E[2]{desc,in,out}:    # Examples
 ├── skills.toon              # Token-optimized summary
 ├── skill_loader.py
 ├── skill-query-handler.py
-└── [61 skill folders]       # All skills at root level
+└── [62 skill folders]       # All skills at root level
 ```
 
 > **v4.3.0+**: All skills flattened to root level (no category subfolders)
