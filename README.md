@@ -1,10 +1,10 @@
 # Agent Skills
 
 > Modular skill system for AI agents
-> **65 Skills** | **95% Token Reduction** | **TOON Format by Default**
+> **67 Skills** | **95% Token Reduction** | **TOON Format by Default**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-65-green.svg)](.agent-skills/)
+[![Skills](https://img.shields.io/badge/Skills-67-green.svg)](.agent-skills/)
 [![Token](https://img.shields.io/badge/Token%20Savings-95%25-success.svg)](.agent-skills/)
 
 ![Agent Skills](AgentSkills.png)
@@ -15,7 +15,7 @@
 ## Quick Install
 
 ```bash
-# All 65 core skills
+# All 67 core skills
 npx skills add https://github.com/supercent-io/skills-template
 
 # Individual skill
@@ -32,7 +32,7 @@ Use the `planno` keyword to review coding plans and diffs visually with Plannota
 
 ```bash
 # Install only plannotator skill
-npx skills add https://github.com/supercent-io/skills-template --skill planview
+npx skills add https://github.com/supercent-io/skills-template --skill planno
 ```
 
 ```text
@@ -249,7 +249,7 @@ gh issue create --label ai-copilot --title "Add auth" --body "..."
 
 ---
 
-## Skills (65 Total)
+## Skills (67 Total)
 
 ### Orchestration & Utilities (18)
 | Skill | Keyword | Description |
@@ -259,7 +259,7 @@ gh issue create --label ai-copilot --title "Add auth" --body "..."
 | `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
 | `bmad-orchestrator` | `bmad` | **Universal** — BMAD phase routing (Analysis → Planning → Solutioning → Implementation) · works with all CLIs |
 | `ralph` | `ralph` | Self-referential completion loop — iterates across agent turns until done |
-| `planview` | `planno` | Visual plan/diff review with Plannotator — annotate, approve, or request changes |
+| `planno` | `planno` | Visual plan/diff review with Plannotator — annotate, approve, or request changes |
 | `agent-browser` | `agent-browser` | Headless browser for AI agents |
 | `opencontext` | — | Persistent memory across sessions |
 | `workflow-automation` | — | Workflow automation scripts |
@@ -269,7 +269,7 @@ gh issue create --label ai-copilot --title "Add auth" --body "..."
 | `git-workflow` | — | Git workflow management |
 | `npm-git-install` | — | Install npm packages from GitHub |
 | `skill-standardization` | — | SKILL.md standardization |
-| `conductor-pattern` | `conductor` | [→kanbanview] Conductor Pattern CLI — parallel agents via git worktree; merged into kanbanview (vibe-kanban) |
+| `conductor-pattern` | `conductor` | Conductor Pattern CLI — parallel AI agents via git worktree, compare PRs; independent of kanbanview |
 | `vibe-kanban` | `kanbanview` | Kanban board for AI agent management — includes Conductor Pattern; To Do → In Progress → Review → Done |
 | `copilot-coding-agent` | `copilotview` | GitHub Copilot issue-to-PR automation — label issue → Copilot creates Draft PR |
 
@@ -349,7 +349,7 @@ E[2]{desc,in,out}:    # Examples
 ├── skills.toon              # Token-optimized summary
 ├── skill_loader.py
 ├── skill-query-handler.py
-└── [65 skill folders]       # All skills at root level
+└── [67 skill folders]       # All skills at root level
 ```
 
 > **v4.3.0+**: All skills flattened to root level (no category subfolders)
@@ -362,7 +362,12 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.9.0 | **Updated**: 2026-02-20 | **Skills**: 65 | **Format**: TOON (Default)
+**Version**: 4.9.1 | **Updated**: 2026-02-20 | **Skills**: 67 | **Format**: TOON (Default)
+
+**Changelog v4.9.1**:
+- **Skills count**: Updated 65 → 67 across all references (added `bmad-orchestrator`, `genkit`, `pollinations-ai`, and 4 new utility skills)
+- **planno**: Renamed skill identifier from `planview` → `planno` in install commands and tables
+- **conductor-pattern**: Removed incorrect "merged into kanbanview" label — conductor-pattern is independent of vibe-kanban
 
 **Changelog v4.9.0**:
 - **AI Review Tools**: Introduced new "AI Review Tools" category grouping planno, kanbanview, copilotview
