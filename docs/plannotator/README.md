@@ -1,25 +1,130 @@
-# plannotator — AI Review Tool
+# plannotator — Interactive Plan & Diff Review
 
-> Keyword: `planno` (formerly `planview`)
+> Keyword: `planno` | [GitHub](https://github.com/backnotprop/plannotator) | [plannotator.ai](https://plannotator.ai)
+>
+> Annotate and review AI coding agent plans visually, share with your team, send feedback with one click.
 
-Visual plan and diff review using Plannotator. Add inline annotations, approve or request revisions, and send structured feedback back to your coding agent.
+## What is plannotator?
 
-## Classification: AI Review Tools
+plannotator opens a **visual browser UI** when your AI coding agent finishes planning. You can annotate the plan, then either approve it (agent proceeds) or request changes (annotations sent back as structured feedback).
 
-plannotator is part of the **AI Review Tools** family alongside:
-- `kanbanview` (vibe-kanban) — Kanban-based visual agent management
-- `copilotview` (copilot-coding-agent) — GitHub Copilot PR review
+**Part of AI Review Tools family** (independent tools, each with its own keyword):
+| Tool | Keyword | Purpose |
+|------|---------|---------|
+| **plannotator** | `planno` | Visual plan/diff review |
+| **vibe-kanban** | `kanbanview` | Kanban board for AI agents |
+| **copilot-coding-agent** | `copilotview` | GitHub Copilot issue→PR |
+| **conductor-pattern** | `conductor` | Parallel git worktree agents |
 
-## Quick Start
+---
+
+## Installation
+
+### 1. Install the CLI
 
 ```bash
 # macOS / Linux / WSL
 curl -fsSL https://plannotator.ai/install.sh | bash
 
-# Claude Code plugin
+# Windows PowerShell
+irm https://plannotator.ai/install.ps1 | iex
+```
+
+### 2. Connect to Claude Code
+
+```bash
 /plugin marketplace add backnotprop/plannotator
 /plugin install plannotator@plannotator
+# IMPORTANT: Restart Claude Code after plugin install
 ```
+
+### 3. Connect to OpenCode
+
+Add to `opencode.json`:
+```json
+{
+  "plugin": ["@plannotator/opencode@latest"]
+}
+```
+
+Run install script, then restart OpenCode.
+
+---
+
+## Feature 1: Plan Review (Before Coding)
+
+When your agent finishes planning, Plannotator **automatically opens a browser UI**:
+
+### How it works
+```
+[Agent produces plan]
+        ↓
+[Plannotator UI opens in browser]
+        ↓
+[You annotate the plan]
+        ↓
+    ┌───┴───┐
+    │       │
+ Approve  Request Changes
+    │       │
+    ↓       ↓
+[Agent   [Annotations sent
+ codes]   back → Agent replans]
+```
+
+### Annotation types
+| Type | Use |
+|------|-----|
+| `delete` | Remove risky or unnecessary step |
+| `insert` | Add missing step |
+| `replace` | Revise incorrect approach |
+| `comment` | Clarify constraints or acceptance criteria |
+
+### Claude Code usage
+1. Enter plan mode: `Shift+Tab×2`
+2. Agent generates the plan
+3. Plannotator UI opens automatically via hook
+4. Annotate → Approve or Request Changes
+
+---
+
+## Feature 2: Code Review with /plannotator-review
+
+```bash
+/plannotator-review
+```
+
+Review git diffs with **inline annotations** (New: Jan 2026):
+- Select specific line numbers to annotate
+- Switch between unified and split diff views
+- Attach and annotate images (pen, arrow, circle tools)
+- Send feedback directly to the agent
+
+---
+
+## Feature 3: Auto-save & Sharing
+
+- **Obsidian integration**: Approved plans auto-save to your Obsidian vault
+- **Bear Notes integration**: Approved plans auto-save to Bear Notes
+- **Share links**: Share plan review sessions with teammates for collaboration
+
+---
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PLANNOTATOR_REMOTE` | No auto browser open (for SSH/devcontainer) | false |
+| `PLANNOTATOR_PORT` | Fixed port for the local server | auto |
+| `PLANNOTATOR_BROWSER` | Custom browser executable path | system default |
+| `PLANNOTATOR_SHARE_URL` | Custom share portal URL | plannotator.ai |
+
+```bash
+export PLANNOTATOR_REMOTE=1
+export PLANNOTATOR_PORT=9999
+```
+
+---
 
 ## Keyword Activation
 
@@ -27,55 +132,21 @@ curl -fsSL https://plannotator.ai/install.sh | bash
 planno로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
 ```
 
-## Usage: Plan Review Loop
-
-1. Ask your coding agent to produce a plan (Claude Code: Shift+Tab×2)
-2. Open plannotator review: `/plannotator-review`
-3. Annotate with clear intent:
-   - `delete`: remove risky or unnecessary step
-   - `insert`: add missing step
-   - `replace`: revise incorrect approach
-   - `comment`: clarify constraints or acceptance criteria
-4. Submit outcome:
-   - **Approve**: implementation proceeds
-   - **Request changes**: structured feedback returns to agent
-
-## Usage: Diff Review
-
-```bash
-# Review after agent creates changes
-plannotator review --branch <branch-name>
-```
-
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `PLANNOTATOR_REMOTE` | Remote mode (no auto browser open) |
-| `PLANNOTATOR_PORT` | Fixed local/forwarded port |
-| `PLANNOTATOR_BROWSER` | Custom browser path |
-| `PLANNOTATOR_SHARE_URL` | Custom share portal URL |
-
-## Integration with AI Review Tools
-
-### With kanbanview (vibe-kanban)
-```
-[Epic 분해 계획] → [planno 검토/승인] → [kanbanview 태스크 생성] → [In Progress] → [planno diff 검토] → [PR]
-```
-
-### With copilotview (copilot-coding-agent)
-```
-[이슈 스펙 작성] → [planno 검토/승인] → [copilotview로 Copilot 할당] → [Draft PR] → [planno diff 검토] → [Merge]
-```
+---
 
 ## Best Practices
 
-1. Require explicit acceptance criteria in annotations
-2. Prefer small, actionable comments over broad rewrites
-3. For diff review, annotate exact line ranges
-4. Keep one decision per annotation
+1. **Review plans before coding** — catch wrong approaches before they become wrong code
+2. **One annotation per concern** — multiple issues in one annotation confuse agents
+3. **Include acceptance criteria** — "Request Changes" should specify testable conditions
+4. **Use image annotations** for UI/UX feedback where text descriptions fall short
+5. **Specific line annotations** for diff review — don't annotate whole files when one line is the issue
+
+---
 
 ## References
 
-- [Plannotator official](https://plannotator.ai)
-- [Claude Code plugin](https://github.com/backnotprop/plannotator)
+- [GitHub: backnotprop/plannotator](https://github.com/backnotprop/plannotator)
+- [plannotator.ai](https://plannotator.ai)
+- [Installation details](https://github.com/backnotprop/plannotator/blob/main/apps/hook/README.md)
+- [Latest release: v0.8.2](https://github.com/backnotprop/plannotator/releases/tag/v0.8.2)

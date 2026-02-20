@@ -1,32 +1,32 @@
 ---
 name: plannotator
 keyword: planno
-description: Review AI agent plans and git diffs visually with Plannotator. Add inline annotations, approve or request revisions, and send structured feedback back to your coding agent.
+description: Interactive plan and diff review for AI coding agents. Visual browser UI for annotating agent plans — approve or request changes with structured feedback. Supports code review, image annotation, and auto-save to Obsidian/Bear Notes.
 allowed-tools: [Read, Bash, Write]
-tags: [planno, planview, plannotator, plan-review, code-review, claude-code, opencode]
+tags: [planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review]
 platforms: [Claude, OpenCode, Codex, Gemini]
-version: 0.1.0
+version: 0.8.2
 source: backnotprop/plannotator
 ---
 
-# plannotator — AI Review Tool (planno)
+# plannotator — Interactive Plan & Diff Review (planno)
 
-> Keyword: `planno` (formerly `planview`)
-
-Use this skill when the user asks to review a coding plan visually, annotate a diff with feedback, or run an approval loop before implementation.
+> Keyword: `planno` | Source: https://github.com/backnotprop/plannotator
+>
+> Annotate and review AI coding agent plans visually, share with your team, send feedback with one click.
+> Works with **Claude Code** and **OpenCode**.
 
 ## When to use this skill
 
-- The user wants to review or refine an AI-generated implementation plan before coding starts
-- The user asks for visual annotation of plans or diffs
-- The user asks for a feedback loop: approve or request changes from the agent
-- The user is using Claude Code or OpenCode and needs plannotator-based workflow guidance
+- You want to review an AI agent's implementation plan BEFORE it starts coding
+- You want to annotate a git diff after the agent makes changes
+- You need a feedback loop: visually mark up what to change, then send structured feedback back
+- You want to share plan reviews with teammates via a link
+- You want to auto-save approved plans to Obsidian or Bear Notes
 
 ---
 
 ## Step 1: Install Plannotator CLI
-
-Install the `plannotator` command first:
 
 ```bash
 # macOS / Linux / WSL
@@ -45,13 +45,12 @@ irm https://plannotator.ai/install.ps1 | iex
 ```bash
 /plugin marketplace add backnotprop/plannotator
 /plugin install plannotator@plannotator
+# IMPORTANT: Restart Claude Code after plugin install
 ```
-
-Restart Claude Code after plugin installation so hooks are applied.
 
 ### OpenCode
 
-Add plugin:
+Add to `opencode.json`:
 
 ```json
 {
@@ -59,52 +58,76 @@ Add plugin:
 }
 ```
 
-Install command:
+Then run the install script and restart OpenCode.
+
+---
+
+## Step 3: Plan Review (Before Coding)
+
+When your agent finishes planning (Claude Code: `Shift+Tab×2` to enter plan mode), Plannotator automatically opens a browser UI:
+
+1. **View** the agent's plan in the visual UI
+2. **Annotate** with clear intent:
+   - `delete` — remove risky or unnecessary step
+   - `insert` — add missing step
+   - `replace` — revise incorrect approach
+   - `comment` — clarify constraints or acceptance criteria
+3. **Submit** one outcome:
+   - **Approve** → agent proceeds with implementation
+   - **Request changes** → your annotations are sent back as structured feedback for replanning
+
+---
+
+## Step 4: Code Review (After Coding)
+
+Run `/plannotator-review` to review git diffs with inline annotations:
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash
+/plannotator-review
 ```
 
-Restart OpenCode after installation.
+- Select line numbers in the diff to annotate specific changes
+- Switch between unified/split diff views
+- Add image attachments with annotations (pen, arrow, circle tools)
+- Send feedback directly to the agent
 
 ---
 
-## Step 3: Run the Plan/Diff Review Loop
+## Step 5: Auto-save & Sharing (Optional)
 
-1. Ask your coding agent to produce a plan or create code changes.
-2. Open plannotator review flow (`/plannotator-review` for diff review, or hook-based plan review).
-3. Annotate with clear intent:
-   - `delete`: remove risky or unnecessary step
-   - `insert`: add missing step
-   - `replace`: revise incorrect approach
-   - `comment`: clarify constraints or acceptance criteria
-4. Submit one of two outcomes:
-   - **Approve**: implementation proceeds
-   - **Request changes**: structured feedback returns to the agent for replanning
+- **Obsidian** and **Bear Notes**: Approved plans are automatically saved
+- **Share link**: Share a plan review session with teammates for collaboration
 
 ---
 
-## Step 4: Remote/Devcontainer Configuration (Optional)
-
-For remote sessions, set fixed port and remote mode:
+## Remote/Devcontainer Configuration
 
 ```bash
-export PLANNOTATOR_REMOTE=1
-export PLANNOTATOR_PORT=9999
+export PLANNOTATOR_REMOTE=1   # No auto browser open
+export PLANNOTATOR_PORT=9999  # Fixed port
 ```
 
-Useful environment variables:
-
-- `PLANNOTATOR_REMOTE`: remote mode (no auto browser open)
-- `PLANNOTATOR_PORT`: fixed local/forwarded port
-- `PLANNOTATOR_BROWSER`: custom browser path/app
-- `PLANNOTATOR_SHARE_URL`: custom share portal URL
+| Variable | Description |
+|----------|-------------|
+| `PLANNOTATOR_REMOTE` | Remote mode (no auto browser open) |
+| `PLANNOTATOR_PORT` | Fixed local/forwarded port |
+| `PLANNOTATOR_BROWSER` | Custom browser path/app |
+| `PLANNOTATOR_SHARE_URL` | Custom share portal URL |
 
 ---
 
-## Best practices
+## Best Practices
 
-1. Require explicit acceptance criteria in annotations (test/build/lint conditions).
-2. Prefer small, actionable comments over broad rewrites.
-3. For diff review, annotate exact line ranges tied to expected behavior changes.
-4. Keep one decision per annotation to reduce ambiguity for the agent.
+1. Use plan review BEFORE the agent starts coding — catch wrong approaches early
+2. Keep each annotation tied to one concrete, actionable change
+3. Include acceptance criteria in "request changes" feedback
+4. For diff review, annotate exact line ranges tied to expected behavior changes
+5. Use image annotation for UI/UX feedback where text is insufficient
+
+---
+
+## References
+
+- [GitHub: backnotprop/plannotator](https://github.com/backnotprop/plannotator)
+- [Official site: plannotator.ai](https://plannotator.ai)
+- [Detailed install: apps/hook/README.md](https://github.com/backnotprop/plannotator/blob/main/apps/hook/README.md)

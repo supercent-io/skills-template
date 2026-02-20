@@ -1,19 +1,21 @@
 N:plannotator
-D:[planno] Review coding agent plans and diffs visually with Plannotator. Add inline annotations, approve or request changes, and return structured feedback to the agent.
-G:planno planview plannotator plan-review diff-review annotate feedback claude-code opencode 계획검토
+D:[planno] AI 코딩 에이전트 계획/diff를 시각적으로 리뷰. 브라우저 UI에서 어노테이션(delete/insert/replace/comment)→Approve 또는 Request Changes. Code Review(/plannotator-review), 이미지 어노테이션, Obsidian 자동저장 지원. Claude Code + OpenCode 통합.
+G:planno plannotator plan-review diff-review code-review annotate visual-review claude-code opencode image-annotation obsidian
 U[5]:
-  Review implementation plans before coding starts
-  Run inline diff annotation with /plannotator-review
-  Request precise replans from coding agents
-  Approve plans with explicit acceptance criteria
-  Collaborate on plan feedback with shared links
-S[5]{n,action,details}:
-  1,Install,Install plannotator CLI via install.sh or install.ps1
-  2,Connect,Install plugin in Claude Code or OpenCode and restart CLI
-  3,Review,Open plan or diff and annotate delete/insert/replace/comment
-  4,Decide,Approve to continue or request changes to send feedback
-  5,Verify,Ensure updated plan satisfies scope tests and constraints
+  에이전트 구현 계획 시각적 검토 및 어노테이션 (코딩 전)
+  /plannotator-review로 git diff 인라인 어노테이션 (코딩 후)
+  Approve → 구현 진행 / Request Changes → 구조화된 피드백 재전송
+  이미지 첨부 어노테이션 (펜/화살표/원 도구)
+  승인된 계획 Obsidian/Bear Notes 자동저장 및 팀 공유 링크
+S[4]{n,action,details}:
+  1,Install,curl -fsSL https://plannotator.ai/install.sh | bash (또는 install.ps1 for Windows)
+  2,Connect,Claude Code: /plugin marketplace add backnotprop/plannotator + /plugin install plannotator@plannotator + 재시작
+  3,Plan Review,에이전트 계획 완료 시 브라우저 UI 자동 오픈 → 어노테이션 → Approve/Request Changes
+  4,Code Review,/plannotator-review 실행 → diff 인라인 어노테이션 → 에이전트에 피드백 전송
 R[3]:
-  Keep each annotation tied to one concrete action
-  Include acceptance criteria in requested changes
-  Prefer line-specific diff comments for implementation safety
+  코딩 시작 전 planno로 계획 먼저 검토 (잘못된 접근 조기 차단)
+  어노테이션 하나당 하나의 구체적 액션 (모호함 방지)
+  Request Changes에는 반드시 acceptance criteria 포함
+E[2]{desc,in,out}:
+  "계획 검토","에이전트 계획 완료 → plannotator UI 자동 오픈","어노테이션 후 Approve → 에이전트 구현 시작 / Request Changes → 재계획"
+  "diff 리뷰","/plannotator-review","git diff 인라인 어노테이션 UI 오픈 → 피드백 에이전트 전송"
