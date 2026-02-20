@@ -95,7 +95,7 @@ ohmg 스킬을 설정하고 사용해줘. 기억해.
 **OpenCode / oh-my-opencode** — all keywords available
 ```text
 # Supports all harnesses in one session
-ralph-loop로 이 작업 완료될 때까지 반복해줘
+ralph로 이 작업 완료될 때까지 반복해줘
 ohmg 스킬로 멀티 에이전트 워크플로우 시작해줘. 기억해.
 ```
 
@@ -270,20 +270,20 @@ ultrapilot    # Legacy (routes to Team)
 
 ---
 
-## ralph-loop — Completion Loop
+## ralph — Completion Loop
 
-> **ralph-loop** enforces task completion across all CLI tools. Enabling it activates `ohmg`, `omx`, `bmad`, `playwriter`, and `agent-browser` as usable keywords in your workflow.
+> **ralph** is a self-referential completion loop for AI CLI tools. It runs the agent on the same task across turns with fresh context each iteration, until the completion promise is detected or max iterations is reached.
 
 ```text
-/ralph-loop "<task>" [--completion-promise=DONE] [--max-iterations=100]
+/ralph "<task>" [--completion-promise=DONE] [--max-iterations=5]
 ```
 
 | Keyword | Availability |
 |---------|-------------|
-| `ralph-loop` | OpenCode, oh-my-opencode, Claude Code, Gemini-CLI |
-| `ohmg` | Available when ralph-loop is active |
-| `omx` | Available when ralph-loop is active |
-| `bmad` | Available when ralph-loop is active |
+| `ralph` | Gemini-CLI, OpenCode, oh-my-opencode, Claude Code |
+| `ohmg` | Available when ralph is active |
+| `omx` | Available when ralph is active |
+| `bmad` | Available when ralph is active |
 | `playwriter` | Available for browser verification |
 | `agent-browser` | Available for headless verification |
 
@@ -298,7 +298,7 @@ ultrapilot    # Legacy (routes to Team)
 | `ohmg` | `ohmg` | Multi-agent orchestration — Gemini + Google models harness |
 | `oh-my-codex` | `omx` | Multi-agent orchestration — Codex CLI harness |
 | `bmad-orchestrator` | `bmad` | BMAD phase routing — Claude Code harness |
-| `ralph-loop` | `ralph-loop` | Completion enforcement loop for all CLIs |
+| `ralph` | `ralph` | Self-referential completion loop — iterates across agent turns until done |
 | `agent-browser` | `agent-browser` | Headless browser for AI agents |
 | `opencontext` | — | Persistent memory across sessions |
 | `workflow-automation` | — | Workflow automation scripts |
@@ -350,7 +350,7 @@ ultrapilot    # Legacy (routes to Team)
 | `oh-my-claudecode` | Yeachan-Heo | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` (Claude Code native plugin) |
 | `oh-my-codex` | Yeachan-Heo | `npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex` |
 | `bmad-orchestrator` | bmad-code-org | `npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator` |
-| `ralph-loop` | opencode/oh-my-opencode | `npx skills add https://github.com/supercent-io/skills-template --skill ralph-loop` |
+| `ralph` | gemini-cli-extensions | `npx skills add https://github.com/supercent-io/skills-template --skill ralph` |
 | `Playwriter` | remorses | `npx -y skills add remorses/playwriter` |
 | `agent-browser` | vercel-labs | `npx skills add vercel-labs/agent-browser` |
 
@@ -398,7 +398,10 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 4.4.3 | **Updated**: 2026-02-20 | **Skills**: 60 | **Format**: TOON (Default)
+**Version**: 4.5.0 | **Updated**: 2026-02-20 | **Skills**: 60 | **Format**: TOON (Default)
+
+**Changelog v4.5.0**:
+- **ralph**: Renamed `ralph-loop` → `ralph` keyword; rewrote skill based on [gemini-cli-extensions/ralph](https://github.com/gemini-cli-extensions/ralph) — self-referential loop across agent turns, fresh context per iteration, `--completion-promise` and `--max-iterations` options, `/ralph:cancel` and `/ralph:help` commands
 
 **Changelog v4.4.3**:
 - **bmad-orchestrator Guide**: Added comprehensive guide for `bmad` harness in README with quick start, core commands, and project level matrix; created detailed docs in `docs/bmad/` covering installation, workflow phases, configuration reference, and practical examples (bug fix → enterprise)
@@ -414,7 +417,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 - **Harness Engineering**: Documented ohmg→Gemini, omx→Codex, bmad→Claude as specialized harnesses
 - **Keyword System**: Added keyword aliases (`ohmg`, `omx`, `bmad`) and "기억해" activation requirement
 - **CLI Hub**: Positioned OpenCode and oh-my-opencode as universal model-agnostic hubs
-- **ralph-loop integration**: Clarified ralph-loop as gateway for ohmg/omx/bmad/playwriter/agent-browser
+- **ralph integration**: Clarified ralph as gateway for ohmg/omx/bmad/playwriter/agent-browser
 - **README**: Streamlined to list/usability format, removed verbose installation guides
 
 **Changelog v4.3.8**:

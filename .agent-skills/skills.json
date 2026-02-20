@@ -47,7 +47,8 @@
       "skill-standardization",
       "file-organization",
       "agentic-development-principles",
-      "bmad"
+      "bmad",
+      "ralph"
     ],
     "code-quality": [
       "testing-strategies",
@@ -359,15 +360,15 @@
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         },
         {
-          "command": "ralph-loop --max-iterations 50 --task \"Implement feature X\"",
+          "command": "ralph \"Implement feature X\" --max-iterations 50",
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         },
         {
-          "command": "ralph-loop --max-cost $10 --task \"Refactor module Y\"",
+          "command": "ralph \"Refactor module Y\" --completion-promise=\"DONE\"",
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         },
         {
-          "command": "ralph-loop --timeout 2h --task \"Debug issue Z\"",
+          "command": "ralph \"Debug issue Z\" --max-iterations 30",
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         },
         {
@@ -379,7 +380,7 @@
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         },
         {
-          "command": "ralph-loop --max-iterations 100 \\",
+          "command": "ralph \"Complete task\" --max-iterations 100",
           "source": "project-management/ultrathink-multiagent-workflow/SKILL.md"
         }
       ]
