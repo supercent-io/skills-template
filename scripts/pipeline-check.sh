@@ -1,208 +1,135 @@
 #!/usr/bin/env bash
 # pipeline-check.sh — Conductor 파이프라인 사전 점검
-# 사용법: bash scripts/pipeline-check.sh [--agents claude,codex,gemini]
-#
-# 필수 도구와 설정이 갖춰졌는지 확인합니다.
-# 모든 점검 통과 시 exit 0, 실패 시 exit 1
+# 사용법: bash scripts/pipeline-check.sh [--agents=claude,codex]
+
 set -euo pipefail
 
-AGENTS_ARG="${1:-claude,codex}"
-if [[ "$AGENTS_ARG" == --agents=* ]]; then
-  AGENTS_ARG="${AGENTS_ARG#--agents=}"
-elif [[ "$AGENTS_ARG" == --agents ]]; then
-  AGENTS_ARG="${2:-claude,codex}"
-fi
+# ─── 색상 ────────────────────────────────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
+ok()   { echo -e "${GREEN}✅ $*${NC}"; }
+warn() { echo -e "${YELLOW}⚠️  $*${NC}"; }
+fail() { echo -e "${RED}❌ $*${NC}"; }
 
-IFS=',' read -ra AGENTS <<< "$AGENTS_ARG"
+# ─── 인자 파싱 ───────────────────────────────────────────────────────────────
+AGENTS="claude,codex"
+for arg in "$@"; do
+  case "$arg" in
+    --agents=*) AGENTS="${arg#--agents=}" ;;
+  esac
+done
 
-PASS=0
-FAIL=0
-WARN=0
-
-check_pass() { echo "  ✅ $1"; PASS=$((PASS + 1)); }
-check_fail() { echo "  ❌ $1"; FAIL=$((FAIL + 1)); }
-check_warn() { echo "  ⚠️  $1"; WARN=$((WARN + 1)); }
-
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Conductor 파이프라인 사전 점검"
-echo "  에이전트: ${AGENTS[*]}"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "╔══════════════════════════════════════╗"
+echo "║  Conductor 사전 점검 (pipeline-check) ║"
+echo "╚══════════════════════════════════════╝"
 echo ""
 
-# ─── 필수 시스템 도구 ────────────────────────────────────────────────────────
-echo "[ 시스템 도구 ]"
+ERRORS=0
 
-if command -v git &>/dev/null; then
-  GIT_VER=$(git --version | awk '{print $3}')
-  check_pass "git $GIT_VER"
-else
-  check_fail "git (필수)"
-fi
+# ─── 필수 도구 점검 ──────────────────────────────────────────────────────────
+echo "📦 필수 도구 확인..."
+for tool in git tmux; do
+  if command -v "$tool" &>/dev/null; then
+    ok "$tool: $(command -v $tool)"
+  else
+    fail "$tool: 설치되지 않음"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
 
-if command -v tmux &>/dev/null; then
-  TMUX_VER=$(tmux -V | awk '{print $2}')
-  check_pass "tmux $TMUX_VER"
-else
-  check_fail "tmux (필수) — macOS: brew install tmux / Linux: apt install tmux"
-fi
-
+# gh CLI (선택사항이지만 PR 생성에 필요)
 if command -v gh &>/dev/null; then
-  GH_VER=$(gh --version | head -1 | awk '{print $3}')
-  check_pass "gh $GH_VER"
+  ok "gh CLI: $(gh --version | head -1)"
 else
-  check_warn "gh CLI (PR 생성에 필요) — https://cli.github.com/"
-fi
-
-if command -v jq &>/dev/null; then
-  JQ_VER=$(jq --version)
-  check_pass "jq $JQ_VER"
-else
-  check_fail "jq (필수) — macOS: brew install jq / Linux: apt install jq"
-fi
-
-if command -v curl &>/dev/null; then
-  check_pass "curl"
-else
-  check_fail "curl (필수)"
+  warn "gh CLI: 미설치 (PR 생성 기능 사용 불가)"
 fi
 
 echo ""
 
-# ─── Git 레포지토리 ──────────────────────────────────────────────────────────
-echo "[ Git 설정 ]"
-
-if git rev-parse --git-dir > /dev/null 2>&1; then
-  ROOT_DIR="$(git rev-parse --show-toplevel)"
-  check_pass "Git 레포: $ROOT_DIR"
+# ─── git 레포 확인 ───────────────────────────────────────────────────────────
+echo "📁 git 레포 확인..."
+if git rev-parse --git-dir &>/dev/null; then
+  ROOT=$(git rev-parse --show-toplevel)
+  ok "git 레포: $ROOT"
 else
-  check_fail "Git 레포지토리가 아닙니다"
-  ROOT_DIR="$(pwd)"
+  fail "현재 디렉토리가 git 레포가 아닙니다"
+  ERRORS=$((ERRORS + 1))
 fi
 
+# git worktree 지원 확인
 if git worktree list &>/dev/null; then
-  check_pass "git worktree 지원"
+  ok "git worktree: 지원됨"
 else
-  check_warn "git worktree를 지원하지 않는 버전일 수 있습니다"
-fi
-
-CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
-check_pass "현재 브랜치: $CURRENT_BRANCH"
-
-# 미커밋 변경사항 경고
-if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
-  check_warn "미커밋 변경사항 있음 — worktree 생성 전 커밋 권장"
+  fail "git worktree: 지원되지 않음 (git 2.5+ 필요)"
+  ERRORS=$((ERRORS + 1))
 fi
 
 echo ""
 
-# ─── GitHub 인증 ─────────────────────────────────────────────────────────────
-echo "[ GitHub 인증 ]"
+# ─── 에이전트 CLI 확인 ───────────────────────────────────────────────────────
+echo "🤖 에이전트 CLI 확인 (요청: $AGENTS)..."
+IFS=',' read -ra AGENT_LIST <<< "$AGENTS"
+AGENT_ERRORS=0
 
-if command -v gh &>/dev/null; then
-  if gh auth status &>/dev/null 2>&1; then
-    GH_USER=$(gh api user --jq .login 2>/dev/null || echo "unknown")
-    check_pass "gh 인증 완료 (사용자: $GH_USER)"
-  else
-    check_warn "gh 인증 필요 — 'gh auth login' 실행"
-  fi
-
-  REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")
-  if [[ -n "$REPO" ]]; then
-    check_pass "GitHub 레포: $REPO"
-  else
-    check_warn "GitHub 레포 연결 없음 (로컬에서만 실행 가능)"
-  fi
-fi
-
-echo ""
-
-# ─── 에이전트 CLI ─────────────────────────────────────────────────────────────
-echo "[ 에이전트 CLI ]"
-
-for AGENT in "${AGENTS[@]}"; do
-  case "$AGENT" in
+for agent in "${AGENT_LIST[@]}"; do
+  agent=$(echo "$agent" | tr -d ' ')
+  case "$agent" in
     claude)
       if command -v claude &>/dev/null; then
-        check_pass "claude CLI"
+        ok "claude: $(command -v claude)"
       else
-        check_warn "claude CLI 미설치 — https://claude.ai/claude-code"
+        fail "claude: Claude Code CLI 미설치 (npm install -g @anthropic-ai/claude-code)"
+        AGENT_ERRORS=$((AGENT_ERRORS + 1))
       fi
       ;;
     codex)
       if command -v codex &>/dev/null; then
-        check_pass "codex CLI"
+        ok "codex: $(command -v codex)"
       else
-        check_warn "codex CLI 미설치 — npm install -g @openai/codex"
+        warn "codex: 미설치 (conductor에서 해당 에이전트 건너뜀)"
       fi
       ;;
     gemini)
       if command -v gemini &>/dev/null; then
-        check_pass "gemini CLI"
+        ok "gemini: $(command -v gemini)"
       else
-        check_warn "gemini CLI 미설치 — https://github.com/google-gemini/gemini-cli"
+        warn "gemini: 미설치 (conductor에서 해당 에이전트 건너뜀)"
       fi
       ;;
     *)
-      if command -v "$AGENT" &>/dev/null; then
-        check_pass "$AGENT CLI"
-      else
-        check_warn "$AGENT CLI 미설치 또는 알 수 없는 에이전트"
-      fi
+      warn "알 수 없는 에이전트: $agent"
       ;;
   esac
 done
 
-echo ""
-
-# ─── Copilot 관련 (선택) ──────────────────────────────────────────────────────
-echo "[ Copilot 설정 (선택) ]"
-
-if [[ -n "${COPILOT_ASSIGN_TOKEN:-}" ]]; then
-  check_pass "COPILOT_ASSIGN_TOKEN 설정됨"
-else
-  check_warn "COPILOT_ASSIGN_TOKEN 미설정 (Copilot 할당 불가)"
-fi
-
-# plannotator 체크
-if command -v plannotator &>/dev/null; then
-  check_pass "plannotator (planno 독립 사용 가능)"
-else
-  check_warn "plannotator 미설치 (planno 스킬 없이 진행)"
+if [[ $AGENT_ERRORS -gt 0 ]]; then
+  ERRORS=$((ERRORS + AGENT_ERRORS))
 fi
 
 echo ""
 
-# ─── 파이프라인 상태 ──────────────────────────────────────────────────────────
-echo "[ 파이프라인 상태 ]"
-
-STATE_FILE="${ROOT_DIR:-$(pwd)}/.conductor-pipeline-state.json"
-if [[ -f "$STATE_FILE" ]]; then
-  LAST_STAGE=$(jq -r '.stage // "unknown"' "$STATE_FILE" 2>/dev/null || echo "unknown")
-  LAST_FEATURE=$(jq -r '.feature // "unknown"' "$STATE_FILE" 2>/dev/null || echo "unknown")
-  LAST_STATUS=$(jq -r '.status // "unknown"' "$STATE_FILE" 2>/dev/null || echo "unknown")
-  check_warn "미완료 파이프라인 발견: $LAST_FEATURE @ $LAST_STAGE ($LAST_STATUS)"
-  echo "         → 재개: bash scripts/pipeline.sh --resume"
-  echo "         → 초기화: rm $STATE_FILE"
+# ─── tmux 세션 충돌 확인 ─────────────────────────────────────────────────────
+echo "🔍 tmux 환경 확인..."
+if tmux ls &>/dev/null 2>&1; then
+  SESSION_COUNT=$(tmux ls 2>/dev/null | wc -l | tr -d ' ')
+  if [[ $SESSION_COUNT -gt 10 ]]; then
+    warn "활성 tmux 세션이 많습니다 ($SESSION_COUNT개). 불필요한 세션을 정리하세요."
+  else
+    ok "tmux 세션 수: $SESSION_COUNT개"
+  fi
 else
-  check_pass "파이프라인 상태 없음 (새로 시작)"
+  ok "tmux 서버 미실행 (정상)"
 fi
 
-# ─── 결과 요약 ────────────────────────────────────────────────────────────────
 echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  결과: 통과 $PASS / 경고 $WARN / 실패 $FAIL"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-if [[ $FAIL -gt 0 ]]; then
+# ─── 결과 ────────────────────────────────────────────────────────────────────
+if [[ $ERRORS -eq 0 ]]; then
+  echo -e "${GREEN}🎉 모든 점검 통과! conductor를 실행할 준비가 되었습니다.${NC}"
   echo ""
-  echo "❌ 필수 도구가 없습니다. 위의 실패 항목을 해결 후 다시 실행하세요."
+  echo "다음 명령어로 실행:"
+  echo "  bash scripts/conductor.sh <feature-name> main ${AGENTS}"
+  exit 0
+else
+  echo -e "${RED}💥 점검 실패: ${ERRORS}개 오류. 위 항목을 해결 후 재시도하세요.${NC}"
   exit 1
-elif [[ $WARN -gt 0 ]]; then
-  echo ""
-  echo "⚠️  경고가 있지만 기본 기능은 사용 가능합니다."
-  exit 0
-else
-  echo ""
-  echo "✅ 모든 점검 통과! 파이프라인을 시작할 수 있습니다."
-  exit 0
 fi

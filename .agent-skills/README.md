@@ -17,7 +17,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill api-desig
 npx skills add https://github.com/supercent-io/skills-template --skill code-review
 npx skills add https://github.com/supercent-io/skills-template --skill ohmg
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
-npx skills add https://github.com/supercent-io/skills-template --skill planview
+npx skills add https://github.com/supercent-io/skills-template --skill plannotator
 ```
 
 ### oh-my-ag MCP Setup

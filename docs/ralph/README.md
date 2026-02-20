@@ -6,15 +6,27 @@
 
 ---
 
-## How It Works
+## Core Concept
 
-Ralph intercepts the agent's exit via an `AfterAgent` hook, clears the context, and re-runs the same prompt — but file state persists. Each iteration starts fresh but builds on what previous iterations wrote to disk.
+The loop happens **across agent turns**, controlled by an `AfterAgent` hook.
+
+1. **You run ONCE**: `/ralph "Your task description"`
+2. **Agent works**: Performs actions (modifies files, runs tests, writes code)
+3. **Hook intercepts**: When the agent finishes its turn, the `AfterAgent` hook intercepts the exit
+4. **Loop continuation**: Hook evaluates state (max iterations, promise) and starts a new turn with the **original prompt**, clearing the previous turn's context
+5. **Repeat**: Continues autonomously until completion or user interruption
+
+### Why this works
+
+- **Stable Context & No Compaction**: Prompt never changes between iterations; previous context is cleared. The agent relies on current file state, not stale chat history.
+- **Persistent State**: The agent's work persists in files and git history across iterations.
+- **Ghost Protection**: If you interrupt and start a new task, the hook detects the prompt mismatch and silently cleans up.
 
 ```
 Iteration 1: Agent reads task → works → exits
-AfterAgent hook: clears context, re-runs same prompt
+AfterAgent hook: checks completion promise → not found → clears context, re-runs
 Iteration 2: Agent reads task + sees file changes → continues → exits
-... repeats until completion promise detected
+... repeats until <promise>DONE</promise> detected or max-iterations reached
 ```
 
 ---
@@ -22,27 +34,57 @@ Iteration 2: Agent reads task + sees file changes → continues → exits
 ## Usage
 
 ```bash
-/ralph "<task>" [--completion-promise="DONE"] [--max-iterations=10]
+/ralph "<task>" [--completion-promise="DONE"] [--max-iterations=5]
 ```
 
 ### Options
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--completion-promise` | `"DONE"` | String the agent must output to signal completion |
-| `--max-iterations` | `10` | Maximum number of iterations before stopping |
+| `--completion-promise` | `"DONE"` | Text the agent must output inside `<promise>TEXT</promise>` to stop |
+| `--max-iterations` | `5` | Maximum number of iterations before stopping |
 
-### Examples
+### Completion Promise Format
 
-```bash
-# Simple task with default completion promise
-/ralph "refactor the auth module"
+The agent signals completion by outputting the promise text wrapped in XML tags:
 
-# Custom completion signal
-/ralph "implement the API endpoints" --completion-promise="ALL ENDPOINTS IMPLEMENTED"
+```xml
+<promise>DONE</promise>
+```
 
-# Limit iterations
-/ralph "fix all TypeScript errors" --max-iterations=5 --completion-promise="0 errors"
+---
+
+## Examples
+
+### Standard run
+
+```text
+/ralph "Build a Python CLI task manager with full test coverage"
+```
+
+### Custom completion promise
+
+```text
+/ralph "Build a REST API for todos. When all CRUD endpoints work and tests pass with >80% coverage, output TASK_COMPLETE" --completion-promise="TASK_COMPLETE"
+```
+
+### Bounded iteration run
+
+```text
+/ralph "Attempt to refactor the authentication module" --max-iterations=20
+```
+
+### TDD workflow with self-correction
+
+```text
+/ralph "Implement feature X by following TDD:
+1. Write failing tests for the feature.
+2. Implement the code to make the tests pass.
+3. Run the test suite.
+4. If any tests fail, analyze the errors and debug.
+5. Refactor for clarity and efficiency.
+6. Repeat until all tests are green.
+7. When complete, output <promise>TESTS_PASSED</promise>" --completion-promise="TESTS_PASSED"
 ```
 
 ---
@@ -54,6 +96,32 @@ Iteration 2: Agent reads task + sees file changes → continues → exits
 | `/ralph "<task>"` | Start a ralph loop |
 | `/ralph:cancel` | Cancel the active loop |
 | `/ralph:help` | Show help |
+
+---
+
+## Prompt Best Practices
+
+1. **Clear Completion Criteria** — Provide a verifiable definition of "done." The `--completion-promise` is crucial.
+2. **Use Safety Hatches** — Always use `--max-iterations` as a safety net to prevent runaway loops.
+3. **Encourage Self-Correction** — Structure the prompt to guide the agent through work → verify → debug cycles.
+
+```text
+# Good: clear task + completion signal
+/ralph "Fix all TypeScript errors in src/. Run tsc and show 0 errors. Output <promise>0 errors</promise> when done." --completion-promise="0 errors"
+
+# Good: iterative implementation with verification
+/ralph "Implement all TODO items in src/api.ts. Mark each as done when complete. Output <promise>ALL TODOS COMPLETE</promise>." --completion-promise="ALL TODOS COMPLETE"
+```
+
+---
+
+## Launch Safely
+
+Always run in sandbox mode for safety. Enabling YOLO mode (`-y`) prevents constant tool execution prompts during the loop:
+
+```bash
+gemini -s -y
+```
 
 ---
 
@@ -70,27 +138,37 @@ Iteration 2: Agent reads task + sees file changes → continues → exits
 
 ---
 
-## Prompt Best Practices
-
-For best results, write prompts that:
-1. **State the task clearly** — what needs to be done
-2. **Specify the completion signal** — what output means "done"
-3. **Reference file paths** — so each iteration knows what to look at
+## Installation
 
 ```bash
-# Good: clear task + completion signal
-/ralph "Fix all TypeScript errors in src/. Run tsc and show 0 errors." --completion-promise="0 errors"
+# Skill only
+npx skills add https://github.com/supercent-io/skills-template --skill ralph
 
-# Good: iterative implementation
-/ralph "Implement all TODO items in src/api.ts. Mark each as done when complete." --completion-promise="ALL TODOS COMPLETE"
+# Gemini CLI extension (AfterAgent hook)
+gemini extensions install https://github.com/gemini-cli-extensions/ralph --auto-update
+```
+
+Required in `~/.gemini/settings.json` for Gemini CLI:
+
+```json
+{
+  "hooksConfig": { "enabled": true },
+  "context": {
+    "includeDirectories": ["~/.gemini/extensions/ralph"]
+  }
+}
 ```
 
 ---
 
-## Installation
+## Quick Reference
 
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill ralph
-```
+| Action | Command |
+|--------|---------|
+| Start loop | `/ralph "task"` |
+| Custom promise | `/ralph "task" --completion-promise=TEXT` |
+| Iteration cap | `/ralph "task" --max-iterations=N` |
+| Cancel | `/ralph:cancel` |
+| Help | `/ralph:help` |
 
 Source: [gemini-cli-extensions/ralph](https://github.com/gemini-cli-extensions/ralph)

@@ -1,26 +1,23 @@
 N:vibe-kanban
-D:[kanbanview] AI 코딩 에이전트 통합 Kanban 보드. Conductor 패턴(git worktree 병렬 실행) 내장. 태스크 카드→worktree 자동 생성→에이전트 실행→PR 생성을 시각적으로 관리. kanbanview 키워드로 실행.
-G:kanbanview vibe-kanban kanban ai-agents worktree pr-management conductor parallel-agents claude-code codex gemini task-management
-U[7]:
-  여러 AI 에이전트 작업을 Kanban 보드에서 시각적 통합 관리
-  에픽을 독립 태스크로 쪼개 에이전트별 병렬 배분 (Conductor 패턴)
-  To Do→In Progress→Review→Done 플로우로 GitHub PR 프로세스 연동
-  planno(plannotator)로 태스크 스펙 검토 후 승인된 태스크만 에이전트 실행
-  diff/로그 UI 확인 후 에이전트 교체 및 재시도
-  CLI 전용 병렬 실행: scripts/conductor.sh + scripts/pipeline.sh
-  copilotview와 연동해 완료 태스크 후속 작업 Copilot 자동 위임
-S[6]{n,action,details}:
-  1,Install,npx vibe-kanban 또는 bash scripts/vibe-kanban-start.sh
-  2,Plan Review,planno로 에픽 분해 계획 검토 및 승인 후 태스크 카드 생성
-  3,Assign Agent,카드에 Claude/Codex/Gemini 지정 후 In Progress → worktree+에이전트 자동 실행(Conductor 패턴)
-  4,CLI Mode,bash scripts/pipeline.sh <feature> --stages check,conductor,pr (Kanban UI 없이 CLI 전용)
-  5,Review Diff,Review 칼럼에서 diff/로그 확인, planno로 상세 검토, 필요시 재시도/교체
-  6,Create PR,승인 후 PR 생성 → merge 완료 시 Done 자동 이동
+D:AI 에이전트 시각적 Kanban 보드. To Do→In Progress→Review→Done 흐름. In Progress 이동 시 git worktree 자동 생성+에이전트 실행. Review에서 diff/로그 확인+재시도. GitHub PR 자동 생성.
+G:vibe-kanban kanban multi-agent git-worktree github-pr task-management claude-code codex gemini
+U[5]:
+  에픽을 독립 태스크로 분해해 병렬 에이전트 할당
+  AI 에이전트 작업 상태 시각적 추적 (To Do→Done)
+  Review 칼럼에서 브라우저 UI로 diff/로그 확인 후 재시도
+  GitHub PR 기반 팀 협업 + AI 에이전트 작업 결합
+  동일 태스크 두 에이전트 비교 (구현 비교 전략)
+S[4]{n,action,details}:
+  1,Start,npx vibe-kanban (또는 bash scripts/vibe-kanban-start.sh)
+  2,CreateTask,보드에서 카드 생성: 제목+설명+에이전트 선택
+  3,Run,카드를 In Progress로 드래그 → worktree+에이전트 자동 시작
+  4,Review,Review 칼럼에서 diff 확인 → 승인 or Retry → PR 생성
 R[4]:
-  태스크 카드 생성 전 planno로 스펙 검토 (모호한 태스크 방지)
-  한 카드 = 하나의 에이전트 + 하나의 worktree (병렬 안전)
-  Review 단계에서 planno로 diff 검토 후 PR 생성 (품질 보장)
-  copilotview와 파이프라인 구성 가능 (kanbanview→copilotview 순서)
-E[2]{desc,in,out}:
-  "UI 모드","npx vibe-kanban","브라우저에서 Kanban UI 오픈, 에이전트별 worktree 자동 관리"
-  "CLI 모드","bash scripts/pipeline.sh my-feature --stages check,conductor,pr","체크→병렬 에이전트→PR 자동 생성 파이프라인"
+  카드 범위를 좁게 유지 (1카드=1커밋 단위)
+  2개 파일 이상 변경 태스크는 planno로 계획 먼저 검토
+  VIBE_KANBAN_REMOTE=true는 신뢰 네트워크에서만
+  에이전트 스탈 시 재할당 또는 카드 분할
+E[3]{desc,in,out}:
+  "서버 시작","npx vibe-kanban","http://localhost:3000 보드 UI 오픈"
+  "에이전트 실행","카드 In Progress로 드래그","git worktree 생성 + 에이전트 CLI 실행 + 로그 스트리밍"
+  "PR 생성","Review 칼럼에서 승인","GitHub Draft PR 자동 생성 + 카드 Done 이동"

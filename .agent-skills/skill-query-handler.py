@@ -136,8 +136,8 @@ SKILL_KEYWORDS = {
         "스토리 포인트",
     ],
     "task-planning": ["plan", "planning", "task", "계획", "태스크"],
-    "planview": [
-        "planview",
+    "plannotator": [
+        "plannotator",
         "plannotator",
         "plan review",
         "review plan",
@@ -243,7 +243,7 @@ class SkillQueryHandler:
         for skill_path, keywords in SKILL_KEYWORDS.items():
             score = 0
 
-            # Strongly prefer explicit skill-name invocation (e.g. "planview ...")
+            # Strongly prefer explicit skill-name invocation (e.g. "plannotator ...")
             if re.search(
                 rf"(?<![A-Za-z0-9_-]){re.escape(skill_path.lower())}(?![A-Za-z0-9_-])",
                 query_lower,

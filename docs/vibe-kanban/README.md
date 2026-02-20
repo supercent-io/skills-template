@@ -50,15 +50,89 @@ Set variables in your shell or in a `.env` file at the project root before start
 
 ---
 
-## Workflow
+## Workflow — Task → Parallel Agents → PR
 
-### 1. Install and Start
+### 1. Start the Server
 
 ```bash
 npx vibe-kanban
+# → http://localhost:3000
 ```
 
-Opens the board at `http://localhost:3000`.
+### 2. (Optional) Review Epic Plan with planno
+
+Before creating cards, review the feature breakdown visually:
+
+```text
+planno로 이 기능의 구현 계획을 검토해줘
+```
+
+planno (plannotator) is an independent skill — usable without Vibe Kanban.
+
+### 3. Create Task Cards
+
+- Add cards to the **To Do** column
+- Set title, description, priority (High / Medium / Low)
+- Select agent: Claude / Codex / Gemini
+
+### 4. In Progress → Agent Auto-Start
+
+Drag a card to **In Progress**:
+- `vk/<hash>-<slug>` branch auto-created
+- git worktree auto-created (fully isolated per agent)
+- Agent CLI launched with log streaming
+
+### 5. Review Column
+
+- Inspect the branch diff in the web UI
+- View agent logs and "thinking process"
+- **Retry** with same agent or reassign to a different agent
+
+### 6. PR Creation & Done
+
+- Approve → GitHub PR auto-created
+- PR merge → card moves to **Done**
+- Worktree auto-cleaned up
+
+---
+
+## Use Cases
+
+### 1. Parallel Epic Decomposition
+
+```
+"Payment Flow v2" epic
+  ├── Card 1: Frontend UI    → Claude
+  ├── Card 2: Backend API    → Codex
+  └── Card 3: Integration Tests → Claude
+→ 3 cards simultaneously In Progress → parallel implementation
+```
+
+### 2. Role-Based Agent Assignment
+
+```
+Claude  → Design/domain-heavy features
+Codex   → Types/tests/refactoring
+Gemini  → Docs/Storybook writing
+```
+
+### 3. GitHub PR Team Collaboration
+
+```
+VIBE_KANBAN_REMOTE=true
+→ Team views board status
+→ Review/approve only in GitHub PR
+→ Parallel agents + traditional PR process combined
+```
+
+### 4. Implementation Comparison
+
+```
+Same task, two cards:
+  Card A → Claude (UI structure focus)
+  Card B → Codex (performance focus)
+→ Compare PRs → pick best-of-both
+```
 
 ---
 
@@ -191,3 +265,38 @@ This isolation means multiple agents can work on different cards simultaneously 
 - Use planno (independent skill) for any feature touching more than two files.
 - Set `VIBE_KANBAN_REMOTE=true` only on trusted networks — it exposes the board and agent controls to all connections on the port.
 - If an agent stalls on a card, reassign to a different agent or break the card into smaller pieces.
+
+---
+
+## Quick Reference
+
+```
+=== Start Server ===
+npx vibe-kanban                    Instant launch
+bash scripts/vibe-kanban-start.sh  Wrapper script
+http://localhost:3000              Board UI
+
+=== Environment Variables ===
+VIBE_KANBAN_PORT=3001              Change port
+VIBE_KANBAN_REMOTE=true            Allow remote access
+ANTHROPIC_API_KEY=...              Claude auth
+OPENAI_API_KEY=...                 Codex/GPT auth
+
+=== Card Flow ===
+To Do → In Progress → Review → Done
+In Progress: worktree created + agent started
+Review: diff/logs visible + Retry available
+Done: PR merged
+
+=== Worktree Cleanup ===
+git worktree prune                 Remove orphans
+git worktree list                  List all worktrees
+```
+
+---
+
+## References
+
+- [GitHub: BloopAI/vibe-kanban](https://github.com/BloopAI/vibe-kanban)
+- [Official site: vibekanban.com](https://vibekanban.online)
+- [Demo: Run Multiple Claude Code Agents Without Git Conflicts](https://www.youtube.com/watch?v=W45XJWZiwPM)

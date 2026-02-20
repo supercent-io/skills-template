@@ -20,22 +20,44 @@ plannotator opens a **visual browser UI** when your AI coding agent finishes pla
 
 ## Installation
 
+### Scripts (Recommended — Automated)
+
+All installation steps have corresponding scripts in `scripts/`. Run them directly or let the agent call them.
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/install.sh` | Install plannotator CLI |
+| `scripts/setup-hook.sh` | Configure Claude Code `ExitPlanMode` hook |
+| `scripts/check-status.sh` | Verify full installation |
+| `scripts/configure-remote.sh` | SSH / devcontainer / WSL setup |
+| `scripts/review.sh` | Launch diff review UI |
+
 ### 1. Install the CLI
 
 ```bash
-# macOS / Linux / WSL
-curl -fsSL https://plannotator.ai/install.sh | bash
+# macOS / Linux / WSL (via script)
+bash scripts/install.sh
 
-# Windows PowerShell
-irm https://plannotator.ai/install.ps1 | iex
+# Or install CLI + get plugin commands
+bash scripts/install.sh --with-plugin
+
+# Direct install
+curl -fsSL https://plannotator.ai/install.sh | bash
 ```
 
 ### 2. Connect to Claude Code
 
+**Option A — Plugin (recommended, no manual hook needed):**
 ```bash
 /plugin marketplace add backnotprop/plannotator
 /plugin install plannotator@plannotator
 # IMPORTANT: Restart Claude Code after plugin install
+```
+
+**Option B — Manual hook:**
+```bash
+bash scripts/setup-hook.sh
+# Restart Claude Code after running
 ```
 
 ### 3. Connect to OpenCode
@@ -48,6 +70,27 @@ Add to `opencode.json`:
 ```
 
 Run install script, then restart OpenCode.
+
+### 4. Verify installation
+
+```bash
+bash scripts/check-status.sh
+```
+
+Checks CLI version, hook configuration, env vars, and git repo state.
+
+### Recommended Setup Flow
+
+```
+1. bash scripts/install.sh --with-plugin
+   └─ Installs CLI + shows plugin install commands
+
+2. bash scripts/setup-hook.sh          ← skip if using plugin
+   └─ Configures automatic plan review trigger
+
+3. bash scripts/check-status.sh
+   └─ Confirm everything is ready
+```
 
 ---
 

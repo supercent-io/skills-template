@@ -7,6 +7,28 @@
 
 ---
 
+## Installation (3 Steps)
+
+**Step 1: Install plugin**
+```bash
+/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+/plugin install oh-my-claudecode
+```
+
+**Step 2: Run setup**
+```bash
+/omc:omc-setup
+```
+
+**Step 3: Build something**
+```text
+autopilot: build a REST API for managing tasks
+```
+
+> **npm alternative**: `npm install -g oh-my-claude-sisyphus`
+
+---
+
 ## Orchestration Modes
 
 | Mode | What it is | Use For |
@@ -109,5 +131,20 @@ omc config-stop-callback discord --enable --webhook <url>
 ```
 
 ---
+
+---
+
+## Quick Reference
+
+| Action | Command |
+|--------|---------|
+| Install | `/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode` |
+| Setup | `/omc:omc-setup` |
+| Team mode | `/omc:team N:executor "task"` |
+| Autopilot | `autopilot: <task>` |
+| Ralph loop | `ralph: <task>` |
+| Ultrawork | `ulw <task>` |
+| Update | `/plugin marketplace update omc && /omc:omc-setup` |
+| Debug | `/omc:omc-doctor` |
 
 → [Full documentation](https://yeachan-heo.github.io/oh-my-claudecode-website) · [GitHub](https://github.com/Yeachan-Heo/oh-my-claudecode)

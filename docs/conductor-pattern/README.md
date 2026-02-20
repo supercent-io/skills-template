@@ -155,3 +155,72 @@ bash scripts/pipeline.sh --resume
 # Or restart from a specific stage
 bash scripts/pipeline.sh my-feature --stages pr
 ```
+
+---
+
+## Use Cases
+
+### 1. Same Spec, Multiple Implementations Compared
+
+```
+UI redesign → Claude / Codex / Gemini generate 3 versions simultaneously
+→ Compare design / code quality / performance → pick the best
+```
+
+### 2. Risk Hedging
+
+```
+High-risk refactor:
+  Agent A fails → Agent B succeeds (probability-based coverage)
+  Pick the safer implementation from both results
+```
+
+### 3. Role-Based Parallel Work
+
+```
+Claude  → Domain logic / design  (feat/<name>-claude)
+Codex   → Boilerplate / tests / types  (feat/<name>-codex)
+Gemini  → Docs / Storybook  (feat/<name>-gemini)
+```
+
+### 4. Merge / PR Strategy
+
+```bash
+feat/<name>-claude  ─┐
+feat/<name>-codex   ─┼─ compare review → best-of-both → main
+feat/<name>-gemini  ─┘
+```
+
+Review options:
+1. Pick a single PR → merge
+2. cherry-pick the best parts from each
+3. Manually combine into `feat/<name>-best` branch → merge
+
+---
+
+## Quick Reference
+
+```
+=== Commands ===
+pipeline.sh <feat> --stages check,conductor,pr   Full pipeline
+conductor.sh <feat> main claude,codex            Parallel agents
+conductor-pr.sh <feat> main                      Create PRs
+conductor-cleanup.sh <feat>                      Clean up worktrees
+
+=== Worktree Management ===
+git worktree list                                List all
+git worktree remove trees/feat-<name>-<agent>   Remove one
+git worktree prune                               Clean orphans
+
+=== Hooks ===
+CONDUCTOR_SKIP_HOOKS=1   Skip all hooks
+--dry-run                Preview without executing
+--resume                 Resume from last failed stage
+```
+
+---
+
+## References
+
+- [Claude Code Docs: Run parallel sessions with Git worktrees](https://code.claude.com/docs/en/common-workflows)
+- [Parallel AI Coding with Git Worktrees](https://docs.agentinterviews.com/blog/parallel-ai-coding-with-gitworktrees/)

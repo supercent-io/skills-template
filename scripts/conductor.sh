@@ -1,207 +1,169 @@
 #!/usr/bin/env bash
-# conductor.sh — AI 에이전트 병렬 실행 오케스트레이터
+# conductor.sh — 병렬 AI 에이전트 실행 (git worktree 기반)
 # 사용법: bash scripts/conductor.sh <feature-name> [base-branch] [agents]
+#
 # 예시:
-#   bash scripts/conductor.sh user-dashboard main
-#   bash scripts/conductor.sh user-dashboard main claude,codex,gemini
-#   bash scripts/conductor.sh user-dashboard main claude,codex --no-attach
-#
-# 플래그:
-#   --no-attach   : tmux 세션에 자동으로 attach하지 않음 (비대화형 실행용)
-#   --skip-hooks  : 모든 훅 우회 (CONDUCTOR_SKIP_HOOKS=1 과 동일)
-#
-# planno(plannotator) 통합: bash scripts/conductor-planno.sh <feature-name> 사용 권장
+#   bash scripts/conductor.sh user-dashboard main claude,codex
+#   bash scripts/conductor.sh auth-refactor develop claude
+
 set -euo pipefail
 
-# ─── 훅 라이브러리 로드 ───────────────────────────────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/lib/hooks.sh" ]]; then
-  # shellcheck source=lib/hooks.sh
-  source "$SCRIPT_DIR/lib/hooks.sh"
-else
-  # 훅 라이브러리 없으면 no-op stub 사용
-  run_hook() { return 0; }
-fi
+# ─── 색상 ────────────────────────────────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+info()  { echo -e "${BLUE}ℹ️  $*${NC}"; }
+ok()    { echo -e "${GREEN}✅ $*${NC}"; }
+warn()  { echo -e "${YELLOW}⚠️  $*${NC}"; }
+error() { echo -e "${RED}❌ $*${NC}" >&2; }
 
-# ─── 인수 파싱 ────────────────────────────────────────────────────────────────
-FEATURE_NAME=""
-BASE_BRANCH="main"
-AGENTS_ARG="claude,codex"
-NO_ATTACH=false
+# ─── 인자 파싱 ───────────────────────────────────────────────────────────────
+FEATURE_RAW="${1:-}"
+BASE_BRANCH="${2:-main}"
+AGENTS_RAW="${3:-claude,codex}"
+NO_ATTACH="${NO_ATTACH:-false}"
+SKIP_HOOKS="${CONDUCTOR_SKIP_HOOKS:-0}"
 
-for arg in "$@"; do
-  case "$arg" in
-    --no-attach)   NO_ATTACH=true ;;
-    --skip-hooks)  export CONDUCTOR_SKIP_HOOKS=1 ;;
-    --*)           echo "알 수 없는 플래그: $arg" >&2; exit 1 ;;
-    *)
-      if [[ -z "$FEATURE_NAME" ]]; then
-        FEATURE_NAME="$arg"
-      elif [[ "$BASE_BRANCH" == "main" && "$arg" != *,* ]]; then
-        BASE_BRANCH="$arg"
-      else
-        AGENTS_ARG="$arg"
-      fi
-      ;;
-  esac
-done
-
-if [[ -z "$FEATURE_NAME" ]]; then
-  echo "사용법: $0 <feature-name> [base-branch] [agents] [--no-attach] [--skip-hooks]"
-  echo "  예시: $0 user-dashboard main claude,codex"
+if [[ -z "$FEATURE_RAW" ]]; then
+  error "사용법: $0 <feature-name> [base-branch] [agents]"
+  error "예시:   $0 user-dashboard main claude,codex"
   exit 1
 fi
 
-# ─── 피처 이름 검증 및 정규화 ────────────────────────────────────────────────
-# 허용: 알파벳 소문자, 숫자, 하이픈. 공백과 특수문자를 하이픈으로 변환
-FEATURE_NAME_SAFE="$(echo "$FEATURE_NAME" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9-' '-' | sed 's/^-//;s/-$//')"
-if [[ "$FEATURE_NAME_SAFE" != "$FEATURE_NAME" ]]; then
-  echo "⚠️  피처 이름 정규화: '$FEATURE_NAME' → '$FEATURE_NAME_SAFE'"
-  FEATURE_NAME="$FEATURE_NAME_SAFE"
-fi
-if [[ -z "$FEATURE_NAME" ]]; then
-  echo "❌ 유효하지 않은 피처 이름입니다. 알파벳/숫자/하이픈만 사용하세요."
-  exit 1
-fi
+# feature name 정규화 (소문자 + 하이픈만)
+FEATURE=$(echo "$FEATURE_RAW" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
 
-# 에이전트 배열로 파싱
-IFS=',' read -ra AGENTS <<< "$AGENTS_ARG"
-
-# ─── 설정 ─────────────────────────────────────────────────────────────────────
-ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+ROOT_DIR="$(git rev-parse --show-toplevel)"
 TREES_DIR="$ROOT_DIR/trees"
-SESSION="conductor-$FEATURE_NAME"
+HOOKS_DIR="${CONDUCTOR_HOOKS_DIR:-$ROOT_DIR/scripts/hooks}"
+SESSION="feat-$FEATURE"
 
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Conductor 패턴 시작"
-echo "  Feature : $FEATURE_NAME"
-echo "  Base    : $BASE_BRANCH"
-echo "  Agents  : ${AGENTS[*]}"
-echo "  Attach  : $( [[ "$NO_ATTACH" == "true" ]] && echo "아니오 (--no-attach)" || echo "예" )"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+info "Conductor 시작"
+echo "  Feature : $FEATURE"
+echo "  Branch  : $BASE_BRANCH"
+echo "  Agents  : $AGENTS_RAW"
+echo ""
 
-# ─── 전제 조건 확인 ───────────────────────────────────────────────────────────
-if ! git rev-parse --git-dir > /dev/null 2>&1; then
-  echo "❌ Git 레포지토리가 아닙니다: $ROOT_DIR"
-  exit 1
-fi
-
-if ! command -v tmux &>/dev/null; then
-  echo "❌ tmux가 설치되어 있지 않습니다. 설치 후 다시 실행하세요."
-  echo "   macOS: brew install tmux"
-  echo "   Linux: sudo apt install tmux"
-  exit 1
-fi
-
-mkdir -p "$TREES_DIR"
-
-# ─── Pre-conductor 훅 ─────────────────────────────────────────────────────────
-run_hook pre-conductor "$FEATURE_NAME" "$BASE_BRANCH" "${AGENTS[*]}"
-
-# ─── 기존 tmux 세션 정리 ──────────────────────────────────────────────────────
-if tmux has-session -t "$SESSION" 2>/dev/null; then
-  echo "⚠️  기존 tmux 세션 '$SESSION' 발견. 정리 중..."
-  tmux kill-session -t "$SESSION"
-fi
-
-# ─── 에이전트별 worktree 생성 ─────────────────────────────────────────────────
-declare -A TREE_PATHS
-declare -A BRANCH_NAMES
-
-for AGENT in "${AGENTS[@]}"; do
-  TREE_PATH="$TREES_DIR/feat-$FEATURE_NAME-$AGENT"
-  BRANCH_NAME="feat/$FEATURE_NAME-$AGENT"
-  TREE_PATHS[$AGENT]="$TREE_PATH"
-  BRANCH_NAMES[$AGENT]="$BRANCH_NAME"
-
-  if [[ -d "$TREE_PATH" ]]; then
-    echo "⚠️  worktree 이미 존재: $TREE_PATH (건너뜀)"
-  else
-    echo "📁 worktree 생성: $TREE_PATH (브랜치: $BRANCH_NAME)"
-    git worktree add "$TREE_PATH" -b "$BRANCH_NAME" "$BASE_BRANCH"
+# ─── 훅 실행 함수 ────────────────────────────────────────────────────────────
+run_hook() {
+  local hook_name="$1"
+  local hook_file="$HOOKS_DIR/${hook_name}.sh"
+  if [[ "$SKIP_HOOKS" == "1" ]]; then return 0; fi
+  if [[ -x "$hook_file" ]]; then
+    info "훅 실행: $hook_name"
+    bash "$hook_file" "$FEATURE" "$BASE_BRANCH" || return 1
   fi
-
-  # 공통 설정 파일 복사
-  for CONFIG_FILE in .env .env.local; do
-    if [[ -f "$ROOT_DIR/$CONFIG_FILE" ]]; then
-      cp "$ROOT_DIR/$CONFIG_FILE" "$TREE_PATH/$CONFIG_FILE" 2>/dev/null || true
-      echo "   📄 복사: $CONFIG_FILE → $TREE_PATH/"
-    fi
-  done
-done
-
-# ─── 에이전트 CLI 명령 결정 ────────────────────────────────────────────────────
-get_agent_cmd() {
-  local agent="$1"
-  case "$agent" in
-    claude)  echo "claude" ;;
-    codex)   echo "codex" ;;
-    gemini)  echo "gemini" ;;
-    *)       echo "bash" ;;
-  esac
+  return 0
 }
 
-# ─── tmux 세션에서 에이전트 실행 ─────────────────────────────────────────────
-echo ""
-echo "🚀 tmux 세션 '$SESSION' 시작..."
+# ─── pre-conductor 훅 ────────────────────────────────────────────────────────
+if ! run_hook "pre-conductor"; then
+  error "pre-conductor 훅 실패. 중단합니다."
+  exit 1
+fi
 
-FIRST_AGENT="${AGENTS[0]}"
-FIRST_TREE="${TREE_PATHS[$FIRST_AGENT]}"
+# ─── trees 디렉토리 준비 ─────────────────────────────────────────────────────
+mkdir -p "$TREES_DIR"
 
-# 첫 번째 에이전트로 세션 생성
-FIRST_CMD=$(get_agent_cmd "$FIRST_AGENT")
-tmux new-session -d -s "$SESSION" -c "$FIRST_TREE" \
-  -x "$(tput cols 2>/dev/null || echo 220)" \
-  -y "$(tput lines 2>/dev/null || echo 50)"
+# ─── 에이전트별 worktree 생성 ────────────────────────────────────────────────
+IFS=',' read -ra AGENT_LIST <<< "$AGENTS_RAW"
+CREATED_AGENTS=()
+TMUX_PANES=()
 
-# 첫 번째 pane에 에이전트 실행
-tmux rename-window -t "$SESSION:0" "conductor"
-tmux send-keys -t "$SESSION:0" "echo '=== [$FIRST_AGENT] worktree: $FIRST_TREE ===' && $FIRST_CMD" Enter
+for agent in "${AGENT_LIST[@]}"; do
+  agent=$(echo "$agent" | tr -d ' ')
 
-# 나머지 에이전트는 가로 분할로 추가
-for i in "${!AGENTS[@]}"; do
-  if [[ $i -eq 0 ]]; then continue; fi
-  AGENT="${AGENTS[$i]}"
-  TREE="${TREE_PATHS[$AGENT]}"
-  CMD=$(get_agent_cmd "$AGENT")
+  # 에이전트 CLI 존재 확인
+  if ! command -v "$agent" &>/dev/null; then
+    warn "$agent CLI를 찾을 수 없습니다. 건너뜁니다."
+    continue
+  fi
 
-  tmux split-window -h -t "$SESSION:0" -c "$TREE"
-  tmux send-keys -t "$SESSION:0" "echo '=== [$AGENT] worktree: $TREE ===' && $CMD" Enter
+  TREE_PATH="$TREES_DIR/feat-$FEATURE-$agent"
+  BRANCH_NAME="feat/$FEATURE-$agent"
+
+  # 기존 worktree 정리
+  if [[ -d "$TREE_PATH" ]]; then
+    warn "$TREE_PATH 이미 존재. 제거 후 재생성..."
+    git worktree remove --force "$TREE_PATH" 2>/dev/null || rm -rf "$TREE_PATH"
+  fi
+
+  # 기존 브랜치 정리
+  if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
+    git branch -D "$BRANCH_NAME" 2>/dev/null || true
+  fi
+
+  info "worktree 생성: $TREE_PATH ($BRANCH_NAME)"
+  git worktree add "$TREE_PATH" -b "$BRANCH_NAME" "$BASE_BRANCH"
+
+  # 공통 설정 파일 복사
+  for config_file in .env .env.local .nvmrc .node-version; do
+    if [[ -f "$ROOT_DIR/$config_file" ]]; then
+      cp "$ROOT_DIR/$config_file" "$TREE_PATH/$config_file" 2>/dev/null || true
+    fi
+  done
+
+  ok "worktree 준비: feat-$FEATURE-$agent"
+  CREATED_AGENTS+=("$agent")
+  TMUX_PANES+=("$TREE_PATH")
 done
 
-# 균등 레이아웃
+if [[ ${#CREATED_AGENTS[@]} -eq 0 ]]; then
+  error "실행 가능한 에이전트가 없습니다."
+  exit 1
+fi
+
+# ─── tmux 세션 생성 ──────────────────────────────────────────────────────────
+echo ""
+info "tmux 세션 생성: $SESSION"
+
+# 기존 세션 제거
+tmux kill-session -t "$SESSION" 2>/dev/null || true
+
+FIRST_AGENT="${CREATED_AGENTS[0]}"
+FIRST_TREE="${TMUX_PANES[0]}"
+
+# 첫 번째 pane
+tmux new-session -d -s "$SESSION" -c "$FIRST_TREE" \
+  -x 220 -y 50 \
+  "echo '🤖 [$FIRST_AGENT] feat/$FEATURE-$FIRST_AGENT'; echo ''; $FIRST_AGENT; exec bash"
+
+# 추가 에이전트 pane (split-window)
+for i in "${!CREATED_AGENTS[@]}"; do
+  if [[ $i -eq 0 ]]; then continue; fi
+  agent="${CREATED_AGENTS[$i]}"
+  tree="${TMUX_PANES[$i]}"
+  tmux split-window -h -t "$SESSION:0" -c "$tree" \
+    "echo '🤖 [$agent] feat/$FEATURE-$agent'; echo ''; $agent; exec bash"
+done
+
+# 레이아웃 정렬
 tmux select-layout -t "$SESSION:0" tiled
 
-# ─── Post-conductor 훅 ────────────────────────────────────────────────────────
-run_hook post-conductor "$FEATURE_NAME" "$SESSION"
+ok "tmux 세션 준비: $SESSION"
+echo ""
 
-# ─── 완료 안내 ────────────────────────────────────────────────────────────────
+# ─── post-conductor 훅 ───────────────────────────────────────────────────────
+run_hook "post-conductor" || warn "post-conductor 훅 경고 (계속 진행)"
+
+# ─── 완료 안내 ───────────────────────────────────────────────────────────────
+echo "╔═══════════════════════════════════════════════════╗"
+echo "║  Conductor 준비 완료                               ║"
+echo "╚═══════════════════════════════════════════════════╝"
 echo ""
-echo "✅ Conductor 세션 준비 완료!"
-echo ""
-echo "  Worktrees 위치:"
-for AGENT in "${AGENTS[@]}"; do
-  echo "    [$AGENT] ${TREE_PATHS[$AGENT]}"
-  echo "           브랜치: ${BRANCH_NAMES[$AGENT]}"
+echo "생성된 worktree:"
+for i in "${!CREATED_AGENTS[@]}"; do
+  agent="${CREATED_AGENTS[$i]}"
+  echo "  🌿 trees/feat-$FEATURE-$agent  →  feat/$FEATURE-$agent"
 done
 echo ""
-echo "  tmux 세션 attach:"
-echo "    tmux attach-session -t $SESSION"
+echo "에이전트 작업 완료 후:"
+echo "  bash scripts/conductor-pr.sh $FEATURE $BASE_BRANCH"
 echo ""
-echo "  작업 완료 후 PR 생성:"
-echo "    bash scripts/conductor-pr.sh $FEATURE_NAME"
-echo ""
-echo "  Worktree 정리:"
-echo "    bash scripts/conductor-cleanup.sh $FEATURE_NAME"
 
-# ─── tmux 세션 attach (대화형 모드에서만) ─────────────────────────────────────
-if [[ "$NO_ATTACH" == "false" ]]; then
-  # 터미널이 대화형인 경우에만 attach
-  if [[ -t 0 && -t 1 ]]; then
-    tmux attach-session -t "$SESSION"
-  else
-    echo ""
-    echo "  ℹ️  비대화형 환경 감지 — attach 건너뜀"
-    echo "     수동 접속: tmux attach-session -t $SESSION"
-  fi
+# tmux attach
+if [[ "$NO_ATTACH" != "true" && -t 1 ]]; then
+  echo "tmux 세션에 연결합니다... (Ctrl+B D로 분리)"
+  tmux attach-session -t "$SESSION"
+else
+  echo "tmux 세션 백그라운드 실행 중: $SESSION"
+  echo "연결하려면: tmux attach-session -t $SESSION"
 fi

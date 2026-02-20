@@ -1,206 +1,215 @@
 ---
 name: conductor-pattern
-keyword: conductor
-description: Run multiple AI agents (Claude/Codex/Gemini) in parallel using git worktree. Each agent works in an isolated sandbox branch, implements the same spec independently, then PRs are compared for the best implementation or cherry-picked for best-of-both.
-allowed-tools: [Read, Write, Bash, Glob, Grep]
-tags: [conductor, git-worktree, parallel-agents, claude-code, codex, tmux, pr-comparison, multi-agent, pipeline]
-platforms: [Claude, Codex, Gemini, OpenCode]
-version: 1.1.0
-source: claude-code-docs/worktrees
+description: git worktree로 Claude/Codex/Gemini 에이전트를 병렬 실행하는 Conductor 패턴. 동일 스펙을 여러 에이전트가 독립 브랜치에서 동시 구현하고 PR로 비교.
+allowed-tools: [Read, Write, Bash, Grep, Glob]
+tags: [conductor, git-worktree, parallel-agents, claude-code, codex, multi-agent, pr-comparison]
+platforms: [Claude, Codex, Gemini]
+version: 1.0.0
+source: https://code.claude.com/docs/en/common-workflows
 ---
 
-# Conductor Pattern — Parallel AI Agent Execution (conductor)
+# Conductor Pattern — 병렬 AI 에이전트 오케스트레이션
 
-> Keyword: `conductor`
->
-> Run Claude + Codex + Gemini simultaneously on the same feature. Each agent works in an isolated git worktree branch. PRs are created per agent for comparison — cherry-pick the best of each.
+> git worktree로 에이전트별 샌드박스를 생성하고, 동일 스펙을 Claude/Codex/Gemini가 동시에 구현한 뒤 PR로 비교합니다.
 
 ## When to use this skill
 
-- You want multiple AI agents to independently implement the same spec and compare results
-- You want to reduce risk on a high-stakes refactor (if one agent fails, others succeed)
-- You want parallel role separation: Claude for domain logic, Codex for tests/types, Gemini for docs
-- You want CLI-based pipeline automation: check → agents → PR creation
+- 동일 기능을 여러 AI 에이전트 버전으로 비교하고 싶을 때
+- 난이도 높은 리팩터링에서 리스크를 분산하고 싶을 때
+- Claude(설계) + Codex(보일러플레이트) 식의 역할 분담 병렬 작업
+- git 충돌 없이 여러 에이전트가 동시에 같은 레포에서 작업할 때
 
 ---
 
-## Architecture
+## 전제 조건
+
+```bash
+# 필수 도구
+git --version          # git worktree 지원 필요
+tmux -V                # 병렬 세션 관리
+gh --version           # PR 생성 (GitHub CLI)
+
+# 에이전트 CLI (하나 이상)
+claude --version       # Claude Code CLI
+codex --version        # OpenAI Codex CLI (선택)
+gemini --version       # Gemini CLI (선택)
+```
+
+---
+
+## 디렉토리 구조
 
 ```
 repo-root/
-  .git/                    # Shared git history
-  src/ ...
-  trees/                   # Per-agent worktrees (no conflicts)
-    feat-x-claude/         # Claude sandbox
-    feat-x-codex/          # Codex sandbox
-    feat-x-gemini/         # Gemini sandbox (optional)
-  scripts/
-    conductor.sh           # Main orchestrator
-    conductor-pr.sh        # Auto PR creation
-    pipeline.sh            # Unified pipeline runner
-    pipeline-check.sh      # Pre-flight checks
-    lib/hooks.sh           # Hook system
+├── .git/
+├── src/
+├── trees/                        ← 에이전트별 worktree
+│   ├── feat-<name>-claude/
+│   ├── feat-<name>-codex/
+│   └── feat-<name>-gemini/
+├── scripts/
+│   ├── conductor.sh              ← 메인 실행 스크립트
+│   ├── conductor-pr.sh           ← PR 생성
+│   ├── conductor-cleanup.sh      ← worktree 정리
+│   ├── pipeline.sh               ← 통합 파이프라인
+│   ├── pipeline-check.sh         ← 사전 점검
+│   └── hooks/                    ← 단계별 훅
+│       ├── pre-conductor.sh
+│       └── post-conductor.sh
+└── .conductor-pipeline-state.json
 ```
 
 ---
 
-## Quick Start
+## 빠른 시작
 
 ```bash
-# Pre-flight check
-bash scripts/pipeline-check.sh
+# 1. 사전 점검
+bash scripts/pipeline-check.sh --agents=claude,codex
 
-# Run parallel agents (Claude + Codex by default)
-bash scripts/conductor.sh my-feature main
+# 2. 에이전트 병렬 실행 (tmux 세션 자동 생성)
+bash scripts/conductor.sh user-dashboard main claude,codex
 
-# Run with 3 agents
-bash scripts/conductor.sh my-feature main claude,codex,gemini
+# 3. 에이전트 작업 완료 후 PR 생성
+bash scripts/conductor-pr.sh user-dashboard main
 
-# Unified pipeline (check → agents → PR)
-bash scripts/pipeline.sh my-feature --stages check,conductor,pr
+# 4. 정리
+bash scripts/conductor-cleanup.sh user-dashboard
 ```
 
----
-
-## Step 1: Pre-flight Check
+### 통합 파이프라인 (권장)
 
 ```bash
-bash scripts/pipeline-check.sh
-# Verifies: git, tmux, gh, jq, agent CLIs installed
+# 모든 단계 한번에
+bash scripts/pipeline.sh user-dashboard --stages check,conductor,pr
+
+# 계획 검토 포함
+bash scripts/pipeline.sh user-dashboard --stages check,plan,conductor,pr
+
+# 드라이런 (미리보기)
+bash scripts/pipeline.sh user-dashboard --dry-run
+
+# 실패 후 재개
+bash scripts/pipeline.sh --resume
 ```
 
 ---
 
-## Step 2: Run Conductor
+## 파이프라인 플래그
+
+| 플래그 | 설명 | 기본값 |
+|--------|------|--------|
+| `--base <branch>` | 베이스 브랜치 | `main` |
+| `--agents <list>` | 쉼표 구분 에이전트 | `claude,codex` |
+| `--stages <list>` | 실행 단계: check,plan,conductor,pr | 모두 |
+| `--no-attach` | tmux 비연결 (CI용) | — |
+| `--dry-run` | 실행 없이 미리보기 | — |
+| `--resume` | 마지막 실패 단계부터 재개 | — |
+
+---
+
+## Worktree 격리 원리
 
 ```bash
-bash scripts/conductor.sh <feature-name> [base-branch] [agents]
+# Claude용 worktree + 브랜치 생성
+git worktree add trees/feat-<name>-claude -b feat/<name>-claude main
+
+# Codex용 worktree + 브랜치 생성
+git worktree add trees/feat-<name>-codex  -b feat/<name>-codex  main
 ```
 
-**What it does:**
-1. Creates `trees/feat-<name>-<agent>` worktrees
-2. Creates isolated branches from base branch
-3. Copies `.env` and common config files
-4. Launches tmux sessions for each agent simultaneously
-5. Each agent works independently (no conflicts)
-
-**Flags:**
-| Flag | Description |
-|------|-------------|
-| `--no-attach` | Don't attach to tmux session (for CI/non-interactive) |
-| `--skip-hooks` | Skip all pre/post hooks |
+- `.git` 디렉토리와 히스토리는 공유
+- 각 `trees/*` 폴더의 작업 파일은 완전 분리
+- 에이전트 간 파일 충돌 불가능
 
 ---
 
-## Step 3: Review in tmux
+## 병합/PR 전략
 
 ```bash
-# Attach to tmux session
-tmux attach-session -t conductor-<feature>
-
-# Switch between agent panes
-Ctrl+b, n  # Next pane
+# 각 에이전트 결과를 PR로 비교
+feat/<name>-claude  ─┐
+feat/<name>-codex   ─┼─ 비교 리뷰 → best-of-both → main
+feat/<name>-gemini  ─┘
 ```
+
+리뷰 옵션:
+1. 단일 PR 선택 → merge
+2. cherry-pick으로 최적 조합 생성
+3. `feat/<name>-best` 브랜치 수동 조합 후 merge
 
 ---
 
-## Step 4: Auto-create PRs
+## 훅 시스템
+
+```
+scripts/hooks/
+├── pre-conductor.sh    # conductor 시작 전 (실패 시 중단)
+├── post-conductor.sh   # conductor 완료 후 (실패 시 경고만)
+├── pre-pr.sh           # PR 생성 전 (실패 시 중단)
+└── post-pr.sh          # PR 생성 후
+```
 
 ```bash
-bash scripts/conductor-pr.sh <feature-name> [base-branch]
-```
+# 훅 스킵
+CONDUCTOR_SKIP_HOOKS=1 bash scripts/pipeline.sh ...
 
-Creates a PR per agent worktree. Commits any uncommitted changes automatically.
-
----
-
-## Step 5: Compare & Merge Best
-
-```bash
-# List agent PRs
-gh pr list --search "feat: <feature>"
-
-# Create best-of-both branch
-git checkout -b feat/<feature>-best main
-git cherry-pick <claude-commit>   # UI structure
-git cherry-pick <codex-commit>    # Tests/types
-gh pr create -B main -H feat/<feature>-best
+# 커스텀 훅 디렉토리
+CONDUCTOR_HOOKS_DIR=/path/to/hooks bash scripts/pipeline.sh ...
 ```
 
 ---
 
-## Pipeline Mode
+## 대표 사용 케이스
 
-Run all stages in sequence:
-
-```bash
-bash scripts/pipeline.sh my-feature \
-  --base main \
-  --agents claude,codex \
-  --stages check,conductor,pr
+### 1. 동일 스펙 여러 구현 비교
+```
+UI 리디자인을 Claude / Codex / Gemini 3가지 버전으로 동시 생성
+→ 디자인/코드품질/성능 비교 후 최적 선택
 ```
 
-**Stages:** `check` → `plan` → `conductor` → `pr` → `copilot`
+### 2. 리스크 헷징
+```
+난이도 높은 리팩터링:
+  에이전트 A 실패 → 에이전트 B 성공 확률로 커버
+  두 결과 중 더 안전한 구현 선택
+```
 
-**Pipeline flags:**
-| Flag | Description |
-|------|-------------|
-| `--base <branch>` | Base branch (default: main) |
-| `--agents <list>` | Agent list (default: claude,codex) |
-| `--stages <list>` | Stages to run |
-| `--resume` | Resume from last failed stage |
-| `--no-attach` | No tmux attach |
-| `--dry-run` | Print stages without executing |
-| `--skip-hooks` | Skip all hooks |
-
----
-
-## Hook System
-
-Pre/post hooks run at each stage. Create scripts in `scripts/hooks/`:
-
-| Hook | Trigger | Behavior on failure |
-|------|---------|---------------------|
-| `pre-conductor.sh` | Before agent start | Abort if non-zero |
-| `post-conductor.sh` | After agents complete | Warn only |
-| `pre-pr.sh` | Before PR creation | Abort if non-zero |
-| `post-pr.sh` | After each PR created | Warn only |
-
-```bash
-# Skip all hooks
-CONDUCTOR_SKIP_HOOKS=1 bash scripts/conductor.sh my-feature
-
-# Custom hooks directory
-CONDUCTOR_HOOKS_DIR=/path/to/hooks bash scripts/conductor.sh my-feature
+### 3. 역할 분담 병렬 작업
+```
+Claude  → 도메인 로직/설계 (feat/<name>-claude)
+Codex   → 보일러플레이트/테스트/타입 (feat/<name>-codex)
+Gemini  → 문서/스토리북 (feat/<name>-gemini)
 ```
 
 ---
 
-## Use Cases
+## 참고 레퍼런스
 
-| Scenario | Agent Config | Merge Strategy |
-|----------|-------------|----------------|
-| UI redesign | Claude (UI) + Codex (styling) | UI: Claude, style: Codex |
-| API dev | Claude (business logic) + Codex (types/tests) | Logic: Claude, tests: Codex |
-| Risk hedging | Claude + Codex (same spec) | Use successful version |
-| Documentation | Gemini (docs) + Claude (examples) | Docs: Gemini, examples: Claude |
+- [Claude Code 공식: Run parallel sessions with Git worktrees](https://code.claude.com/docs/en/common-workflows)
+- [Leverage git worktree to parallelize work with Codex, Claude Code](https://dev.to/qlerebours_/leverage-git-worktree-to-parallelize-work-with-codex-claude-code-etc-1np1)
+- [Using Git Worktrees for Parallel AI Development](https://stevekinney.com/courses/ai-development/git-worktrees)
+- [Parallel AI Coding with Git Worktrees](https://docs.agentinterviews.com/blog/parallel-ai-coding-with-gitworktrees/)
+- [Claude Code & Git Worktrees 데모 영상](https://www.youtube.com/watch?v=an-Abb7b2XM)
 
 ---
 
-## Cleanup
+## Quick Reference
 
-```bash
-git worktree list
-git worktree remove trees/feat-<feature>-claude
-git worktree remove trees/feat-<feature>-codex
-git branch -d feat/<feature>-claude feat/<feature>-codex
 ```
+=== conductor 명령어 ===
+pipeline.sh <feat> --stages check,conductor,pr   전체 파이프라인
+conductor.sh <feat> main claude,codex            에이전트 병렬 실행
+conductor-pr.sh <feat> main                      PR 생성
+conductor-cleanup.sh <feat>                      worktree 정리
 
----
+=== worktree 수동 관리 ===
+git worktree list                                목록 확인
+git worktree remove trees/feat-<name>-<agent>   개별 제거
+git worktree prune                               고아 worktree 정리
 
-## References
-
-- [docs/conductor-pattern/README.md](docs/conductor-pattern/README.md)
-- [scripts/conductor.sh](scripts/conductor.sh)
-- [scripts/pipeline.sh](scripts/pipeline.sh)
-- [Claude Code: Git worktrees guide](https://docs.anthropic.com/claude-code)
+=== 훅 ===
+CONDUCTOR_SKIP_HOOKS=1   모든 훅 건너뜀
+--dry-run                실행 없이 미리보기
+--resume                 실패 단계부터 재개
+```

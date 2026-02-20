@@ -44,7 +44,7 @@
       "npm-git-install",
       "opencode-authentication",
       "opencontext",
-      "planview",
+      "plannotator",
       "project-init-memory",
       "prompt-repetition",
       "omc",
@@ -2263,41 +2263,85 @@
       ]
     },
     {
-      "name": "planview",
-      "description": "Review AI agent plans and git diffs visually with Plannotator. Add inline annotations, approve or request revisions, and send structured feedback back to your coding agent.",
+      "name": "plannotator",
+      "description": "Review AI agent plans and git diffs visually with Plannotator. Systematic scripts for install, hook setup, status check, remote config, and diff review. Annotate plans before coding, review diffs after.",
       "category": "utilities",
-      "path": "utilities/planview/SKILL.md",
+      "path": "plannotator/SKILL.md",
       "tags": [
-        "planview",
+        "plannotator",
         "plannotator",
         "plan-review",
         "diff-review",
+        "code-review",
         "claude-code",
-        "opencode"
+        "opencode",
+        "scripts"
       ],
       "platforms": [
         "Claude",
-        "ChatGPT",
-        "Gemini",
-        "Codex"
+        "OpenCode",
+        "Codex",
+        "Gemini"
       ],
       "allowed_tools": [
         "Read",
         "Bash",
         "Write"
       ],
+      "scripts": [
+        {
+          "file": "scripts/install.sh",
+          "description": "Install plannotator CLI (OS auto-detect, --with-plugin option)"
+        },
+        {
+          "file": "scripts/setup-hook.sh",
+          "description": "Add ExitPlanMode hook to ~/.claude/settings.json"
+        },
+        {
+          "file": "scripts/check-status.sh",
+          "description": "Verify CLI, hook, env vars and git state"
+        },
+        {
+          "file": "scripts/configure-remote.sh",
+          "description": "Configure SSH/devcontainer/WSL env vars interactively"
+        },
+        {
+          "file": "scripts/review.sh",
+          "description": "Launch plannotator diff review UI"
+        }
+      ],
       "commands": [
         {
-          "command": "curl -fsSL https://plannotator.ai/install.sh | bash",
-          "source": "utilities/planview/SKILL.md"
+          "command": "bash scripts/install.sh",
+          "source": "plannotator/scripts/install.sh"
+        },
+        {
+          "command": "bash scripts/install.sh --with-plugin",
+          "source": "plannotator/scripts/install.sh"
+        },
+        {
+          "command": "bash scripts/setup-hook.sh",
+          "source": "plannotator/scripts/setup-hook.sh"
+        },
+        {
+          "command": "bash scripts/check-status.sh",
+          "source": "plannotator/scripts/check-status.sh"
+        },
+        {
+          "command": "bash scripts/configure-remote.sh",
+          "source": "plannotator/scripts/configure-remote.sh"
+        },
+        {
+          "command": "bash scripts/review.sh",
+          "source": "plannotator/scripts/review.sh"
         },
         {
           "command": "/plugin marketplace add backnotprop/plannotator",
-          "source": "utilities/planview/SKILL.md"
+          "source": "plannotator/SKILL.md"
         },
         {
           "command": "/plugin install plannotator@plannotator",
-          "source": "utilities/planview/SKILL.md"
+          "source": "plannotator/SKILL.md"
         }
       ]
     },
@@ -2305,8 +2349,20 @@
       "name": "omc",
       "description": "oh-my-claudecode — Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agents, smart model routing, persistent execution loops, and real-time HUD visibility. Activate with `omc` keyword.",
       "category": "utilities",
-      "tags": ["omc", "oh-my-claudecode", "claude-code", "multi-agent", "orchestration", "team", "autopilot", "ralph", "ultrawork"],
-      "platforms": ["Claude Code"],
+      "tags": [
+        "omc",
+        "oh-my-claudecode",
+        "claude-code",
+        "multi-agent",
+        "orchestration",
+        "team",
+        "autopilot",
+        "ralph",
+        "ultrawork"
+      ],
+      "platforms": [
+        "Claude Code"
+      ],
       "keyword": "omc",
       "path": "utilities/omc/SKILL.md",
       "install_commands": [

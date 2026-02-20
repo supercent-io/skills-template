@@ -365,49 +365,19 @@ MIT License — see [LICENSE](LICENSE) for details.
 **Version**: 4.9.1 | **Updated**: 2026-02-20 | **Skills**: 67 | **Format**: TOON (Default)
 
 **Changelog v4.9.1**:
-- **Skills count**: Updated 65 → 67 across all references (added `bmad-orchestrator`, `genkit`, `pollinations-ai`, and 4 new utility skills)
+- **Skills count**: Updated 65 → 67 (added `bmad-orchestrator`, `genkit`, `pollinations-ai`, and 4 new utility skills)
 - **planno**: Renamed skill identifier from `planview` → `planno` in install commands and tables
 - **conductor-pattern**: Removed incorrect "merged into kanbanview" label — conductor-pattern is independent of vibe-kanban
 
 **Changelog v4.9.0**:
-- **AI Review Tools**: Introduced new "AI Review Tools" category grouping planno, kanbanview, copilotview
-- **plannotator** (keyword: `planno`): Renamed from `planview` keyword; same Plannotator tool, cleaner keyword
-- **kanbanview** (keyword: `kanbanview`): Vibe Kanban now includes Conductor Pattern (parallel git worktree execution) built-in; CLI mode via `scripts/pipeline.sh`
+- **AI Review Tools**: Introduced new category grouping planno, kanbanview, copilotview
+- **plannotator** (keyword: `planno`): Renamed from `planview` keyword
+- **kanbanview** (keyword: `kanbanview`): Vibe Kanban includes Conductor Pattern (parallel git worktree) built-in; CLI via `scripts/pipeline.sh`
 - **copilotview** (keyword: `copilotview`): Renamed from `copilot` keyword for clarity
-- **conductor-pattern**: Merged into `kanbanview` (vibe-kanban); CLI scripts (`conductor.sh`, `pipeline.sh`) remain available
 
 **Changelog v4.8.0**:
-- **conductor-pattern**: Added Conductor Pattern skill — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume, planno(plannotator) optional integration
-- **vibe-kanban**: Added Vibe Kanban skill — visual Kanban board for AI agent task management with git worktree and planno(plannotator) optional integration
-- **copilot-coding-agent**: Added Copilot Coding Agent skill — GitHub issue-to-Draft-PR automation via GraphQL assignment and GitHub Actions
-
-**Changelog v4.7.0**:
-- **README restructured**: Moved detailed usage docs to `docs/` — `docs/omc/`, `docs/ralph/`, `docs/harness/`; README now links to detailed guides instead of embedding them
-- **omx (oh-my-codex)**: Added dedicated Codex CLI use case section for `omx` keyword, mirroring `omc` pattern
-
-**Changelog v4.6.0**:
-- **omc skill**: Added `omc` skill (oh-my-claudecode) for Claude Code multi-agent orchestration — Team/Autopilot/Ralph/Ultrawork modes, 32 specialized agents, magic keywords; activate with `omc` keyword → `/omc:omc-setup`
-- **bmad universal**: Clarified `bmad-orchestrator` as a **universal** engineering harness — works across Claude Code, Codex CLI, Gemini-CLI, and OpenCode (not Claude Code exclusive)
-- **Claude Code 사용 케이스**: Reframed oh-my-claudecode section as Claude Code-specific use case with `omc` keyword
-
-**Changelog v4.5.0**:
-- **ralph**: Renamed `ralph-loop` → `ralph` keyword; rewrote skill based on [gemini-cli-extensions/ralph](https://github.com/gemini-cli-extensions/ralph) — self-referential loop across agent turns, fresh context per iteration, `--completion-promise` and `--max-iterations` options, `/ralph:cancel` and `/ralph:help` commands
-
-**Changelog v4.4.3**:
-- **bmad-orchestrator Guide**: Added comprehensive guide for `bmad` harness in README with quick start, core commands, and project level matrix; created detailed docs in `docs/bmad/` covering installation, workflow phases, configuration reference, and practical examples (bug fix → enterprise)
-
-**Changelog v4.4.2**:
-- **oh-my-claudecode Plugin Guide**: Added comprehensive guide for installing and using oh-my-claudecode as a Claude Code native plugin — covering installation, Team mode, orchestration modes, magic keywords, and multi-AI orchestration setup
-
-**Changelog v4.4.1**:
-- **CLI Setup Links**: Added hyperlinks for OpenCode, oh-my-opencode, Claude Code, Codex CLI, Gemini-CLI setup guides
-- **Usage Examples**: Added per-CLI keyword usage examples (bmad→Claude Code, omx→Codex, ohmg→Gemini-CLI, all→OpenCode)
-
-**Changelog v4.4.0**:
-- **Harness Engineering**: Documented ohmg→Gemini, omx→Codex, bmad→Claude as specialized harnesses
-- **Keyword System**: Added keyword aliases (`ohmg`, `omx`, `bmad`) and "기억해" activation requirement
-- **CLI Hub**: Positioned OpenCode and oh-my-opencode as universal model-agnostic hubs
-- **ralph integration**: Clarified ralph as gateway for ohmg/omx/bmad/playwriter/agent-browser
-- **README**: Streamlined to list/usability format, removed verbose installation guides
+- **conductor-pattern**: Added — parallel AI agents via git worktree, unified pipeline runner with hooks, state-based resume
+- **vibe-kanban**: Added — visual Kanban board for AI agent task management with git worktree
+- **copilot-coding-agent**: Added — GitHub issue-to-Draft-PR automation via GraphQL and GitHub Actions
 
 <!-- plannotator-temp-check -->

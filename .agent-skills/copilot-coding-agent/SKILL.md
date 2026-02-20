@@ -1,218 +1,221 @@
 ---
 name: copilot-coding-agent
-keyword: copilotview
-description: GitHub Copilot Coding Agent를 통한 Issue → Draft PR 자동화. GitHub Actions와 GraphQL API를 연계해 라벨 기반으로 이슈를 Copilot에 자동 할당하고 PR을 생성. planno(plannotator)로 이슈 스펙 독립 검토 지원 (선택적).
-allowed-tools: [Read, Write, Bash]
-tags: [copilotview, github-copilot, github-actions, issue-automation, draft-pr, graphql, planno, workflow-automation]
-platforms: [Claude, Codex, Gemini, OpenCode]
+description: GitHub Copilot Coding Agent 자동화. 이슈에 ai-copilot 라벨 부착 → GitHub Actions가 GraphQL로 Copilot에 자동 할당 → Copilot이 Draft PR 생성. 원클릭 이슈-to-PR 파이프라인.
+allowed-tools: [Read, Write, Bash, Grep, Glob]
+tags: [copilot, github-actions, issue-to-pr, draft-pr, graphql, automation, ai-agent]
+platforms: [Claude, Codex, Gemini]
 version: 1.0.0
-source: docs.github.com/copilot/coding-agent
+source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent
 ---
 
 # GitHub Copilot Coding Agent — Issue → Draft PR 자동화
 
-> Keyword: `copilotview` | Part of the **AI Review Tools** family: planno · kanbanview · copilotview
+> 이슈에 `ai-copilot` 라벨을 붙이면 GitHub Actions가 자동으로 Copilot에 할당하고,
+> Copilot이 브랜치 생성 → 코드 작성 → Draft PR 생성까지 수행합니다.
 
 ## When to use this skill
 
-- GitHub Issue를 작성하면 Copilot이 자동으로 PR을 생성하게 하고 싶을 때
-- `ai-copilot` 라벨 하나로 Copilot 에이전트 작업을 트리거하고 싶을 때
-- 리팩터링, 문서화, 테스트 추가 등 백로그 작업을 Copilot에게 위임하고 싶을 때
-- planno로 이슈 스펙을 독립적으로 검토·승인한 뒤 Copilot이 구현하도록 자동화하고 싶을 때
-- Conductor / Vibe Kanban 패턴과 결합해 "잔업 → Copilot 위임" 파이프라인을 구축하고 싶을 때
+- PM/디자이너가 이슈 작성 → 개발자 없이 Copilot이 자동 구현 시작할 때
+- 백로그 이슈(리팩터링/문서화/테스트 추가)를 Copilot에게 offload할 때
+- Vibe Kanban / Conductor로 생성된 후속 작업을 Copilot에게 위임할 때
+- Jira 등 외부 시스템 → GitHub Issue → Copilot PR 자동화 파이프라인
 
 ---
 
-## 핵심 개념
+## 전제 조건
 
-1. **Copilot은 Issue의 assignee가 되어 작동합니다**
-   - Issue 오른쪽 패널에서 Copilot을 assignee로 지정 (UI 방식)
-   - 또는 GraphQL API로 자동 assign (Actions 방식)
-
-2. **Copilot이 만드는 PR은 외부 기여자처럼 취급됩니다**
-   - Draft PR로 생성됨
-   - Actions 워크플로는 사람이 "신뢰" 승인 후 실행
-   - Write 권한 있는 사람만 Copilot에게 이슈 할당 가능
-
-3. **필요 플랜**: Copilot Pro, Pro+, Business, Enterprise
+- **GitHub 플랜**: Copilot Pro+, Business, 또는 Enterprise
+- **Copilot Coding Agent 활성화**: 레포 설정에서 활성화 필요
+- **gh CLI**: 인증 완료
+- **PAT**: `repo` scope를 가진 Personal Access Token
 
 ---
 
-## Step 1: 사전 준비
+## 최초 1회 셋업
 
 ```bash
-# 1. GitHub Personal Access Token 생성
-# → GitHub Settings > Developer settings > Personal access tokens
-# → Scopes: repo (full), read:org (필요 시)
-
-# 2. 레포 시크릿에 등록
-gh secret set COPILOT_ASSIGN_TOKEN --body "<YOUR_TOKEN>"
-
-# 3. Copilot coding agent 활성화 확인
-# → GitHub Settings > Copilot > Coding agent 활성화
-
-# 4. 설정 스크립트 실행
+# 원클릭 셋업 (토큰 등록 + 워크플로 배포 + 라벨 생성)
 bash scripts/copilot-setup-workflow.sh
 ```
 
+이 스크립트가 수행하는 작업:
+1. `COPILOT_ASSIGN_TOKEN` 레포 시크릿 등록
+2. `.github/workflows/assign-to-copilot.yml` 배포
+3. `ai-copilot` 라벨 생성
+
 ---
 
-## Step 2: planno로 이슈 스펙 검토 (선택적 독립 단계)
+## 사용 방법
 
-Copilot에게 이슈를 할당하기 전에 planno(plannotator)로 스펙을 독립적으로 검토할 수 있습니다:
+### 방법 1: GitHub Actions 자동 (권장)
 
 ```bash
-# 에이전트가 이슈 상세 스펙 초안 작성 (Claude Code)
-# → planno로 이슈 내용 검토 (선택적)
-
-plannotator review  # 이슈 스펙 어노테이션
-
-# Approve 후 이슈 생성 및 라벨 부착
+# 이슈 생성 + ai-copilot 라벨 → Copilot 자동 할당
 gh issue create \
-  --title "feat: 결제 UI 리팩터링" \
-  --body "$(cat issue-spec.md)" \
-  --label "ai-copilot"
+  --label ai-copilot \
+  --title "Add user authentication" \
+  --body "Implement JWT-based auth with refresh tokens. Include login, logout, refresh endpoints."
 ```
 
-planno 어노테이션 활용:
-- `comment`: Copilot이 참고할 구체적 지시사항 추가
-- `insert`: 누락된 acceptance criteria 삽입
-- `replace`: 모호한 스펙을 명확한 지시로 교체
-
----
-
-## Step 3: GitHub Actions 워크플로 설정
-
-`.github/workflows/assign-to-copilot.yml` 파일을 배포합니다:
+### 방법 2: 기존 이슈에 라벨 추가
 
 ```bash
-# 워크플로 파일 복사
-cp .github/workflows/assign-to-copilot.yml .github/workflows/
-
-# 커밋 & 푸시
-git add .github/workflows/assign-to-copilot.yml
-git commit -m "ci: add Copilot auto-assign workflow"
-git push
+# 이슈 번호 42에 라벨 추가 → Actions 트리거
+gh issue edit 42 --add-label ai-copilot
 ```
 
-### 워크플로 동작 방식
-
-```
-이슈에 'ai-copilot' 라벨 부착
-         ↓
-GitHub Actions 트리거 (issues: opened/labeled)
-         ↓
-GraphQL: Copilot bot ID 조회
-         ↓
-GraphQL: replaceActorsForAssignable → Copilot을 assignee로 설정
-         ↓
-Copilot Coding Agent 활성화
-         ↓
-브랜치 생성 → 코드 수정 → Draft PR 생성
-         ↓
-사람이 PR 리뷰 → 승인 → CI 실행 → Merge
-```
-
----
-
-## Step 4: 이슈 라벨링으로 트리거
+### 방법 3: 스크립트로 직접 할당
 
 ```bash
-# 새 이슈 생성과 동시에 라벨 부착
-gh issue create \
-  --title "refactor: auth 모듈 JWT 마이그레이션" \
-  --body "상세 설명..." \
-  --label "ai-copilot"
-
-# 기존 이슈에 라벨 추가
-gh issue edit <issue-number> --add-label "ai-copilot"
+export COPILOT_ASSIGN_TOKEN=<your-pat>
+bash scripts/copilot-assign-issue.sh 42
 ```
 
 ---
 
-## Step 5: Copilot PR 검토 및 승인
+## 동작 원리 (기술)
 
-Copilot이 Draft PR을 생성하면:
+```
+이슈 생성/라벨링
+    ↓
+GitHub Actions 트리거 (assign-to-copilot.yml)
+    ↓
+GraphQL로 Copilot bot ID 조회
+    ↓
+replaceActorsForAssignable → Copilot을 assignee로 설정
+    ↓
+Copilot Coding Agent 이슈 처리 시작
+    ↓
+브랜치 생성 → 코드 작성 → Draft PR 오픈
+    ↓
+당신을 PR 리뷰어로 자동 지정
+```
 
-1. **PR 확인**: `gh pr list --search "copilot"`
-2. **첫 번째 승인**: Copilot PR은 처음에 Actions 실행이 보류됨
-   ```bash
-   gh pr review <pr-number> --approve  # 또는 UI에서 "Approve and run"
-   ```
-3. **CI 실행**: 승인 후 `.github/workflows/copilot-pr-ci.yml` 실행
-4. **Merge**: CI 통과 후 merge
+필수 GraphQL 헤더:
+```
+GraphQL-Features: issues_copilot_assignment_api_support,coding_agent_model_selection
+```
 
-### planno로 Copilot PR diff 검토 (선택적)
+---
+
+## GitHub Actions 워크플로우
+
+| 워크플로 | 트리거 | 목적 |
+|---------|--------|------|
+| `assign-to-copilot.yml` | 이슈에 `ai-copilot` 라벨 | Copilot에 자동 할당 |
+| `copilot-pr-ci.yml` | PR 오픈/업데이트 | CI (빌드 + 테스트) 실행 |
+
+---
+
+## Copilot PR 제약 사항
+
+> Copilot은 **외부 기여자**처럼 취급됩니다.
+
+- PR은 기본적으로 Draft 상태로 생성
+- 첫 번째 Actions 실행 전 write 권한자의 **수동 승인** 필요
+- 승인 후 `copilot-pr-ci.yml` CI가 정상 실행
 
 ```bash
-# Copilot이 생성한 변경사항을 planno(plannotator)로 검토
-gh pr checkout <pr-number>
-plannotator review  # diff 어노테이션
-
-# Request Changes → Copilot PR 코멘트로 피드백
-gh pr review <pr-number> --request-changes --body "$(cat feedback.md)"
-# → Copilot이 코멘트를 읽고 추가 수정
+# 수동 승인 후 CI 확인
+gh pr list --search 'head:copilot/'
+gh pr view <pr-number>
 ```
 
 ---
 
-## 수동 Copilot 할당 (GraphQL)
+## planno(plannotator) 통합 — 선택사항
 
-```bash
-# 스크립트 실행
-bash scripts/copilot-assign-issue.sh <issue-number>
+Copilot에 할당 전 이슈 스펙을 planno로 검토 (독립 스킬, 필수 아님):
 
-# 또는 직접 실행
-ISSUE_NODE_ID=$(gh api repos/:owner/:repo/issues/<number> --jq '.node_id')
-bash scripts/copilot-graphql-assign.sh "$ISSUE_NODE_ID"
+```text
+planno로 이 이슈 스펙을 검토하고 승인해줘
 ```
 
----
-
-## planno + Copilot 전체 워크플로우 (선택적 독립 구성)
-
-```
-[이슈 초안 작성 (에이전트)]
-    ↓
-[planno로 이슈 스펙 검토] ← Request Changes → 재작성  ← 선택적 독립 단계
-    ↓ Approve (또는 건너뜀)
-[gh issue create --label ai-copilot]
-    ↓
-[GitHub Actions → Copilot 자동 할당]
-    ↓
-[Copilot: 브랜치 생성 → 코드 작성 → Draft PR]
-    ↓
-[planno로 PR diff 검토] ← Request Changes → Copilot 재작업  ← 선택적 독립 단계
-    ↓ Approve (또는 건너뜀)
-[Actions 실행 승인 → CI 통과 → Merge]
-```
+승인 후 `ai-copilot` 라벨 부착 → Actions 트리거.
 
 ---
 
 ## 대표 사용 케이스
 
-| 시나리오 | 트리거 방법 | 효과 |
-|---------|-----------|------|
-| 백로그 자동 처리 | `ai-copilot` 라벨 | Copilot이 PR 자동 생성 |
-| Jira 연동 | 외부 이슈 → GitHub Issue → 라벨 | 완전 자동화 파이프라인 |
-| Conductor + Copilot | Conductor 결과 후속 이슈 | 리팩터링/테스트 자동 위임 |
-| PM 주도 개발 | PM이 이슈 작성 + 라벨 | 에이전트가 PR 자동 생성 |
+### 1. 라벨 기반 Copilot 큐
+
+```
+PM이 이슈 작성 → ai-copilot 라벨 부착
+→ Actions 자동 할당 → Copilot Draft PR 생성
+→ 팀이 PR 리뷰만 수행
+```
+
+### 2. Vibe Kanban / Conductor와 결합
+
+```
+Vibe Kanban으로 생성된 후속 이슈:
+  리팩터링/문서 정리/테스트 추가
+  → ai-copilot 라벨 → Copilot 처리
+→ 팀은 메인 기능 개발에 집중
+```
+
+### 3. 외부 시스템 연동
+
+```
+Jira 이슈 → Zapier/웹훅 → GitHub Issue 자동 생성
+→ ai-copilot 라벨 → Copilot PR
+→ 완전 자동화 파이프라인
+```
+
+### 4. 리팩터링 백로그 처리
+
+```bash
+# 백로그 이슈들에 라벨 일괄 추가
+gh issue list --label "tech-debt" --json number \
+  | jq '.[].number' \
+  | xargs -I{} gh issue edit {} --add-label ai-copilot
+```
 
 ---
 
-## 제약 사항
+## 결과 확인
 
-- Copilot은 단일 레포에서만 작동 (멀티 레포 이슈 불가)
-- 한 이슈당 하나의 PR만 생성
-- 특정 브랜치 보호 규칙 우회 불가
-- GitHub.com 호스팅 레포만 지원
-- 첫 PR은 Actions 실행 전 수동 승인 필요
+```bash
+# Copilot이 생성한 PR 목록
+gh pr list --search 'head:copilot/'
+
+# 특정 이슈 상태
+gh issue view 42
+
+# PR CI 상태
+gh pr checks <pr-number>
+```
 
 ---
 
-## 참고 링크
+## 참고 레퍼런스
 
-- [GitHub Copilot coding agent 개요](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent)
-- [Ask Copilot to create a PR (GraphQL 예제)](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr)
-- [.github/workflows/assign-to-copilot.yml](../../.github/workflows/assign-to-copilot.yml)
-- [scripts/copilot-assign-issue.sh](../scripts/copilot-assign-issue.sh)
+- [GitHub Copilot Coding Agent 개요](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent)
+- [Copilot에게 PR 생성 요청 (GraphQL 예제)](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr)
+- [이슈 Copilot 할당 공식 문서](https://docs.github.com/copilot/using-github-copilot/coding-agent/asking-copilot-to-create-a-pull-request)
+- [Copilot PR 권한/제약 사항](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent)
+- [GitHub Copilot coding agent (VSCode 문서)](https://code.visualstudio.com/docs/copilot/copilot-coding-agent)
+
+---
+
+## Quick Reference
+
+```
+=== 셋업 ===
+bash scripts/copilot-setup-workflow.sh   최초 1회 설정
+
+=== 이슈 할당 ===
+gh issue create --label ai-copilot ...  새 이슈 + 자동 할당
+gh issue edit <num> --add-label ai-copilot  기존 이슈
+bash scripts/copilot-assign-issue.sh <num>  직접 할당
+
+=== 결과 확인 ===
+gh pr list --search 'head:copilot/'    Copilot PR 목록
+gh pr view <num>                        PR 상세
+gh pr checks <num>                      CI 상태
+
+=== 제약 ===
+Copilot Pro+/Business/Enterprise 필요
+첫 PR은 수동 승인 필요 (외부 기여자 취급)
+PAT: repo scope 필요
+```
