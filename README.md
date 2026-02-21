@@ -1,7 +1,7 @@
 # Agent Skills
 
 > Modular skill system for AI agents.
-> **66 Skills** · **TOON Format** · **Flat Skill Layout**
+> **64 Skills** · **TOON Format** · **Flat Skill Layout**
 
 ---
 
@@ -12,7 +12,7 @@
 npx skills add https://github.com/supercent-io/skills-template
 
 # Install one skill
-npx skills add https://github.com/supercent-io/skills-template --skill conductor-pattern
+npx skills add https://github.com/supercent-io/skills-template --skill plannotator
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 ```
 
@@ -22,63 +22,16 @@ npx skills add https://github.com/supercent-io/skills-template --skill oh-my-cod
 
 This repository stores the `agentskills` package used by this workspace.
 
-- `66` skills under `.agent-skills/`
+- `64` skills under `.agent-skills/`
 - TOON format is the default output mode
 - Flat skill layout (`.agent-skills/<skill-name>/`)
-- Orchestration + workflow tooling in `scripts/`
 
 ---
 
-## Scripts in this project
-
-| Script | Purpose |
-| --- | --- |
-| `scripts/pipeline-check.sh` | Pre-flight check for conductor requirements (agent binaries, git worktree, tmux, etc.) |
-| `scripts/conductor.sh` | Launch AI agents in parallel using git worktree |
-| `scripts/conductor-pr.sh` | Create branch/commit/push and open PR for each agent result |
-| `scripts/conductor-cleanup.sh` | Remove worktrees, tmux sessions, and local branches |
-| `scripts/pipeline.sh` | End-to-end pipeline: `check -> conductor -> pr` (with optional `plan`, `copilot`) |
-| `scripts/copilot-setup-workflow.sh` | Configure Copilot coding-agent workflow and required GitHub labels/secrets |
-| `scripts/copilot-assign-issue.sh` | Assign an existing issue to Copilot coding agent |
-| `scripts/vibe-kanban-start.sh` | Start Vibe Kanban UI |
-| `scripts/hooks/pre-conductor.sh` | Pre-hook example (defaults to blocking on failure) |
-| `scripts/hooks/post-conductor.sh` | Post-hook example (warn-only on failure) |
-
----
-
-## Core command set
-
-```bash
-# 1) Pre-check
-bash scripts/pipeline-check.sh --agents=claude,codex
-
-# 2) Conductor workflow
-bash scripts/conductor.sh <feature-name> <base-branch> <agent-list>
-# ex) bash scripts/conductor.sh auth-refactor main claude,codex
-
-bash scripts/conductor-pr.sh <feature-name> <base-branch>
-# ex) bash scripts/conductor-pr.sh auth-refactor main
-
-bash scripts/conductor-cleanup.sh <feature-name>
-# ex) bash scripts/conductor-cleanup.sh auth-refactor
-
-# 3) Full pipeline
-bash scripts/pipeline.sh <feature-name> --stages check,conductor,pr
-bash scripts/pipeline.sh <feature-name> --stages check,plan,conductor,pr --no-attach
-bash scripts/pipeline.sh <feature-name> --dry-run
-
-# 4) Copilot + Kanban
-bash scripts/copilot-setup-workflow.sh
-bash scripts/copilot-assign-issue.sh <issue-number>
-bash scripts/vibe-kanban-start.sh --port 3001
-```
-
----
-
-## Skills list (66 total)
+## Skills list (64 total)
 
 ### Orchestration & Workflow
-`agent-browser`, `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`, `bmad`, `bmad-orchestrator`, `changelog-maintenance`, `conductor-pattern`, `copilot-coding-agent`, `environment-setup`, `file-organization`, `git-submodule`, `git-workflow`, `npm-git-install`, `opencontext`, `oh-my-codex`, `ohmg`, `omc`, `plannotator`, `prompt-repetition`, `ralph`, `skill-standardization`, `workflow-automation`
+`agent-browser`, `agent-configuration`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`, `bmad-orchestrator`, `changelog-maintenance`, `copilot-coding-agent`, `environment-setup`, `file-organization`, `git-submodule`, `git-workflow`, `npm-git-install`, `oh-my-codex`, `ohmg`, `omc`, `opencontext`, `plannotator`, `prompt-repetition`, `ralph`, `skill-standardization`, `vibe-kanban`, `workflow-automation`
 
 ### API / Backend
 `api-design`, `api-documentation`, `authentication-setup`, `backend-testing`, `database-schema-design`
@@ -87,13 +40,13 @@ bash scripts/vibe-kanban-start.sh --port 3001
 `design-system`, `react-best-practices`, `responsive-design`, `state-management`, `ui-component-patterns`, `web-accessibility`, `web-design-guidelines`
 
 ### Code quality
-`code-refactoring`, `code-review`, `debugging`, `performance-optimization`, `testing-strategies`
+`agent-evaluation`, `code-refactoring`, `code-review`, `debugging`, `performance-optimization`, `testing-strategies`
 
 ### Search & analysis
 `codebase-search`, `data-analysis`, `log-analysis`, `pattern-detection`
 
 ### Documentation
-`changelog-maintenance`, `presentation-builder`, `technical-writing`, `user-guide-writing`
+`presentation-builder`, `technical-writing`, `user-guide-writing`
 
 ### Project management
 `sprint-retrospective`, `standup-meeting`, `task-estimation`, `task-planning`
@@ -107,7 +60,7 @@ bash scripts/vibe-kanban-start.sh --port 3001
 ### Marketing
 `marketing-automation`
 
-> Full manifest + descriptions are in `.agent-skills/skills.json` and each folder’s `SKILL.md`.
+> Full manifest + descriptions are in `.agent-skills/skills.json` and each folder's `SKILL.md`.
 
 ---
 
@@ -121,23 +74,15 @@ bash scripts/vibe-kanban-start.sh --port 3001
 │   ├── skill-query-handler.py
 │   ├── skills.json
 │   ├── skills.toon
-│   ├── [66 skill folders]
-│   └── react-best-practices/AGENTS.md
+│   └── [64 skill folders]
 ├── docs/
-│   ├── installation.md
-│   ├── script-reference.md
-│   ├── usage-guide.md
 │   ├── bmad/
-│   ├── conductor-pattern/
 │   ├── copilot-coding-agent/
 │   ├── harness/
 │   ├── omc/
 │   ├── plannotator/
 │   ├── ralph/
 │   └── vibe-kanban/
-├── scripts/
-│   ├── hooks/
-│   └── *.sh
 ├── install.sh / flatten_skills.py
 └── README.md
 ```
@@ -146,14 +91,13 @@ bash scripts/vibe-kanban-start.sh --port 3001
 
 ## Related docs
 
-- [Installation guide](docs/installation.md)
-- [Usage guide](docs/usage-guide.md)
-- [Script reference](docs/script-reference.md)
-- [Conductor Pattern docs](docs/conductor-pattern/README.md)
 - [Ralph loop docs](docs/ralph/README.md)
 - [Vibe Kanban docs](docs/vibe-kanban/README.md)
 - [Copilot coding agent docs](docs/copilot-coding-agent/README.md)
+- [Plannotator docs](docs/plannotator/README.md)
+- [BMAD docs](docs/bmad/README.md)
+- [OMC docs](docs/omc/README.md)
 
 ---
 
-**Version**: Local repository sync | **Updated**: 2026-02-20
+**Version**: Local repository sync | **Updated**: 2026-02-21
