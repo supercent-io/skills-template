@@ -26,9 +26,27 @@ source: user-installed skill
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
 ```
 
+## Codex 사용 참고
+
+`bmad-orchestrator`의 기본 실행 경로는 Claude Code입니다.  
+Codex에서 직접 동일한 흐름으로 사용하려면 `omx`/`ohmg` 등 상위 오케스트레이션 경로를 통해 BMAD 단계를 운영하는 것을 권장합니다.
+
 ---
 
 ## BMAD Execution Commands
+
+## 플랫폼별 적용 상태 (현재 지원 기준)
+
+| 플랫폼 | 현재 지원 방식 | 적용 조건 |
+|---|---|---|
+| Gemini CLI | 네이티브(권장) | `bmad` 키워드 등록 후 `/workflow-init` 실행 |
+| Claude Code | 네이티브(권장) | 스킬 설치 + `기억해` 패턴 |
+| OpenCode | 오케스트레이션 연동 | `omx`/`ohmg`/`omx` 류 브릿지 사용 |
+| Codex | 오케스트레이션 연동 | `omx`/`ohmg`류 브릿지 사용 |
+
+`현재 스킬만`으로 가능한지:  
+- Gemini CLI/Claude Code: **가능**  
+- OpenCode/Codex: **가능(오케스트레이션 경유)**
 
 Use these in your AI session:
 

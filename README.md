@@ -104,7 +104,9 @@ bash scripts/install.sh --all   # Install + configure all AI tools at once
 ### vibe-kanban — AI Agent Kanban Board
 > Keyword: `kanbanview` | [Docs](docs/vibe-kanban/README.md) | [GitHub](https://github.com/BloopAI/vibe-kanban)
 
-Visual Kanban board (To Do → In Progress → Review → Done) with parallel AI agents (Claude, Codex, Gemini) isolated per card via git worktrees. Auto-creates PRs on completion.
+Visual Kanban board (To Do → In Progress → Review → Done) with parallel AI agents (Claude, Codex, OpenCode, Gemini) isolated per card via git worktrees. Auto-creates PRs on completion.
+
+Codex integration is supported via `pluggable` MCP/tooling setup (see `docs/vibe-kanban/README.md`).
 
 ```bash
 npx vibe-kanban          # Launch board at http://localhost:3000
@@ -128,7 +130,13 @@ Self-referential loop that re-runs the agent on the same task across turns (with
 /ralph "Fix all TypeScript errors" --completion-promise="0 errors" --max-iterations=10
 ```
 
-Available in: Gemini CLI, OpenCode, Claude Code, oh-my-codex.
+Available in: Gemini CLI, OpenCode, Claude Code, Codex.
+
+For Codex, use the local setup script first when you want loop continuity hints:
+
+```bash
+bash <your-agent-skills>/ralph/scripts/setup-codex-hook.sh
+```
 
 ---
 
@@ -155,6 +163,8 @@ Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agen
 > Keyword: `bmad` | [Docs](docs/bmad/README.md)
 
 Phase-based workflow (Analysis → Planning → Solutioning → Implementation) for disciplined AI-assisted development. Automatically adapts to project scope (Level 0–4).
+
+> Note: This is primarily a Claude Code native workflow. For Codex/OpenCode-based use, combine with `omx`/`ohmg` orchestration.
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator

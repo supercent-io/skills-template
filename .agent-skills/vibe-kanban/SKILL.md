@@ -3,11 +3,25 @@ name: vibe-kanban
 keyword: kanbanview
 description: AI 코딩 에이전트를 시각적 Kanban 보드에서 관리. To Do→In Progress→Review→Done 흐름으로 병렬 에이전트 실행, git worktree 자동 격리, GitHub PR 자동 생성.
 allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [vibe-kanban, kanban, kanbanview, multi-agent, git-worktree, github-pr, task-management, claude-code, codex, gemini, mcp]
-platforms: [Claude, Codex, Gemini]
+tags: [vibe-kanban, kanban, kanbanview, multi-agent, git-worktree, github-pr, task-management, claude-code, codex, gemini, open-code, mcp]
+platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.1.0
 source: https://github.com/BloopAI/vibe-kanban
 ---
+
+## 플랫폼별 적용 상태 (현재 지원 기준)
+
+| 플랫폼 | 현재 지원 방식 | 적용 조건 |
+|---|---|---|
+| Claude | 네이티브 MCP 연동 | `mcpServers` 등록 |
+| Codex | MCP 스크립트 연동 | `scripts/mcp-setup.sh --codex` 또는 동일 설정 |
+| Gemini | MCP 등록 | `mcpServers`/브릿지 구성 |
+| OpenCode | MCP/브릿지 연동 | `omx`/`ohmg`류 또는 동등 구성 |
+
+`현재 스킬만`으로 가능한지:
+- Claude/Gemini: **가능**
+- Codex: **가능(스크립트 기반 설정 필요)**
+- OpenCode: **가능(오케스트레이션 경유)**
 
 # Vibe Kanban — AI 에이전트 칸반 보드
 
@@ -113,6 +127,17 @@ Vibe Kanban은 MCP(Model Context Protocol) 서버로 동작하여 에이전트�
 | `vk_move_task` | 태스크 상태 변경 |
 | `vk_get_diff` | 태스크 diff 조회 |
 | `vk_retry_task` | 태스크 재실행 |
+
+### Codex MCP 적용
+
+Codex에서 Vibe Kanban을 연동하려면 프로젝트 루트에서 다음을 실행합니다.
+
+```bash
+bash scripts/mcp-setup.sh --codex
+```
+
+이 명령은 `~/.codex/config.toml`에 `vibe-kanban` MCP 서버 설정을 추가합니다.  
+훅 기반 자동 반복은 Codex 기본 동작이 아니므로, 재시도/반복 운영은 보드 카드 진행 상태 또는 상위 오케스트레이션으로 관리합니다.
 
 ---
 

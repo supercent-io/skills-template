@@ -57,6 +57,20 @@ Set variables in your shell or in a `.env` file at the project root before start
 
 Vibe Kanban can run as an MCP (Model Context Protocol) server, allowing AI agents to directly control the board programmatically.
 
+### Platform Compatibility Matrix
+
+| Platform | 지원 방식 | 필요 설정 |
+|---|---|---|
+| Claude | Native MCP server registration | `~/.claude/settings.json` or `.mcp.json` |
+| Codex | MCP script-assisted setup | `bash <your-agent-skills>/vibe-kanban/scripts/mcp-setup.sh --codex` |
+| Gemini | MCP registration | 동일 패턴 설정 |
+| OpenCode | MCP/브릿지 연동 | `omx`/`ohmg`류 또는 동일 토폴로지 |
+
+`현재 스킬만`으로 가능한지:
+- Claude/Gemini: **가능**
+- Codex: **가능(스크립트 기반)** 
+- OpenCode: **가능(오케스트레이션 경유)**
+
 ### Claude Code MCP Configuration
 
 Add to `~/.claude/settings.json` or project `.mcp.json`:
@@ -85,6 +99,18 @@ Add to `~/.claude/settings.json` or project `.mcp.json`:
 | `vk_move_task` | Change task status |
 | `vk_get_diff` | Get task diff |
 | `vk_retry_task` | Retry task execution |
+
+### Codex MCP setup
+
+When using Codex, set up MCP via the script included in this skill:
+
+```bash
+bash <your-agent-skills>/vibe-kanban/scripts/mcp-setup.sh --codex
+```
+
+It appends MCP server config under `~/.codex/config.toml` and writes a `vibe-kanban` MCP entry.
+
+> Note: This skill is not an Auto-hook loop system. For autonomous repeat behavior, combine with the skill or workflow that your Codex orchestration layer already provides.
 
 ---
 

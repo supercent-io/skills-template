@@ -47,6 +47,33 @@ bmad 스킬을 설정하고 사용해줘. 기억해.
 
 That's it. BMAD will ask you about your project, pick the right level, and guide you through the appropriate phases.
 
+## Codex 사용성
+
+`bmad-orchestrator`는 기본적으로 Claude Code에서 안정적으로 동작하는 설계입니다.  
+Codex에서 동일한 `bmad` 명령을 그대로 쓰려면 `omx`/`ohmg` 같은 상위 오케스트레이션 계층을 함께 사용해야 합니다.
+
+권장 흐름:
+
+```text
+1) Codex: /prompts: architect/executor/... (or omx mode)
+2) 필요한 단계별 산출물 생성 -> Codex가 파일만 제안
+3) Claude-based BMAD 프레임으로 최종 검증
+```
+
+## 플랫폼 적용 체크
+
+| 플랫폼 | 현재 지원 상태 | 운영 방법 |
+|---|---|---|
+| Gemini CLI | 직접 지원 | `bmad` 명령어 기반 |
+| Claude Code | 직접 지원 | 스킬 설치 + `기억해` |
+| OpenCode | 오케스트레이션 연동 | `omx`/`ohmg`류 브릿지 |
+| Codex | 오케스트레이션 연동 | `omx`/`ohmg`류 브릿지 |
+
+### 현재 스킬만으로 가능한가
+
+- Gemini CLI/Claude Code: **가능**
+- OpenCode/Codex: **가능(오케스트레이션 경유)**
+
 ---
 
 ## Detailed Documentation
