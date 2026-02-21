@@ -366,6 +366,47 @@ VIBE_KANBAN_REMOTE=true 설정
 
 ---
 
+## 스킬 파일 구조
+
+```
+.agent-skills/vibe-kanban/
+├── SKILL.md              # 메인 스킬 문서
+├── SKILL.toon            # TOON 형식 (압축)
+├── scripts/
+│   ├── start.sh          # 서버 시작 래퍼
+│   ├── cleanup.sh        # Worktree 정리
+│   ├── mcp-setup.sh      # MCP 설정 자동화
+│   └── health-check.sh   # 서버 상태 확인
+├── references/
+│   ├── environment-variables.md  # 환경 변수 레퍼런스
+│   └── mcp-api.md                # MCP API 레퍼런스
+└── templates/
+    ├── claude-mcp-config.json    # Claude Code MCP 설정
+    ├── docker-compose.yml        # Docker 배포 템플릿
+    └── .env.example              # 환경 변수 예시
+```
+
+### 스크립트 사용법
+
+```bash
+# 서버 시작
+bash scripts/start.sh --port 3001
+
+# Worktree 정리
+bash scripts/cleanup.sh --dry-run  # 미리보기
+bash scripts/cleanup.sh --all       # 모든 VK worktree 삭제
+
+# MCP 설정
+bash scripts/mcp-setup.sh --claude  # Claude Code 설정
+bash scripts/mcp-setup.sh --all     # 모든 에이전트 설정
+
+# 상태 확인
+bash scripts/health-check.sh
+bash scripts/health-check.sh --json  # JSON 출력
+```
+
+---
+
 ## Quick Reference
 
 ```
