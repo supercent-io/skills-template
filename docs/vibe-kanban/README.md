@@ -41,12 +41,137 @@ After starting, the board is available at `http://localhost:3000` (or your confi
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VIBE_KANBAN_PORT` | Server port | `3000` |
+| `PORT` | Server port | Auto-assigned |
+| `HOST` | Server host | `127.0.0.1` |
 | `VIBE_KANBAN_REMOTE` | Allow remote connections | `false` |
+| `VK_ALLOWED_ORIGINS` | CORS allowed origins | — |
+| `DISABLE_WORKTREE_CLEANUP` | Disable worktree cleanup | — |
 | `ANTHROPIC_API_KEY` | For Claude-powered tasks | — |
 | `OPENAI_API_KEY` | For GPT-powered tasks | — |
 
 Set variables in your shell or in a `.env` file at the project root before starting the server.
+
+---
+
+## MCP Integration
+
+Vibe Kanban can run as an MCP (Model Context Protocol) server, allowing AI agents to directly control the board programmatically.
+
+### Claude Code MCP Configuration
+
+Add to `~/.claude/settings.json` or project `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "vibe-kanban": {
+      "command": "npx",
+      "args": ["vibe-kanban", "--mcp"],
+      "env": {
+        "MCP_HOST": "127.0.0.1",
+        "MCP_PORT": "3001"
+      }
+    }
+  }
+}
+```
+
+### Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `vk_list_tasks` | List all tasks |
+| `vk_create_task` | Create a new task |
+| `vk_move_task` | Change task status |
+| `vk_get_diff` | Get task diff |
+| `vk_retry_task` | Retry task execution |
+
+---
+
+## Remote Deployment
+
+### Docker
+
+```bash
+# Official image
+docker run -p 3000:3000 vibekanban/vibe-kanban
+
+# With environment variables
+docker run -p 3000:3000 \
+  -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
+  -e VK_ALLOWED_ORIGINS=https://vk.example.com \
+  vibekanban/vibe-kanban
+```
+
+### Reverse Proxy (Nginx/Caddy)
+
+```bash
+# CORS configuration required
+VK_ALLOWED_ORIGINS=https://vk.example.com
+
+# Multiple origins
+VK_ALLOWED_ORIGINS=https://a.example.com,https://b.example.com
+```
+
+### SSH Remote Access
+
+Integrate with VSCode Remote-SSH:
+```
+vscode://vscode-remote/ssh-remote+user@host/path/to/.vk/trees/<task-slug>
+```
+
+---
+
+## Troubleshooting
+
+### Worktree Conflicts / Orphaned Worktrees
+
+```bash
+# Clean orphaned worktrees
+git worktree prune
+
+# List current worktrees
+git worktree list
+
+# Force remove a specific worktree
+git worktree remove .vk/trees/<slug> --force
+```
+
+### 403 Forbidden (CORS Error)
+
+```bash
+# Set CORS when accessing remotely
+VK_ALLOWED_ORIGINS=https://your-domain.com npx vibe-kanban
+```
+
+### Agent Won't Start
+
+```bash
+# Test CLI directly
+claude --version
+codex --version
+
+# Check API keys
+echo $ANTHROPIC_API_KEY
+echo $OPENAI_API_KEY
+```
+
+### Port Conflict
+
+```bash
+# Use a different port
+npx vibe-kanban --port 3001
+
+# Or via environment variable
+PORT=3001 npx vibe-kanban
+```
+
+### SQLite Lock Error
+
+```bash
+# Disable worktree cleanup and restart
+DISABLE_WORKTREE_CLEANUP=1 npx vibe-kanban
+```
 
 ---
 
