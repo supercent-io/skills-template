@@ -3,6 +3,11 @@
 > Modular skill system for AI agents.
 > **64 Skills** · **TOON Format** · **Flat Skill Layout**
 
+[![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
+[![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.0.0-brightgreen)](docs/bmad/README.md)
+
+![Agent Skills Installer](AgentSkills.png)
+
 ---
 
 ## Quick install
@@ -15,6 +20,14 @@ npx skills add https://github.com/supercent-io/skills-template
 npx skills add https://github.com/supercent-io/skills-template --skill plannotator
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 ```
+
+## Release Deploy Version
+
+Use GitHub Releases as the deployment baseline when you need reproducible installs.
+
+- Release page: `https://github.com/supercent-io/skills-template/releases`
+- BMAD deploy version in this repo: `1.0.0` (`.agent-skills/bmad-orchestrator/SKILL.md`)
+- Current main includes previously validated plannotator integration updates (Approve/Send Feedback flow reflected in docs and setup scripts)
 
 ---
 
