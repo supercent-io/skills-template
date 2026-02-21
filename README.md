@@ -73,13 +73,15 @@ These tools have full documentation in `docs/` and dedicated skills in `.agent-s
 
 Visual browser UI for annotating AI agent plans before coding. Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**. Approve plans or send structured feedback in one click.
 
+Validated in-session with Playwright: Approve + feedback loops confirmed across all four platforms. See `docs/plannotator/README.md` for the verified python3 stdin pattern (avoid raw `echo`/heredoc for plan submission).
+
 ```bash
 bash scripts/install.sh --all   # Install + configure all AI tools at once
 ```
 
 | Feature | Description |
 |---------|-------------|
-| Plan Review | Opens browser UI when agent exits plan mode — annotate, approve, or request changes |
+| Plan Review | Opens browser UI when agent exits plan mode — annotate, approve, or send feedback |
 | Diff Review | `/plannotator-review` for inline line annotations on git diffs |
 | Auto-save | Approved plans sync to Obsidian vault or Bear Notes |
 | Share | Share plan review sessions with teammates via link |

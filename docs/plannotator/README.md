@@ -7,7 +7,7 @@
 
 ## What is plannotator?
 
-plannotator opens a **visual browser UI** when your AI coding agent finishes planning. You can annotate the plan, then either approve it (agent proceeds) or request changes (annotations sent back as structured feedback).
+plannotator opens a **visual browser UI** when your AI coding agent finishes planning. You can annotate the plan, then either approve it (agent proceeds) or send feedback (annotations sent back as structured feedback).
 
 **Part of AI Review Tools family** (independent tools, each with its own keyword):
 | Tool | Keyword | Purpose |
@@ -178,8 +178,26 @@ When your agent finishes planning, Plannotator **automatically opens a browser U
 
 ### Codex CLI usage
 1. Codex CLI generates a plan (via `developer_instructions`)
-2. Hook triggers plannotator
-3. Annotate → Approve or Request Changes
+2. Codex runs plannotator command from instructions (no ExitPlanMode hook in Codex)
+3. Annotate → Approve or Send Feedback
+
+### Manual plan submission (validated format)
+
+`echo`/heredoc with `plannotator plan -` can fail with `Failed to parse hook event from stdin`.
+Use python3 JSON generation:
+
+```bash
+cat > /tmp/plan.md << 'PLAN'
+# Implementation Plan
+## Steps
+1. ...
+PLAN
+
+python3 -c "
+import json
+print(json.dumps({'tool_input': {'plan': open('/tmp/plan.md').read(), 'permission_mode': 'acceptEdits'}}))
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
+```
 
 ---
 
@@ -193,7 +211,9 @@ Review git diffs with **inline annotations** (New: Jan 2026):
 - Select specific line numbers to annotate
 - Switch between unified and split diff views
 - Attach and annotate images (pen, arrow, circle tools)
-- Send feedback directly to the agent
+- Send feedback to the active hook/session when integration path supports it
+
+OpenCode plugin path (`/plannotator-review`) is validated and returns approval result in CLI.
 
 ---
 
@@ -236,6 +256,18 @@ planno로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
 3. **Include acceptance criteria** — "Request Changes" should specify testable conditions
 4. **Use image annotations** for UI/UX feedback where text descriptions fall short
 5. **Specific line annotations** for diff review — don't annotate whole files when one line is the issue
+6. **Kill stale instances first** — run `pkill plannotator 2>/dev/null; sleep 1` before a new session
+7. **Reload once in automation** — Playwright flow should include `page.reload()` before clicking Approve/Send Feedback
+
+---
+
+## Known Limitations (validated 2026-02-21)
+
+1. `plannotator plan -` with heredoc/echo can fail to parse stdin; use python3 JSON format.
+2. Keeping stdin open (for example with `sleep`) blocks server start; stdin EOF must be immediate.
+3. First browser load can show demo plan; call `page.reload()` in automated tests.
+4. Send Feedback requires at least one annotation first.
+5. `plannotator review` requires a git repository.
 
 ---
 

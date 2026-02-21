@@ -222,8 +222,12 @@ Usage in Gemini CLI after setup:
 # Enter planning mode (hook fires when you exit)
 gemini --approval-mode plan
 
-# Manual plan review
-echo "# My Plan..." | plannotator plan -
+# Manual plan review (validated format)
+python3 -c "
+import json
+plan = open('plan.md').read()
+print(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
 
 # Code review after implementation
 plannotator review
@@ -253,12 +257,18 @@ Usage in Codex CLI after setup:
 # Use the plannotator agent prompt
 /prompts:plannotator
 
-# Manual plan review
-echo "# My Plan..." | plannotator plan -
+# Manual plan review (validated format)
+python3 -c "
+import json
+plan = open('plan.md').read()
+print(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
 
 # Code review after implementation
 plannotator review HEAD~1
 ```
+
+> Note: `plannotator plan -` with heredoc/echo can fail with `Failed to parse hook event from stdin`. Use the python3 JSON format above.
 
 ---
 
