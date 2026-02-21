@@ -23,8 +23,11 @@ Key capabilities:
 No global install is required. Run directly with `npx`:
 
 ```bash
-# Run directly (no install needed)
+# Run directly (no install needed) - default port 3000
 npx vibe-kanban
+
+# Port conflict (e.g. Next.js dev server on 3000)
+PORT=3001 npx vibe-kanban --port 3001
 
 # Or use the wrapper script
 bash scripts/vibe-kanban-start.sh
@@ -35,19 +38,34 @@ bash scripts/vibe-kanban-start.sh --port 3001
 
 After starting, the board is available at `http://localhost:3000` (or your configured port).
 
+Startup log (verified v0.1.17):
+```
+Starting vibe-kanban v0.1.17...
+No user profiles.json found, using defaults only
+Starting PR monitoring service with interval 60s
+Remote client initialized with URL: https://api.vibekanban.com
+Main server on :3000, Preview proxy on :XXXXX
+Opening browser...
+```
+
+**Supported agents** (verified v0.1.17): Opencode, Claude Code, Codex, Gemini, Amp, Qwen Code, Copilot, Droid, Cursor Agent
+
 ---
 
 ## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PORT` | Server port | Auto-assigned |
+| `PORT` | Server port | `3000` |
 | `HOST` | Server host | `127.0.0.1` |
 | `VIBE_KANBAN_REMOTE` | Allow remote connections | `false` |
 | `VK_ALLOWED_ORIGINS` | CORS allowed origins | — |
 | `DISABLE_WORKTREE_CLEANUP` | Disable worktree cleanup | — |
-| `ANTHROPIC_API_KEY` | For Claude-powered tasks | — |
-| `OPENAI_API_KEY` | For GPT-powered tasks | — |
+| `ANTHROPIC_API_KEY` | For Claude Code-powered tasks | — |
+| `OPENAI_API_KEY` | For Codex-powered tasks | — |
+| `GOOGLE_API_KEY` | For Gemini-powered tasks | — |
+
+> **Port collision warning**: Default port is `3000`. If Next.js or other dev servers use 3000, run `PORT=3001 npx vibe-kanban --port 3001`.
 
 Set variables in your shell or in a `.env` file at the project root before starting the server.
 
@@ -94,11 +112,13 @@ Add to `~/.claude/settings.json` or project `.mcp.json`:
 
 | Tool | Description |
 |------|-------------|
-| `vk_list_tasks` | List all tasks |
-| `vk_create_task` | Create a new task |
-| `vk_move_task` | Change task status |
-| `vk_get_diff` | Get task diff |
-| `vk_retry_task` | Retry task execution |
+| `vk_list_cards` | List all cards (workspaces) |
+| `vk_create_card` | Create a new card |
+| `vk_move_card` | Change card status |
+| `vk_get_diff` | Get card diff |
+| `vk_retry_card` | Retry card execution |
+
+> ⚠️ **Tool name change**: `vk_list_tasks` → `vk_list_cards`, `vk_create_task` → `vk_create_card` (verified v0.1.17)
 
 ### Codex MCP setup
 
@@ -143,7 +163,7 @@ VK_ALLOWED_ORIGINS=https://a.example.com,https://b.example.com
 
 Integrate with VSCode Remote-SSH:
 ```
-vscode://vscode-remote/ssh-remote+user@host/path/to/.vk/trees/<task-slug>
+vscode://vscode-remote/ssh-remote+user@host/path/to/.vibe-kanban-workspaces/<workspace-uuid>
 ```
 
 ---
@@ -159,8 +179,8 @@ git worktree prune
 # List current worktrees
 git worktree list
 
-# Force remove a specific worktree
-git worktree remove .vk/trees/<slug> --force
+    # Force remove a specific worktree
+    git worktree remove ~/.vibe-kanban-workspaces/<workspace-uuid> --force
 ```
 
 ### 403 Forbidden (CORS Error)
