@@ -348,15 +348,134 @@ The `submit_plan` tool is automatically available to the agent for plan submissi
 
 ---
 
-## Auto-save (Obsidian / Bear Notes)
+## Pattern 9: Obsidian Integration Setup
 
-> **Prerequisite:** Install Obsidian first → https://obsidian.md/download
+Auto-save approved plans to your Obsidian vault with YAML frontmatter and tags.
 
-1. Open plannotator UI → Settings (gear icon)
-2. Enable "Obsidian Integration" and select your vault
-3. Approved plans auto-save with YAML frontmatter and tags
+### Prerequisites
 
-Obsidian is optional — plans can still be reviewed and approved without it.
+1. **Install Obsidian**: https://obsidian.md/download
+2. **Create a Vault**: Open Obsidian → Create new vault → Choose location
+   - Example: `~/Documents/Obsidian/MyVault`
+3. **Verify Vault Exists**: Obsidian creates `obsidian.json` config after first vault creation
+
+```bash
+# Check Obsidian installation (macOS)
+ls /Applications/Obsidian.app
+
+# Check Obsidian config exists (vault detection depends on this)
+# macOS
+cat ~/Library/Application\ Support/obsidian/obsidian.json
+# Linux
+cat ~/.config/obsidian/obsidian.json
+# Windows
+cat %APPDATA%/obsidian/obsidian.json
+```
+
+### Step-by-Step Setup
+
+```bash
+# Step 1: Verify Obsidian is installed and has at least one vault
+bash scripts/check-status.sh
+
+# Step 2: Trigger a plan review (any method)
+# Claude Code: Shift+Tab×2 → plan mode → exit plan mode
+# Gemini CLI: gemini --approval-mode plan
+# OpenCode: Agent creates a plan
+
+# Step 3: In the plannotator UI:
+#   1. Click ⚙️ (Settings gear icon)
+#   2. Go to "Saving" tab
+#   3. Toggle ON "Obsidian Integration"
+#   4. Select your vault from dropdown (auto-detected)
+#      - Or enter custom path if vault not detected
+#   5. Set folder name (default: "plannotator")
+
+# Step 4: Approve a plan to test the integration
+#   - Click "Approve" in the plannotator UI
+#   - Check your vault for the saved file
+```
+
+### Obsidian Configuration Options
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Vault** | Path to Obsidian vault | Auto-detected |
+| **Folder** | Subfolder in vault for plans | `plannotator` |
+| **Custom Path** | Manual path if auto-detect fails | - |
+
+### Saved File Format
+
+Files are saved with human-readable names and YAML frontmatter:
+
+```
+Filename: {Title} - {Month} {Day}, {Year} {Hour}-{Minute}{am/pm}.md
+Example:  User Authentication - Feb 22, 2026 10-45pm.md
+```
+
+```yaml
+---
+created: 2026-02-22T22:45:30.000Z
+source: plannotator
+tags: [plannotator, project-name, typescript, ...]
+---
+
+[[Plannotator Plans]]
+
+# Original plan content...
+```
+
+**Tag extraction:**
+- `plannotator` — always included
+- Project name — from git repo or directory
+- Title words — first 3 meaningful words from H1 heading
+- Languages — from code blocks (```typescript → typescript)
+
+### Bear Notes (Alternative)
+
+If you prefer Bear Notes over Obsidian:
+
+1. Toggle ON "Bear Notes" in Settings → Saving tab
+2. Plans are saved via `bear://x-callback-url/create`
+3. Tags are appended as hashtags
+
+| Feature | Obsidian | Bear |
+|---------|----------|------|
+| Storage | File system | x-callback-url |
+| Frontmatter | YAML | None (hashtags) |
+| Platforms | macOS/Win/Linux | macOS/iOS |
+
+### Troubleshooting
+
+**Vault not detected:**
+```bash
+# 1. Check Obsidian config exists
+ls ~/Library/Application\ Support/obsidian/obsidian.json  # macOS
+
+# 2. If missing, open Obsidian and create a vault first
+open /Applications/Obsidian.app
+
+# 3. After creating vault, restart plannotator
+```
+
+**Plans not saving:**
+```bash
+# Check write permissions on vault folder
+ls -la ~/path/to/vault/plannotator/
+
+# Check browser console for errors (F12 → Console)
+```
+
+**Settings not persisting:**
+- Settings are stored in cookies (not localStorage)
+- Ensure cookies are enabled for localhost
+- Settings persist across different ports
+
+---
+
+## Auto-save (Summary)
+
+> Obsidian integration is **optional** — plans can still be reviewed and approved without it.
 
 ---
 

@@ -83,21 +83,25 @@ These tools have full documentation in `docs/` and dedicated skills in `.agent-s
 
 ### plannotator — Interactive Plan & Diff Review
 > Keyword: `planno` | [Docs](docs/plannotator/README.md) | [GitHub](https://github.com/backnotprop/plannotator)
-
 Visual browser UI for annotating AI agent plans before coding. Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**. Approve plans or send structured feedback in one click.
 
 Validated in-session with Playwright: Approve + feedback loops confirmed across all four platforms. See `docs/plannotator/README.md` for the verified python3 stdin pattern (avoid raw `echo`/heredoc for plan submission).
-
 ```bash
 bash scripts/install.sh --all   # Install + configure all AI tools at once
 ```
-
 | Feature | Description |
 |---------|-------------|
 | Plan Review | Opens browser UI when agent exits plan mode — annotate, approve, or send feedback |
 | Diff Review | `/plannotator-review` for inline line annotations on git diffs |
-| Auto-save | Approved plans sync to Obsidian vault or Bear Notes |
+| **Obsidian Integration** | Auto-save approved plans to Obsidian vault with YAML frontmatter, tags, and backlinks |
+| Bear Notes | Alternative auto-save to Bear Notes (macOS) |
 | Share | Share plan review sessions with teammates via link |
+#### Obsidian Setup (3 steps)
+1. Install Obsidian → https://obsidian.md/download
+2. Create/open a vault in Obsidian
+3. In plannotator UI: Settings (⚙️) → Saving → Enable "Obsidian Integration" → Select vault
+
+See [Pattern 9: Obsidian Integration Setup](.agent-skills/plannotator/SKILL.md#pattern-9-obsidian-integration-setup) in the skill for detailed instructions.
 
 ---
 
@@ -217,4 +221,4 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 
 ---
 
-**Version**: Local repository sync | **Updated**: 2026-02-21
+**Version**: Local repository sync | **Updated**: 2026-02-22
