@@ -100,7 +100,6 @@ verbose_mode: false
 ---
 
 ## Workflow Status File (`docs/bmm-workflow-status.yaml`)
-
 Tracks progress across all phases. Updated automatically as you complete workflows.
 
 ### Schema
@@ -112,31 +111,33 @@ project_level: 2
 communication_language: "Korean"
 output_language: "English"
 last_updated: "2026-02-20T10:00:00Z"
-
-workflow_status:
   - name: "product-brief"
     phase: 1
     status: "docs/product-brief-myapp-2026-02-20.md"  # ← completed
     description: "Product vision and high-level requirements"
-
+    plannotator_review: "approved"      # optional: pending | approved | skipped
+    reviewed_at: "2026-02-20T11:00:00Z" # optional: ISO timestamp of approval
   - name: "prd"
     phase: 2
     status: "required"  # ← not started yet
     description: "Product Requirements Document"
-
+    plannotator_review: null
+    reviewed_at: null
   - name: "architecture"
     phase: 3
     status: "required"
     description: "System architecture design"
-
+    plannotator_review: null
+    reviewed_at: null
   - name: "sprint-planning"
     phase: 4
     status: "required"
     description: "Sprint planning and story breakdown"
+    plannotator_review: null
+    reviewed_at: null
 ```
 
 ### Status Values
-
 | Status | Meaning |
 |--------|---------|
 | `"optional"` | Can be skipped without impact |
@@ -144,6 +145,14 @@ workflow_status:
 | `"required"` | Must complete to proceed |
 | `"{file-path}"` | Completed — shows output file path |
 | `"skipped"` | User explicitly chose to skip |
+### plannotator Review Fields
+
+| Field | Values | Meaning |
+|-------|--------|---------|
+| `plannotator_review` | `null` / `"pending"` / `"approved"` / `"skipped"` | Phase gate review status |
+| `reviewed_at` | `null` / ISO timestamp | Time of plannotator approval |
+
+Set automatically when running `bash scripts/phase-gate-review.sh` and approving in the plannotator UI.
 
 ### When Status Updates
 
@@ -154,11 +163,14 @@ Status is updated automatically when a workflow completes. Example transition:
 - name: prd
   phase: 2
   status: "required"
+  plannotator_review: null
 
-# After completing PRD
+# After completing PRD + plannotator approval
 - name: prd
   phase: 2
   status: "docs/prd-myapp-2026-02-20.md"
+  plannotator_review: "approved"
+  reviewed_at: "2026-02-20T14:30:00Z"
 ```
 
 ---

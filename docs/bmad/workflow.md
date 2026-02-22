@@ -213,24 +213,27 @@ Phase 4: Implementation
 ```
 
 ### Status Symbols
-
 | Symbol | Meaning |
 |--------|---------|
 | `✓` | Completed |
 | `⚠` | Required but not started |
 | `→` | Current phase |
 | `-` | Optional or not applicable |
+| `📋` | Pending plannotator review before proceeding |
+| `✅` | plannotator review approved & saved to Obsidian |
 
 ---
 
 ## Phase Transition Rules
 
-| From → To | Can transition when |
-|-----------|-------------------|
-| Phase 1 → 2 | Product brief complete, OR user skips Phase 1 |
-| Phase 2 → 3 | PRD complete (Level 2+) OR Tech Spec complete (Level 0–1) |
-| Phase 3 → 4 | Architecture complete (Level 2+) OR project is Level 0–1 |
-| Phase 4 → Done | All stories marked "done", tests passing |
+| From → To | Can transition when | plannotator Gate |
+|-----------|-------------------|-----------------|
+| Phase 1 → 2 | Product brief complete, OR user skips Phase 1 | Optional — review product-brief |
+| Phase 2 → 3 | PRD complete (Level 2+) OR Tech Spec complete (Level 0–1) | **Recommended** — review PRD/Tech Spec |
+| Phase 3 → 4 | Architecture complete (Level 2+) OR project is Level 0–1 | **Required (Level 2+)** — review Architecture |
+| Phase 4 → Done | All stories marked "done", tests passing | Optional — review Sprint Plan |
+
+> Run `bash scripts/phase-gate-review.sh <doc> "<title>"` at each transition to open the plannotator review UI and auto-save approved docs to Obsidian.
 
 ---
 

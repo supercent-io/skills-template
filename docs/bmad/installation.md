@@ -9,6 +9,7 @@
 - **Claude Code CLI** — [Installation guide](https://docs.anthropic.com/en/docs/claude-code/getting-started)
 - **Claude Max/Pro subscription** or Anthropic API key
 - **Node.js 18+** (for `npx skills`)
+- **plannotator** (optional) — Required for phase gate reviews & Obsidian auto-save. Install from oh-my-claudecode.
 
 ---
 

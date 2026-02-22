@@ -85,11 +85,9 @@
 # 1. Initialize
 /workflow-init
 # → Project: AuthSystem, Level: 2, Type: api
-
 # Phase 1: Analysis
 /product-brief
 # → Defines: target users, security requirements, OAuth support needed?
-
 # Phase 2: Planning
 /prd
 # → Comprehensive requirements:
@@ -98,10 +96,9 @@
 #    - OAuth (Google, GitHub)
 #    - Rate limiting
 #    - Account lockout
-
-/create-ux-design
+bash scripts/phase-gate-review.sh docs/prd-authsystem-2026-02-22.md "PRD Review: AuthSystem"
+# → plannotator UI opens → Approve → saved to Obsidian → proceed to Phase 3
 # → User flows for login, registration, password reset
-
 # Phase 3: Solutioning
 /architecture
 # → System design:
@@ -109,8 +106,8 @@
 #    - Database schema (users, sessions, oauth_providers)
 #    - API contract
 #    - Security considerations
-
-# Phase 4: Implementation
+bash scripts/phase-gate-review.sh docs/architecture-authsystem-2026-02-22.md "Architecture Review: AuthSystem"
+# → plannotator UI opens → Approve → saved to Obsidian → proceed to Phase 4
 /sprint-planning
 # → Sprint 1: Core auth (7 stories)
 #    - story-E001-S001: User model & DB schema
@@ -122,20 +119,17 @@
 #    - story-E001-S007: Rate limiting middleware
 # → Sprint 2: OAuth (4 stories)
 #    ...
-
 # Implement sprint 1
 /dev-story  # × 7 stories
-
 # Code review
 /code-review
 # → Review findings, security audit
-
 # Sprint 2
 /dev-story  # × 4 stories
 ```
-
 **Total time:** 1–3 weeks  
-**Documents created:** 1 product brief, 1 PRD, 1 UX design, 1 architecture, 11+ stories
+**Documents created:** 1 product brief, 1 PRD, 1 UX design, 1 architecture, 11+ stories  
+**plannotator reviews:** PRD (Phase 2→3) + Architecture (Phase 3→4) both approved & Obsidian-archived
 
 ---
 

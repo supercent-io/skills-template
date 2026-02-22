@@ -184,6 +184,12 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 | 3 Solutioning | Architecture design |
 | 4 Implementation | Sprint planning, dev, code review |
 
+| Feature | Description |
+|---------|-------------|
+| Phase Gate Review | plannotator review UI at each phase transition |
+| Obsidian Archive | Auto-save approved docs with YAML frontmatter |
+| Team Visibility | Share review link for stakeholder annotation |
+
 ---
 
 ## Structure
