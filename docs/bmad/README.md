@@ -137,4 +137,51 @@ omx 스킬을 설정하고 사용해줘. 기억해.    # Codex CLI
 ohmg 스킬을 설정하고 사용해줘. 기억해.   # Gemini-CLI
 ```
 
+---
+
+## plannotator Integration
+
+Review each phase's key deliverable with **plannotator** before transitioning to the next phase. Approved documents auto-save to your Obsidian vault.
+
+### Phase Gate Workflow
+
+```
+Phase document created (PRD, Architecture, etc.)
+       ↓
+bash scripts/phase-gate-review.sh <doc-file> "<title>"
+       ↓
+plannotator UI opens → Annotate → Approve or Request Changes
+       ↓
+[Approved] → Obsidian saved + proceed to next phase
+[Changes]  → Agent revises → re-review
+```
+
+### Usage
+
+```bash
+# Review PRD before moving to Solutioning (Phase 3)
+bash scripts/phase-gate-review.sh docs/prd-myapp-2026-02-22.md "PRD Review: myapp"
+
+# Review Architecture before starting Implementation (Phase 4)
+bash scripts/phase-gate-review.sh docs/architecture-myapp-2026-02-22.md "Architecture Review: myapp"
+```
+
+Or trigger from within your AI session after any phase document is created:
+
+```text
+planno — review the PRD before we proceed to Phase 3
+```
+
+### Obsidian Auto-Save
+
+Approved plans are saved with BMAD-specific tags:
+
+```yaml
+tags: [bmad, phase-2, prd, myapp]
+```
+
+See [plannotator docs](../plannotator/README.md) for Obsidian setup.
+
+---
+
 → [Back to skills-template README](../../README.md)

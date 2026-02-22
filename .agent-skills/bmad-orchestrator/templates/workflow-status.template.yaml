@@ -118,9 +118,17 @@ workflow_status:
 # ============================================================
 # Status Legend
 # ============================================================
-# required    - Must be completed before proceeding to next phase
-# recommended - Strongly suggested for project quality
-# optional    - Can be skipped based on project needs
-# conditional - Required based on context (e.g., sprint active)
-# {file-path} - Workflow completed, shows output document
-# skipped     - User explicitly chose to skip this workflow
+# required              - Must be completed before proceeding to next phase
+# recommended           - Strongly suggested for project quality
+# optional              - Can be skipped based on project needs
+# conditional           - Required based on context (e.g., sprint active)
+# {file-path}           - Workflow completed, shows output document
+# skipped               - User explicitly chose to skip this workflow
+#
+# plannotator_review    - "approved" | "pending" | "changes-requested"
+# reviewed_at           - ISO 8601 timestamp of last plannotator review
+#
+# Phase Gate Review (optional but recommended):
+#   After completing any phase document, run:
+#   bash scripts/phase-gate-review.sh <doc-file> "<title>"
+#   This opens plannotator for review before transitioning to next phase.

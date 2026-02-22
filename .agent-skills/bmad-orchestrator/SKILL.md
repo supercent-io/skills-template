@@ -69,3 +69,81 @@ Typical flow:
 |--------|---------|
 | Initialize BMAD | `/workflow-init` |
 | Check BMAD status | `/workflow-status` |
+
+
+---
+
+## plannotator Integration (Phase Review Gate)
+
+Each BMAD phase produces a key document (PRD, Tech Spec, Architecture). Before transitioning to the next phase, review that document with **plannotator** and auto-save it to Obsidian.
+
+### Why use plannotator with BMAD?
+
+- **Quality gate**: Approve or request changes before locking in a phase deliverable
+- **Obsidian archive**: Every approved phase document auto-saves with YAML frontmatter and `[[BMAD Plans]]` backlink
+- **Team visibility**: Share a plannotator link so stakeholders can annotate the PRD/Architecture before implementation begins
+
+### Phase Review Pattern
+
+After completing any phase document, submit it for review:
+
+```bash
+# After /prd → docs/prd-myapp-2026-02-22.md is created
+bash scripts/phase-gate-review.sh docs/prd-myapp-2026-02-22.md "PRD Review: myapp"
+
+# After /architecture → docs/architecture-myapp-2026-02-22.md is created
+bash scripts/phase-gate-review.sh docs/architecture-myapp-2026-02-22.md "Architecture Review: myapp"
+```
+
+Or submit the plan directly from within your AI session:
+
+```text
+# In Claude Code after /prd completes:
+planno — review the PRD before we proceed to Phase 3
+```
+
+The agent will call `submit_plan` with the document content, opening the plannotator UI for review.
+
+### Phase Gate Flow
+
+```
+/prd completes → docs/prd-myapp.md created
+       ↓
+ bash scripts/phase-gate-review.sh docs/prd-myapp.md
+       ↓
+ plannotator UI opens in browser
+       ↓
+  [Approve]              [Request Changes]
+       ↓                        ↓
+ Obsidian saved          Agent revises doc
+ bmm-workflow-status     Re-submit for review
+ updated automatically
+       ↓
+ /architecture (Phase 3)
+```
+
+### Obsidian Save Format
+
+Approved phase documents are saved to your Obsidian vault with:
+
+```yaml
+---
+created: 2026-02-22T22:45:30.000Z
+source: plannotator
+tags: [bmad, phase-2, prd, myapp]
+---
+
+[[BMAD Plans]]
+
+# PRD: myapp
+...
+```
+
+### Quick Reference
+
+| Phase | Document | Gate Command |
+|-------|----------|--------------|
+| Phase 1 → 2 | Product Brief | `bash scripts/phase-gate-review.sh docs/product-brief-*.md` |
+| Phase 2 → 3 | PRD / Tech Spec | `bash scripts/phase-gate-review.sh docs/prd-*.md` |
+| Phase 3 → 4 | Architecture | `bash scripts/phase-gate-review.sh docs/architecture-*.md` |
+| Phase 4 done | Sprint Plan | `bash scripts/phase-gate-review.sh docs/sprint-status.yaml` |
