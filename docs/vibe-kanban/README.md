@@ -132,6 +132,27 @@ It appends MCP server config under `~/.codex/config.toml` and writes a `vibe-kan
 
 > Note: This skill is not an Auto-hook loop system. For autonomous repeat behavior, combine with the skill or workflow that your Codex orchestration layer already provides.
 
+### OpenCode MCP Configuration
+
+Add to `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcp": {
+    "vibe-kanban": {
+      "command": "npx",
+      "args": ["vibe-kanban", "--mcp"],
+      "env": {
+        "MCP_HOST": "127.0.0.1",
+        "MCP_PORT": "3001"
+      }
+    }
+  }
+}
+```
+
+After restarting OpenCode, `vk_*` tools are available directly in your session.
+
 ---
 
 ## Remote Deployment
@@ -303,6 +324,33 @@ Same task, two cards:
   Card A → Claude (UI structure focus)
   Card B → Codex (performance focus)
 → Compare PRs → pick best-of-both
+```
+
+### 5. OpenCode + ulw Parallel Delegation
+
+Combine Vibe Kanban with OpenCode's ulw (ultrawork) mode to run agents in parallel at the epic level:
+
+```python
+# ulw keyword → ultrawork parallel execution layer activated
+# Run Vibe Kanban board: npx vibe-kanban (in a separate terminal)
+
+task(category="visual-engineering", run_in_background=True,
+     load_skills=["frontend-ui-ux", "vibe-kanban"],
+     description="[Kanban WS1] Frontend UI",
+     prompt="Implement payment flow UI — card input, order confirmation, completion screens in src/components/payment/")
+
+task(category="unspecified-high", run_in_background=True,
+     load_skills=["vibe-kanban"],
+     description="[Kanban WS2] Backend API",
+     prompt="Implement payment API — POST /charge, POST /refund, GET /status/:id")
+
+task(category="unspecified-low", run_in_background=True,
+     load_skills=["vibe-kanban"],
+     description="[Kanban WS3] Integration Tests",
+     prompt="Write payment E2E tests — success, failure, and refund scenarios")
+
+# → 3 workspaces appear simultaneously in Running state on the Kanban board
+# → Each completion: Needs Attention → PR created → Archive
 ```
 
 ---
