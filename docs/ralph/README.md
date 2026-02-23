@@ -193,7 +193,7 @@ bash <your-agent-skills>/ralph/scripts/setup-codex-hook.sh
 1. 위 스크립트 실행
 2. Codex 재시작
 3. `/prompts:ralph` 확인
-4. `/ralph "..." --completion-promise="DONE" --max-iterations=10`
+4. `/ralph "..." --completion-promise="DONE" --max-iterations=100`
 
 ### 현재 스킬만으로 가능한지
 

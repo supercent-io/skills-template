@@ -131,7 +131,7 @@ npx vibe-kanban          # Launch board at http://localhost:3000
 Self-referential loop that re-runs the agent on the same task across turns (with fresh context each iteration) until a `<promise>DONE</promise>` tag is detected or max iterations is reached.
 
 ```bash
-/ralph "Fix all TypeScript errors" --completion-promise="0 errors" --max-iterations=10
+/ralph "Fix all TypeScript errors" --completion-promise="0 errors" --max-iterations=100
 ```
 
 Available in: Gemini CLI, OpenCode, Claude Code, Codex.

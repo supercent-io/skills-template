@@ -14,7 +14,7 @@ Key capabilities:
 - Parallel agent execution on independent tasks
 - Git worktree isolation per task card
 - Automatic PR creation on task completion
-- planno (plannotator) integration for epic-level plan review before card creation (optional, independent)
+- plannotator integration for epic-level plan review before card creation (keyword: `plan` / `계획`, optional, independent)
 
 ---
 
@@ -230,15 +230,15 @@ npx vibe-kanban
 # → http://localhost:3000
 ```
 
-### 2. (Optional) Review Epic Plan with planno
+### 2. (Optional) Review Epic Plan with plannotator
 
 Before creating cards, review the feature breakdown visually:
 
 ```text
-planno로 이 기능의 구현 계획을 검토해줘
+plan으로 이 기능의 구현 계획을 검토해줘
 ```
 
-planno (plannotator) is an independent skill — usable without Vibe Kanban.
+plannotator is an independent skill — usable without Vibe Kanban.
 
 ### 3. Create Task Cards
 
@@ -356,19 +356,19 @@ Worktrees are isolated — multiple agents run concurrently without conflicting 
 
 ---
 
-### 2. Plan Review with planno (Optional, Independent)
+### 2. Plan Review with plannotator (Optional, Independent)
 
-Before creating individual task cards, you can optionally review the epic breakdown using planno (plannotator) — a separate, independent skill:
+Before creating individual task cards, you can optionally review the epic breakdown using plannotator — a separate, independent skill:
 
 ```text
-planno로 이 기능의 구현 계획을 검토해줘
+plan으로 이 기능의 구현 계획을 검토해줘
 ```
 
-planno breaks the feature spec into an ordered set of sub-tasks. Review and adjust the plan, then approve it. Approved specs become the source of truth for card creation. planno operates independently — you can use Vibe Kanban without it.
+plannotator breaks the feature spec into an ordered set of sub-tasks. Review and adjust the plan, then approve it. Approved specs become the source of truth for card creation. plannotator operates independently — you can use Vibe Kanban without it.
 
 ### 3. Create Tasks
 
-Add task cards to the **To Do** column. Each card should represent a single, atomic unit of work derived from the approved planno spec (or your own task breakdown if not using planno).
+Add task cards to the **To Do** column. Each card should represent a single, atomic unit of work derived from the approved plannotator spec (or your own task breakdown if not using plannotator).
 
 ### 4. Assign Agents
 
@@ -392,19 +392,19 @@ Approve and merge the PR. The card advances to **Done**.
 
 ---
 
-## planno (plannotator) Integration — Optional, Independent
+## plannotator Integration — Optional, Independent
 
-planno is an independent skill for epic-level plan review. It is not required by Vibe Kanban — each tool operates on its own. Use planno when you want visual annotation and approval of the implementation plan before breaking it into cards.
+plannotator is an independent skill for epic-level plan review. It is not required by Vibe Kanban — each tool operates on its own. Use plannotator when you want visual annotation and approval of the implementation plan before breaking it into cards.
 
-Typical flow (when using planno alongside Vibe Kanban):
+Typical flow (when using plannotator alongside Vibe Kanban):
 
 1. Describe the feature or epic in natural language.
-2. Ask planno to decompose it: `planno로 이 기능의 구현 계획을 검토해줘`
+2. Ask plannotator to decompose it: `plan으로 이 기능의 구현 계획을 검토해줘`
 3. Review the generated breakdown — adjust ordering, scope, or dependencies.
 4. Approve the plan.
 5. Create one card per approved sub-task in Vibe Kanban.
 
-Skipping planno is perfectly fine for small, self-contained tasks. For larger features with many moving parts, planno helps prevent scope creep before card creation.
+Skipping plannotator is perfectly fine for small, self-contained tasks. For larger features with many moving parts, plannotator helps prevent scope creep before card creation.
 
 ---
 
@@ -433,7 +433,7 @@ This isolation means multiple agents can work on different cards simultaneously 
 ## Tips
 
 - Keep card scope narrow. One card = one commit-worthy change. Broad cards lead to large, hard-to-review PRs.
-- Use planno (independent skill) for any feature touching more than two files.
+- Use plannotator (independent skill, keyword: `plan` / `계획`) for any feature touching more than two files.
 - Set `VIBE_KANBAN_REMOTE=true` only on trusted networks — it exposes the board and agent controls to all connections on the port.
 - If an agent stalls on a card, reassign to a different agent or break the card into smaller pieces.
 

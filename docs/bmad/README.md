@@ -169,7 +169,7 @@ bash scripts/phase-gate-review.sh docs/architecture-myapp-2026-02-22.md "Archite
 Or trigger from within your AI session after any phase document is created:
 
 ```text
-planno — review the PRD before we proceed to Phase 3
+plan — review the PRD before we proceed to Phase 3
 ```
 
 ### Obsidian Auto-Save
