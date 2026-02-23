@@ -219,7 +219,7 @@ OpenCode plugin path (`/plannotator-review`) is validated and returns approval r
 
 ## Feature 3: Auto-save & Sharing
 
-- **Obsidian integration**: Approved plans auto-save to your Obsidian vault
+- **Obsidian integration**: Approved plans auto-save to your Obsidian vault with YAML frontmatter and tags. Supports subfolder organization (e.g., `plannotator/approved/`, `plannotator/2026-02/`). Settings configured via Settings (⚙️) → Saving → Obsidian Integration in the system browser.
 - **Bear Notes integration**: Approved plans auto-save to Bear Notes
 - **Share links**: Share plan review sessions with teammates for collaboration
 
@@ -264,13 +264,15 @@ plan으로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘
 
 ---
 
-## Known Limitations (validated 2026-02-21)
+## Known Limitations (validated 2026-02-23)
 
 1. `plannotator plan -` with heredoc/echo can fail to parse stdin; use python3 JSON format.
 2. Keeping stdin open (for example with `sleep`) blocks server start; stdin EOF must be immediate.
 3. First browser load can show demo plan; call `page.reload()` in automated tests.
 4. Send Feedback requires at least one annotation first.
 5. `plannotator review` requires a git repository.
+6. "Save to Obsidian" fails in automated browser contexts (Playwright, Puppeteer) — obsidian:// URI cannot be opened; write directly to the vault filesystem as a fallback.
+7. Obsidian Integration settings must be configured in the system browser that plannotator auto-opens (not in Playwright or other isolated browser profiles).
 
 ---
 

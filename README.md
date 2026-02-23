@@ -101,7 +101,16 @@ bash scripts/install.sh --all   # Install + configure all AI tools at once
 2. Create/open a vault in Obsidian
 3. In plannotator UI: Settings (⚙️) → Saving → Enable "Obsidian Integration" → Select vault
 
-See [Pattern 9: Obsidian Integration Setup](.agent-skills/plannotator/SKILL.md#pattern-9-obsidian-integration-setup) in the skill for detailed instructions.
+> **Note**: Configure settings in the **system browser** that plannotator auto-opens. Settings configured in automated/Playwright browser sessions are isolated and will not persist. See [Pattern 9: Obsidian Integration Setup](.agent-skills/plannotator/SKILL.md#pattern-9-obsidian-integration-setup) for detailed instructions and folder organization.
+
+#### Obsidian Folder Organization
+Plans can be organized into subfolders within the vault:
+```
+vault/plannotator/
+├── approved/    ← approved plans
+├── denied/      ← rejected plans
+└── 2026-02/     ← monthly archive
+```
 
 ---
 
@@ -229,7 +238,10 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 
 **Version**: Local repository sync | **Updated**: 2026-02-23
 
+**Changelog v2026-02-23 (latest)**:
+- **plannotator/Obsidian**: Verified Obsidian integration (2026-02-23); added automated browser limitation note (Playwright/Puppeteer cannot open obsidian:// URI); added folder organization guide (approved/, denied/, YYYY-MM/); added direct filesystem fallback pattern (SKILL.md, docs/plannotator/README.md, README.md)
+
 **Changelog v2026-02-23**:
 - **ralph**: Default `--max-iterations` changed from `5` → `100` (SKILL.md, SKILL.toon, docs/ralph/README.md)
 - **plannotator**: Primary keyword changed from `planno` → `plan`, `계획` for natural design-phase activation; `planno` retained as backward-compatible alias in tags
- **vibe-kanban**: OpenCode MCP 설정 섹션 추가 (SKILL.md, docs/vibe-kanban/README.md); OpenCode + ulw 병렬 위임 사용 케이스 추가 (SKILL.toon v1.2.0)
+- **vibe-kanban**: OpenCode MCP 설정 섹션 추가 (SKILL.md, docs/vibe-kanban/README.md); OpenCode + ulw 병렬 위임 사용 케이스 추가 (SKILL.toon v1.2.0)

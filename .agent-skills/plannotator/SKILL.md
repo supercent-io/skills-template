@@ -431,6 +431,29 @@ tags: [plannotator, project-name, typescript, ...]
 - Title words — first 3 meaningful words from H1 heading
 - Languages — from code blocks (```typescript → typescript)
 
+### Folder Organization
+
+Organize plans within the vault using subfolders:
+
+```
+vault/plannotator/
+├── approved/          ← approved plans
+├── denied/            ← rejected plans
+└── 2026-02/           ← monthly archive
+```
+
+Create subfolders manually (Obsidian detects them automatically):
+```bash
+mkdir -p ~/path/to/vault/plannotator/approved
+mkdir -p ~/path/to/vault/plannotator/denied
+mkdir -p ~/path/to/vault/plannotator/2026-02
+```
+
+Or write directly to any subfolder:
+```bash
+cp ~/.plannotator/plans/<name>-approved.md ~/path/to/vault/plannotator/approved/
+```
+
 ### Bear Notes (Alternative)
 
 If you prefer Bear Notes over Obsidian:
@@ -465,6 +488,17 @@ ls -la ~/path/to/vault/plannotator/
 
 # Check browser console for errors (F12 → Console)
 ```
+
+**"Save failed" in automated/headless browsers (Playwright, Puppeteer):**
+```bash
+# plannotator uses the obsidian:// URI protocol to open Obsidian.
+# Playwright and other automated browsers cannot handle custom URI schemes.
+# Solution: Write directly to the Obsidian vault filesystem instead:
+mkdir -p ~/path/to/vault/plannotator/
+cp ~/.plannotator/plans/<plan-name>.md ~/path/to/vault/plannotator/
+```
+- Settings must be configured in the **system browser** that plannotator opens (not Playwright)
+- Playwright sessions have isolated localStorage and cannot open obsidian:// URIs
 
 **Settings not persisting:**
 - Settings are stored in cookies (not localStorage)
