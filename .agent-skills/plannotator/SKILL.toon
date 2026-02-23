@@ -1,6 +1,7 @@
 N:plannotator
-D:[planno] AI 코딩 에이전트 계획/diff를 시각적으로 리뷰. 브라우저 UI에서 어노테이션(delete/insert/replace/comment)→Approve 또는 Send Feedback. Code Review(/plannotator-review), 이미지 어노테이션, Obsidian 자동저장 지원. Claude Code + OpenCode + Gemini CLI + Codex CLI 통합. 수동 Plan 제출은 echo/heredoc 대신 python3 JSON(stdin tool_input 포맷) 사용 권장.
-G:planno plannotator plan-review diff-review code-review annotate visual-review claude-code opencode gemini codex image-annotation obsidian scripts
+D:[plan/계획] AI 코딩 에이전트 계획/diff를 시각적으로 리뷰. 브라우저 UI에서 어노테이션(delete/insert/replace/comment)→Approve 또는 Send Feedback. Code Review(/plannotator-review), 이미지 어노테이션, Obsidian 자동저장 지원. Claude Code + OpenCode + Gemini CLI + Codex CLI 통합. 수동 Plan 제출은 echo/heredoc 대신 python3 JSON(stdin tool_input 포맷) 사용 권장.
+G:plan 계획 planno plannotator plan-review diff-review code-review annotate visual-review claude-code opencode gemini codex image-annotation obsidian scripts 계획검토 설계검토
+
 U[6]:
   scripts/install.sh — plannotator CLI 설치 (OS 자동감지, --with-plugin 옵션)
   scripts/setup-hook.sh — ~/.claude/settings.json에 ExitPlanMode 훅 자동 추가

@@ -174,7 +174,7 @@ repository to the current project.
 | `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI |
 | `omc` | oh-my-claudecode — Teams-first multi-agent orchestration |
 | `opencontext` | AI agent persistent memory |
-| `planno` | Visual plan and diff review with Plannotator — annotate, approve, or request changes |
+| `plan`, `계획` | Visual plan and diff review with Plannotator — annotate, approve, or request changes (alias: `planno`) |
 | `ralph` | Self-referential completion loop for multi-turn agents |
 | `skill-standardization` | SKILL.md standardization |
 | `vercel-deploy` | Vercel deployment |

@@ -1,6 +1,6 @@
 # plannotator — Interactive Plan & Diff Review
 
-> Keyword: `planno` | [GitHub](https://github.com/backnotprop/plannotator) | [plannotator.ai](https://plannotator.ai)
+> Keyword: `plan`, `계획` (alias: `planno`) | [GitHub](https://github.com/backnotprop/plannotator) | [plannotator.ai](https://plannotator.ai)
 >
 > Annotate and review AI coding agent plans visually, share with your team, send feedback with one click.
 > Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**.
@@ -12,7 +12,7 @@ plannotator opens a **visual browser UI** when your AI coding agent finishes pla
 **Part of AI Review Tools family** (independent tools, each with its own keyword):
 | Tool | Keyword | Purpose |
 |------|---------|---------|
-| **plannotator** | `planno` | Visual plan/diff review |
+| **plannotator** | `plan`, `계획` | Visual plan/diff review |
 | **vibe-kanban** | `kanbanview` | Kanban board for AI agents |
 | **copilot-coding-agent** | `copilotview` | GitHub Copilot issue→PR |
 
@@ -244,7 +244,13 @@ export PLANNOTATOR_PORT=9999
 ## Keyword Activation
 
 ```text
-planno로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
+plan으로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘.
+계획 검토하고 수정 코멘트 만들어줘.
+```
+
+> 이전 키워드 `planno`도 하위 호환으로 계속 동작합니다.
+
+```text
 ```
 
 ---

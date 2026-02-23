@@ -82,7 +82,7 @@ This repository stores the `agentskills` package used by this workspace.
 These tools have full documentation in `docs/` and dedicated skills in `.agent-skills/`.
 
 ### plannotator — Interactive Plan & Diff Review
-> Keyword: `planno` | [Docs](docs/plannotator/README.md) | [GitHub](https://github.com/backnotprop/plannotator)
+> Keyword: `plan`, `계획` (alias: `planno`) | [Docs](docs/plannotator/README.md) | [GitHub](https://github.com/backnotprop/plannotator)
 Visual browser UI for annotating AI agent plans before coding. Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**. Approve plans or send structured feedback in one click.
 
 Validated in-session with Playwright: Approve + feedback loops confirmed across all four platforms. See `docs/plannotator/README.md` for the verified python3 stdin pattern (avoid raw `echo`/heredoc for plan submission).
@@ -219,7 +219,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 
 | Tool | Keyword | Doc |
 |------|---------|-----|
-| plannotator | `planno` | [docs/plannotator/README.md](docs/plannotator/README.md) |
+| plannotator | `plan`, `계획` | [docs/plannotator/README.md](docs/plannotator/README.md) |
 | vibe-kanban | `kanbanview` | [docs/vibe-kanban/README.md](docs/vibe-kanban/README.md) |
 | ralph | `ralph` | [docs/ralph/README.md](docs/ralph/README.md) |
 | omc | `omc` | [docs/omc/README.md](docs/omc/README.md) |
@@ -227,4 +227,8 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 
 ---
 
-**Version**: Local repository sync | **Updated**: 2026-02-22
+**Version**: Local repository sync | **Updated**: 2026-02-23
+
+**Changelog v2026-02-23**:
+- **ralph**: Default `--max-iterations` changed from `5` → `100` (SKILL.md, SKILL.toon, docs/ralph/README.md)
+- **plannotator**: Primary keyword changed from `planno` → `plan`, `계획` for natural design-phase activation; `planno` retained as backward-compatible alias in tags

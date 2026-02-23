@@ -47,7 +47,7 @@ The loop happens **across agent turns**, controlled by an `AfterAgent` hook.
 
 Defaults:
 - Completion promise: `DONE`
-- Max iterations: `5`
+- Max iterations: `100`
 
 ---
 

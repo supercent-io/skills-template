@@ -34,7 +34,7 @@ Iteration 2: Agent reads task + sees file changes → continues → exits
 ## Usage
 
 ```bash
-/ralph "<task>" [--completion-promise="DONE"] [--max-iterations=5]
+/ralph "<task>" [--completion-promise="DONE"] [--max-iterations=100]
 ```
 
 ### Options
@@ -42,7 +42,7 @@ Iteration 2: Agent reads task + sees file changes → continues → exits
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--completion-promise` | `"DONE"` | Text the agent must output inside `<promise>TEXT</promise>` to stop |
-| `--max-iterations` | `5` | Maximum number of iterations before stopping |
+| `--max-iterations` | `100` | Maximum number of iterations before stopping |
 
 ### Completion Promise Format
 
