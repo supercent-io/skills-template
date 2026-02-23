@@ -124,6 +124,12 @@ bash scripts/check-status.sh
 
 Checks CLI version, hook configuration for all tools (Claude, Gemini, Codex, OpenCode), env vars, Obsidian integration, and git repo state.
 
+### Skill path resolution (absolute/global)
+
+When plannotator is loaded via skill tooling:
+- Absolute skill paths are honored as-is (for example, `/Users/me/.agent-skills/plannotator`)
+- Relative skill paths resolve with fallback order: configured skills directory -> global `~/.agent-skills`
+
 ### Recommended Setup Flow
 
 ```

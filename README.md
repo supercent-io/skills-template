@@ -89,6 +89,10 @@ Validated in-session with Playwright: Approve + feedback loops confirmed across 
 ```bash
 bash scripts/install.sh --all   # Install + configure all AI tools at once
 ```
+Path resolution behavior for skill loading:
+- Absolute skill paths are used directly (for example, `/Users/me/.agent-skills/plannotator`)
+- Relative skill paths are resolved in this order: configured skills directory -> global `~/.agent-skills`
+
 | Feature | Description |
 |---------|-------------|
 | Plan Review | Opens browser UI when agent exits plan mode — annotate, approve, or send feedback |

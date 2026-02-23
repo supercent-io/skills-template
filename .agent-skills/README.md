@@ -220,6 +220,10 @@ python3 skill-query-handler.py query "API design"
 python3 skill-query-handler.py stats
 ```
 
+Path resolution behavior for `--skill`:
+- Absolute skill paths are used directly (directory or direct `SKILL.md` path)
+- Relative skill paths resolve in order: configured `skills_dir` -> global `~/.agent-skills`
+
 ### skill_loader.py
 
 ```bash
