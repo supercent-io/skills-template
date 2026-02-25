@@ -1,9 +1,9 @@
 ---
 name: jeo
 keyword: jeo
-description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator."
+description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 브라우저 동작 검증, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator, agent-browser."
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
-tags: [jeo, orchestration, ralph, plannotator, team, bmad, omc, omx, ohmg, multi-agent, workflow, worktree-cleanup]
+tags: [jeo, orchestration, ralph, plannotator, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: supercent-io/skills-template
@@ -49,7 +49,7 @@ JEO가 설치하고 설정하는 도구 목록:
 | **bmad** | BMAD 워크플로우 오케스트레이션 | skills에 포함됨 |
 | **ralph** | 자기참조 완료 루프 | omc에 포함 또는 별도 설치 |
 | **plannotator** | 계획/diff 시각적 리뷰 | `bash scripts/install.sh --with-plannotator` |
-| **agent-browser** | AI 에이전트용 헤드리스 브라우저 (선택) | `npm install -g agent-browser` |
+| **agent-browser** | AI 에이전트용 헤드리스 브라우저 — **브라우저 동작 검증 기본 도구** | `npm install -g agent-browser` |
 | **playwriter** | Playwright 기반 브라우저 자동화 (선택) | `npm install -g playwriter` |
 
 ---
@@ -72,7 +72,12 @@ jeo "<task>"
     └─ team 없음?     → /bmad /workflow-init → BMAD 단계 실행
     │
     ▼
-[3] CLEANUP
+[3] VERIFY (agent-browser — 기본 동작)
+    agent-browser로 브라우저 동작 검증
+    → 스냅샷 캡처 → UI/기능 정상 여부 확인
+    │
+    ▼
+[4] CLEANUP
     모든 작업 완료 후 → bash scripts/worktree-cleanup.sh
     git worktree prune
 ```
@@ -126,7 +131,26 @@ Shift+Tab×2 → plan mode 진입 → 계획 완료 시 plannotator 자동 실�
 - Analysis → Planning → Solutioning → Implementation 순서로 진행
 - 각 단계 완료 시 plannotator로 문서 검토
 
-### 3.3 CLEANUP 단계 (worktree 자동 정리)
+### 3.3 VERIFY 단계 (agent-browser — 기본 동작)
+
+브라우저 기반 기능이 있을 경우 `agent-browser`로 동작을 검증합니다.
+
+```bash
+# 앱 실행 중인 URL에서 스냅샷 캡처
+agent-browser snapshot http://localhost:3000
+
+# 특정 요소 확인 (accessibility tree ref 방식)
+agent-browser snapshot http://localhost:3000 -i
+# → @eN ref 번호로 요소 상태 확인
+
+# 스크린샷 저장
+agent-browser screenshot http://localhost:3000 -o verify.png
+```
+
+> **기본 동작**: 브라우저 관련 작업 완료 시 자동으로 agent-browser 검증 단계를 실행합니다.
+> 브라우저 UI가 없는 백엔드/CLI 작업은 이 단계를 건너뜁니다.
+
+### 3.4 CLEANUP 단계 (worktree 자동 정리)
 
 ```bash
 # 모든 작업 완료 후 자동 실행
@@ -233,7 +257,7 @@ JEO는 아래 경로에 상태를 저장합니다:
 **상태 파일 구조:**
 ```json
 {
-  "phase": "plan|execute|cleanup",
+  "phase": "plan|execute|verify|cleanup",
   "task": "현재 작업 설명",
   "plan_approved": true,
   "team_available": true,
