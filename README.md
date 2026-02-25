@@ -26,14 +26,11 @@
 
 ---
 
-## Quick Start
+## Quick Start (For LLM Agents)
 
 ```bash
-# 1. jeo 설치 (모든 플랫폼 — 권장)
-npx skills add https://github.com/supercent-io/skills-template --skill jeo
-
-# 2. 실행 (Claude Code)
-jeo "원하는 작업을 여기에 설명하세요"
+# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
+curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
 
 > 더 많은 스킬 설치 → [설치](#설치-install) | 플랫폼별 상세 실행 → [실행 가이드](#실행-가이드)
@@ -56,104 +53,10 @@ jeo "원하는 작업을 여기에 설명하세요"
 
 LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
 
-#### Step 0: 사용자 환경 파악
-
-다음 질문으로 설치할 스킬을 결정하세요:
-
-1. **어떤 AI 플랫폼을 사용하나요?**
-   - Claude Code → `omc`, `plannotator`, `ralph`, `bmad-orchestrator` 사용 가능
-   - Codex CLI → `oh-my-codex`, `ralph`, `jeo` 사용 가능
-   - Gemini CLI → `ohmg`, `ralph`, `jeo` 사용 가능
-   - 모두 사용 → `jeo` (전 플랫폼 통합)
-
-2. **어떤 워크플로우가 필요한가요?**
-   - 계획·검토 루프 → `plannotator`, `ralph`
-   - 멀티에이전트 실행 → `omc` (Claude), `ohmg` (Gemini), `oh-my-codex` (Codex)
-   - 칸반 보드로 진행 추적 → `vibe-kanban`
-   - 전체 통합 → `jeo`
-
-3. **`skills` CLI가 설치되어 있나요?**
-
 ```bash
-if command -v skills &> /dev/null; then
-    echo "skills CLI available"
-else
-    echo "npx를 통해 설치합니다"
-fi
+# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
+curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
-
-#### Step 1: OpenCode / 기본 도구 확인 (선택)
-
-OpenCode 사용 시:
-```bash
-if command -v opencode &> /dev/null; then
-    echo "OpenCode $(opencode --version) installed"
-else
-    echo "OpenCode not found. Ref: https://opencode.ai/docs"
-fi
-```
-
-#### Step 2: 스킬 설치
-
-Step 0의 답변에 따라 적절한 명령을 실행하세요:
-
-**빠른 시작 (전 플랫폼):**
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill jeo
-```
-
-**Claude Code 전용:**
-```bash
-npx skills add https://github.com/supercent-io/skills-template \
-  --skill omc --skill plannotator --skill ralph --skill vibe-kanban
-```
-
-**Gemini CLI 전용:**
-```bash
-npx skills add https://github.com/supercent-io/skills-template \
-  --skill ohmg --skill ralph --skill vibe-kanban
-```
-
-**Codex CLI 전용:**
-```bash
-npx skills add https://github.com/supercent-io/skills-template \
-  --skill oh-my-codex --skill ralph
-```
-
-**전체 65개 스킬 → [setup-all-skills-prompt.md](setup-all-skills-prompt.md)**
-
-**Gemini CLI (확장 설치):**
-```bash
-gemini extensions install https://github.com/supercent-io/skills-template
-```
-
-#### Step 3: OpenCode 추가 설정 (oh-my-opencode)
-
-OpenCode를 사용한다면, 최신 설치 가이드를 직접 fetch해서 내용을 읽고 따르세요:
-
-```bash
-# oh-my-opencode 최신 설치 가이드 fetch — 구독 환경에 맞는 플래그 확인 후 실행
-curl -s https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
-```
-
-가이드에서 구독 상태(Claude Pro/Max, Gemini, Copilot 등)에 맞는 설치 플래그를 확인하고 설치를 진행합니다.
-
-#### Step 4: 설치 확인
-
-```bash
-# 스킬 디렉토리 확인
-ls ~/.agent-skills/ 2>/dev/null || ls .agent-skills/ 2>/dev/null
-```
-
-설치 성공 시 `jeo`, `omc`, `ralph` 등 스킬 폴더가 보여야 합니다.
-
-#### Step 5: 사용자에게 다음 단계 안내
-
-설치 완료 후:
-- **Claude Code**: `jeo "작업 내용"` 또는 `/omc:team "작업"` 실행
-- **Gemini CLI**: `/jeo "작업 내용"` 실행
-- **Codex CLI**: `/jeo "작업 내용"` 실행
-
 ---
 
 ### 사람용 (For Humans)
