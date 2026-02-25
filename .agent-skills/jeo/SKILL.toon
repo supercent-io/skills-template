@@ -15,12 +15,13 @@ S[8]{n,action,details}:
   3,Setup-Codex,bash scripts/setup-codex.sh (~/.codex/config.toml developer_instructions + /prompts:jeo)
   4,Setup-Gemini,bash scripts/setup-gemini.sh (~/.gemini/settings.json 훅 + GEMINI.md 지시사항)
   5,Setup-OpenCode,bash scripts/setup-opencode.sh (opencode.json 플러그인 등록 + slash commands)
-  6,Plan,ralph+plannotator 계획수립: /ralph "jeo-plan: <task>" → plannotator UI → Approve or Feedback
+  6,Plan,ralph+plannotator 계획수립: /ralph "jeo-plan: <task>" → plannotator 블로킹 실행(& 금지) → Approve("approved":true) or Feedback → 재계획 루프
   7,Execute,team 우선: /omc:team 3:executor "<task>" / team 없음: /workflow-init (BMAD)
   8,Verify-Cleanup,agent-browser snapshot <url> → UI 검증 → bash scripts/worktree-cleanup.sh
 
-R[4]:
+R[5]:
   ralph+plannotator로 계획 먼저 검토 — 코딩 시작 전 잘못된 방향 조기 차단
+  plannotator는 반드시 블로킹 실행(& 금지) — "approved":true 확인 후 EXECUTE 진입 / 피드백 시 재계획 루프
   Claude+omc: team 우선 / Codex·Gemini·OpenCode: bmad fallback 사용
   브라우저 관련 작업 완료 시 agent-browser snapshot으로 UI 동작 검증 (기본 동작)
   상태는 {worktree}/.omc/state/jeo-state.json에 세션 간 저장

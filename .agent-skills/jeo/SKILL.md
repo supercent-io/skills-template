@@ -94,20 +94,29 @@ jeo "<task>"
 
 **Codex / Gemini / OpenCode (대체):**
 ```bash
-# 1. plan.md 직접 작성 후 plannotator로 검토
-cat plan.md | python3 -c "
-import json, sys
-plan = sys.stdin.read()
-print(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
-" | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
+# 1. plan.md 직접 작성 후 plannotator로 검토 (블로킹 실행 — & 없음)
+python3 -c "
+import json
+print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+# ↑ & 없이 실행: 사용자가 브라우저에서 Approve/Send Feedback 클릭까지 대기
+
+# 2. 결과 확인 후 분기
+if grep -q '"approved":true' /tmp/plannotator_feedback.txt 2>/dev/null; then
+  echo "PLAN_APPROVED"   # → EXECUTE 단계 진입
+else
+  echo "PLAN_FEEDBACK"   # → cat /tmp/plannotator_feedback.txt 읽고 재계획 후 위 과정 반복
+fi
 ```
+
+> **중요**: `&` (백그라운드) 실행 금지. 블로킹으로 실행해야 사용자 피드백을 수신할 수 있습니다.
 
 공통 플로우:
 - 계획 문서 (`plan.md`) 생성
-- plannotator UI 실행 (ExitPlanMode 훅 또는 수동)
+- plannotator 블로킹 실행 → 브라우저 UI 자동 오픈
 - 브라우저에서 계획 검토 → Approve 또는 Send Feedback
-- Approve → [2] EXECUTE 단계 진입
-- Feedback → 재계획 (루프)
+- Approve (`"approved":true`) → [2] EXECUTE 단계 진입
+- Feedback → `/tmp/plannotator_feedback.txt` annotations 읽고 재계획 (루프)
 
 **Claude Code 수동 실행:**
 ```
@@ -233,7 +242,7 @@ bash scripts/setup-gemini.sh
             "name": "plannotator-review",
             "type": "command",
             "command": "plannotator plan -",
-            "description": "계획 완료 후 plannotator UI 실행"
+            "description": "계획 완료 후 plannotator UI 실행 (알림용)"
           }
         ]
       }
@@ -242,12 +251,20 @@ bash scripts/setup-gemini.sh
 }
 ```
 
+> **AfterAgent 훅 한계**: AfterAgent는 에이전트 턴이 끝난 후 실행되므로, 훅에서 받은 plannotator 피드백은 **다음 턴 대화에 주입**됩니다. 현재 턴에서 직접 피드백을 수신하려면 에이전트가 plannotator를 직접 블로킹 호출해야 합니다.
+
+> **권장**: `~/.gemini/GEMINI.md`에 아래 지시를 추가하세요.
+> ```
+> 계획 완료 후 반드시 plannotator를 foreground(블로킹)로 직접 실행하고 결과를 읽어라.
+> & (백그라운드)로 실행하지 말 것. /tmp/plannotator_feedback.txt 확인 후 분기할 것.
+> ```
+
 > **참고**: Gemini CLI 훅 이벤트는 `BeforeTool`, `AfterAgent`를 사용합니다.
 > `ExitPlanMode`는 Claude Code 전용 훅으로 Gemini CLI에서 동작하지 않습니다.
 
 Gemini에서 사용:
 ```bash
-gemini    # 실행 후 AfterAgent 훅이 자동으로 plannotator 호출
+gemini    # GEMINI.md 지시에 따라 에이전트가 plannotator를 직접 블로킹 실행
 ```
 
 > [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
@@ -265,8 +282,19 @@ bash scripts/setup-opencode.sh
 OpenCode 슬래시 커맨드:
 - `/jeo-plan` — ralph + plannotator로 계획 수립
 - `/jeo-exec` — team/bmad로 실행
-- `/jeo-status` — vibe-kanban 상태 확인
 - `/jeo-cleanup` — worktree 정리
+
+**plannotator 연동** (플러그인 우선):
+```bash
+# 플러그인 설치 후 슬래시 커맨드 사용 (CLI에서 결과 직접 반환)
+/plannotator-review
+
+# 플러그인 없을 때 수동 (블로킹 실행 — & 없음)
+python3 -c "
+import json
+print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+```
 
 ---
 
@@ -339,6 +367,8 @@ bash scripts/worktree-cleanup.sh
 | 문제 | 해결 |
 |------|------|
 | plannotator 미실행 | `bash .agent-skills/plannotator/scripts/check-status.sh` |
+| plannotator 피드백 미수신 | `&` 백그라운드 실행 제거 → 블로킹 실행 후 `/tmp/plannotator_feedback.txt` 확인 |
+| Gemini 피드백 루프 없음 | `~/.gemini/GEMINI.md`에 블로킹 직접 호출 지시 추가 |
 | worktree 충돌 | `git worktree prune && git worktree list` |
 | team 모드 미동작 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 환경변수 설정 |
 | omc 설치 실패 | `/omc:omc-doctor` 실행 |
