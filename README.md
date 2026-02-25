@@ -199,7 +199,7 @@ ls ~/.agent-skills/ 2>/dev/null || ls .agent-skills/ 2>/dev/null
 |------|------|------|
 | 계획 | ralph + plannotator | AI가 계획을 세우고, 당신이 승인/피드백 |
 | 실행 | omc team / bmad | 병렬 에이전트가 코드를 작성 |
-| 추적 | vibe-kanban + agent-browser | 칸반 보드로 진행 상황 확인 |
+| 검증 | agent-browser | 브라우저 동작 검증 (기본) |
 | 정리 | worktree-cleanup | 완료 후 자동 정리 |
 
 ```bash
@@ -393,7 +393,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `file-organization` | File & folder organization | All platforms |
 | `git-submodule` | Git submodule management | All platforms |
 | `git-workflow` | Git workflow management | All platforms |
-| `jeo` | Integrated AI orchestration: ralph+plannotator → team/bmad → vibe-kanban → worktree cleanup | Claude · Codex · Gemini · OpenCode |
+| `jeo` | Integrated AI orchestration: ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup | Claude · Codex · Gemini · OpenCode |
 | `npm-git-install` | Install npm from GitHub | All platforms |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows | Claude · Gemini |
 | `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI *(in development)* | Codex |
@@ -553,7 +553,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 > **용도**: 전체 워크플로우 통합 자동화 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: stable
 > Keyword: `jeo` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 
-계획(ralph+plannotator) → 실행(team/bmad) → 추적(vibe-kanban+agent-browser) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
+계획(ralph+plannotator) → 실행(team/bmad) → 검증(agent-browser) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
 
 ```bash
 bash scripts/install.sh --all   # 전체 설치
@@ -563,7 +563,7 @@ bash scripts/install.sh --all   # 전체 설치
 |-------|------|-------------|
 | Plan | ralph + plannotator | 시각적 계획 검토 → Approve/Feedback |
 | Execute | omc team / bmad | 병렬 에이전트 실행 |
-| Track | vibe-kanban + agent-browser | Kanban 보드 실시간 상태 업데이트 |
+| Verify | agent-browser | 브라우저 동작 검증 (기본) |
 | Cleanup | worktree-cleanup.sh | 완료 후 worktree 자동 정리 |
 
 ---
