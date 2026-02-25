@@ -8,6 +8,8 @@
 
 ![Agent Skills Installer](AgentSkills.png)
 
+> 스킬 구성 및 상세 목록: [.agent-skills/README.md](.agent-skills/README.md)
+
 ---
 
 ## What's New in v2026-02-25

@@ -110,6 +110,12 @@ npx skills list
 npx skills info jeo
 ```
 
+설치 후 Claude Code 대화에서 jeo 스킬을 활성화하려면:
+
+```
+jeo 스킬을 설정하고 사용해줘. 기억해.
+```
+
 ---
 
 > 전체 스킬 목록 및 상세 설명: [README.md](README.md)
