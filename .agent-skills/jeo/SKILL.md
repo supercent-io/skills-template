@@ -217,14 +217,40 @@ Codex에서 사용:
 # 자동 설정
 bash scripts/setup-gemini.sh
 
-# ExitPlanMode 훅 추가됨: ~/.gemini/settings.json
+# AfterAgent 훅 추가됨: ~/.gemini/settings.json
 # 지시사항 추가됨: ~/.gemini/GEMINI.md
 ```
 
+**훅 설정 파일** (`~/.gemini/settings.json`):
+```json
+{
+  "hooks": {
+    "AfterAgent": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "name": "plannotator-review",
+            "type": "command",
+            "command": "plannotator plan -",
+            "description": "계획 완료 후 plannotator UI 실행"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+> **참고**: Gemini CLI 훅 이벤트는 `BeforeTool`, `AfterAgent`를 사용합니다.
+> `ExitPlanMode`는 Claude Code 전용 훅으로 Gemini CLI에서 동작하지 않습니다.
+
 Gemini에서 사용:
 ```bash
-gemini --approval-mode plan    # plan 모드로 진입 → plannotator 자동 실행
+gemini    # 실행 후 AfterAgent 훅이 자동으로 plannotator 호출
 ```
+
+> [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
 ### 4.4 OpenCode
 
