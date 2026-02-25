@@ -12,17 +12,49 @@
 
 ---
 
+## Contents
+
+- [Quick Start](#quick-start)
+- [What's New](#whats-new-in-v2026-02-25)
+- [설치 (Install)](#설치-install)
+- [실행 가이드](#실행-가이드)
+- [Skills List (65)](#skills-list-65-total)
+- [Featured Tools](#featured-tools)
+- [Structure](#structure)
+- [Related docs](#related-docs)
+- [Changelog](#changelog)
+
+---
+
+## Quick Start
+
+```bash
+# 1. jeo 설치 (모든 플랫폼 — 권장)
+npx skills add https://github.com/supercent-io/skills-template --skill jeo
+
+# 2. 실행 (Claude Code)
+jeo "원하는 작업을 여기에 설명하세요"
+```
+
+> 더 많은 스킬 설치 → [설치](#설치-install) | 플랫폼별 상세 실행 → [실행 가이드](#실행-가이드)
+
+---
+
 ## What's New in v2026-02-25
 
-- **jeo**: Integrated Agent Orchestration 추가 — ralph+plannotator → team/bmad → vibe-kanban → worktree cleanup 완전 자동화
-- Skills list 표 형식 개편 (카테고리 재구성)
-- copilot-coding-agent 스킬 신규 추가
+| 변경 | 내용 |
+|------|------|
+| **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → vibe-kanban → worktree cleanup 완전 자동화 |
+| **Skills list 재구성** | 11개 카테고리, 65개 스킬 표 형식 개편 |
+| **신규 `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR 자동화 |
 
 ---
 
 ## 설치 (Install)
 
-### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
+### 사람용 (For Humans)
+
+#### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
 
 `jeo` 하나로 계획·실행·추적·정리 워크플로우가 모두 활성화됩니다.
 
@@ -30,52 +62,130 @@
 npx skills add https://github.com/supercent-io/skills-template --skill jeo
 ```
 
-### 2단계: 전체 65개 스킬 설치 (선택)
+#### 2단계: 전체 65개 스킬 설치 (선택)
+
+LLM에게 설치를 위임하려면, 아래 명령으로 가이드를 AI에게 전달하세요:
 
 ```bash
-npx skills add https://github.com/supercent-io/skills-template \
-  --skill agent-configuration --skill agent-evaluation \
-  --skill agentic-development-principles --skill agentic-principles \
-  --skill agentic-workflow --skill bmad-orchestrator \
-  --skill prompt-repetition --skill api-design \
-  --skill api-documentation --skill authentication-setup \
-  --skill backend-testing --skill database-schema-design \
-  --skill design-system --skill react-best-practices \
-  --skill responsive-design --skill state-management \
-  --skill ui-component-patterns --skill web-accessibility \
-  --skill web-design-guidelines --skill code-refactoring \
-  --skill code-review --skill debugging \
-  --skill performance-optimization --skill testing-strategies \
-  --skill deployment-automation --skill firebase-ai-logic \
-  --skill genkit --skill looker-studio-bigquery \
-  --skill monitoring-observability --skill security-best-practices \
-  --skill system-environment-setup --skill vercel-deploy \
-  --skill changelog-maintenance --skill presentation-builder \
-  --skill technical-writing --skill user-guide-writing \
-  --skill sprint-retrospective --skill standup-meeting \
-  --skill task-estimation --skill task-planning \
-  --skill codebase-search --skill data-analysis \
-  --skill log-analysis --skill pattern-detection \
-  --skill image-generation --skill pollinations-ai \
-  --skill video-production --skill marketing-automation \
-  --skill agent-browser --skill copilot-coding-agent \
-  --skill environment-setup --skill file-organization \
-  --skill git-submodule --skill git-workflow --skill jeo \
-  --skill npm-git-install --skill ohmg --skill oh-my-codex \
-  --skill omc --skill opencontext --skill plannotator \
-  --skill ralph --skill skill-standardization \
-  --skill vibe-kanban --skill workflow-automation
+# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
+curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
 
-> 또는 LLM에게 설정 위임 → [setup-all-skills-prompt.md](setup-all-skills-prompt.md)
+> 직접 실행하려면 → [setup-all-skills-prompt.md](setup-all-skills-prompt.md)
 
-### Gemini CLI 사용 시
+#### Gemini CLI 사용 시
 
 ```bash
 gemini extensions install https://github.com/supercent-io/skills-template
 ```
 
 > [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
+
+---
+
+### LLM 에이전트용 (For LLM Agents)
+
+LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
+
+#### Step 0: 사용자 환경 파악
+
+다음 질문으로 설치할 스킬을 결정하세요:
+
+1. **어떤 AI 플랫폼을 사용하나요?**
+   - Claude Code → `omc`, `plannotator`, `ralph`, `bmad-orchestrator` 사용 가능
+   - Codex CLI → `oh-my-codex`, `ralph`, `jeo` 사용 가능
+   - Gemini CLI → `ohmg`, `ralph`, `jeo` 사용 가능
+   - 모두 사용 → `jeo` (전 플랫폼 통합)
+
+2. **어떤 워크플로우가 필요한가요?**
+   - 계획·검토 루프 → `plannotator`, `ralph`
+   - 멀티에이전트 실행 → `omc` (Claude), `ohmg` (Gemini), `oh-my-codex` (Codex)
+   - 칸반 보드로 진행 추적 → `vibe-kanban`
+   - 전체 통합 → `jeo`
+
+3. **`skills` CLI가 설치되어 있나요?**
+
+```bash
+if command -v skills &> /dev/null; then
+    echo "skills CLI available"
+else
+    echo "npx를 통해 설치합니다"
+fi
+```
+
+#### Step 1: OpenCode / 기본 도구 확인 (선택)
+
+OpenCode 사용 시:
+```bash
+if command -v opencode &> /dev/null; then
+    echo "OpenCode $(opencode --version) installed"
+else
+    echo "OpenCode not found. Ref: https://opencode.ai/docs"
+fi
+```
+
+#### Step 2: 스킬 설치
+
+Step 0의 답변에 따라 적절한 명령을 실행하세요:
+
+**빠른 시작 (전 플랫폼):**
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill jeo
+```
+
+**Claude Code 전용:**
+```bash
+npx skills add https://github.com/supercent-io/skills-template \
+  --skill omc --skill plannotator --skill ralph --skill vibe-kanban
+```
+
+**Gemini CLI 전용:**
+```bash
+npx skills add https://github.com/supercent-io/skills-template \
+  --skill ohmg --skill ralph --skill vibe-kanban
+```
+
+**Codex CLI 전용:**
+```bash
+npx skills add https://github.com/supercent-io/skills-template \
+  --skill oh-my-codex --skill ralph
+```
+
+**전체 65개 스킬 → [setup-all-skills-prompt.md](setup-all-skills-prompt.md)**
+
+**Gemini CLI (확장 설치):**
+```bash
+gemini extensions install https://github.com/supercent-io/skills-template
+```
+
+#### Step 3: OpenCode 추가 설정 (oh-my-opencode)
+
+OpenCode를 사용한다면, 최신 설치 가이드를 직접 fetch해서 내용을 읽고 따르세요:
+
+```bash
+# oh-my-opencode 최신 설치 가이드 fetch — 구독 환경에 맞는 플래그 확인 후 실행
+curl -s https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
+```
+
+가이드에서 구독 상태(Claude Pro/Max, Gemini, Copilot 등)에 맞는 설치 플래그를 확인하고 설치를 진행합니다.
+
+#### Step 4: 설치 확인
+
+```bash
+# 스킬 디렉토리 확인
+ls ~/.agent-skills/ 2>/dev/null || ls .agent-skills/ 2>/dev/null
+```
+
+설치 성공 시 `jeo`, `omc`, `ralph` 등 스킬 폴더가 보여야 합니다.
+
+#### Step 5: 사용자에게 다음 단계 안내
+
+설치 완료 후:
+- **Claude Code**: `jeo "작업 내용"` 또는 `/omc:team "작업"` 실행
+- **Gemini CLI**: `/jeo "작업 내용"` 실행
+- **Codex CLI**: `/jeo "작업 내용"` 실행
+
+> **참고**: 플랫폼별 상세 실행 방법은 아래 [실행 가이드](#실행-가이드) 참조
 
 ---
 
@@ -171,7 +281,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills list (65 total)
+## Skills List (65 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -302,6 +412,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 These tools have full documentation in `docs/` and dedicated skills in `.agent-skills/`.
 
 ### plannotator — Interactive Plan & Diff Review
+> **용도**: 실행 전 계획 시각 검토 및 피드백 루프 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: v0.9.0
 > Keyword: `plan`, `계획` (alias: `planno`) | [Docs](docs/plannotator/README.md) | [GitHub](https://github.com/backnotprop/plannotator)
 
 Visual browser UI for annotating AI agent plans before coding. Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**. Approve plans or send structured feedback in one click.
@@ -348,6 +459,7 @@ open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callbac
 ---
 
 ### vibe-kanban — AI Agent Kanban Board
+> **용도**: 병렬 에이전트 진행 상황 시각적 추적 | **플랫폼**: All | **상태**: stable
 > Keyword: `kanbanview` | [Docs](docs/vibe-kanban/README.md) | [GitHub](https://github.com/BloopAI/vibe-kanban)
 
 Visual Kanban board (To Do → In Progress → Review → Done) with parallel AI agents (Claude, Codex, OpenCode, Gemini) isolated per card via git worktrees. Auto-creates PRs on completion.
@@ -368,6 +480,7 @@ npx vibe-kanban          # Launch board at http://localhost:3000
 ---
 
 ### ralph — Completion Loop
+> **용도**: 작업 완료까지 자동 반복 실행 | **플랫폼**: Claude · Gemini · Codex · OpenCode | **상태**: stable
 > Keyword: `ralph` | [Docs](docs/ralph/README.md) | [GitHub](https://github.com/gemini-cli-extensions/ralph)
 
 Self-referential loop that re-runs the agent on the same task across turns (with fresh context each iteration) until a `<promise>DONE</promise>` tag is detected or max iterations is reached.
@@ -387,6 +500,7 @@ bash <your-agent-skills>/ralph/scripts/setup-codex-hook.sh
 ---
 
 ### omc — oh-my-claudecode
+> **용도**: Claude Code 멀티에이전트 팀 오케스트레이션 | **플랫폼**: Claude | **상태**: stable
 > Keyword: `omc` / `autopilot` / `ralph` / `ulw` | [Docs](docs/omc/README.md) | [GitHub](https://github.com/Yeachan-Heo/oh-my-claudecode)
 
 Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agents, smart model routing, and a staged pipeline (`team-plan → team-prd → team-exec → team-verify → team-fix`).
@@ -406,6 +520,7 @@ Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agen
 ---
 
 ### bmad-orchestrator — AI-Driven Development Harness
+> **용도**: 분석→계획→설계→구현 단계별 AI 개발 | **플랫폼**: Claude | **상태**: in development
 > Keyword: `bmad` | [Docs](docs/bmad/README.md)
 
 Phase-based workflow (Analysis → Planning → Solutioning → Implementation) for disciplined AI-assisted development. Automatically adapts to project scope (Level 0–4).
@@ -435,6 +550,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 ---
 
 ### jeo — Integrated Agent Orchestration
+> **용도**: 전체 워크플로우 통합 자동화 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: stable
 > Keyword: `jeo` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 
 계획(ralph+plannotator) → 실행(team/bmad) → 추적(vibe-kanban+agent-browser) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
