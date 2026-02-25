@@ -456,6 +456,13 @@ vault/plannotator/
 open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callback%20OK"
 ```
 
+#### Known Issues
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| 브라우저가 두 번 열림 | `plannotator-launch.sh`의 중복 `open` 호출 | 훅 스크립트에서 포트 감지 루프의 `open` 제거 — plannotator가 브라우저를 자체 오픈 |
+| 피드백 미수신 (Codex/Gemini/OpenCode) | `&` 백그라운드 실행으로 에이전트가 결과를 대기하지 않음 | `&` 없이 블로킹 실행 후 `/tmp/plannotator_feedback.txt` 읽기 |
+
 ---
 
 ### vibe-kanban — AI Agent Kanban Board
