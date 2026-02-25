@@ -5,7 +5,7 @@ description: Interactive plan and diff review for AI coding agents. Visual brows
 allowed-tools: [Read, Bash, Write]
 tags: [plan, 계획, planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review, 계획검토, 설계검토]
 platforms: [Claude, OpenCode, Codex, Gemini]
-version: 0.9.0
+version: 0.9.2
 source: backnotprop/plannotator
 ---
 
@@ -272,6 +272,37 @@ plannotator review HEAD~1
 
 ---
 
+## Pattern 10: Manual Save via Export → Notes Tab
+
+Save the current plan to Obsidian or Bear Notes at any time — without approving or denying.
+
+### How to access
+
+1. Click **Export** button in the plannotator UI toolbar
+2. Click the **Notes** tab (not Share or Annotations)
+3. You see:
+   - **Obsidian** row with configured vault path and **Save** button
+   - **Bear** row with **Save** button
+   - **Save All** button to save both at once
+4. A green dot next to each row means that integration is configured
+5. Clicking **Save** shows **Saved** when complete
+
+### When to use
+
+- Save work-in-progress plans without committing to Approve/Deny
+- Quick archive after reviewing without final decision
+- Save annotated plans for team reference
+
+### Requirements
+
+- plannotator must be running in **hook mode** (normal Claude Code ExitPlanMode hook invocation = hook mode)
+- Obsidian/Bear must be configured in Settings (⚙️) → Saving tab
+- Settings are stored in **cookies** (not localStorage) and persist across restarts
+
+> **Note:** The Notes tab uses `POST /api/save-notes` which writes directly to the vault filesystem (Obsidian) or calls `bear://x-callback-url/create` (Bear). This endpoint is only available in hook mode.
+
+---
+
 ## Recommended Workflow
 
 ### Quick Start (all AI tools)
@@ -461,6 +492,11 @@ If you prefer Bear Notes over Obsidian:
 1. Toggle ON "Bear Notes" in Settings → Saving tab
 2. Plans are saved via `bear://x-callback-url/create`
 3. Tags are appended as hashtags
+4. Validate callback from terminal:
+
+```bash
+open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callback%20OK"
+```
 
 | Feature | Obsidian | Bear |
 |---------|----------|------|
@@ -489,16 +525,16 @@ ls -la ~/path/to/vault/plannotator/
 # Check browser console for errors (F12 → Console)
 ```
 
-**"Save failed" in automated/headless browsers (Playwright, Puppeteer):**
-```bash
-# plannotator uses the obsidian:// URI protocol to open Obsidian.
-# Playwright and other automated browsers cannot handle custom URI schemes.
-# Solution: Write directly to the Obsidian vault filesystem instead:
-mkdir -p ~/path/to/vault/plannotator/
-cp ~/.plannotator/plans/<plan-name>.md ~/path/to/vault/plannotator/
-```
-- Settings must be configured in the **system browser** that plannotator opens (not Playwright)
-- Playwright sessions have isolated localStorage and cannot open obsidian:// URIs
+**Export → Notes tab Save buttons require hook mode:**
+- Export → Notes tab Save buttons require plannotator running in **hook mode** (stdin JSON input). In CLI `review`/`annotate` modes, the `/api/save-notes` endpoint is not active. Normal Claude Code hook invocation (ExitPlanMode hook) always runs in hook mode.
+
+**Settings not visible in automated/headless browsers:**
+- Obsidian Integration settings must be configured in the **system browser** that plannotator auto-opens. Settings are stored in cookies (not localStorage). Automated/headless browser profiles (Playwright, Puppeteer) use isolated cookie jars and will not see these settings.
+
+**Bear export not working:**
+- Confirm Bear app is installed and opened at least once
+- Confirm `open "bear://x-callback-url/create?..."` works from terminal
+- Use system browser session for plannotator settings; automated/headless sessions can block custom URI handlers
 
 **Settings not persisting:**
 - Settings are stored in cookies (not localStorage)

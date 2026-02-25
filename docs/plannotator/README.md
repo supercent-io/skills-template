@@ -225,9 +225,36 @@ OpenCode plugin path (`/plannotator-review`) is validated and returns approval r
 
 ## Feature 3: Auto-save & Sharing
 
-- **Obsidian integration**: Approved plans auto-save to your Obsidian vault with YAML frontmatter and tags. Supports subfolder organization (e.g., `plannotator/approved/`, `plannotator/2026-02/`). Settings configured via Settings (⚙️) → Saving → Obsidian Integration in the system browser.
-- **Bear Notes integration**: Approved plans auto-save to Bear Notes
-- **Share links**: Share plan review sessions with teammates for collaboration
+### Auto-save on Approve
+
+When you click **Approve**, plans are automatically saved if configured:
+- **Obsidian integration**: Approved plans save to your vault with YAML frontmatter and tags. Configure via Settings (⚙️) → Saving → Obsidian Integration.
+- **Bear Notes integration**: Approved plans save to Bear Notes. Configure via Settings (⚙️) → Saving → Bear Notes.
+- **Share links**: Share plan review sessions with teammates for collaboration.
+
+### Manual Save via Export → Notes Tab
+
+Save the current plan at any time — **without approving or denying**:
+
+1. Click **Export** in the toolbar
+2. Click the **Notes** tab
+3. Each row shows a green dot if configured, with a **Save** button
+4. Click **Save** (Obsidian or Bear) or **Save All**
+5. Button changes to **Saved** on success
+
+> Requires plannotator running in hook mode (normal Claude Code ExitPlanMode hook invocation). Settings stored in **cookies** (not localStorage).
+
+### Bear Setup (macOS)
+
+1. Install Bear app and run it once.
+2. In plannotator UI: Settings (⚙️) → Saving → Enable "Bear Notes".
+3. Verify callback works from terminal:
+
+```bash
+open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callback%20OK"
+```
+
+If this command does not open Bear and create a note, fix OS/browser callback handling first.
 
 ---
 
@@ -277,8 +304,9 @@ plan으로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘
 3. First browser load can show demo plan; call `page.reload()` in automated tests.
 4. Send Feedback requires at least one annotation first.
 5. `plannotator review` requires a git repository.
-6. "Save to Obsidian" fails in automated browser contexts (Playwright, Puppeteer) — obsidian:// URI cannot be opened; write directly to the vault filesystem as a fallback.
+6. Export → Notes tab Save requires plannotator in **hook mode** (stdin JSON). CLI `review`/`annotate` modes do not expose `/api/save-notes`. Normal Claude Code hook invocation always uses hook mode.
 7. Obsidian Integration settings must be configured in the system browser that plannotator auto-opens (not in Playwright or other isolated browser profiles).
+8. Bear export also depends on custom URI handling (`bear://x-callback-url/create`) and must be configured/tested in the system browser session.
 
 ---
 
@@ -287,4 +315,4 @@ plan으로 이번 구현 계획을 검토하고 수정 코멘트를 만들어줘
 - [GitHub: backnotprop/plannotator](https://github.com/backnotprop/plannotator)
 - [plannotator.ai](https://plannotator.ai)
 - [Installation details](https://github.com/backnotprop/plannotator/blob/main/apps/hook/README.md)
-- [Latest release: v0.9.0](https://github.com/backnotprop/plannotator/releases/tag/v0.9.0)
+- [Latest release: v0.9.2](https://github.com/backnotprop/plannotator/releases/tag/v0.9.2)

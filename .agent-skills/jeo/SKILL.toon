@@ -1,0 +1,35 @@
+N:jeo
+D:[jeo] 통합 AI 오케스트레이션. ralph+plannotator 계획→team/bmad 실행→agent-browser로 vibe-kanban 추적→worktree 자동 정리. Claude/Codex/Gemini/OpenCode 전 플랫폼 플러그인 지원. 설치: omc omx ohmg bmad ralph plannotator agent-browser playwriter vibe-kanban.
+G:jeo orchestration ralph plannotator team bmad vibe-kanban agent-browser omc omx ohmg playwriter multi-agent workflow kanban worktree cleanup 오케스트레이션 계획 실행 추적 정리
+
+U[6]:
+  멀티에이전트 작업의 계획→실행→추적→정리 전체 플로우 자동화
+  ralph+plannotator로 코딩 시작 전 계획 시각적 검토 및 승인
+  team(Claude) 또는 bmad(fallback)로 병렬 에이전트 실행
+  agent-browser로 vibe-kanban 보드 실시간 상태 업데이트
+  vibe-kanban worktree 생성 → 작업 완료 후 자동 정리
+  Claude/Codex/Gemini/OpenCode 모두에서 동일한 워크플로우 플러그인 실행
+
+S[8]{n,action,details}:
+  1,Install,bash scripts/install.sh --all (ralph omc omx ohmg bmad agent-browser playwriter plannotator vibe-kanban 전체 설치)
+  2,Setup-Claude,bash scripts/setup-claude.sh (/plugin install oh-my-claudecode + plannotator 훅 설정)
+  3,Setup-Codex,bash scripts/setup-codex.sh (~/.codex/config.toml developer_instructions + /prompts:jeo)
+  4,Setup-Gemini,bash scripts/setup-gemini.sh (~/.gemini/settings.json 훅 + GEMINI.md 지시사항)
+  5,Setup-OpenCode,bash scripts/setup-opencode.sh (opencode.json 플러그인 등록 + slash commands)
+  6,Plan,ralph+plannotator 계획수립: /ralph "jeo-plan: <task>" → plannotator UI → Approve or Feedback
+  7,Execute,team 우선: /omc:team 3:executor "<task>" / team 없음: /workflow-init (BMAD) + agent-browser로 kanban 업데이트
+  8,Cleanup,bash scripts/worktree-cleanup.sh (git worktree prune + vibe-kanban 생성 worktree 전체 삭제)
+
+R[6]:
+  ralph+plannotator로 계획 먼저 검토 — 코딩 시작 전 잘못된 방향 조기 차단
+  Claude+omc: team 우선 / Codex·Gemini·OpenCode: bmad fallback 사용
+  agent-browser ref(@eN) 방식으로 vibe-kanban 카드 결정론적 조작
+  worktree-cleanup.sh는 모든 작업 종료 즉시 실행 (브랜치 오염 방지)
+  vibe-kanban 카드 범위는 1카드=1커밋 단위로 좁게 유지
+  상태는 {worktree}/.omc/state/jeo-state.json에 세션 간 저장
+
+E[4]{desc,in,out}:
+  "전체 설치","bash scripts/install.sh --all && bash scripts/check-status.sh","모든 컴포넌트 설치 완료 + 전체 AI 툴 연동 확인"
+  "계획 수립","jeo '새 기능 구현' → ralph 계획 → plannotator UI Approve","승인된 계획 .omc/plans/jeo-plan.md 저장"
+  "실행+추적","team 실행 + agent-browser로 vibe-kanban 카드 In Progress→Done 업데이트","kanban 보드에 실시간 진행 상황 반영"
+  "정리","bash scripts/worktree-cleanup.sh","vibe-kanban worktree 전체 삭제 + git worktree prune 완료"

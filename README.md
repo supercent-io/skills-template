@@ -116,6 +116,11 @@ vault/plannotator/
 └── 2026-02/     ← monthly archive
 ```
 
+#### Bear Quick Check (macOS)
+```bash
+open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callback%20OK"
+```
+
 ---
 
 ### vibe-kanban — AI Agent Kanban Board

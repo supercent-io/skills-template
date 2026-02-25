@@ -141,7 +141,7 @@ ohmg 스킬을 설정하고 사용해줘. 기억해.   # Gemini-CLI
 
 ## plannotator Integration
 
-Review each phase's key deliverable with **plannotator** before transitioning to the next phase. Approved documents auto-save to your Obsidian vault.
+Review each phase's key deliverable with **plannotator** before transitioning to the next phase. Approved documents auto-save to your enabled destination (Obsidian or Bear).
 
 ### Phase Gate Workflow
 
@@ -152,7 +152,7 @@ bash scripts/phase-gate-review.sh <doc-file> "<title>"
        ↓
 plannotator UI opens → Annotate → Approve or Request Changes
        ↓
-[Approved] → Obsidian saved + proceed to next phase
+[Approved] → Saved (Obsidian/Bear) + proceed to next phase
 [Changes]  → Agent revises → re-review
 ```
 
@@ -172,7 +172,7 @@ Or trigger from within your AI session after any phase document is created:
 plan — review the PRD before we proceed to Phase 3
 ```
 
-### Obsidian Auto-Save
+### Save Destination (Obsidian or Bear)
 
 Approved plans are saved with BMAD-specific tags:
 
@@ -180,7 +180,11 @@ Approved plans are saved with BMAD-specific tags:
 tags: [bmad, phase-2, prd, myapp]
 ```
 
-See [plannotator docs](../plannotator/README.md) for Obsidian setup.
+Set the destination in plannotator UI (Settings → Saving):
+- Obsidian Integration
+- Bear Notes
+
+See [plannotator docs](../plannotator/README.md) for setup and callback troubleshooting.
 
 ---
 
