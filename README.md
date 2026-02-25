@@ -52,37 +52,6 @@ jeo "원하는 작업을 여기에 설명하세요"
 
 ## 설치 (Install)
 
-### 사람용 (For Humans)
-
-#### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
-
-`jeo` 하나로 계획·실행·추적·정리 워크플로우가 모두 활성화됩니다.
-
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill jeo
-```
-
-#### 2단계: 전체 65개 스킬 설치 (선택)
-
-LLM에게 설치를 위임하려면, 아래 명령으로 가이드를 AI에게 전달하세요:
-
-```bash
-# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
-curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
-```
-
-> 직접 실행하려면 → [setup-all-skills-prompt.md](setup-all-skills-prompt.md)
-
-#### Gemini CLI 사용 시
-
-```bash
-gemini extensions install https://github.com/supercent-io/skills-template
-```
-
-> [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
-
----
-
 ### LLM 에이전트용 (For LLM Agents)
 
 LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
@@ -185,7 +154,25 @@ ls ~/.agent-skills/ 2>/dev/null || ls .agent-skills/ 2>/dev/null
 - **Gemini CLI**: `/jeo "작업 내용"` 실행
 - **Codex CLI**: `/jeo "작업 내용"` 실행
 
-> **참고**: 플랫폼별 상세 실행 방법은 아래 [실행 가이드](#실행-가이드) 참조
+---
+
+### 사람용 (For Humans)
+
+#### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
+
+`jeo` 하나로 계획·실행·추적·정리 워크플로우가 모두 활성화됩니다.
+
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill jeo
+```
+
+#### Gemini CLI 사용 시
+
+```bash
+gemini extensions install https://github.com/supercent-io/skills-template
+```
+
+> [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
 ---
 

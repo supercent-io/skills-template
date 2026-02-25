@@ -53,7 +53,6 @@ echo ""
 info "Core Tools"
 check_opt "plannotator CLI"  "command -v plannotator"
 check_opt "agent-browser"    "command -v agent-browser || npx agent-browser --version"
-check_opt "vibe-kanban"      "npx --yes vibe-kanban --version 2>/dev/null || true"
 check_opt "playwriter"       "command -v playwriter"
 echo ""
 
@@ -154,7 +153,6 @@ state = {
     "plan_approved": False,
     "plan_path": ".omc/plans/jeo-plan.md",
     "team_available": False,
-    "kanban_url": "http://localhost:3000",
     "worktrees": [],
     "bmad_phase": None,
     "created_at": now,

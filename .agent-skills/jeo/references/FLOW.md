@@ -30,17 +30,15 @@
 │          └───────────────┬──────────────────┘                  │
 │                          │                                      │
 │          ┌───────────────▼──────────────────┐                  │
-│          │         PHASE 3: TRACK            │                  │
-│          │   npx vibe-kanban (kanban UI)     │                  │
-│          │   agent-browser → board update    │                  │
-│          │   Cards: ToDo→InProgress→Done     │                  │
+│          │         PHASE 3: VERIFY           │                  │
+│          │   agent-browser snapshot <url>    │                  │
+│          │   UI/기능 동작 확인               │                  │
 │          └───────────────┬──────────────────┘                  │
 │                          │                                      │
 │          ┌───────────────▼──────────────────┐                  │
 │          │         PHASE 4: CLEANUP          │                  │
 │          │   bash scripts/worktree-cleanup.sh│                  │
 │          │   git worktree prune              │                  │
-│          │   Remove vibe-kanban worktrees    │                  │
 │          └───────────────┬──────────────────┘                  │
 │                          │                                      │
 │                       [DONE]                                    │
@@ -76,7 +74,7 @@ jeo keyword detected
     │
     ├─ Plan: Write plan.md manually or via ralph prompt
     ├─ Execute: BMAD /workflow-init (no native team support)
-    ├─ Track: agent-browser → vibe-kanban board
+    ├─ Verify: agent-browser snapshot <url>
     └─ Cleanup: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 ```
 
@@ -90,7 +88,7 @@ gemini --approval-mode plan
     │
     ├─ Plan mode: write plan → exit → plannotator fires
     ├─ Execute: ohmg (bunx oh-my-ag) or BMAD /workflow-init
-    ├─ Track: agent-browser → vibe-kanban
+    ├─ Verify: agent-browser snapshot <url>
     └─ Cleanup: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 ```
 
@@ -115,14 +113,14 @@ gemini --approval-mode plan
 ## State Machine
 
 ```
-States: plan → execute → track → cleanup → done
-                                    ↑
-Transitions:                        │
+States: plan → execute → verify → cleanup → done
+
+Transitions:
   plan     → execute  (plan approved)
   plan     → plan     (feedback received, re-plan)
-  execute  → track    (tasks started in kanban)
-  execute  → cleanup  (task complete, no kanban used)
-  track    → cleanup  (all kanban cards Done)
+  execute  → verify   (tasks complete, browser UI present)
+  execute  → cleanup  (task complete, no browser UI)
+  verify   → cleanup  (verification passed)
   cleanup  → done     (worktrees removed, prune complete)
 ```
 
@@ -135,8 +133,7 @@ State persisted in: `.omc/state/jeo-state.json`
   "plan_approved": false,
   "plan_path": ".omc/plans/jeo-plan.md",
   "team_available": true,
-  "kanban_url": "http://localhost:3000",
-  "worktrees": [".vibe-kanban/task-1", ".vibe-kanban/task-2"],
+  "worktrees": [],
   "bmad_phase": null,
   "created_at": "2026-02-24T00:00:00Z",
   "updated_at": "2026-02-24T00:00:00Z",
@@ -160,46 +157,24 @@ State persisted in: `.omc/state/jeo-state.json`
 
 ---
 
-## agent-browser Kanban Interaction Pattern
+## agent-browser Verify Pattern
 
 ```bash
-# 1. Open kanban board
-agent-browser open http://localhost:3000
+# 앱 실행 중인 URL에서 스냅샷 캡처
+agent-browser snapshot http://localhost:3000
 
-# 2. Get accessibility snapshot to find card refs
-agent-browser snapshot -i
-# Output: @e1 (Add Task button), @e2 (card: Task A), @e3 (In Progress column), ...
+# 특정 요소 확인 (accessibility tree ref 방식)
+agent-browser snapshot http://localhost:3000 -i
+# → @eN ref 번호로 요소 상태 확인
 
-# 3. Update card status (drag to In Progress)
-agent-browser click @e2    # Select card
-agent-browser drag @e2 @e3 # Drag to In Progress column
-
-# 4. Check updated state
-agent-browser snapshot -i
-
-# 5. After task done — move to Done column
-agent-browser drag @e4 @e5  # @e4=card, @e5=Done column
-```
-
-**MCP mode (preferred when available):**
-```bash
-npx vibe-kanban --mcp  # Start with MCP API
-# Agent directly calls MCP endpoints to update card states
-# No browser interaction needed
+# 스크린샷 저장
+agent-browser screenshot http://localhost:3000 -o verify.png
 ```
 
 ---
 
-## Worktree Patterns Created by vibe-kanban
+## Worktree Manual Cleanup
 
-vibe-kanban creates worktrees with these patterns:
-- `.vibe-kanban/<task-id>/`
-- Path contains "vibe-kanban"
-- Branch names: `task/*`, `agent/*`, `vibe-kanban-*`
-
-The `worktree-cleanup.sh` script detects and removes all of these.
-
-Manual cleanup if needed:
 ```bash
 # List all worktrees
 git worktree list
@@ -208,11 +183,6 @@ git worktree list
 git worktree remove /path/to/worktree --force
 
 # Prune stale references
-git worktree prune
-
-# Nuclear option (removes all non-main worktrees)
-git worktree list | tail -n +2 | awk '{print $1}' | \
-  xargs -I{} git worktree remove {} --force
 git worktree prune
 ```
 
@@ -225,9 +195,7 @@ git worktree prune
 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | Enable native team orchestration | `1` |
 | `PLANNOTATOR_REMOTE` | Remote mode (no auto browser open) | unset |
 | `PLANNOTATOR_PORT` | Fixed plannotator port | auto |
-| `JEO_KANBAN_URL` | vibe-kanban board URL | `http://localhost:3000` |
 | `JEO_MAX_ITERATIONS` | Max ralph loop iterations | `20` |
-| `VIBE_KANBAN_REMOTE` | Remote kanban access | unset |
 
 ---
 
@@ -255,12 +223,6 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
 # Fall back to ralph:
 /ralph "<task>" --max-iterations=20
-```
-
-### vibe-kanban port conflict
-```bash
-PORT=3001 npx vibe-kanban
-export JEO_KANBAN_URL=http://localhost:3001
 ```
 
 ### worktree removal fails

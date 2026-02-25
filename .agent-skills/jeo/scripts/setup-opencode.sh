@@ -73,15 +73,15 @@ instructions = config.setdefault("instructions", "")
 jeo_instructions = """
 ## JEO Orchestration Commands
 
-/jeo-plan   — Start ralph+plannotator planning workflow
-/jeo-exec   — Execute with team or BMAD orchestration
-/jeo-status — Check vibe-kanban board status via agent-browser
-/jeo-cleanup — Clean up all vibe-kanban worktrees
+/jeo-plan    — Start ralph+plannotator planning workflow
+/jeo-exec    — Execute with team or BMAD orchestration
+/jeo-verify  — Verify UI with agent-browser snapshot
+/jeo-cleanup — Clean up worktrees after completion
 
 ## JEO Workflow
 1. PLAN: Use ralph for task planning + plannotator for visual review
 2. EXECUTE: Use omx team agents or BMAD structured phases
-3. TRACK: agent-browser monitors vibe-kanban at http://localhost:3000
+3. VERIFY: agent-browser snapshot <url> for UI verification
 4. CLEANUP: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 
 ## Available Orchestration
@@ -106,7 +106,7 @@ echo ""
 echo "OpenCode slash commands after setup:"
 echo "  /jeo-plan      ← Start planning workflow"
 echo "  /jeo-exec      ← Execute task"
-echo "  /jeo-status    ← Check kanban status"
+echo "  /jeo-verify    ← Verify UI with agent-browser"
 echo "  /jeo-cleanup   ← Clean worktrees"
 echo "  /plannotator-review ← Code review UI"
 echo ""

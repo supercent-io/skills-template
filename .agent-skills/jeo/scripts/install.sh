@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # JEO Skill — Master Installation Script
-# Installs and configures: ralph, omc, omx, ohmg, bmad, agent-browser, playwriter, plannotator, vibe-kanban
-# Usage: bash install.sh [--all] [--with-omc] [--with-plannotator] [--with-kanban] [--with-browser] [--dry-run]
+# Installs and configures: ralph, omc, omx, ohmg, bmad, agent-browser, playwriter, plannotator
+# Usage: bash install.sh [--all] [--with-omc] [--with-plannotator] [--with-browser] [--dry-run]
 
 set -euo pipefail
 
@@ -20,7 +20,6 @@ DRY_RUN=false
 INSTALL_ALL=false
 INSTALL_OMC=false
 INSTALL_PLANNOTATOR=false
-INSTALL_KANBAN=false
 INSTALL_BROWSER=false
 INSTALL_BMAD=false
 INSTALL_OMX=false
@@ -31,7 +30,6 @@ for arg in "$@"; do
     --all)             INSTALL_ALL=true ;;
     --with-omc)        INSTALL_OMC=true ;;
     --with-plannotator) INSTALL_PLANNOTATOR=true ;;
-    --with-kanban)     INSTALL_KANBAN=true ;;
     --with-browser)    INSTALL_BROWSER=true ;;
     --with-bmad)       INSTALL_BMAD=true ;;
     --with-omx)        INSTALL_OMX=true ;;
@@ -44,7 +42,6 @@ for arg in "$@"; do
       echo "  --all              Install all components"
       echo "  --with-omc         Install oh-my-claudecode (Claude Code)"
       echo "  --with-plannotator Install plannotator CLI"
-      echo "  --with-kanban      Install vibe-kanban"
       echo "  --with-browser     Install agent-browser + playwriter"
       echo "  --with-bmad        Install BMAD orchestrator"
       echo "  --with-omx         Install omx (OpenCode multi-agent)"
@@ -56,7 +53,7 @@ for arg in "$@"; do
 done
 
 if $INSTALL_ALL; then
-  INSTALL_OMC=true; INSTALL_PLANNOTATOR=true; INSTALL_KANBAN=true
+  INSTALL_OMC=true; INSTALL_PLANNOTATOR=true
   INSTALL_BROWSER=true; INSTALL_BMAD=true; INSTALL_OMX=true; INSTALL_OHMG=true
 fi
 
@@ -155,19 +152,7 @@ if $INSTALL_PLANNOTATOR; then
   fi
 fi
 
-# ── 5. vibe-kanban ────────────────────────────────────────────────────────────
-if $INSTALL_KANBAN; then
-  echo ""
-  info "Verifying vibe-kanban availability..."
-  if command -v npx >/dev/null 2>&1; then
-    run "npx vibe-kanban --version 2>/dev/null || echo 'vibe-kanban available via npx'"
-    ok "vibe-kanban available (run: npx vibe-kanban)"
-  else
-    warn "npx not found — install Node.js first"
-  fi
-fi
-
-# ── 6. agent-browser ──────────────────────────────────────────────────────────
+# ── 5. agent-browser ──────────────────────────────────────────────────────────
 if $INSTALL_BROWSER; then
   echo ""
   info "Installing agent-browser..."

@@ -44,7 +44,7 @@ else
 # JEO provides integrated AI orchestration:
 #   1. PLAN: ralph+plannotator for visual plan review
 #   2. EXECUTE: team (if available) or bmad workflow
-#   3. TRACK: agent-browser updates vibe-kanban board
+#   3. VERIFY: agent-browser snapshot for UI verification
 #   4. CLEANUP: auto worktree cleanup after completion
 #
 # Trigger with: jeo "<task description>"
@@ -54,7 +54,7 @@ else
 #   /workflow-init   — initialize BMAD workflow
 #   /workflow-status — check current BMAD phase
 #
-# Tools: agent-browser, playwriter, plannotator, vibe-kanban'
+# Tools: agent-browser, playwriter, plannotator'
 
   # Add developer_instructions — section-aware to avoid duplicate [developer_instructions] tables
   if [[ -f "$CODEX_CONFIG" ]] && grep -q "^jeo\s*=" "$CODEX_CONFIG"; then
@@ -117,21 +117,20 @@ Use BMAD structured phases:
 - Solutioning phase: architecture decisions
 - Implementation phase: write code
 
-### Step 3: TRACK (vibe-kanban)
-If vibe-kanban is running (npx vibe-kanban):
-- Update task cards as work progresses
-- Use agent-browser to interact with the Kanban board at http://localhost:3000
-- Move cards: To Do → In Progress → Review → Done
+### Step 3: VERIFY (agent-browser)
+If the task has browser UI:
+- Run: `agent-browser snapshot http://localhost:3000`
+- Check UI elements via accessibility tree (-i flag)
+- Save screenshot: `agent-browser screenshot <url> -o verify.png`
 
 ### Step 4: CLEANUP (worktree)
 After all tasks complete:
 - Run: git worktree prune
-- Remove any vibe-kanban created worktrees
 - Run: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 
 ## Key Commands
 - Plan review: `plannotator plan -` (pipe plan.md content)
-- Kanban status: `agent-browser open http://localhost:3000`
+- Browser verify: `agent-browser snapshot http://localhost:3000`
 - BMAD init: `/workflow-init`
 - Worktree cleanup: `bash .agent-skills/jeo/scripts/worktree-cleanup.sh`
 
@@ -139,7 +138,7 @@ After all tasks complete:
 Save progress to: `.omc/state/jeo-state.json`
 ```json
 {
-  "phase": "plan|execute|track|cleanup",
+  "phase": "plan|execute|verify|cleanup",
   "task": "current task description",
   "plan_approved": false,
   "worktrees": []

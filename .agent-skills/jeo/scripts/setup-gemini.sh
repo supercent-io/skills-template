@@ -104,14 +104,12 @@ JEO provides integrated AI agent orchestration across all AI tools.
 - `/workflow-status` — Check current phase
 - Phases: Analysis → Planning → Solutioning → Implementation
 
-**TRACK** (vibe-kanban + agent-browser):
-- Start kanban: `npx vibe-kanban` (separate terminal)
-- agent-browser interacts with board at http://localhost:3000
-- Update card status as work progresses
+**VERIFY** (agent-browser):
+- `agent-browser snapshot http://localhost:3000`
+- UI/기능 정상 여부 확인
 
 **CLEANUP** (worktree):
 - After all work: `bash .agent-skills/jeo/scripts/worktree-cleanup.sh`
-- Removes all vibe-kanban created worktrees
 
 ### ohmg Integration
 For Gemini multi-agent orchestration:

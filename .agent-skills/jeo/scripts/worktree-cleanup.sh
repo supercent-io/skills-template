@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # JEO Skill — Worktree Cleanup Script
-# Removes all vibe-kanban created git worktrees after task completion
+# Removes stale git worktrees after task completion
 # Usage: bash worktree-cleanup.sh [--force] [--dry-run] [--list]
 
 set -euo pipefail
@@ -17,7 +17,7 @@ for arg in "$@"; do
     --dry-run) DRY_RUN=true ;;
     --force)
       FORCE=true
-      warn "WARNING: --force removes ALL non-main worktrees, not just vibe-kanban ones."
+      warn "WARNING: --force removes ALL non-main worktrees."
       warn "         Active feature branches in separate worktrees will also be removed."
       warn "         Press Ctrl+C within 5 seconds to cancel..."
       sleep 5
@@ -28,7 +28,7 @@ done
 
 echo ""
 echo "JEO — Worktree Cleanup"
-echo "======================"
+echo "====================="
 
 # ── Check git repo ─────────────────────────────────────────────────────────────
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
@@ -41,34 +41,17 @@ info "Current worktrees:"
 git worktree list
 echo ""
 
-# ── Identify vibe-kanban worktrees ────────────────────────────────────────────
-# vibe-kanban creates worktrees with patterns like:
-#   .vibe-kanban/<task-id>/
-#   /tmp/vibe-kanban-*/
-#   worktrees named: vibe-kanban-*, task-*, agent-worktree-*
-
+# ── Identify stale worktrees ──────────────────────────────────────────────────
 MAIN_WORKTREE=$(git worktree list | head -1 | awk '{print $1}')
 WORKTREES_TO_REMOVE=()
 
 while IFS= read -r line; do
   WORKTREE_PATH=$(echo "$line" | awk '{print $1}')
-  WORKTREE_BRANCH=$(echo "$line" | grep -oP '\[.*\]' | tr -d '[]' || echo "")
 
   # Skip main worktree
   [[ "$WORKTREE_PATH" == "$MAIN_WORKTREE" ]] && continue
 
-  # Identify vibe-kanban worktrees by path or branch patterns
-  IS_VK=false
-  if [[ "$WORKTREE_PATH" == *"vibe-kanban"* ]] || \
-     [[ "$WORKTREE_PATH" == *".vk/"* ]] || \
-     [[ "$WORKTREE_PATH" == */tmp/vk-* ]] || \
-     [[ "$WORKTREE_BRANCH" == vibe-kanban-* ]] || \
-     [[ "$WORKTREE_BRANCH" == task/* ]] || \
-     [[ "$WORKTREE_BRANCH" == agent/* ]]; then
-    IS_VK=true
-  fi
-
-  if $IS_VK || $FORCE; then
+  if $FORCE; then
     WORKTREES_TO_REMOVE+=("$WORKTREE_PATH")
   fi
 done < <(git worktree list | tail -n +2)
@@ -76,7 +59,7 @@ done < <(git worktree list | tail -n +2)
 # ── List mode ─────────────────────────────────────────────────────────────────
 if $LIST_ONLY; then
   if [[ ${#WORKTREES_TO_REMOVE[@]} -eq 0 ]]; then
-    ok "No vibe-kanban worktrees found"
+    ok "No extra worktrees found"
   else
     echo "Worktrees to remove:"
     for wt in "${WORKTREES_TO_REMOVE[@]}"; do
@@ -88,7 +71,7 @@ fi
 
 # ── Remove identified worktrees ───────────────────────────────────────────────
 if [[ ${#WORKTREES_TO_REMOVE[@]} -eq 0 ]]; then
-  ok "No vibe-kanban worktrees to remove"
+  ok "No extra worktrees to remove"
 else
   info "Removing ${#WORKTREES_TO_REMOVE[@]} worktree(s)..."
   for WORKTREE_PATH in "${WORKTREES_TO_REMOVE[@]}"; do
