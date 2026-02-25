@@ -1,9 +1,9 @@
 ---
 name: jeo
 keyword: jeo
-description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 vibe-kanban 상태 업데이트, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, agent-browser, playwriter, plannotator, vibe-kanban."
+description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator."
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
-tags: [jeo, orchestration, ralph, plannotator, team, bmad, vibe-kanban, agent-browser, omc, omx, ohmg, playwriter, multi-agent, workflow, kanban, worktree-cleanup]
+tags: [jeo, orchestration, ralph, plannotator, team, bmad, omc, omx, ohmg, multi-agent, workflow, worktree-cleanup]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: supercent-io/skills-template
@@ -14,7 +14,7 @@ compatibility: "Requires git, node>=18, bash. Optional: bun, docker."
 
 > Keyword: `jeo` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 >
-> 계획(ralph+plannotator) → 실행(team/bmad) → 추적(vibe-kanban+agent-browser) → 정리(worktree cleanup)
+> 계획(ralph+plannotator) → 실행(team/bmad) → 정리(worktree cleanup)
 > 의 완전 자동화 오케스트레이션 플로우를 제공하는 통합 스킬.
 
 ---
@@ -49,9 +49,8 @@ JEO가 설치하고 설정하는 도구 목록:
 | **bmad** | BMAD 워크플로우 오케스트레이션 | skills에 포함됨 |
 | **ralph** | 자기참조 완료 루프 | omc에 포함 또는 별도 설치 |
 | **plannotator** | 계획/diff 시각적 리뷰 | `bash scripts/install.sh --with-plannotator` |
-| **agent-browser** | AI 에이전트용 헤드리스 브라우저 | `npm install -g agent-browser` |
-| **playwriter** | Playwright 기반 브라우저 자동화 | `npm install -g playwriter` |
-| **vibe-kanban** | AI Kanban 보드 (git worktree 자동화) | `npx vibe-kanban` |
+| **agent-browser** | AI 에이전트용 헤드리스 브라우저 (선택) | `npm install -g agent-browser` |
+| **playwriter** | Playwright 기반 브라우저 자동화 (선택) | `npm install -g playwriter` |
 
 ---
 
@@ -73,14 +72,9 @@ jeo "<task>"
     └─ team 없음?     → /bmad /workflow-init → BMAD 단계 실행
     │
     ▼
-[3] TRACK (vibe-kanban + agent-browser)
-    agent-browser로 vibe-kanban 보드 접속
-    → 작업 카드 상태 실시간 업데이트 (In Progress → Review → Done)
-    │
-    ▼
-[4] CLEANUP
+[3] CLEANUP
     모든 작업 완료 후 → bash scripts/worktree-cleanup.sh
-    git worktree prune + vibe-kanban 생성 worktree 삭제
+    git worktree prune
 ```
 
 ### 3.1 PLAN 단계 (ralph + plannotator)
@@ -132,33 +126,15 @@ Shift+Tab×2 → plan mode 진입 → 계획 완료 시 plannotator 자동 실�
 - Analysis → Planning → Solutioning → Implementation 순서로 진행
 - 각 단계 완료 시 plannotator로 문서 검토
 
-### 3.3 TRACK 단계 (vibe-kanban + agent-browser)
-
-```bash
-# vibe-kanban 시작 (별도 터미널)
-npx vibe-kanban
-
-# agent-browser로 Kanban 보드 자동 업데이트
-agent-browser open http://localhost:3000
-agent-browser snapshot -i
-# → @eN ref로 카드 상태 조작
-```
-
-**MCP 모드 사용 시 (에이전트 직접 API 호출):**
-```bash
-npx vibe-kanban --mcp
-# 에이전트가 MCP 프로토콜로 카드 CRUD 직접 처리
-```
-
-### 3.4 CLEANUP 단계 (worktree 자동 정리)
+### 3.3 CLEANUP 단계 (worktree 자동 정리)
 
 ```bash
 # 모든 작업 완료 후 자동 실행
 bash scripts/worktree-cleanup.sh
 
 # 개별 명령
-git worktree list              # 현재 worktree 목록 확인
-git worktree prune             # 삭제된 브랜치 worktree 정리
+git worktree list                         # 현재 worktree 목록 확인
+git worktree prune                        # 삭제된 브랜치 worktree 정리
 bash scripts/worktree-cleanup.sh --force  # 강제 정리
 ```
 
@@ -257,11 +233,10 @@ JEO는 아래 경로에 상태를 저장합니다:
 **상태 파일 구조:**
 ```json
 {
-  "phase": "plan|execute|track|cleanup",
+  "phase": "plan|execute|cleanup",
   "task": "현재 작업 설명",
   "plan_approved": true,
   "team_available": true,
-  "kanban_url": "http://localhost:3000",
   "worktrees": ["path/to/worktree1", "path/to/worktree2"],
   "created_at": "2026-02-24T00:00:00Z",
   "updated_at": "2026-02-24T00:00:00Z"
@@ -292,7 +267,6 @@ jeo "<작업 설명>"           # 키워드로 활성화
 
 # 4단계: 자동 실행
 # team 또는 bmad가 작업 처리
-# vibe-kanban에서 진행 상황 시각적 확인
 
 # 5단계: 완료 후 정리
 bash scripts/worktree-cleanup.sh
@@ -306,8 +280,7 @@ bash scripts/worktree-cleanup.sh
 2. **team 우선**: Claude Code에서는 omc team 모드 사용이 가장 효율적
 3. **bmad fallback**: team 없는 환경(Codex, Gemini)에서 BMAD 사용
 4. **worktree 정리**: 작업 완료 즉시 `worktree-cleanup.sh` 실행 (브랜치 오염 방지)
-5. **kanban 범위**: vibe-kanban 카드는 1카드=1커밋 단위로 좁게 유지
-6. **상태 저장**: `.omc/state/jeo-state.json`으로 세션 간 상태 유지
+5. **상태 저장**: `.omc/state/jeo-state.json`으로 세션 간 상태 유지
 
 ---
 
@@ -316,7 +289,6 @@ bash scripts/worktree-cleanup.sh
 | 문제 | 해결 |
 |------|------|
 | plannotator 미실행 | `bash .agent-skills/plannotator/scripts/check-status.sh` |
-| vibe-kanban 포트 충돌 | `PORT=3001 npx vibe-kanban` |
 | worktree 충돌 | `git worktree prune && git worktree list` |
 | team 모드 미동작 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 환경변수 설정 |
 | omc 설치 실패 | `/omc:omc-doctor` 실행 |
@@ -328,7 +300,5 @@ bash scripts/worktree-cleanup.sh
 
 - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) — Claude Code 멀티에이전트
 - [plannotator](https://plannotator.ai) — 계획/diff 시각적 리뷰
-- [vibe-kanban](https://github.com/BloopAI/vibe-kanban) — AI Kanban 보드
-- [agent-browser](https://github.com/anthropics/agent-browser) — AI 헤드리스 브라우저
 - [BMAD Method](https://github.com/bmad-dev/BMAD-METHOD) — 구조화된 AI 개발 워크플로우
 - [Agent Skills Spec](https://agentskills.io/specification) — 스킬 포맷 명세
