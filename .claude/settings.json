@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(src/)",
+      "Write(src/)",
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(git status)",
+      "Bash(git diff)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo rm *)",
+      "Bash(chmod 777 *)",
+      "Bash(curl * | sh)",
+      "Bash(wget * | sh)",
+      "Bash(git reset --hard)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "pattern": "rm -rf /",
+        "action": "block",
+        "message": "루트 삭제 명령은 금지됩니다."
+      },
+      {
+        "pattern": "rm -rf /*",
+        "action": "block",
+        "message": "루트 하위 대량 삭제는 금지됩니다."
+      },
+      {
+        "pattern": "curl * | sh",
+        "action": "block",
+        "message": "스크립트 파이프 실행은 차단됩니다."
+      },
+      {
+        "pattern": "chmod 777",
+        "action": "warn",
+        "message": "과도한 권한 변경은 검토 후 실행하세요."
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "pattern": "sudo *",
+        "action": "warn",
+        "message": "sudo 사용은 허가 범위와 위험도를 확인하세요."
+      }
+    ]
+  },
+  "mcpServers": {}
+}
