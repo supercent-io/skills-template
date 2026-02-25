@@ -1,16 +1,13 @@
 ---
 name: jeo
 keyword: jeo
-description: JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 vibe-kanban 상태 업데이트, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, agent-browser, playwriter, plannotator, vibe-kanban.
+description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 vibe-kanban 상태 업데이트, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, agent-browser, playwriter, plannotator, vibe-kanban."
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
 tags: [jeo, orchestration, ralph, plannotator, team, bmad, vibe-kanban, agent-browser, omc, omx, ohmg, playwriter, multi-agent, workflow, kanban, worktree-cleanup]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: supercent-io/skills-template
-compatibility: Requires git, node>=18, bash. Optional: bun, docker.
-metadata:
-  author: supercent-io
-  keyword: jeo
+compatibility: "Requires git, node>=18, bash. Optional: bun, docker."
 ---
 
 # JEO — Integrated Agent Orchestration
