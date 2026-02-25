@@ -44,7 +44,7 @@ jeo "원하는 작업을 여기에 설명하세요"
 
 | 변경 | 내용 |
 |------|------|
-| **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → vibe-kanban → worktree cleanup 완전 자동화 |
+| **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup 완전 자동화 |
 | **Skills list 재구성** | 11개 카테고리, 65개 스킬 표 형식 개편 |
 | **신규 `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR 자동화 |
 
@@ -601,7 +601,7 @@ bash scripts/install.sh --all   # 전체 설치
 ## Changelog
 
 **v2026-02-25 (latest)**:
-- **jeo**: New skill added — Integrated Agent Orchestration (ralph+plannotator → team/bmad → vibe-kanban+agent-browser → worktree cleanup); registered in skills.json under utilities
+- **jeo**: New skill added — Integrated Agent Orchestration (ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup); registered in skills.json under utilities
 - Skills list 표 형식 개편 (카테고리 재구성, 65개 전체)
 
 **v2026-02-23**:
