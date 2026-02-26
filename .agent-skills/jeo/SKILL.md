@@ -290,7 +290,8 @@ NEVER proceed to EXECUTE without approved=true.
 bash scripts/setup-opencode.sh
 
 # opencode.json에 추가됨:
-# "@jeo/opencode@latest" 플러그인
+# "@plannotator/opencode@latest" 플러그인
+# "@oh-my-opencode/opencode@latest" 플러그인 (omx)
 ```
 
 OpenCode 슬래시 커맨드:

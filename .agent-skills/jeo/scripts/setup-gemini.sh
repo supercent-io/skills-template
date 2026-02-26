@@ -27,11 +27,12 @@ if ! command -v gemini >/dev/null 2>&1; then
   warn "gemini CLI not found. Install via: npm install -g @google/gemini-cli"
 fi
 
-# NOTE: ExitPlanMode hook support in Gemini CLI depends on the installed version.
-# If plannotator does not auto-open on plan exit, use the manual fallback:
-#   python3 -c "import json; plan=open('plan.md').read(); \
-#     print(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" \
-#     | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
+# NOTE: Gemini CLI uses AfterAgent hook (not ExitPlanMode, which is Claude Code-only).
+# The primary method is agent direct blocking call — do NOT use & (background).
+# Manual blocking call (same-turn feedback):
+#   python3 -c "import json,sys; plan=open('plan.md').read(); \
+#     sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" \
+#     | plannotator > /tmp/plannotator_feedback.txt 2>&1
 
 # ── 2. Configure ~/.gemini/settings.json ─────────────────────────────────────
 if ! $MD_ONLY; then
