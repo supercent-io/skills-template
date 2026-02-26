@@ -129,7 +129,11 @@ After all tasks complete:
 - Run: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 
 ## Key Commands
-- Plan review: `plannotator plan -` (pipe plan.md content)
+- Plan review (blocking — no &):
+  ```bash
+  python3 -c "import json; print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+  grep -q '"approved":true' /tmp/plannotator_feedback.txt && echo "PLAN_APPROVED" || cat /tmp/plannotator_feedback.txt
+  ```
 - Browser verify: `agent-browser snapshot http://localhost:3000`
 - BMAD init: `/workflow-init`
 - Worktree cleanup: `bash .agent-skills/jeo/scripts/worktree-cleanup.sh`
