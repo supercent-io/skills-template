@@ -194,11 +194,12 @@ bash .agent-skills/plannotator/scripts/setup-hook.sh
 ```json
 {
   "hooks": {
-    "ExitPlanMode": [{
-      "matcher": "",
+    "PermissionRequest": [{
+      "matcher": "ExitPlanMode",
       "hooks": [{
         "type": "command",
-        "command": "plannotator plan -"
+        "command": "plannotator",
+        "timeout": 1800
       }]
     }]
   }
