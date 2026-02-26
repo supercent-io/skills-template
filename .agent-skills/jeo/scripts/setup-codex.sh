@@ -63,43 +63,53 @@ else
 #
 # Tools: agent-browser, playwriter, plannotator'
 
-  # Add developer_instructions — section-aware to avoid duplicate [developer_instructions] tables
-  if [[ -f "$CODEX_CONFIG" ]] && grep -q "^jeo\s*=" "$CODEX_CONFIG"; then
-    ok "JEO developer_instructions already in config.toml"
-  else
-    python3 - <<PYEOF
+  python3 - <<PYEOF
 import re, os
 
 config_path = os.path.expanduser("~/.codex/config.toml")
-jeo_value = '''"""
-${JEO_INSTRUCTION}
-"""'''
+jeo_instruction = """${JEO_INSTRUCTION}"""
 
 try:
     content = open(config_path).read() if os.path.exists(config_path) else ""
 except Exception:
     content = ""
 
-# If [developer_instructions] section already exists, insert jeo key inside it
-if "[developer_instructions]" in content:
-    # Insert before the next section header or at end of file
-    content = re.sub(
-        r'(\[developer_instructions\][^\[]*)',
-        lambda m: m.group(1).rstrip() + f'\njeo = {jeo_value}\n',
-        content, count=1
-    )
-    # Avoid double-insertion if already present
-    if content.count("jeo =") > 1:
-        pass  # already inserted, skip
+content = re.sub(r'(?ms)^\[developer_instructions\]\s*\n.*?(?=^\[|\Z)', '', content).strip() + "\n"
+content = re.sub(r'(?ms)^# JEO Orchestration Workflow\n.*?^"""\s*\n', '', content)
+
+def parse_existing_instructions(text: str) -> str:
+    m = re.search(r'(?ms)^developer_instructions\s*=\s*"""\n?(.*?)\n?"""\s*$', text)
+    if m:
+        return m.group(1)
+
+    m = re.search(r'(?m)^developer_instructions\s*=\s*"(.*)"\s*$', text)
+    if m:
+        return bytes(m.group(1), "utf-8").decode("unicode_escape")
+
+    return ""
+
+existing = parse_existing_instructions(content)
+if "Keyword: jeo | Platforms: Codex, Claude, Gemini, OpenCode" in existing:
+    merged = existing
 else:
-    content += f'\n[developer_instructions]\njeo = {jeo_value}\n'
+    merged = (existing.rstrip() + "\n\n" if existing.strip() else "") + jeo_instruction.strip()
+
+new_assignment = 'developer_instructions = """\n' + merged + '\n"""\n'
+
+if re.search(r'(?m)^developer_instructions\s*=', content):
+    content = re.sub(r'(?ms)^developer_instructions\s*=\s*(""".*?"""|".*?")\s*$', new_assignment, content, count=1)
+else:
+    first_table = re.search(r'(?m)^\[', content)
+    if first_table:
+        content = content[:first_table.start()] + new_assignment + "\n" + content[first_table.start():]
+    else:
+        content = new_assignment + "\n" + content
 
 with open(config_path, "w") as f:
     f.write(content)
-print("✓ JEO developer_instructions added (section-aware merge)")
+print("✓ JEO developer_instructions synced (top-level string)")
 PYEOF
-    ok "JEO developer_instructions added to ~/.codex/config.toml"
-  fi
+  ok "JEO developer_instructions synced in ~/.codex/config.toml"
 
   # ── 3. Create /prompts:jeo prompt file ──────────────────────────────────────
   cat > "$JEO_PROMPT_FILE" <<'PROMPTEOF'
@@ -236,8 +246,7 @@ try:
 except Exception:
     content = ""
 
-# Add notify root key before any [table] sections
-if "notify" not in content:
+if not re.search(r'(?m)^notify\s*=', content):
     first_table = re.search(r'^\[', content, re.MULTILINE)
     notify_line = f'notify = ["python3", "{hook_path}"]\n'
     if first_table:

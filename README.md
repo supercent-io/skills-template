@@ -352,6 +352,7 @@ open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callbac
 |------|------|------|
 | 브라우저가 두 번 열림 | `plannotator-launch.sh`의 중복 `open` 호출 | 훅 스크립트에서 포트 감지 루프의 `open` 제거 — plannotator가 브라우저를 자체 오픈 |
 | 피드백 미수신 (Codex/Gemini/OpenCode) | `&` 백그라운드 실행으로 에이전트가 결과를 대기하지 않음 | `&` 없이 블로킹 실행 후 `/tmp/plannotator_feedback.txt` 읽기 |
+| Codex 시작 실패 (`invalid type: map, expected a string`) | `~/.codex/config.toml`에서 `developer_instructions`를 테이블(`[developer_instructions]`)로 잘못 선언 | `bash .agent-skills/jeo/scripts/setup-codex.sh` 재실행 후 `developer_instructions = "..."` top-level 문자열 형식 확인 |
 
 ---
 
@@ -502,6 +503,10 @@ bash scripts/install.sh --all   # 전체 설치
 ---
 
 ## Changelog
+
+**v2026-02-26**:
+- **jeo (codex setup)**: `setup-codex.sh`가 `developer_instructions`를 Codex 스키마에 맞는 top-level 문자열로 강제 동기화하도록 수정
+- **jeo (status check)**: Codex 설정 검증을 강화해 잘못된 `developer_instructions` 형식을 정확히 감지하고 안내
 
 **v2026-02-25 (latest)**:
 - **jeo**: New skill added — Integrated Agent Orchestration (ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup); registered in skills.json under utilities

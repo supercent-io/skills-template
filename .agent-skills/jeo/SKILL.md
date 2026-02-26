@@ -226,12 +226,20 @@ bash scripts/setup-codex.sh
 
 **`~/.codex/config.toml`** 설정:
 ```toml
+developer_instructions = """
+# JEO Orchestration Workflow
+# ...
+"""
+
 notify = ["python3", "~/.codex/hooks/jeo-notify.py"]
 
 [tui]
 notifications = ["agent-turn-complete"]
 notification_method = "osc9"
 ```
+
+> `developer_instructions`는 반드시 **top-level string**이어야 합니다.
+> `[developer_instructions]` 테이블 형식으로 작성하면 Codex가 `invalid type: map, expected a string` 오류로 시작 실패할 수 있습니다.
 
 Codex에서 사용:
 ```bash
@@ -383,6 +391,7 @@ bash scripts/worktree-cleanup.sh
 |------|------|
 | plannotator 미실행 | `bash .agent-skills/plannotator/scripts/check-status.sh` |
 | plannotator 피드백 미수신 | `&` 백그라운드 실행 제거 → 블로킹 실행 후 `/tmp/plannotator_feedback.txt` 확인 |
+| Codex 시작 실패 (`invalid type: map, expected a string`) | `bash scripts/setup-codex.sh` 재실행 후 `~/.codex/config.toml`의 `developer_instructions`가 top-level string인지 확인 |
 | Gemini 피드백 루프 없음 | `~/.gemini/GEMINI.md`에 블로킹 직접 호출 지시 추가 |
 | worktree 충돌 | `git worktree prune && git worktree list` |
 | team 모드 미동작 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 환경변수 설정 |
