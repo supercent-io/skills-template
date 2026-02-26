@@ -109,12 +109,18 @@ You are now operating in **JEO mode** — Integrated AI Agent Orchestration.
 
 ## Your Workflow
 
-### Step 1: PLAN (ralph + plannotator)
-Before writing any code, create a structured plan:
-1. Write a detailed implementation plan in `plan.md`
-2. Include: objectives, steps, risks, acceptance criteria
-3. Submit for visual review via plannotator (if available)
-4. Only proceed after plan is approved
+### Step 1: PLAN (plannotator — blocking loop)
+Before writing any code, create and review a plan:
+1. Write a detailed implementation plan in `plan.md` (objectives, steps, risks, acceptance criteria)
+2. Run plannotator BLOCKING (no & — wait for user review):
+   ```bash
+   python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+   echo "PLAN_READY"
+   ```
+3. Read /tmp/plannotator_feedback.txt
+4. If `"approved":true` → proceed to EXECUTE
+5. If NOT approved → read annotations, revise plan.md, repeat from step 2
+NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
 
 ### Step 2: EXECUTE (BMAD workflow for Codex)
 Use BMAD structured phases:
