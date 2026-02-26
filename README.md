@@ -44,6 +44,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup 완전 자동화 |
 | **Skills list 재구성** | 11개 카테고리, 65개 스킬 표 형식 개편 |
 | **신규 `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR 자동화 |
+| **`agent-browser` 강화** | deterministic workflow + verification/diff + security hardening + references/templates 추가 |
 
 ---
 
@@ -503,6 +504,11 @@ bash scripts/install.sh --all   # 전체 설치
 ---
 
 ## Changelog
+
+**v2026-02-26**:
+- **agent-browser**: SKILL.md를 운영형 구조로 확장 (core workflow, verification, safeguards, troubleshooting)
+- **agent-browser**: SKILL.toon 동기화 (snapshot-interact-resnapshot + verify 단계 반영)
+- **agent-browser**: references 4종 및 templates 2종 추가
 
 **v2026-02-26**:
 - **jeo (codex setup)**: `setup-codex.sh`가 `developer_instructions`를 Codex 스키마에 맞는 top-level 문자열로 강제 동기화하도록 수정
