@@ -38,7 +38,7 @@ if ! $MD_ONLY; then
   info "Configuring ~/.gemini/settings.json..."
 
   if $DRY_RUN; then
-    echo -e "${YELLOW}[DRY-RUN]${NC} Would add ExitPlanMode hook to $GEMINI_SETTINGS"
+    echo -e "${YELLOW}[DRY-RUN]${NC} Would add AfterAgent hook to $GEMINI_SETTINGS"
   else
     mkdir -p "$(dirname "$GEMINI_SETTINGS")"
     [[ -f "$GEMINI_SETTINGS" ]] && cp "$GEMINI_SETTINGS" "${GEMINI_SETTINGS}.jeo.bak"
@@ -54,25 +54,28 @@ except (FileNotFoundError, json.JSONDecodeError):
     settings = {}
 
 hooks = settings.setdefault("hooks", {})
-exit_plan = hooks.setdefault("ExitPlanMode", [])
+# AfterAgent is the correct Gemini CLI hook (ExitPlanMode is Claude Code-only)
+after_agent = hooks.setdefault("AfterAgent", [])
 
 # Check if plannotator hook already exists
 planno_exists = any(
     any(h.get("command", "").startswith("plannotator") for h in entry.get("hooks", []))
-    for entry in exit_plan
+    for entry in after_agent
 )
 
 if not planno_exists:
-    exit_plan.append({
+    after_agent.append({
         "matcher": "",
         "hooks": [{
+            "name": "plannotator-review",
             "type": "command",
-            "command": "plannotator plan -"
+            "command": "plannotator plan -",
+            "description": "계획 완료 후 plannotator UI 실행 (알림용)"
         }]
     })
     with open(settings_path, "w") as f:
         json.dump(settings, f, indent=2)
-    print("✓ plannotator ExitPlanMode hook added to ~/.gemini/settings.json")
+    print("✓ plannotator AfterAgent hook added to ~/.gemini/settings.json")
 else:
     print("✓ plannotator hook already present")
 PYEOF
@@ -124,7 +127,7 @@ python3 -c "
 import json
 plan = open('"'"'plan.md'"'"').read()
 print(json.dumps({'"'"'tool_input'"'"': {'"'"'plan'"'"': plan, '"'"'permission_mode'"'"': '"'"'acceptEdits'"'"'}}))
-" | plannotator > /tmp/plannotator_feedback.txt 2>&1 &
+" | plannotator > /tmp/plannotator_feedback.txt 2>&1
 ```
 '
 
