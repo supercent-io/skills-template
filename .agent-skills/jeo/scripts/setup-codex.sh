@@ -50,6 +50,13 @@ else
 # Trigger with: jeo "<task description>"
 # Use /prompts:jeo for full workflow activation
 #
+# PLAN phase protocol (Codex):
+#   1. Write plan to plan.md
+#   2. Run plannotator blocking (no &):
+#      python3 -c "import json; print(json.dumps({\"tool_input\": {\"plan\": open(\"plan.md\").read(), \"permission_mode\": \"acceptEdits\"}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+#   3. Output "PLAN_READY" to trigger notify hook as backup signal
+#   4. Check /tmp/plannotator_feedback.txt: approved=true -> EXECUTE, else re-plan
+#
 # BMAD commands (fallback when team unavailable):
 #   /workflow-init   — initialize BMAD workflow
 #   /workflow-status — check current BMAD phase
@@ -129,10 +136,13 @@ After all tasks complete:
 - Run: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 
 ## Key Commands
-- Plan review (blocking — no &):
+- Plan review — run plannotator BLOCKING (no &), then output PLAN_READY:
   ```bash
   python3 -c "import json; print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
-  grep -q '"approved":true' /tmp/plannotator_feedback.txt && echo "PLAN_APPROVED" || cat /tmp/plannotator_feedback.txt
+  # Output PLAN_READY to trigger notify hook as backup signal
+  echo "PLAN_READY"
+  # Check result
+  grep -q '"approved":true' /tmp/plannotator_feedback.txt && echo "PLAN_APPROVED — proceed to EXECUTE" || cat /tmp/plannotator_feedback.txt
   ```
 - Browser verify: `agent-browser snapshot http://localhost:3000`
 - BMAD init: `/workflow-init`
@@ -153,11 +163,105 @@ Always check state file on resume to continue from last phase.
 PROMPTEOF
 
   ok "JEO prompt file created: $JEO_PROMPT_FILE"
+
+  # ── 4. Create plannotator notify hook ────────────────────────────────────────
+  info "Setting up plannotator notify hook..."
+  HOOK_DIR="${HOME}/.codex/hooks"
+  HOOK_FILE="${HOOK_DIR}/jeo-notify.py"
+  mkdir -p "$HOOK_DIR"
+
+  cat > "$HOOK_FILE" << 'HOOKEOF'
+#!/usr/bin/env python3
+"""JEO Codex notify hook — detects PLAN_READY signal and triggers plannotator."""
+import json, os, subprocess, sys
+
+# Signals that indicate the agent finished writing a plan
+PLAN_SIGNALS = ["PLAN_READY", "plan.md created", "계획 작성 완료", "plan complete"]
+
+def main() -> int:
+    try:
+        notification = json.loads(sys.argv[1])
+    except (IndexError, json.JSONDecodeError):
+        return 0
+
+    if notification.get("type") != "agent-turn-complete":
+        return 0
+
+    msg = notification.get("last-assistant-message", "")
+    cwd = notification.get("cwd", os.getcwd())
+
+    # Only trigger on plan completion signals
+    if not any(sig.lower() in msg.lower() for sig in PLAN_SIGNALS):
+        return 0
+
+    plan_path = os.path.join(cwd, "plan.md")
+    if not os.path.exists(plan_path):
+        return 0
+
+    plan_content = open(plan_path).read()
+    payload = json.dumps({"tool_input": {"plan": plan_content, "permission_mode": "acceptEdits"}})
+
+    feedback_file = "/tmp/plannotator_feedback.txt"
+    try:
+        with open(feedback_file, "w") as f:
+            subprocess.run(["plannotator"], input=payload, stdout=f, stderr=f, text=True)
+        print(f"[JEO] plannotator feedback → {feedback_file}")
+    except FileNotFoundError:
+        print("[JEO] plannotator not found — skipping")
+
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+HOOKEOF
+
+  chmod +x "$HOOK_FILE"
+  ok "JEO notify hook created: $HOOK_FILE"
+
+  # Add notify + tui to config.toml
+  python3 - <<PYEOF
+import re, os
+
+config_path = os.path.expanduser("~/.codex/config.toml")
+hook_path = os.path.expanduser("~/.codex/hooks/jeo-notify.py")
+
+try:
+    content = open(config_path).read() if os.path.exists(config_path) else ""
+except Exception:
+    content = ""
+
+# Add notify root key before any [table] sections
+if "notify" not in content:
+    first_table = re.search(r'^\[', content, re.MULTILINE)
+    notify_line = f'notify = ["python3", "{hook_path}"]\n'
+    if first_table:
+        content = content[:first_table.start()] + notify_line + "\n" + content[first_table.start():]
+    else:
+        content = notify_line + content
+    print("✓ notify hook registered in config.toml")
+else:
+    print("✓ notify already configured")
+
+# Add [tui] section if missing
+if "[tui]" not in content:
+    content += '\n[tui]\nnotifications = ["agent-turn-complete"]\nnotification_method = "osc9"\n'
+    print("✓ [tui] notifications added")
+else:
+    print("✓ [tui] already configured")
+
+with open(config_path, "w") as f:
+    f.write(content)
+PYEOF
+
+  ok "Codex config.toml updated with notify hook"
 fi
 
 echo ""
 echo "Codex CLI usage after setup:"
-echo "  /prompts:jeo    ← Activate JEO orchestration workflow"
+echo "  /prompts:jeo             ← Activate JEO orchestration workflow"
+echo "  notify hook: ~/.codex/hooks/jeo-notify.py"
+echo "    fires on: PLAN_READY signal in agent output"
+echo "    writes to: /tmp/plannotator_feedback.txt"
 echo ""
 ok "Codex CLI setup complete"
 echo ""

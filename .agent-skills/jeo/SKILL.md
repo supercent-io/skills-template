@@ -212,13 +212,31 @@ bash .agent-skills/plannotator/scripts/setup-hook.sh
 # 자동 설정
 bash scripts/setup-codex.sh
 
-# developer_instructions 추가됨: ~/.codex/config.toml
-# prompt 파일 생성됨: ~/.codex/prompts/jeo.md
+# 설정 내용:
+# - developer_instructions: ~/.codex/config.toml
+# - prompt 파일: ~/.codex/prompts/jeo.md
+# - notify hook: ~/.codex/hooks/jeo-notify.py
+# - [tui] notifications: agent-turn-complete
+```
+
+**notify hook** (`~/.codex/hooks/jeo-notify.py`):
+- 에이전트 턴 완료 시 `last-assistant-message`에서 `PLAN_READY` 신호 감지
+- `plan.md` 존재 확인 후 plannotator 자동 실행
+- 결과를 `/tmp/plannotator_feedback.txt`에 저장
+
+**`~/.codex/config.toml`** 설정:
+```toml
+notify = ["python3", "~/.codex/hooks/jeo-notify.py"]
+
+[tui]
+notifications = ["agent-turn-complete"]
+notification_method = "osc9"
 ```
 
 Codex에서 사용:
 ```bash
 /prompts:jeo    # JEO 워크플로우 활성화
+# 에이전트가 plan.md 작성 후 "PLAN_READY" 출력 → notify hook 자동 실행
 ```
 
 ### 4.3 Gemini CLI
