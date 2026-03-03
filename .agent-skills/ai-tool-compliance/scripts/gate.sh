@@ -88,10 +88,11 @@ determine_mode() {
 EFFECTIVE_MODE=$(determine_mode)
 
 # ── 점수 데이터 읽기 ───────────────────────────────────────────
-TOTAL=$(jq '.total_score' "$SCORE_FILE")
+TOTAL=$(jq '.p0_gate_score // .total_score' "$SCORE_FILE")
 P0_FAILS=$(jq '.p0_fail_total' "$SCORE_FILE")
 P1_FAILS=$(jq '.p1_fail_total' "$SCORE_FILE")
 GRADE=$(jq -r '.grade' "$SCORE_FILE")
+P1_MATURITY=$(jq '.p1_maturity_score // .p1.maturity_score // 0' "$SCORE_FILE")
 
 # ── 판정 출력 ──────────────────────────────────────────────────
 echo ""
@@ -102,6 +103,7 @@ echo "  Mode:  $EFFECTIVE_MODE"
 echo "  Score: $TOTAL/100 ($GRADE)"
 echo "  P0:    $P0_FAILS fails"
 echo "  P1:    $P1_FAILS fails"
+echo "  P1 Maturity: $P1_MATURITY/100"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # ── 게이트 판정 로직 ───────────────────────────────────────────

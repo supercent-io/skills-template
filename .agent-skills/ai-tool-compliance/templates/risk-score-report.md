@@ -73,6 +73,15 @@
 | P1-007  | 환경변수 하드코딩 없음         | {{P1-007}} | {{P1-007_detail}} |
 | P1-008  | CORS 설정                    | {{P1-008}} | {{P1-008_detail}} |
 
+### P1 v1.1 Catalog Extension (Append-only)
+
+| Rule ID     | Domain            | Requirement                                     | Result | Evidence | Action Queue (<=1 week) |
+|-------------|-------------------|-------------------------------------------------|--------|----------|---------------------------|
+| P1-DOM-001  | Domain Management | 도메인 등록/변경/삭제 이력 + 메타데이터 강제        | {{P1-DOM-001}} | {{P1-DOM-001_evidence}} | {{P1-DOM-001_action}} |
+| P1-STAT-002 | Statistics        | 사용자/모델/기간/게임 기준 사용량·비용 통계 집계      | {{P1-STAT-002}} | {{P1-STAT-002_evidence}} | {{P1-STAT-002_action}} |
+| P1-COST-003 | Cost Control      | 예산 80% 경고 + 100% 차단(API 레벨 강제)            | {{P1-COST-003}} | {{P1-COST-003_evidence}} | {{P1-COST-003_action}} |
+| P1-LOG-004  | Logging           | 로그 스키마 검증 + 보관 기간 + 검색/Export           | {{P1-LOG-004}} | {{P1-LOG-004_evidence}} | {{P1-LOG-004_action}} |
+
 ---
 
 ## Failed Items — Drill-Down

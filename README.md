@@ -42,6 +42,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | 변경 | 내용 |
 |------|------|
 | **신규 `ai-tool-compliance` 스킬** | 내부 AI 툴 필수 구현 가이드(P0/P1) 기반 컴플라이언스 자동 검증. 4도메인 이진 점수(40/25/20/15), 배포 게이트, 이력 추적 |
+| **`ai-tool-compliance` P1 확장** | 기본 P0 검증 경로는 유지하고(`verify.sh` 기본 동작 변경 없음), 선택적 P1 확장 모드(`--include-p1`)와 P1 성숙도 점수(`p1_maturity_score`)를 추가. 리포트/문서는 append-only로 확장 |
 
 ---
 
@@ -503,6 +504,11 @@ bash scripts/install.sh --all   # 전체 설치
 ---
 
 ## Changelog
+
+**v2026-03-03 (latest, update)**:
+- **ai-tool-compliance P1 확장**: `verify.sh --include-p1` 옵션 추가(기본 P0 유지), `catalog-p1.json`/`catalog-all.json` 카탈로그 추가, `score.sh`에 `p1_maturity_score`/`p0_gate_score` 출력 확장, `gate.sh`에 P1 성숙도 표시 추가
+- **Workflow Toggle**: `templates/ai-tool-compliance.yml`에 `COMPLIANCE_INCLUDE_P1` 환경변수 추가(기본 `false`), 켜면 CI에서 P0+P1 동시 검증
+- **문서/리포트 확장**: `SKILL.md`와 `risk-score-report.md`에 Notion 표 정렬용 P1 v1.1 섹션을 append-only 방식으로 추가
 
 **v2026-03-03 (latest)**:
 - **ai-tool-compliance**: New skill — 내부 AI 툴 필수 구현 가이드 v1.1 기반 P0/P1 컴플라이언스 자동 검증. 4도메인 이진 점수 체계(보안 40/권한 25/비용 20/로그 15), GitHub Actions 배포 게이트, `.compliance/runs/` 이력 추적, `verify.sh` + `score.sh` 파이프라인

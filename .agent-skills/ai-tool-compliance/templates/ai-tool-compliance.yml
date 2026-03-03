@@ -19,6 +19,7 @@ permissions:
 
 env:
   COMPLIANCE_SKILL_PATH: .agent-skills/ai-tool-compliance
+  COMPLIANCE_INCLUDE_P1: "false"
 
 jobs:
   compliance-check:
@@ -57,9 +58,14 @@ jobs:
       - name: Run static analysis
         id: verify
         run: |
+          INCLUDE_P1_FLAG=""
+          if [ "${COMPLIANCE_INCLUDE_P1}" = "true" ]; then
+            INCLUDE_P1_FLAG="--include-p1"
+          fi
           bash $COMPLIANCE_SKILL_PATH/scripts/verify.sh \
             --output /tmp/compliance-verify.json \
-            --target .
+            --target . \
+            $INCLUDE_P1_FLAG
           echo "p0_count=$(jq '.summary.p0_violations' /tmp/compliance-verify.json)" >> $GITHUB_OUTPUT
 
       - name: Calculate score

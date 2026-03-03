@@ -153,32 +153,45 @@ echo ""
 # ── Step 4: 룰 카탈로그 초기화 + YAML→JSON 컴파일 ─────────────
 print_info "[4/5] 룰 카탈로그 초기화..."
 
-CATALOG_YAML="$SKILL_ROOT/rules/p0-catalog.yaml"
+P0_CATALOG_YAML="$SKILL_ROOT/rules/p0-catalog.yaml"
+P1_CATALOG_YAML="$SKILL_ROOT/rules/p1-catalog.yaml"
 CATALOG_JSON="$SKILL_ROOT/rules/catalog.json"
+CATALOG_P1_JSON="$SKILL_ROOT/rules/catalog-p1.json"
+CATALOG_ALL_JSON="$SKILL_ROOT/rules/catalog-all.json"
 
-# YAML → JSON 컴파일 (verify.sh가 runtime에 읽는 파일)
 if command -v python3 &>/dev/null && python3 -c "import yaml" 2>/dev/null; then
-  python3 -c "
-import yaml, json, sys
-with open('$CATALOG_YAML') as f:
-    data = yaml.safe_load(f)
-with open('$CATALOG_JSON', 'w') as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
-print('[verify] catalog.json compiled from p0-catalog.yaml')
-"
+  python3 - << PYTHON
+import json, yaml
+
+with open("$P0_CATALOG_YAML") as f:
+    p0 = yaml.safe_load(f) or {"rules": []}
+with open("$P1_CATALOG_YAML") as f:
+    p1 = yaml.safe_load(f) or {"rules": []}
+
+with open("$CATALOG_JSON", "w") as f:
+    json.dump(p0, f, ensure_ascii=False, indent=2)
+with open("$CATALOG_P1_JSON", "w") as f:
+    json.dump(p1, f, ensure_ascii=False, indent=2)
+with open("$CATALOG_ALL_JSON", "w") as f:
+    json.dump({"rules": list(p0.get("rules", [])) + list(p1.get("rules", []))}, f, ensure_ascii=False, indent=2)
+PYTHON
   print_success "catalog.json 컴파일 완료: $CATALOG_JSON"
+  print_success "catalog-p1.json 컴파일 완료: $CATALOG_P1_JSON"
+  print_success "catalog-all.json 컴파일 완료: $CATALOG_ALL_JSON"
 else
-  if [ -f "$CATALOG_JSON" ]; then
-    print_warning "PyYAML 없음. 기존 catalog.json 사용 (p0-catalog.yaml 변경 시 재컴파일 필요)"
+  if [ -f "$CATALOG_JSON" ] && [ -f "$CATALOG_P1_JSON" ]; then
+    print_warning "PyYAML 없음. 기존 catalog.json/catalog-p1.json 사용 (YAML 변경 시 재컴파일 필요)"
   else
-    print_error "PyYAML 없고 catalog.json 없음. pip install pyyaml 후 재실행 필요"
+    print_error "PyYAML 없고 catalog JSON 파일이 부족함. pip install pyyaml 후 재실행 필요"
     exit 1
   fi
 fi
 
-# stale 감지: YAML이 JSON보다 최신이면 경고
-if [ -f "$CATALOG_JSON" ] && [ "$CATALOG_YAML" -nt "$CATALOG_JSON" ]; then
+if [ -f "$CATALOG_JSON" ] && [ "$P0_CATALOG_YAML" -nt "$CATALOG_JSON" ]; then
   print_warning "p0-catalog.yaml이 catalog.json보다 최신. bash scripts/install.sh 로 재컴파일 권장"
+fi
+if [ -f "$CATALOG_P1_JSON" ] && [ "$P1_CATALOG_YAML" -nt "$CATALOG_P1_JSON" ]; then
+  print_warning "p1-catalog.yaml이 catalog-p1.json보다 최신. bash scripts/install.sh 로 재컴파일 권장"
 fi
 
 # .compliance/ 디렉토리 초기화 (이력 추적용)
@@ -232,7 +245,9 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo ""
 echo "  설정 파일:   $COMPLIANCE_CONFIG"
 echo "  워크플로우:  $WORKFLOW_DEST"
-echo "  카탈로그:    $CATALOG_JSON"
+echo "  카탈로그(P0): $CATALOG_JSON"
+echo "  카탈로그(P1): $CATALOG_P1_JSON"
+echo "  카탈로그(All): $CATALOG_ALL_JSON"
 echo "  이력 추적:   $COMPLIANCE_DIR/history.md"
 echo ""
 echo "  현재 모드: ${INSTALL_MODE} → ${BLOCK_DATE} 이후 자동 block 전환"

@@ -72,9 +72,14 @@ DOMAIN_MAP = {"SEC": "security", "AUTH": "auth", "COST": "cost", "LOG": "logging
 
 domain_scores = {k: 0 for k in DOMAIN_TOTALS}
 domain_max_applicable = {k: 0 for k in DOMAIN_TOTALS}
+domain_p0_fails = {k: 0 for k in DOMAIN_TOTALS}
+domain_p1_fails = {k: 0 for k in DOMAIN_TOTALS}
 p0_fails = []
 p1_fails = []
 manual_reviews = []
+p1_manual_reviews = []
+p1_applicable_max = 0
+p1_pass_score = 0
 
 for r in verify.get("results", []):
     rule_id = r["rule_id"]
@@ -91,16 +96,27 @@ for r in verify.get("results", []):
     if domain in DOMAIN_TOTALS:
         domain_max_applicable[domain] = domain_max_applicable.get(domain, 0) + score_impact
 
+    if severity == "P1":
+        p1_applicable_max += score_impact
+
     if status == "PASS":
         if domain in domain_scores:
             domain_scores[domain] += score_impact
+        if severity == "P1":
+            p1_pass_score += score_impact
     elif status == "FAIL":
         if severity == "P0":
             p0_fails.append(rule_id)
+            if domain in domain_p0_fails:
+                domain_p0_fails[domain] += 1
         elif severity == "P1":
             p1_fails.append(rule_id)
+            if domain in domain_p1_fails:
+                domain_p1_fails[domain] += 1
     elif status == "MANUAL_REVIEW":
         manual_reviews.append(rule_id)
+        if severity == "P1":
+            p1_manual_reviews.append(rule_id)
 
 # Calculate total with N/A normalization
 raw_score = sum(domain_scores.values())
@@ -114,6 +130,7 @@ else:
 
 p0_fail_count = len(p0_fails)
 p1_fail_count = len(p1_fails)
+p1_maturity_score = round((p1_pass_score / p1_applicable_max) * 100) if p1_applicable_max > 0 else 0
 
 # Grade determination (P0 takes precedence)
 if p0_fail_count > 0:
@@ -153,7 +170,10 @@ if os.path.exists(latest_run_file):
 # Build output
 output = {
     "timestamp": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "include_p1": verify.get("include_p1", False),
     "total_score": normalized_score,
+    "p0_gate_score": normalized_score,
+    "p1_maturity_score": p1_maturity_score,
     "raw_score": raw_score,
     "applicable_max": applicable_max,
     "p0_fail_total": p0_fail_count,
@@ -163,14 +183,25 @@ output = {
     "domains": {
         k: {
             "score": domain_scores[k],
+            "base": DOMAIN_TOTALS[k],
             "max": DOMAIN_TOTALS[k],
-            "applicable_max": domain_max_applicable[k]
+            "applicable_max": domain_max_applicable[k],
+            "p0_fails": domain_p0_fails[k],
+            "p1_fails": domain_p1_fails[k]
         }
         for k in DOMAIN_TOTALS
     },
     "p0_failed_rules": p0_fails,
     "p1_failed_rules": p1_fails,
+    "p1_manual_review_rules": p1_manual_reviews,
     "manual_review_rules": manual_reviews,
+    "p1": {
+        "score": p1_pass_score,
+        "applicable_max": p1_applicable_max,
+        "maturity_score": p1_maturity_score,
+        "fail_count": p1_fail_count,
+        "manual_review_count": len(p1_manual_reviews)
+    },
     "delta": delta
 }
 

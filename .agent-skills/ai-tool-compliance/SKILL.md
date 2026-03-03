@@ -789,6 +789,46 @@ P0 전수 통과 후 점진적으로 도입을 권장하는 항목:
 | 비용 통제 | 예산 상한 알림 | 팀/프로젝트별 비용 임계값 초과 시 알림 |
 | 로그 보관 | 로그 보관 정책 | 90일 Hot / 365일 Cold / 이후 삭제 정책 |
 
+### P1 v1.1 룰 카탈로그 (추가 확장)
+
+| Rule ID | 영역 | 체크 타입 | 핵심 기준 | 배점 |
+|---------|------|-----------|-----------|------|
+| P1-DOM-001 | Domain Management | static_analysis | 도메인 CRUD 이력 + `createdAt/updatedAt/status/owner` 메타데이터 | 7 |
+| P1-STAT-002 | Statistics | api_test | 사용자/모델/기간/게임 필터 통계 + 비용 집계 최신성(<1h) | 6 |
+| P1-COST-003 | Cost Control | config_check | 예산 80% 경고 + 100% 차단(429/403) + 리셋 주기 | 6 |
+| P1-LOG-004 | Logging | config_check | 로그 스키마 검증 + 6개월+ 보관 + 검색/Export | 6 |
+
+### Notion 테이블 정렬용 표준 컬럼 (추가)
+
+| 컬럼 | 설명 | 소스 |
+|------|------|------|
+| Rule ID | 기준 식별자 | rules/p1-catalog.yaml |
+| Category/Domain | 컴플라이언스 영역 | rules/p1-catalog.yaml |
+| Check Type | 검증 방식(static/api/config/log) | rules/*-catalog.yaml |
+| Pass/Fail Condition | 판정 기준 | rules/*-catalog.yaml |
+| Score Impact | 가중치 | rules/*-catalog.yaml |
+| Evidence | 파일:라인 또는 설정 근거 | verify 결과 JSON |
+| Owner Role | 조치 담당 역할 | compliance-report / role checklist |
+| Action Queue | 1주 이내 개선 항목 | remediation-task / report |
+
+### 기준검증 시스템 설계 (추가)
+
+| 컴포넌트 | 책임 | 산출물 |
+|----------|------|--------|
+| Rule Registry | P0/P1 카탈로그 버전 관리 및 로드 정책 | `rules/catalog.json`, `rules/catalog-p1.json`, `rules/catalog-all.json` |
+| Evidence Collector | 코드/설정/API 증거 수집 및 정규화 | `verify.sh` 결과의 evidence/violations |
+| Verifier Engine | 룰별 PASS/FAIL/WARNING/NA 판정 | `/tmp/compliance-verify.json` |
+| Risk Scorer | P0 Gate Score + P1 Maturity Score 계산 | `/tmp/compliance-score.json` |
+| Gatekeeper | 배포 차단(P0)과 권고(P1) 의사결정 분리 | `gate.sh` exit code + gate summary |
+
+### 운영 모드 (추가, 기존 흐름 유지)
+
+| 모드 | 명령 | 동작 |
+|------|------|------|
+| P0 기본 | `bash scripts/verify.sh .` | 기존 P0 룰만 검증 (기본값, 역호환) |
+| P0+P1 확장 | `bash scripts/verify.sh . --include-p1` | P0 검증 + P1 권장 룰 동시 검증 |
+| 게이트 판정 | `bash scripts/gate.sh --score-file ...` | P0 기준으로 배포 판정, P1은 성숙도/개선 추적 |
+
 ---
 
 ## Constraints
