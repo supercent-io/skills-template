@@ -1,9 +1,9 @@
 # Agent Skills
 
-> v2026-03-03 · **66 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-03 · **67 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-66-brightgreen)](#skills-list-66-total)
+[![Skills](https://img.shields.io/badge/Skills-67-brightgreen)](#skills-list-67-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.0.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -15,10 +15,10 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-02-25)
+- [What's New](#whats-new-in-v2026-03-03)
 - [설치 (Install)](#설치-install)
 - [실행 가이드](#실행-가이드)
-- [Skills List (66)](#skills-list-66-total)
+- [Skills List (67)](#skills-list-67-total)
 - [Featured Tools](#featured-tools)
 - [Structure](#structure)
 - [Related docs](#related-docs)
@@ -37,14 +37,11 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-02-25
+## What's New in v2026-03-03
 
 | 변경 | 내용 |
 |------|------|
-| **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup 완전 자동화 |
-| **Skills list 재구성** | 11개 카테고리, 65개 스킬 표 형식 개편 |
-| **신규 `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR 자동화 |
-| **`agent-browser` 강화** | deterministic workflow + verification/diff + security hardening + references/templates 추가 |
+| **신규 `ai-tool-compliance` 스킬** | 내부 AI 툴 필수 구현 가이드(P0/P1) 기반 컴플라이언스 자동 검증. 4도메인 이진 점수(40/25/20/15), 배포 게이트, 이력 추적 |
 
 ---
 
@@ -172,7 +169,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (66 total)
+## Skills List (67 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -220,10 +217,11 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `performance-optimization` | Performance optimization | All platforms |
 | `testing-strategies` | Testing strategies | All platforms |
 
-### Infrastructure (9)
+### Infrastructure (10)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
+| `ai-tool-compliance` | 내부 AI 툴 P0/P1 컴플라이언스 자동 검증 — 4도메인 이진 점수(보안/권한/비용/로그), 배포 게이트, 이력 추적 | All platforms |
 | `deployment-automation` | CI/CD & deployment automation | All platforms |
 | `firebase-ai-logic` | Firebase AI Logic integration | Claude · Gemini |
 | `genkit` | Firebase Genkit AI workflows | Claude · Gemini |
@@ -505,6 +503,9 @@ bash scripts/install.sh --all   # 전체 설치
 ---
 
 ## Changelog
+
+**v2026-03-03 (latest)**:
+- **ai-tool-compliance**: New skill — 내부 AI 툴 필수 구현 가이드 v1.1 기반 P0/P1 컴플라이언스 자동 검증. 4도메인 이진 점수 체계(보안 40/권한 25/비용 20/로그 15), GitHub Actions 배포 게이트, `.compliance/runs/` 이력 추적, `verify.sh` + `score.sh` 파이프라인
 
 **v2026-02-26**:
 - **agent-browser**: SKILL.md를 운영형 구조로 확장 (core workflow, verification, safeguards, troubleshooting)
