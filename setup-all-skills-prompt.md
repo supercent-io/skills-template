@@ -182,6 +182,8 @@ npx skills info jeo
 | `plannotator` | `plan`, `계획` | 계획 검토 + Feedback loop |
 | `vibe-kanban` | `kanbanview` | 칸반 보드 |
 | `bmad-orchestrator` | `bmad` | 구조화 개발 |
+| `bmad-gds` | `bmad-gds` | 게임 개발 스튜디오 (Unity/Unreal/Godot) |
+| `bmad-idea` | `bmad-idea` | 창의적 아이디어 · 디자인 씽킹 · 혁신 전략 |
 | `agent-browser` | `agent-browser` | 헤드리스 브라우저 자동화 |
 | `oh-my-codex` | `omx` | Codex CLI 멀티에이전트 |
 | `ohmg` | `ohmg` | Gemini / Antigravity 워크플로우 |
