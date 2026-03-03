@@ -8,7 +8,7 @@
 
 ![Agent Skills Installer](AgentSkills.png)
 
-> 스킬 구성 및 상세 목록: [.agent-skills/README.md](.agent-skills/README.md)
+> Skill configuration and detailed list: [.agent-skills/README.md](.agent-skills/README.md)
 
 ---
 
@@ -16,8 +16,8 @@
 
 - [Quick Start](#quick-start)
 - [What's New](#whats-new-in-v2026-02-25)
-- [설치 (Install)](#설치-install)
-- [실행 가이드](#실행-가이드)
+- [Install](#install)
+- [Execution Guide](#execution-guide)
 - [Skills List (65)](#skills-list-65-total)
 - [Featured Tools](#featured-tools)
 - [Structure](#structure)
@@ -29,146 +29,146 @@
 ## Quick Start (For LLM Agents)
 
 ```bash
-# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
+# Pass to LLM: Read the guide below and proceed with installation
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
 
-> 더 많은 스킬 설치 → [설치](#설치-install) | 플랫폼별 상세 실행 → [실행 가이드](#실행-가이드)
+> More skills installation → [Install](#install) | Platform-specific execution → [Execution Guide](#execution-guide)
 
 ---
 
 ## What's New in v2026-02-25
 
-| 변경 | 내용 |
-|------|------|
-| **신규 `jeo` 스킬** | ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup 완전 자동화 |
-| **Skills list 재구성** | 11개 카테고리, 65개 스킬 표 형식 개편 |
-| **신규 `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR 자동화 |
-| **`agent-browser` 강화** | deterministic workflow + verification/diff + security hardening + references/templates 추가 |
+| Change | Description |
+|--------|-------------|
+| **New `jeo` skill** | Complete automation: ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup |
+| **Skills list reorganization** | 11 categories, 65 skills table format restructured |
+| **New `copilot-coding-agent`** | GitHub Copilot Issue → Draft PR automation |
+| **`agent-browser` enhancement** | Added deterministic workflow + verification/diff + security hardening + references/templates |
 
 ---
 
-## 설치 (Install)
+## Install
 
-### LLM 에이전트용 (For LLM Agents)
+### For LLM Agents
 
-LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
+If an LLM agent is helping with installation, follow these steps.
 
 ```bash
-# LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
+# Pass to LLM: Read the guide below and proceed with installation
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
 ---
 
-### 사람용 (For Humans)
+### For Humans
 
-#### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
+#### Step 1: Install jeo (Recommended — includes all core features)
 
-`jeo` 하나로 계획·실행·추적·정리 워크플로우가 모두 활성화됩니다.
+`jeo` enables the entire plan·execute·track·cleanup workflow.
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill jeo
 ```
 
-#### Gemini CLI 사용 시
+#### When using Gemini CLI
 
 ```bash
 gemini extensions install https://github.com/supercent-io/skills-template
 ```
 
-> [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
+> [Hooks Official Guide](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
 ---
 
-## 실행 가이드
+## Execution Guide
 
-### jeo만으로 시작하기 (권장)
+### Getting Started with jeo (Recommended)
 
-`jeo`는 아래 전체 워크플로우를 자동으로 연결합니다:
+`jeo` automatically connects the entire workflow below:
 
-| 단계 | 도구 | 역할 |
-|------|------|------|
-| 계획 | ralph + plannotator | AI가 계획을 세우고, 당신이 승인/피드백 |
-| 실행 | omc team / bmad | 병렬 에이전트가 코드를 작성 |
-| 검증 | agent-browser | 브라우저 동작 검증 (기본) |
-| 정리 | worktree-cleanup | 완료 후 자동 정리 |
+| Phase | Tool | Role |
+|-------|------|------|
+| Plan | ralph + plannotator | AI creates the plan, you approve/provide feedback |
+| Execute | omc team / bmad | Parallel agents write code |
+| Verify | agent-browser | Browser behavior verification (default) |
+| Cleanup | worktree-cleanup | Automatic cleanup after completion |
 
 ```bash
-# Claude Code에서 실행
-jeo "원하는 작업을 여기에 설명하세요"
+# Run in Claude Code
+jeo "Describe your desired task here"
 ```
 
 ---
 
-### 원하는 기능에 따라 선택하기
+### Choose Based on Desired Features
 
-#### Claude Code 멀티에이전트 조율 → `omc`
+#### Claude Code Multi-Agent Orchestration → `omc`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill omc
-# 사용: /omc:team "작업 내용"
+# Usage: /omc:team "task description"
 ```
 
-> 상세: [docs/omc/README.md](docs/omc/README.md)
+> Details: [docs/omc/README.md](docs/omc/README.md)
 
-#### OpenAI Codex CLI 멀티에이전트 → `oh-my-codex` (omx)
+#### OpenAI Codex CLI Multi-Agent → `oh-my-codex` (omx)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 ```
 
-> 상세: [.agent-skills/oh-my-codex/SKILL.md](.agent-skills/oh-my-codex/SKILL.md)
+> Details: [.agent-skills/oh-my-codex/SKILL.md](.agent-skills/oh-my-codex/SKILL.md)
 
-#### Gemini / Antigravity 워크플로우 → `ohmg`
+#### Gemini / Antigravity Workflow → `ohmg`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill ohmg
 ```
 
-> 상세: [.agent-skills/ohmg/SKILL.md](.agent-skills/ohmg/SKILL.md)
+> Details: [.agent-skills/ohmg/SKILL.md](.agent-skills/ohmg/SKILL.md)
 
-#### 단계별 구조화 개발 (분석→계획→설계→구현) → `bmad-orchestrator`
+#### Phase-Based Structured Development (Analysis→Planning→Solutioning→Implementation) → `bmad-orchestrator`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
-# 사용: bmad 스킬을 설정하고 사용해줘. /workflow-init
+# Usage: Set up and use bmad skill. /workflow-init
 ```
 
-> 상세: [docs/bmad/README.md](docs/bmad/README.md)
+> Details: [docs/bmad/README.md](docs/bmad/README.md)
 
-#### 작업이 완료될 때까지 반복 실행 → `ralph`
+#### Repeat Until Task Completion → `ralph`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill ralph
-# 사용: /ralph "모든 TypeScript 오류 수정" --max-iterations=100
+# Usage: /ralph "Fix all TypeScript errors" --max-iterations=100
 ```
 
-> 상세: [docs/ralph/README.md](docs/ralph/README.md)
+> Details: [docs/ralph/README.md](docs/ralph/README.md)
 
-#### 계획 시각 검토 + Feedback loop → `plannotator`
+#### Visual Plan Review + Feedback Loop → `plannotator`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill plannotator
-# 사용: 계획을 세울 때 자동으로 브라우저 UI 오픈 → Approve 또는 피드백 전송
+# Usage: Browser UI automatically opens when planning → Approve or send feedback
 ```
 
-> 상세: [docs/plannotator/README.md](docs/plannotator/README.md)
+> Details: [docs/plannotator/README.md](docs/plannotator/README.md)
 
-#### 브라우저 자동화 (헤드리스) → `agent-browser`
+#### Browser Automation (Headless) → `agent-browser`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill agent-browser
 ```
 
-> 상세: [.agent-skills/agent-browser/SKILL.md](.agent-skills/agent-browser/SKILL.md)
+> Details: [.agent-skills/agent-browser/SKILL.md](.agent-skills/agent-browser/SKILL.md)
 
-#### Playwright 기반 브라우저 제어 → `playwriter`
+#### Playwright-Based Browser Control → `playwriter`
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill playwriter
 ```
 
-> 상세: [.agent-skills/playwriter/SKILL.md](.agent-skills/playwriter/SKILL.md)
+> Details: [.agent-skills/playwriter/SKILL.md](.agent-skills/playwriter/SKILL.md)
 
 ---
 
@@ -303,7 +303,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 These tools have full documentation in `docs/` and dedicated skills in `.agent-skills/`.
 
 ### plannotator — Interactive Plan & Diff Review
-> **용도**: 실행 전 계획 시각 검토 및 피드백 루프 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: v0.9.0
+> **Purpose**: Visual plan review before execution and feedback loop | **Platforms**: Claude · Codex · Gemini · OpenCode | **Status**: v0.9.0
 > Keyword: `plan`, `계획` (alias: `planno`) | [Docs](docs/plannotator/README.md) | [GitHub](https://github.com/backnotprop/plannotator)
 
 Visual browser UI for annotating AI agent plans before coding. Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**. Approve plans or send structured feedback in one click.
@@ -349,16 +349,16 @@ open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callbac
 
 #### Known Issues
 
-| 증상 | 원인 | 해결 |
-|------|------|------|
-| 브라우저가 두 번 열림 | `plannotator-launch.sh`의 중복 `open` 호출 | 훅 스크립트에서 포트 감지 루프의 `open` 제거 — plannotator가 브라우저를 자체 오픈 |
-| 피드백 미수신 (Codex/Gemini/OpenCode) | `&` 백그라운드 실행으로 에이전트가 결과를 대기하지 않음 | `&` 없이 블로킹 실행 후 `/tmp/plannotator_feedback.txt` 읽기 |
-| Codex 시작 실패 (`invalid type: map, expected a string`) | `~/.codex/config.toml`에서 `developer_instructions`를 테이블(`[developer_instructions]`)로 잘못 선언 | `bash .agent-skills/jeo/scripts/setup-codex.sh` 재실행 후 `developer_instructions = "..."` top-level 문자열 형식 확인 |
+| Symptom | Cause | Solution |
+|---------|-------|----------|
+| Browser opens twice | Duplicate `open` call in `plannotator-launch.sh` | Remove `open` from port detection loop in hook script — plannotator opens browser itself |
+| Feedback not received (Codex/Gemini/OpenCode) | Agent doesn't wait for results due to `&` background execution | Run blocking without `&`, then read `/tmp/plannotator_feedback.txt` |
+| Codex startup fails (`invalid type: map, expected a string`) | `developer_instructions` declared as table (`[developer_instructions]`) in `~/.codex/config.toml` | Re-run `bash .agent-skills/jeo/scripts/setup-codex.sh` and verify `developer_instructions = "..."` is top-level string format |
 
 ---
 
 ### vibe-kanban — AI Agent Kanban Board
-> **용도**: 병렬 에이전트 진행 상황 시각적 추적 | **플랫폼**: All | **상태**: stable
+> **Purpose**: Visual tracking of parallel agent progress | **Platforms**: All | **Status**: stable
 > Keyword: `kanbanview` | [Docs](docs/vibe-kanban/README.md) | [GitHub](https://github.com/BloopAI/vibe-kanban)
 
 Visual Kanban board (To Do → In Progress → Review → Done) with parallel AI agents (Claude, Codex, OpenCode, Gemini) isolated per card via git worktrees. Auto-creates PRs on completion.
@@ -379,7 +379,7 @@ npx vibe-kanban          # Launch board at http://localhost:3000
 ---
 
 ### ralph — Completion Loop
-> **용도**: 작업 완료까지 자동 반복 실행 | **플랫폼**: Claude · Gemini · Codex · OpenCode | **상태**: stable
+> **Purpose**: Auto-repeat execution until task completion | **Platforms**: Claude · Gemini · Codex · OpenCode | **Status**: stable
 > Keyword: `ralph` | [Docs](docs/ralph/README.md) | [GitHub](https://github.com/gemini-cli-extensions/ralph)
 
 Self-referential loop that re-runs the agent on the same task across turns (with fresh context each iteration) until a `<promise>DONE</promise>` tag is detected or max iterations is reached.
@@ -399,7 +399,7 @@ bash <your-agent-skills>/ralph/scripts/setup-codex-hook.sh
 ---
 
 ### omc — oh-my-claudecode
-> **용도**: Claude Code 멀티에이전트 팀 오케스트레이션 | **플랫폼**: Claude | **상태**: stable
+> **Purpose**: Claude Code multi-agent team orchestration | **Platforms**: Claude | **Status**: stable
 > Keyword: `omc` / `autopilot` / `ralph` / `ulw` | [Docs](docs/omc/README.md) | [GitHub](https://github.com/Yeachan-Heo/oh-my-claudecode)
 
 Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agents, smart model routing, and a staged pipeline (`team-plan → team-prd → team-exec → team-verify → team-fix`).
@@ -419,7 +419,7 @@ Teams-first multi-agent orchestration layer for Claude Code. 32 specialized agen
 ---
 
 ### bmad-orchestrator — AI-Driven Development Harness
-> **용도**: 분석→계획→설계→구현 단계별 AI 개발 | **플랫폼**: Claude | **상태**: in development
+> **Purpose**: Phase-based AI development (Analysis→Planning→Solutioning→Implementation) | **Platforms**: Claude | **Status**: in development
 > Keyword: `bmad` | [Docs](docs/bmad/README.md)
 
 Phase-based workflow (Analysis → Planning → Solutioning → Implementation) for disciplined AI-assisted development. Automatically adapts to project scope (Level 0–4).
@@ -429,7 +429,7 @@ Phase-based workflow (Analysis → Planning → Solutioning → Implementation) 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
 # Then in Claude Code:
-# bmad 스킬을 설정하고 사용해줘. 기억해.
+# Set up and use bmad skill. Remember.
 # /workflow-init
 ```
 
@@ -449,21 +449,21 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 ---
 
 ### jeo — Integrated Agent Orchestration
-> **용도**: 전체 워크플로우 통합 자동화 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: stable
+> **Purpose**: Complete workflow integration automation | **Platforms**: Claude · Codex · Gemini · OpenCode | **Status**: stable
 > Keyword: `jeo` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 
-계획(ralph+plannotator) → 실행(team/bmad) → 검증(agent-browser) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
+Fully automated orchestration flow: Plan (ralph+plannotator) → Execute (team/bmad) → Verify (agent-browser) → Cleanup (worktree cleanup).
 
 ```bash
-bash scripts/install.sh --all   # 전체 설치
+bash scripts/install.sh --all   # Full installation
 ```
 
 | Phase | Tool | Description |
 |-------|------|-------------|
-| Plan | ralph + plannotator | 시각적 계획 검토 → Approve/Feedback |
-| Execute | omc team / bmad | 병렬 에이전트 실행 |
-| Verify | agent-browser | 브라우저 동작 검증 (기본) |
-| Cleanup | worktree-cleanup.sh | 완료 후 worktree 자동 정리 |
+| Plan | ralph + plannotator | Visual plan review → Approve/Feedback |
+| Execute | omc team / bmad | Parallel agent execution |
+| Verify | agent-browser | Browser behavior verification (default) |
+| Cleanup | worktree-cleanup.sh | Automatic worktree cleanup after completion |
 
 ---
 
@@ -506,17 +506,17 @@ bash scripts/install.sh --all   # 전체 설치
 ## Changelog
 
 **v2026-02-26**:
-- **agent-browser**: SKILL.md를 운영형 구조로 확장 (core workflow, verification, safeguards, troubleshooting)
-- **agent-browser**: SKILL.toon 동기화 (snapshot-interact-resnapshot + verify 단계 반영)
-- **agent-browser**: references 4종 및 templates 2종 추가
+- **agent-browser**: Expanded SKILL.md to operational structure (core workflow, verification, safeguards, troubleshooting)
+- **agent-browser**: Synchronized SKILL.toon (snapshot-interact-resnapshot + verify phase reflection)
+- **agent-browser**: Added 4 reference types and 2 templates
 
 **v2026-02-26**:
-- **jeo (codex setup)**: `setup-codex.sh`가 `developer_instructions`를 Codex 스키마에 맞는 top-level 문자열로 강제 동기화하도록 수정
-- **jeo (status check)**: Codex 설정 검증을 강화해 잘못된 `developer_instructions` 형식을 정확히 감지하고 안내
+- **jeo (codex setup)**: Modified `setup-codex.sh` to force sync `developer_instructions` to top-level string matching Codex schema
+- **jeo (status check)**: Enhanced Codex config validation to accurately detect and guide on incorrect `developer_instructions` format
 
 **v2026-02-25 (latest)**:
 - **jeo**: New skill added — Integrated Agent Orchestration (ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup); registered in skills.json under utilities
-- Skills list 표 형식 개편 (카테고리 재구성, 65개 전체)
+- Restructured skills list table format (category reorganization, all 65 skills)
 
 **v2026-02-23**:
 - **plannotator/Obsidian**: Verified Obsidian integration (2026-02-23); added automated browser limitation note (Playwright/Puppeteer cannot open obsidian:// URI); added folder organization guide (approved/, denied/, YYYY-MM/); added direct filesystem fallback pattern (SKILL.md, docs/plannotator/README.md, README.md)
@@ -524,4 +524,4 @@ bash scripts/install.sh --all   # 전체 설치
 **v2026-02-23**:
 - **ralph**: Default `--max-iterations` changed from `5` → `100` (SKILL.md, SKILL.toon, docs/ralph/README.md)
 - **plannotator**: Primary keyword changed from `planno` → `plan`, `계획` for natural design-phase activation; `planno` retained as backward-compatible alias in tags
-- **vibe-kanban**: OpenCode MCP 설정 섹션 추가 (SKILL.md, docs/vibe-kanban/README.md); OpenCode + ulw 병렬 위임 사용 케이스 추가 (SKILL.toon v1.2.0)
+- **vibe-kanban**: Added OpenCode MCP configuration section (SKILL.md, docs/vibe-kanban/README.md); added OpenCode + ulw parallel delegation use case (SKILL.toon v1.2.0)
