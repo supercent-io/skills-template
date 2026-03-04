@@ -46,6 +46,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | **`ai-tool-compliance` P1 확장** | 기본 P0 검증 경로는 유지하고(`verify.sh` 기본 동작 변경 없음), 선택적 P1 확장 모드(`--include-p1`)와 P1 성숙도 점수(`p1_maturity_score`)를 추가. 리포트/문서는 append-only로 확장 |
 | **신규 `bmad-gds` 스킬** | BMAD Game Development Studio — Pre-production·Design·Architecture·Production·GameTest 5단계, 6 전문 에이전트 (Unity · Unreal Engine · Godot 지원) |
 | **신규 `bmad-idea` 스킬** | BMAD Creative Intelligence Suite — 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 전문 에이전트 (Carson · Maya · Victor · Dr. Quinn · Sophia) |
+| **설치 스크립트 클린 재설치** | `setup-all-skills-prompt.md` 개선 — 설치 전 기존 디렉터리(`~/.agent-skills` 및 플랫폼별 skills 경로) 자동 제거 후 새로 설치. 재설치 시 파일 충돌 없이 항상 최신 버전으로 초기화됨 |
 ---
 
 ## 설치 (Install)
@@ -527,6 +528,7 @@ bash scripts/install.sh --all   # 전체 설치
 
 **v2026-03-04 (latest)**:
 - **ralph v3.0.0**: [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성 — Specification-first 워크플로우 통합 (Interview→Seed→Execute→Evaluate→Evolve), 9개 에이전트 (socratic-interviewer/ontologist/seed-architect/evaluator/contrarian/hacker/simplifier/researcher/architect), Ambiguity≤0.2 게이트, Ontology Similarity≥0.95 수렴, Ralph 영구 루프 + 상태 관리, 3플랫폼 병렬 지원 (Claude 네이티브 플러그인 · Codex bash루프+ooo커맨드 · Gemini AfterAgent훅), `setup-codex-hook.sh` → `/prompts:ouroboros` 추가
+- **setup-all-skills-prompt 클린 재설치**: 설치 전 기존 `~/.agent-skills` 디렉터리를 자동 제거(`rm -rf`) 후 새로 생성. 플랫폼별 동기화 경로(`~/.claude/skills`, `~/.codex/skills`, `~/.gemini/skills`, `~/.opencode/skills` 등)도 for 루프로 순차 제거 후 재생성. 재설치 시 파일 충돌·잔재 없이 클린 설치 보장
 
 **v2026-03-03 (update)**:
 - **bmad-gds**: New skill — BMAD Game Development Studio. Pre-production → Design → Technical → Production → GameTest 5단계 파이프라인, 24개 커맨드, 6 전문 에이전트 (Unity/Unreal/Godot 지원), SKILL.toon + REFERENCE.md 포함

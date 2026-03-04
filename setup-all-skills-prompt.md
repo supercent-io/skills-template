@@ -52,6 +52,11 @@ fi
 ```bash
 # Canonical path (권장 기본 경로)
 export SKILLS_CANONICAL="${HOME}/.agent-skills"
+# 기존 설치 디렉터리가 있으면 제거 후 새로 생성
+if [ -d "${SKILLS_CANONICAL}" ]; then
+    echo "기존 설치 디렉터리 제거: ${SKILLS_CANONICAL}"
+    rm -rf "${SKILLS_CANONICAL}"
+fi
 mkdir -p "${SKILLS_CANONICAL}"
 ```
 
@@ -198,13 +203,16 @@ if [ "${SKILL_SRC}" != "${HOME}/.agent-skills" ]; then
   cp -R "${SKILL_SRC}"/. "${HOME}/.agent-skills"/
 fi
 
-# 플랫폼별 경로 동기화 (global + project)
-mkdir -p \
-  "${HOME}/.claude/skills" "${PWD}/.claude/skills" \
-  "${HOME}/.codex/skills" "${PWD}/.codex/skills" \
-  "${HOME}/.gemini/skills" "${PWD}/.gemini/skills" \
-  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
-  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
+# 플랫폼별 기존 skills 디렉터리 제거 후 새로 생성
+for dest in \
+    "${HOME}/.claude/skills" "${PWD}/.claude/skills" \
+    "${HOME}/.codex/skills" "${PWD}/.codex/skills" \
+    "${HOME}/.gemini/skills" "${PWD}/.gemini/skills" \
+    "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
+    "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"; do
+    rm -rf "${dest}"
+    mkdir -p "${dest}"
+done
 
 cp -R "${HOME}/.agent-skills"/. "${HOME}/.claude/skills"/
 cp -R "${HOME}/.agent-skills"/. "${PWD}/.claude/skills"/
