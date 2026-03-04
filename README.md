@@ -282,6 +282,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `agent-browser` | Fast headless browser CLI for AI agents | All platforms |
+| `agentation` | Visual UI annotation tool — humans click elements, agents receive CSS selectors + MCP watch-loop + Claude Code hooks | Claude · Gemini · Codex · Cursor · Windsurf · OpenCode |
 | `bmad-gds` | BMAD Game Development Studio — Pre-production through production with 6 specialized agents (Unity · Unreal · Godot) | Claude · Gemini · Codex · OpenCode |
 | `bmad-idea` | BMAD Creative Intelligence Suite — brainstorming, design thinking, innovation strategy, problem-solving, storytelling | Claude · Gemini · Codex · OpenCode |
 | `copilot-coding-agent` | GitHub Copilot Coding Agent — Issue → Draft PR automation | Claude · Codex |

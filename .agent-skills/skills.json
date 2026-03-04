@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 59,
+  "skill_count": 60,
   "categories": {
     "documentation": [
       "technical-writing",
@@ -2543,6 +2543,17 @@
       "platforms": ["Claude", "ChatGPT", "Gemini", "Codex"],
       "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
       "keyword": "llm-monitoring",
+      "version": "1.0.0"
+    },
+    {
+      "name": "agentation",
+      "description": "Visual UI annotation tool for AI agents. Humans click elements and leave feedback; agents receive CSS selectors, bounding boxes, and React component trees for precise code targeting. Supports MCP watch-loop, Claude Code hooks, webhook delivery, and autonomous self-driving critique with agent-browser.",
+      "category": "frontend",
+      "path": ".agent-skills/agentation/SKILL.md",
+      "tags": ["ui-feedback", "visual-feedback", "mcp", "react", "annotation", "css-selector", "design-review", "agent-browser"],
+      "platforms": ["Claude", "Gemini", "ChatGPT", "Codex", "Cursor", "Windsurf", "OpenCode"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
+      "keyword": "agentation",
       "version": "1.0.0"
     }
   ],
