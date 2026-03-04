@@ -198,14 +198,32 @@ if [ "${SKILL_SRC}" != "${HOME}/.agent-skills" ]; then
   cp -R "${SKILL_SRC}"/. "${HOME}/.agent-skills"/
 fi
 
-# Claude 호환 경로 동기화 (global + project)
-mkdir -p "${HOME}/.claude/skills" "${PWD}/.claude/skills"
+# 플랫폼별 경로 동기화 (global + project)
+mkdir -p \
+  "${HOME}/.claude/skills" "${PWD}/.claude/skills" \
+  "${HOME}/.codex/skills" "${PWD}/.codex/skills" \
+  "${HOME}/.gemini/skills" "${PWD}/.gemini/skills" \
+  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
+  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
+
 cp -R "${HOME}/.agent-skills"/. "${HOME}/.claude/skills"/
 cp -R "${HOME}/.agent-skills"/. "${PWD}/.claude/skills"/
+cp -R "${HOME}/.agent-skills"/. "${HOME}/.codex/skills"/
+cp -R "${HOME}/.agent-skills"/. "${PWD}/.codex/skills"/
+cp -R "${HOME}/.agent-skills"/. "${HOME}/.gemini/skills"/
+cp -R "${HOME}/.agent-skills"/. "${PWD}/.gemini/skills"/
+cp -R "${HOME}/.agent-skills"/. "${HOME}/.opencode/skills"/
+cp -R "${HOME}/.agent-skills"/. "${PWD}/.opencode/skills"/
+cp -R "${HOME}/.agent-skills"/. "${HOME}/.config/opencode/skills"/
+cp -R "${HOME}/.agent-skills"/. "${PWD}/.config/opencode/skills"/
 
 # 설치된 스킬 목록 확인
 ls "${HOME}/.agent-skills" 2>/dev/null
 ls "${HOME}/.claude/skills" 2>/dev/null
+ls "${HOME}/.codex/skills" 2>/dev/null
+ls "${HOME}/.gemini/skills" 2>/dev/null
+ls "${HOME}/.opencode/skills" 2>/dev/null
+ls "${HOME}/.config/opencode/skills" 2>/dev/null
 
 # 개별 스킬 확인
 npx skills info jeo
