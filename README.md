@@ -37,15 +37,15 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-03-03
+## What's New in v2026-03-04
 
 | 변경 | 내용 |
 |------|------|
+| **`ralph` v3.0.0 — Ouroboros 통합** | [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성. Specification-first 워크플로우(Interview→Seed→Execute→Evaluate→Evolve) 통합, 9개 에이전트, Ambiguity ≤ 0.2 게이트, Ontology Similarity ≥ 0.95 수렴 조건, 3플랫폼 병렬 지원 (Claude · Codex · Gemini) |
 | **신규 `ai-tool-compliance` 스킬** | 내부 AI 툴 필수 구현 가이드(P0/P1) 기반 컴플라이언스 자동 검증. 4도메인 이진 점수(40/25/20/15), 배포 게이트, 이력 추적 |
 | **`ai-tool-compliance` P1 확장** | 기본 P0 검증 경로는 유지하고(`verify.sh` 기본 동작 변경 없음), 선택적 P1 확장 모드(`--include-p1`)와 P1 성숙도 점수(`p1_maturity_score`)를 추가. 리포트/문서는 append-only로 확장 |
 | **신규 `bmad-gds` 스킬** | BMAD Game Development Studio — Pre-production·Design·Architecture·Production·GameTest 5단계, 6 전문 에이전트 (Unity · Unreal Engine · Godot 지원) |
 | **신규 `bmad-idea` 스킬** | BMAD Creative Intelligence Suite — 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 전문 에이전트 (Carson · Maya · Victor · Dr. Quinn · Sophia) |
-
 ---
 
 ## 설치 (Install)
@@ -382,24 +382,40 @@ npx vibe-kanban          # Launch board at http://localhost:3000
 
 ---
 
-### ralph — Completion Loop
-> **용도**: 작업 완료까지 자동 반복 실행 | **플랫폼**: Claude · Gemini · Codex · OpenCode | **상태**: stable
-> Keyword: `ralph` | [Docs](docs/ralph/README.md) | [GitHub](https://github.com/gemini-cli-extensions/ralph)
+### ralph — Ouroboros Specification-First AI Development
+> **용도**: 코드 작성 전 요구사항 명확화 → 검증 통과까지 영구 루프 실행 | **플랫폼**: Claude · Gemini · Codex · OpenCode | **상태**: stable v3.0.0
+> Keyword: `ralph`, `ooo` | [GitHub](https://github.com/Q00/ouroboros)
 
-Self-referential loop that re-runs the agent on the same task across turns (with fresh context each iteration) until a `<promise>DONE</promise>` tag is detected or max iterations is reached.
+> *Stop prompting. Start specifying. The boulder never stops.*
+
+Ouroboros 기반 specification-first 워크플로우. 소크라테스식 인터뷰로 숨겨진 가정을 노출한 뒤 불변 스펙으로 결정화 → Double Diamond 실행 → 3단계 검증 → 온톨로지 수렴까지 진화 루프.
 
 ```bash
-/ralph "Fix all TypeScript errors" --completion-promise="0 errors" --max-iterations=100
+# 요구사항 명확화
+ooo interview "I want to build a task management CLI"
+ooo seed                     # YAML 스펙 생성 (Ambiguity ≤ 0.2 게이트)
+ooo run                      # Double Diamond 실행
+ooo evaluate <session_id>    # 3단계 검증
+
+# 검증 통과까지 영구 루프
+ooo ralph "fix all failing tests"
 ```
 
-Available in: Gemini CLI, OpenCode, Claude Code, Codex.
+| 커맨드 | 역할 |
+|--------|------|
+| `ooo interview` | 소크라테스식 질문 → Ambiguity ≤ 0.2 |
+| `ooo seed` | YAML 스펙 결정화 |
+| `ooo run` | Double Diamond 실행 |
+| `ooo evaluate` | Mechanical → Semantic → Consensus 3단계 검증 |
+| `ooo evolve` | 진화 루프 (Similarity ≥ 0.95 수렴) |
+| `ooo ralph` | 검증 통과까지 영구 루프 |
+| `ooo unstuck` | 막혔을 때 — 5 페르소나 lateral thinking |
 
-For Codex, use the local setup script first when you want loop continuity hints:
+Codex 설정:
 
 ```bash
 bash <your-agent-skills>/ralph/scripts/setup-codex-hook.sh
 ```
-
 ---
 
 ### omc — oh-my-claudecode
@@ -509,7 +525,10 @@ bash scripts/install.sh --all   # 전체 설치
 
 ## Changelog
 
-**v2026-03-03 (latest, update)**:
+**v2026-03-04 (latest)**:
+- **ralph v3.0.0**: [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성 — Specification-first 워크플로우 통합 (Interview→Seed→Execute→Evaluate→Evolve), 9개 에이전트 (socratic-interviewer/ontologist/seed-architect/evaluator/contrarian/hacker/simplifier/researcher/architect), Ambiguity≤0.2 게이트, Ontology Similarity≥0.95 수렴, Ralph 영구 루프 + 상태 관리, 3플랫폼 병렬 지원 (Claude 네이티브 플러그인 · Codex bash루프+ooo커맨드 · Gemini AfterAgent훅), `setup-codex-hook.sh` → `/prompts:ouroboros` 추가
+
+**v2026-03-03 (update)**:
 - **bmad-gds**: New skill — BMAD Game Development Studio. Pre-production → Design → Technical → Production → GameTest 5단계 파이프라인, 24개 커맨드, 6 전문 에이전트 (Unity/Unreal/Godot 지원), SKILL.toon + REFERENCE.md 포함
 - **bmad-idea**: New skill — BMAD Creative Intelligence Suite (CIS). 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 named 에이전트 (Carson/Maya/Victor/Dr. Quinn/Sophia), SKILL.toon + REFERENCE.md 포함
 - **ai-tool-compliance P1 확장**: `verify.sh --include-p1` 옵션 추가(기본 P0 유지), `catalog-p1.json`/`catalog-all.json` 카탈로그 추가, `score.sh`에 `p1_maturity_score`/`p0_gate_score` 출력 확장, `gate.sh`에 P1 성숙도 표시 추가

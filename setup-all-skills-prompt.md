@@ -246,7 +246,7 @@ npx skills info jeo
 |------|-------------|------|
 | `jeo` | `jeo` | 통합 오케스트레이션 (권장 시작점) |
 | `omc` | `omc`, `autopilot` | Claude Code 멀티에이전트 |
-| `ralph` | `ralph` | 완료 루프 |
+| `ralph` | `ralph`, `ooo`, `ooo ralph`, `ooo interview` | Ouroboros 기반 specification-first 개발 (Interview→Seed→Execute→Evaluate→Evolve) + 영구 완료 루프 |
 | `plannotator` | `plan`, `계획` | 계획 검토 + Feedback loop |
 | `vibe-kanban` | `kanbanview` | 칸반 보드 |
 | `bmad-orchestrator` | `bmad` | 구조화 개발 |
