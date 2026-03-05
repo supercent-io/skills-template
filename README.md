@@ -47,7 +47,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | **신규 `bmad-gds` 스킬** | BMAD Game Development Studio — Pre-production·Design·Architecture·Production·GameTest 5단계, 6 전문 에이전트 (Unity · Unreal Engine · Godot 지원) |
 | **신규 `bmad-idea` 스킬** | BMAD Creative Intelligence Suite — 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 전문 에이전트 (Carson · Maya · Victor · Dr. Quinn · Sophia) |
 | **설치 스크립트 클린 재설치** | `setup-all-skills-prompt.md` 개선 — 설치 전 기존 디렉터리(`~/.agent-skills` 및 플랫폼별 skills 경로) 자동 제거 후 새로 설치. 재설치 시 파일 충돌 없이 항상 최신 버전으로 초기화됨 |
-| **`jeo` agentui 통합** | agentation을 jeo VERIFY_UI 단계로 완전 통합. plannotator가 `planui`에서 동작하는 방식과 동일한 패턴: `agentui` 키워드 → `agentation_watch_annotations` 블로킹 → annotation ack→fix→resolve 루프. 4대 플랫폼(Claude/Codex/Gemini/OpenCode) 모두 MCP 등록 + 설치 스크립트 업데이트 |
+| **`jeo` annotate 통합** | agentation을 jeo VERIFY_UI 단계로 완전 통합. plannotator가 `plan`에서 동작하는 방식과 동일한 패턴: `annotate` 키워드 → `agentation_watch_annotations` 블로킹 → annotation ack→fix→resolve 루프. Phase guard로 plannotator와 agentation 분리, pre-flight check, RE-SNAPSHOT 검증 추가. 4대 플랫폼 모두 MCP 등록 + 설치 스크립트 업데이트 |
 ---
 
 ## 설치 (Install)
@@ -291,7 +291,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `file-organization` | File & folder organization | All platforms |
 | `git-submodule` | Git submodule management | All platforms |
 | `git-workflow` | Git workflow management | All platforms |
-| `jeo` | Integrated AI orchestration: ralph+plannotator → team/bmad → agent-browser verify → agentation(agentui) UI피드백 → worktree cleanup | Claude · Codex · Gemini · OpenCode |
+| `jeo` | Integrated AI orchestration: ralph+plannotator → team/bmad → agent-browser verify → agentation(annotate) UI피드백 → worktree cleanup | Claude · Codex · Gemini · OpenCode |
 | `npm-git-install` | Install npm from GitHub | All platforms |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows | Claude · Gemini |
 | `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI *(in development)* | Codex |
@@ -473,9 +473,9 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 
 ### jeo — Integrated Agent Orchestration
 > **용도**: 전체 워크플로우 통합 자동화 | **플랫폼**: Claude · Codex · Gemini · OpenCode | **상태**: stable
-> Keyword: `jeo` · `agentui` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
+> Keyword: `jeo` · `annotate` · `UI검토` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 
-계획(ralph+plannotator) → 실행(team/bmad) → 브라우저검증(agent-browser) → UI피드백(agentation/agentui) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
+계획(ralph+plannotator) → 실행(team/bmad) → 브라우저검증(agent-browser) → UI피드백(agentation/annotate) → 정리(worktree cleanup)의 완전 자동화 오케스트레이션 플로우.
 
 ```bash
 bash scripts/install.sh --all   # 전체 설치
@@ -486,7 +486,7 @@ bash scripts/install.sh --all   # 전체 설치
 | Plan | ralph + plannotator | 시각적 계획 검토 → Approve/Feedback |
 | Execute | omc team / bmad | 병렬 에이전트 실행 |
 | Verify | agent-browser | 브라우저 동작 검증 (기본) |
-| Verify UI | agentation (**agentui**) | UI 어노테이션 watch loop — ack→fix→resolve |
+| Verify UI | agentation (**annotate**) | UI 어노테이션 watch loop — pre-flight → ack→fix→resolve→re-snapshot |
 | Cleanup | worktree-cleanup.sh | 완료 후 worktree 자동 정리 |
 
 ---
@@ -523,14 +523,14 @@ bash scripts/install.sh --all   # 전체 설치
 | ralph | `ralph` | [docs/ralph/README.md](docs/ralph/README.md) |
 | omc | `omc` | [docs/omc/README.md](docs/omc/README.md) |
 | bmad-orchestrator | `bmad` | [docs/bmad/README.md](docs/bmad/README.md) |
-| jeo | `jeo` · `agentui` | [.agent-skills/jeo/SKILL.md](.agent-skills/jeo/SKILL.md) |
+| jeo | `jeo` · `annotate` · `UI검토` | [.agent-skills/jeo/SKILL.md](.agent-skills/jeo/SKILL.md) |
 
 ---
 
 ## Changelog
 
 **v2026-03-04 (latest)**:
-- **jeo agentui 통합**: agentation을 jeo VERIFY_UI 단계로 완전 통합 (commit `9d90656`). plannotator 패턴과 동일: `agentui` 키워드 → `agentation_watch_annotations` 블로킹 → annotation ack→fix→resolve 루프. jeo/SKILL.md Section 3.3.1 VERIFY_UI 단계 신규, FLOW.md agentui 서브플로우 다이어그램, agentation/SKILL.md Section 12 jeo 연동 문서, 4대 플랫폼 설치스크립트(에 agentation MCP 등록 + 신호 핸들러) 업데이트, install.sh `--with-agentation` 플래그 신규
+- **jeo annotate 통합 (v2)**: agentation VERIFY_UI 키워드를 `agentui` → `annotate`로 변경 (Korean alias: `UI검토`, `agentui` 하위 호환). Phase guard 추가로 plannotator-agentation 훅 충돌 해결 (Gemini AfterAgent, Codex notify). Pre-flight 3단계 체크, RE-SNAPSHOT 검증, jeo-state.json agentation 추적 필드, verify-loop.sh 통합 테스트, OpenCode setup Python 구문 버그 수정
 - **ralph v3.0.0**: [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성. Specification-first 워크플로우(단계: Interview→Seed→Execute→Evaluate→Evolve) 통합, 9개 에이전트, Ambiguity ≤ 0.2 게이트, Ontology Similarity ≥ 0.95 수렴 조건, 3플랫폼 병렬 지원 (Claude · Codex · Gemini)
 - **setup-all-skills-prompt 클린 재설치**: 설치 전 기존 `~/.agent-skills` 디렉터리를 자동 제거(`rm -rf`) 후 새로 생성. 플랫폼별 동기화 경로(`~/.claude/skills`, `~/.codex/skills`, `~/.gemini/skills`, `~/.opencode/skills` 등)도 for 루프로 순차 제거 후 재생성. 재설치 시 파일 충돌·잔재 없이 클린 설치 보장
 

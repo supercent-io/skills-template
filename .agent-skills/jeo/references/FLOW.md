@@ -33,14 +33,10 @@
 │          │   agent-browser snapshot <url>    │                  │
 │          │   UI/기능 동작 확인               │                  │
 │          │                                   │                  │
-│          │   [agentui keyword?]              │                  │
+│          │   [annotate keyword? (agentui alias)]│                │
 │          │   └─ YES: VERIFY_UI (agentation)  │                  │
 │          │       watch_annotations loop      │                  │
 │          │       ack → fix → resolve         │                  │
-│          └───────────────┬──────────────────┘                  │
-│          │         PHASE 3: VERIFY           │                  │
-│          │   agent-browser snapshot <url>    │                  │
-│          │   UI/기능 동작 확인               │                  │
 │          └───────────────┬──────────────────┘                  │
 │                          │                                      │
 │          ┌───────────────▼──────────────────┐                  │
@@ -55,20 +51,24 @@
 
 ---
 
-## agentui — agentation Watch Loop (VERIFY_UI Sub-Phase)
+## annotate — agentation Watch Loop (VERIFY_UI Sub-Phase)
 
 ```
-agentui keyword detected (or user requests UI annotation review)
+annotate keyword detected (or agentui alias — or user requests UI annotation review)
     │
     ▼
-[PRE-CHECK]  npx agentation-mcp server running? → http://localhost:4747/pending
-             <Agentation endpoint="http://localhost:4747" /> mounted in app?
+[PREFLIGHT]  3-step check before entering watch loop:
+    │  1. GET /health         → server running?
+    │  2. GET /sessions       → <Agentation> component mounted?
+    │  3. GET /pending        → baseline annotation count
     │
-    ▼
+    ├─ FAIL (server down) → retry 3x, 5s interval → ERROR (exit with message)
+    │
+    ▼  OK → update jeo-state.json: phase="verify_ui", agentation.active=true
 [WATCH]  agentation_watch_annotations({batchWindowSeconds:10, timeoutSeconds:120})
          blocking — waits for annotations or timeout
     │
-    ├─ Annotations received:
+    ├─ Annotations received (sorted by severity: blocking → important → suggestion):
     │   │
     │   ▼
     │  [ACK]   agentation_acknowledge_annotation({id})
@@ -85,12 +85,18 @@ agentui keyword detected (or user requests UI annotation review)
     │  [RESOLVE] agentation_resolve_annotation({id, summary})
     │            → status: 'resolved' → green checkmark in toolbar
     │   │
-    │   └─ Next annotation → repeat ACK→FIND→FIX→RESOLVE
+    │   ▼
+    │  [RE-SNAPSHOT] agent-browser snapshot <url>  ← verify fix visually
+    │            → compare before/after
+    │   │
+    │   └─ Next annotation → repeat ACK→FIND→FIX→RESOLVE→RE-SNAPSHOT
     │
     ├─ count=0 (all resolved)
+    │   └─ update jeo-state.json: agentation.exit_reason="all_resolved"
     │   └─ VERIFY_UI complete → proceed to CLEANUP
     │
     └─ timeout (120s)
+        └─ update jeo-state.json: agentation.exit_reason="timeout"
         └─ summarize what was/wasn't addressed → proceed to CLEANUP
 ```
 
@@ -106,6 +112,53 @@ LOOP:
   sleep 5 → repeat
 ```
 
+### VERIFY_UI Internal State Machine
+
+```
+  IDLE ──(annotate keyword)──► PREFLIGHT
+                                  │
+                     ┌────────────┤
+                     │            │
+                   FAIL        OK
+                     │            │
+                     ▼            ▼
+                  RECOVER     WATCHING
+                  (3x retry)      │
+                     │      ┌─────┼──────┐
+                     │      │     │      │
+                   ERROR  count>0  0   timeout
+                     │      │     │      │
+                     ▼      ▼     ▼      ▼
+                   FAIL  PROCESS DONE  TIMEOUT
+                          │              │
+                   ACK→FIX→RESOLVE    report
+                          │
+                      RE-SNAPSHOT
+                          │
+                    issues? ─Y─► WATCHING
+                          │
+                          N
+                          ▼
+                        DONE
+```
+
+### plannotator-agentation Phase Separation
+
+```
+Phase Guard: hooks check jeo-state.json phase before executing
+
+  PLAN phase:
+    plannotator ✅ (allowed)
+    agentation  ❌ (blocked by phase guard)
+
+  EXECUTE phase:
+    plannotator ❌ (blocked by phase guard)
+    agentation  ❌ (blocked by phase guard)
+
+  VERIFY / VERIFY_UI phase:
+    plannotator ❌ (blocked by phase guard)
+    agentation  ✅ (allowed)
+```
 
 ---
 
@@ -181,11 +234,10 @@ Transitions:
   plan     → execute  (plan approved)
   plan     → plan     (feedback received, re-plan)
   execute  → verify   (tasks complete, browser UI present)
-  verify   → verify_ui (agentui keyword detected, agentation running)
-  verify   → cleanup  (no agentui, verification passed)
+  verify   → verify_ui (annotate keyword detected — or agentui alias — agentation running)
+  verify   → cleanup  (no annotate/agentui, verification passed)
   verify_ui → cleanup (annotations all resolved or timeout)
 
-  cleanup  → done     (worktrees removed, prune complete)
   cleanup  → done     (worktrees removed, prune complete)
 ```
 
@@ -202,9 +254,33 @@ State persisted in: `.omc/state/jeo-state.json`
   "bmad_phase": null,
   "created_at": "2026-02-24T00:00:00Z",
   "updated_at": "2026-02-24T00:00:00Z",
-  "cleanup_completed": false
+  "cleanup_completed": false,
+  "agentation": {
+    "active": false,
+    "session_id": null,
+    "keyword_used": null,
+    "started_at": null,
+    "last_poll_at": null,
+    "timeout_seconds": 120,
+    "annotations": {
+      "total": 0,
+      "acknowledged": 0,
+      "resolved": 0,
+      "dismissed": 0,
+      "pending": 0
+    },
+    "completed_at": null,
+    "exit_reason": null
+  }
 }
 ```
+
+**agentation fields:**
+- `active`: whether VERIFY_UI watch loop is currently running (used as guard by hooks)
+- `session_id`: agentation session ID for resume via `agentation_get_session`
+- `keyword_used`: `"annotate"` or `"agentui"` (tracks which keyword triggered entry)
+- `annotations.*`: cumulative counts by lifecycle status
+- `exit_reason`: `"all_resolved"` | `"timeout"` | `"user_cancelled"` | `"error"`
 
 ---
 
@@ -263,7 +339,7 @@ git worktree prune
 | `JEO_MAX_ITERATIONS` | Max ralph loop iterations | `20` |
 
 | `AGENTATION_PORT` | agentation MCP server port | `4747` |
-| `AGENTATION_TIMEOUT` | agentui watch loop timeout (seconds) | `120` |
+| `AGENTATION_TIMEOUT` | annotate watch loop timeout (seconds) | `120` |
 ---
 
 ## Troubleshooting
@@ -305,7 +381,7 @@ rm -rf /path/to/worktree
 git worktree prune
 ```
 
-### agentui (agentation) watch loop not triggering
+### annotate (agentation) watch loop not triggering
 ```bash
 # Verify agentation-mcp server is running
 curl -sf http://localhost:4747/pending

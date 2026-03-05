@@ -599,15 +599,16 @@ import {
 
 ---
 
-## 12. jeo Integration (agentui keyword)
+## 12. jeo Integration (annotate keyword)
 
 > agentation은 jeo 스킬의 **VERIFY_UI** 단계로 통합됩니다.
 > plannotator가 `planui` / `ExitPlanMode`에서 동작하는 방식과 동일한 패턴입니다.
+> `annotate`가 기본 키워드입니다. `agentui`는 하위 호환 별칭으로 유지됩니다.
 
 ### 엄게나 작동 방식
 
 ```
-plannotator (planui):         agentation (agentui):
+plannotator (planui):         agentation (annotate):
 plan.md 작성                   앱 UI에 <Agentation> 마운트
     ↓ 블로킹                        ↓ 블로킹
 plannotator 실행            agentation_watch_annotations
@@ -623,10 +624,12 @@ EXECUTE 진입                  다음 단계 또는 루프
 
 | 키워드 | 플랫폼 | 동작 |
 |--------|----------|------|
-| `agentui` | Claude Code | `agentation_watch_annotations` MCP 블로킹 호출 |
-| `agentui` | Codex | `AGENTUI_READY` 신호 → `jeo-notify.py` HTTP 폴링 |
-| `agentui` | Gemini | GEMINI.md 지시: HTTP REST 폴링 패턴 |
-| `/jeo-agentui` | OpenCode | opencode.json `mcp.agentation` + 지시사항 |
+| `annotate` | Claude Code | `agentation_watch_annotations` MCP 블로킹 호출 |
+| `annotate` | Codex | `ANNOTATE_READY` 신호 → `jeo-notify.py` HTTP 폴링 |
+| `annotate` | Gemini | GEMINI.md 지시: HTTP REST 폴링 패턴 |
+| `/jeo-annotate` | OpenCode | opencode.json `mcp.agentation` + 지시사항 |
+| `agentui` *(deprecated)* | 전체 플랫폼 | 위와 동일 동작 — 하위 호환 별칭 |
+| `UI검토` | 전체 플랫폼 | `annotate`와 동일 |
 
 ### jeo에서 사용하기
 
@@ -643,12 +646,45 @@ bash .agent-skills/jeo/scripts/install.sh --all
 # 3. MCP 서버 실행
 npx agentation-mcp server
 
-# 4. 에이전트에서 agentui 키워드 입력 → watch loop 시작
+# 4. 에이전트에서 annotate 키워드 입력 → watch loop 시작 (agentui도 하위 호환 동작)
 # Claude Code: MCP 도구 직접 호출
-# Codex: AGENTUI_READY 출력 → notify hook 자동 폴링
+# Codex: ANNOTATE_READY (또는 AGENTUI_READY) 출력 → notify hook 자동 폴링
 # Gemini: GEMINI.md HTTP 폴링 패턴
-# OpenCode: /jeo-agentui 슬래시 커맨드
+# OpenCode: /jeo-annotate 슬래시 커맨드 (또는 /jeo-agentui — deprecated)
 ```
+
+### plannotator와의 분리 (Phase Guard)
+
+plannotator와 agentation은 동일한 블로킹 루프 패턴을 사용하지만 **다른 phase에서만 동작**합니다:
+
+| 도구 | 허용 phase | Hook Guard |
+|------|-----------|------------|
+| **plannotator** | `plan` only | `jeo-state.json` → `phase === "plan"` |
+| **agentation** | `verify` / `verify_ui` only | `jeo-state.json` → `phase === "verify_ui"` |
+
+각 플랫폼의 hook 스크립트는 `jeo-state.json`의 `phase` 필드를 확인하여 잘못된 phase에서 실행되지 않습니다.
+이 guard가 없으면 Gemini의 `AfterAgent` 훅에서 두 도구가 동시에 실행될 수 있습니다.
+
+### Pre-flight Check
+
+VERIFY_UI 진입 전 3단계 확인:
+1. **서버 상태**: `GET /health` — agentation-mcp 서버 실행 여부
+2. **세션 존재**: `GET /sessions` — `<Agentation>` 컴포넌트 마운트 여부
+3. **대기 annotation**: `GET /pending` — 처리할 annotation 수
+
+통과 후 `jeo-state.json`의 `phase`를 `"verify_ui"`로, `agentation.active`를 `true`로 설정.
+
+### Loop 검증 테스트
+
+```bash
+# agentation watch loop 통합 테스트 실행
+bash .agent-skills/agentation/scripts/verify-loop.sh
+
+# 빠른 테스트 (에러 케이스 생략)
+bash .agent-skills/agentation/scripts/verify-loop.sh --quick
+```
+
+4단계 검증: Server Health → Annotation CRUD → ACK-RESOLVE Cycle → Error Cases
 
 ### 평가 플로우 (jeo VERIFY_UI 단계)
 
@@ -659,7 +695,11 @@ jeo "<task>"
 [2] EXECUTE (team/bmad)
 [3] VERIFY
     ├─ agent-browser snapshot
-    └─ agentui → VERIFY_UI (agentation loop)   ← 이 단계
+    ├─ Pre-flight check (server + session + pending)
+    └─ annotate → VERIFY_UI (agentation loop)   ← 이 단계 (agentui도 하위 호환)
+        ├─ ACK → FIND → FIX → RESOLVE
+        ├─ RE-SNAPSHOT (agent-browser)  ← 수정 후 재확인
+        └─ jeo-state.json agentation 필드 업데이트
 [4] CLEANUP
 ```
 

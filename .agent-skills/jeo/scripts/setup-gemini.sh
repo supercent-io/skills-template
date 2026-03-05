@@ -50,6 +50,17 @@ if ! $MD_ONLY; then
     cat > "${GEMINI_HOOK_DIR}/jeo-plannotator.sh" << 'HOOKEOF'
 #!/usr/bin/env bash
 # JEO AfterAgent backup hook — runs plannotator if plan.md exists in cwd
+# Phase guard: only fire during PLAN phase to prevent conflict with agentation
+
+JEO_STATE="${PWD}/.omc/state/jeo-state.json"
+if [[ -f "$JEO_STATE" ]]; then
+  PHASE=$(python3 -c "import json; print(json.load(open('$JEO_STATE')).get('phase',''))" 2>/dev/null || echo "")
+  # Only run plannotator during plan phase (or if no state file exists yet)
+  if [[ -n "$PHASE" && "$PHASE" != "plan" ]]; then
+    exit 0
+  fi
+fi
+
 PLAN_FILE="$(pwd)/plan.md"
 test -f "$PLAN_FILE" || exit 0
 python3 -c "
@@ -59,6 +70,41 @@ sys.stdout.write(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'ac
 " "$PLAN_FILE" | plannotator > /tmp/plannotator_feedback.txt 2>&1 || true
 HOOKEOF
     chmod +x "${GEMINI_HOOK_DIR}/jeo-plannotator.sh"
+
+    # Create agentation AfterAgent hook (phase-guarded: verify_ui only)
+    cat > "${GEMINI_HOOK_DIR}/jeo-agentation.sh" << 'AGENTHOOKEOF'
+#!/usr/bin/env bash
+# JEO AfterAgent hook — check pending agentation annotations during VERIFY_UI phase
+
+# Phase guard: only fire during verify_ui phase
+JEO_STATE="${PWD}/.omc/state/jeo-state.json"
+if [[ -f "$JEO_STATE" ]]; then
+  PHASE=$(python3 -c "import json; print(json.load(open('$JEO_STATE')).get('phase',''))" 2>/dev/null || echo "")
+  if [[ "$PHASE" != "verify_ui" && "$PHASE" != "verify" ]]; then
+    exit 0
+  fi
+else
+  exit 0  # No state file means JEO is not active
+fi
+
+# Check agentation server and report pending annotations
+PENDING=$(curl -sf --connect-timeout 2 http://localhost:4747/pending 2>/dev/null) || exit 0
+COUNT=$(echo "$PENDING" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('count',0))" 2>/dev/null || echo 0)
+
+if [ "$COUNT" -gt 0 ]; then
+  echo "=== AGENTATION: ${COUNT} annotations pending ==="
+  echo "$PENDING" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+for i, a in enumerate(d.get('annotations', [])):
+    sev = a.get('severity', 'suggestion')
+    print(f'  [{i+1}] [{sev}] {a.get(\"element\",\"?\")} ({a.get(\"elementPath\",\"?\")[:60]})')
+    print(f'      {a.get(\"comment\",\"\")[:80]}')
+" 2>/dev/null
+  echo "=== END ==="
+fi
+AGENTHOOKEOF
+    chmod +x "${GEMINI_HOOK_DIR}/jeo-agentation.sh"
 
     python3 - <<PYEOF
 import json, os
@@ -99,6 +145,31 @@ if not planno_exists:
     print("✓ plannotator AfterAgent hook added to ~/.gemini/settings.json")
 else:
     print("\u2713 plannotator hook already present")
+
+# Add agentation AfterAgent hook (phase-guarded: only fires during verify_ui phase)
+agentation_hook_path = os.path.expanduser("~/.gemini/hooks/jeo-agentation.sh")
+agentation_exists = any(
+    any(
+        "jeo-agentation" in h.get("command", "")
+        for h in entry.get("hooks", [])
+    )
+    for entry in after_agent
+)
+if not agentation_exists:
+    after_agent.append({
+        "matcher": "",
+        "hooks": [{
+            "name": "agentation-check",
+            "type": "command",
+            "command": f"bash {agentation_hook_path}",
+            "description": "VERIFY_UI phase: check pending agentation annotations"
+        }]
+    })
+    with open(settings_path, "w") as f:
+        json.dump(settings, f, indent=2)
+    print("\u2713 agentation AfterAgent hook added to ~/.gemini/settings.json")
+else:
+    print("\u2713 agentation hook already present")
 
 # Add agentation MCP server if missing
 mcp_servers = settings.setdefault("mcpServers", {})
@@ -151,8 +222,8 @@ NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
 **CLEANUP** (worktree):
 - After all work: `bash .agent-skills/jeo/scripts/worktree-cleanup.sh`
 
-**AGENTUI** (agentation watch loop — HTTP API 폴백):
-When user says "agentui" or asks to process UI annotations:
+**ANNOTATE** (agentation watch loop — HTTP API 폴백):
+When user says "annotate" or "agentui" (deprecated alias) or asks to process UI annotations:
 1. GET http://localhost:4747/pending — check count
 2. For each annotation: PATCH status:acknowledged, fix code via elementPath, PATCH status:resolved + resolution
 3. Repeat until count=0. Emit AGENTUI_READY when done.

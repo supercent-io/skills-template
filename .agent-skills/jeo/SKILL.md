@@ -1,9 +1,9 @@
 ---
 name: jeo
 keyword: jeo
-description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 브라우저 동작 검증, agentation(agentui)으로 UI 피드백 반영, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator, agent-browser, agentation."
+description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 브라우저 동작 검증, agentation(annotate)으로 UI 피드백 반영, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator, agent-browser, agentation."
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
-tags: [jeo, orchestration, ralph, plannotator, agentation, agentui, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification, ui-feedback]
+tags: [jeo, orchestration, ralph, plannotator, agentation, annotate, agentui, UI검토, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification, ui-feedback]
 platforms: [Claude, Codex, Gemini, OpenCode]
 version: 1.0.0
 source: supercent-io/skills-template
@@ -12,9 +12,9 @@ compatibility: "Requires git, node>=18, bash. Optional: bun, docker."
 
 # JEO — Integrated Agent Orchestration
 
-> Keyword: `jeo` · `agentui` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
+> Keyword: `jeo` · `annotate` · `UI검토` · `agentui (deprecated)` | Platforms: Claude Code · Codex CLI · Gemini CLI · OpenCode
 >
-> 계획(ralph+plannotator) → 실행(team/bmad) → UI 피드백(agentation/agentui) → 정리(worktree cleanup)
+> 계획(ralph+plannotator) → 실행(team/bmad) → UI 피드백(agentation/annotate) → 정리(worktree cleanup)
 > 의 완전 자동화 오케스트레이션 플로우를 제공하는 통합 스킬.
 
 ---
@@ -49,7 +49,7 @@ JEO가 설치하고 설정하는 도구 목록:
 | **bmad** | BMAD 워크플로우 오케스트레이션 | skills에 포함됨 |
 | **ralph** | 자기참조 완료 루프 | omc에 포함 또는 별도 설치 |
 | **plannotator** | 계획/diff 시각적 리뷰 | `bash scripts/install.sh --with-plannotator` |
-| **agentation** | UI 어노테이션 → 에이전트 코드 수정 연동 (`agentui` 키워드) | `bash scripts/install.sh --with-agentation` |
+| **agentation** | UI 어노테이션 → 에이전트 코드 수정 연동 (`annotate` 키워드, `agentui` 호환 유지) | `bash scripts/install.sh --with-agentation` |
 | **agent-browser** | AI 에이전트용 헤드리스 브라우저 — **브라우저 동작 검증 기본 도구** | `npm install -g agent-browser` |
 | **playwriter** | Playwright 기반 브라우저 자동화 (선택) | `npm install -g playwriter` |
 
@@ -77,7 +77,7 @@ jeo "<task>"
     agent-browser로 브라우저 동작 검증
     → 스냅샷 캡처 → UI/기능 정상 여부 확인
     │
-    ├─ agentui 키워드 시 → [3.3.1] VERIFY_UI (agentation watch loop)
+    ├─ annotate 키워드 시 → [3.3.1] VERIFY_UI (agentation watch loop)
     │   agentation_watch_annotations 블로킹 → annotation ack→fix→resolve 루프
     │
     ▼
@@ -163,18 +163,37 @@ agent-browser screenshot http://localhost:3000 -o verify.png
 > **기본 동작**: 브라우저 관련 작업 완료 시 자동으로 agent-browser 검증 단계를 실행합니다.
 > 브라우저 UI가 없는 백엔드/CLI 작업은 이 단계를 건너뜁니다.
 
-### 3.3.1 VERIFY_UI 단계 (agentui — agentation watch loop)
+### 3.3.1 VERIFY_UI 단계 (annotate — agentation watch loop)
 
-`agentui` 키워드 감지 시 agentation watch loop를 실행합니다.
+`annotate` 키워드 감지 시 agentation watch loop를 실행합니다. (`agentui` 키워드도 하위 호환으로 지원됩니다.)
 plannotator가 `planui` / `ExitPlanMode`에서 동작하는 방식과 동일한 패턴입니다.
 
 **전제 조건:**
 1. `npx agentation-mcp server` (HTTP :4747) 실행 중
 2. 앱에 `<Agentation endpoint="http://localhost:4747" />` 마운트
 
+**Pre-flight Check (진입 전 확인 — 모든 플랫폼 공통):**
+```bash
+# Step 1: 서버 상태 확인
+curl -sf --connect-timeout 2 http://localhost:4747/health >/dev/null 2>&1 \
+  || { echo "❌ agentation-mcp 서버 미실행 — npx agentation-mcp server 실행 필요"; exit 1; }
+
+# Step 2: 세션 존재 확인 (<Agentation> 컴포넌트 마운트 여부)
+SESSIONS=$(curl -sf http://localhost:4747/sessions 2>/dev/null)
+S_COUNT=$(echo "$SESSIONS" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
+[ "$S_COUNT" -eq 0 ] && echo "⚠️ 활성 세션 없음 — <Agentation endpoint='http://localhost:4747' /> 마운트 필요"
+
+# Step 3: 대기 annotation 확인
+PENDING=$(curl -sf http://localhost:4747/pending 2>/dev/null)
+P_COUNT=$(echo "$PENDING" | python3 -c "import sys,json; print(json.load(sys.stdin)['count'])" 2>/dev/null || echo 0)
+echo "✅ agentation 준비 완료 — 서버 정상, 세션 ${S_COUNT}개, 대기 annotation ${P_COUNT}개"
+```
+
+> Pre-flight 통과 후 jeo-state.json `phase`를 `"verify_ui"`로 업데이트하고 `agentation.active`를 `true`로 설정.
+
 **Claude Code (MCP 도구 직접 호출):**
 ```
-# agentui 키워드 감지 → MCP 통해 agentation_watch_annotations 블로킹 호출
+# annotate 키워드 감지 (또는 agentui — 하위 호환) → MCP 통해 agentation_watch_annotations 블로킹 호출
 # batchWindowSeconds:10 — 10초 단위로 annotation 일괄 수신
 # timeoutSeconds:120   — 120초 동안 annotation 없으면 자동 종료
 #
@@ -188,6 +207,7 @@ plannotator가 `planui` / `ExitPlanMode`에서 동작하는 방식과 동일한 
 
 > **중요**: `agentation_watch_annotations`는 블로킹 호출입니다. `&` 백그라운드 실행 금지.
 > plannotator의 `approved:true` 루프와 동일하게: annotation count=0 또는 timeout = 완료 신호.
+> `annotate` 키워드가 기본입니다. `agentui`는 하위 호환 별칭으로 동일하게 동작합니다.
 
 **Codex / Gemini / OpenCode (HTTP REST API 폴백):**
 ```bash
@@ -302,7 +322,7 @@ args = ["-y", "agentation-mcp", "server"]
 - 에이전트 턴 완료 시 `last-assistant-message`에서 `PLAN_READY` 신호 감지
 - `plan.md` 존재 확인 후 plannotator 자동 실행
 - 결과를 `/tmp/plannotator_feedback.txt`에 저장
-- `AGENTUI_READY` 신호 감지 시 `http://localhost:4747/pending` 폸링 → annotation HTTP API로 처리
+- `ANNOTATE_READY` 신호 (또는 하위 호환 `AGENTUI_READY`) 감지 시 `http://localhost:4747/pending` 폴링 → annotation HTTP API로 처리
 
 **`~/.codex/config.toml`** 설정:
 ```toml
@@ -397,7 +417,7 @@ bash scripts/setup-opencode.sh
 OpenCode 슬래시 커맨드:
 - `/jeo-plan` — ralph + plannotator로 계획 수립
 - `/jeo-exec` — team/bmad로 실행
-- `/jeo-agentui` — agentation watch loop 시작 (agentui)
+- `/jeo-annotate` — agentation watch loop 시작 (annotate; `/jeo-agentui`는 deprecated 별칭)
 - `/jeo-cleanup` — worktree 정리
 
 
@@ -442,15 +462,30 @@ JEO는 아래 경로에 상태를 저장합니다:
 **상태 파일 구조:**
 ```json
 {
-  "phase": "plan|execute|verify|cleanup",
+  "phase": "plan|execute|verify|verify_ui|cleanup",
   "task": "현재 작업 설명",
   "plan_approved": true,
   "team_available": true,
   "worktrees": ["path/to/worktree1", "path/to/worktree2"],
   "created_at": "2026-02-24T00:00:00Z",
-  "updated_at": "2026-02-24T00:00:00Z"
+  "updated_at": "2026-02-24T00:00:00Z",
+  "agentation": {
+    "active": false,
+    "session_id": null,
+    "keyword_used": null,
+    "started_at": null,
+    "timeout_seconds": 120,
+    "annotations": {
+      "total": 0, "acknowledged": 0, "resolved": 0, "dismissed": 0, "pending": 0
+    },
+    "completed_at": null,
+    "exit_reason": null
+  }
 }
 ```
+
+> **agentation 필드**: `active` — watch loop 실행 여부 (hook guard 사용), `session_id` — 재개용,
+> `exit_reason` — `"all_resolved"` | `"timeout"` | `"user_cancelled"` | `"error"`
 
 재시작 후 복원:
 ```bash
@@ -490,7 +525,7 @@ bash scripts/worktree-cleanup.sh
 3. **bmad fallback**: team 없는 환경(Codex, Gemini)에서 BMAD 사용
 4. **worktree 정리**: 작업 완료 즉시 `worktree-cleanup.sh` 실행 (브랜치 오염 방지)
 5. **상태 저장**: `.omc/state/jeo-state.json`으로 세션 간 상태 유지
-6. **agentui**: 복잡한 UI 수정이 필요할 때 `agentui` 키워드로 agentation watch loop 실행 (CSS selector 기반 정밀 코드 변경)
+6. **annotate**: 복잡한 UI 수정이 필요할 때 `annotate` 키워드로 agentation watch loop 실행 (CSS selector 기반 정밀 코드 변경). `agentui`는 하위 호환 별칭.
 
 ---
 
@@ -506,8 +541,9 @@ bash scripts/worktree-cleanup.sh
 | team 모드 미동작 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 환경변수 설정 |
 | omc 설치 실패 | `/omc:omc-doctor` 실행 |
 | agent-browser 오류 | `agent-browser --version` 확인 |
-| agentui(agentation) 안 열림 | `curl http://localhost:4747/pending` 확인 — agentation-mcp server 실행 여부 |
+| annotate(agentation) 안 열림 | `curl http://localhost:4747/pending` 확인 — agentation-mcp server 실행 여부 |
 | annotation 코드에 반영 안됨 | `agentation_resolve_annotation` 호출 시 `summary` 필드 있는지 확인 |
+| `agentui` 키워드로 활성화 안됨 | `annotate` 키워드(신규)를 사용하세요. `agentui`는 deprecated 별칭이지만 여전히 동작합니다. |
 | MCP 툴 미등록 (Codex/Gemini) | `bash scripts/setup-codex.sh` / `setup-gemini.sh` 재실행 |
 
 ---
@@ -518,4 +554,4 @@ bash scripts/worktree-cleanup.sh
 - [plannotator](https://plannotator.ai) — 계획/diff 시각적 리뷰
 - [BMAD Method](https://github.com/bmad-dev/BMAD-METHOD) — 구조화된 AI 개발 워크플로우
 - [Agent Skills Spec](https://agentskills.io/specification) — 스킬 포맷 명세
-- [agentation](https://github.com/benjitaylor/agentation) — UI 어노테이션 → 에이전트 코드 수정 연동 (`agentui`)
+- [agentation](https://github.com/benjitaylor/agentation) — UI 어노테이션 → 에이전트 코드 수정 연동 (`annotate`; `agentui` 하위 호환)

@@ -86,7 +86,7 @@ jeo_instructions = """
 
 /jeo-plan    — Start ralph+plannotator planning workflow
 /jeo-exec    — Execute with team or BMAD orchestration
-/jeo-agentui — Start agentation watch loop (VERIFY_UI)
+/jeo-annotate — Start agentation watch loop (VERIFY_UI); /jeo-agentui is a deprecated alias
 /jeo-verify  — Verify UI with agent-browser snapshot
 /jeo-cleanup — Clean up worktrees after completion
 ## JEO Workflow
@@ -112,8 +112,8 @@ NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
 
 AGENTUI_INSTRUCTIONS = """
 
-## AGENTUI: agentation Watch Loop (/jeo-agentui)
-When user says 'agentui' or invokes /jeo-agentui:
+## ANNOTATE: agentation Watch Loop (/jeo-annotate)
+When user says 'annotate' or 'agentui' (deprecated alias) or invokes /jeo-annotate (or /jeo-agentui):
 1. Ensure agentation-mcp server running: npx agentation-mcp server (HTTP :4747)
 2. Use agentation_watch_annotations MCP tool (batchWindowSeconds:10, timeoutSeconds:120) — blocking
 3. For each annotation:
@@ -127,13 +127,12 @@ When user says 'agentui' or invokes /jeo-agentui:
 5. Repeat until count=0 or 120s timeout.
 NEVER use & background. NEVER skip annotation without resolving or dismissing.
 """
-"""
 
 if "JEO Orchestration Commands" not in instructions:
     config["instructions"] = instructions + jeo_instructions + AGENTUI_INSTRUCTIONS
-    print("\u2713 JEO + agentui instructions added to opencode.json")
-
-
+    print("\u2713 JEO + annotate instructions added to opencode.json")
+else:
+    print("\u2713 JEO instructions already present")
 
 with open(config_path, "w") as f:
     json.dump(config, f, indent=2)
@@ -147,7 +146,7 @@ echo ""
 echo "OpenCode slash commands after setup:"
 echo "  /jeo-plan      ← Start planning workflow"
 echo "  /jeo-exec      \u2190 Execute task"
-echo "  /jeo-agentui   \u2190 agentation watch loop (VERIFY_UI)"
+echo "  /jeo-annotate  \u2190 agentation watch loop (VERIFY_UI); /jeo-agentui is deprecated alias"
 echo "  /jeo-verify    \u2190 Verify UI with agent-browser"
 echo "  /jeo-cleanup   ← Clean worktrees"
 echo "  /plannotator-review ← Code review UI"

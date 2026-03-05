@@ -188,12 +188,21 @@ PROMPTEOF
 
   cat > "$HOOK_FILE" << 'HOOKEOF'
 #!/usr/bin/env python3
-"""JEO Codex notify hook — detects PLAN_READY / AGENTUI_READY and triggers plannotator / agentation."""
+"""JEO Codex notify hook — detects PLAN_READY / ANNOTATE_READY and triggers plannotator / agentation."""
 import json, os, subprocess, sys, urllib.request, urllib.error, time
 
-# Signals that indicate the agent finished writing a plan
-PLAN_SIGNALS = ["PLAN_READY", "plan.md created", "계획 작성 완료", "plan complete"]
-AGENTUI_SIGNALS = ["AGENTUI_READY", "agentui ready", "annotation watch complete", "어노테이션 완료"]
+# Exact signal strings (matched at end of message line)
+PLAN_SIGNALS = ["PLAN_READY"]
+ANNOTATE_SIGNALS = ["ANNOTATE_READY", "AGENTUI_READY"]
+
+def get_jeo_phase(cwd: str) -> str:
+    """Read current JEO phase from state file. Returns empty string if not available."""
+    state_path = os.path.join(cwd, ".omc", "state", "jeo-state.json")
+    try:
+        with open(state_path) as f:
+            return json.load(f).get("phase", "")
+    except (FileNotFoundError, json.JSONDecodeError, KeyError):
+        return ""
 
 def main() -> int:
     try:
@@ -204,43 +213,49 @@ def main() -> int:
     if notification.get("type") != "agent-turn-complete":
         return 0
 
-    msg = notification.get("last-assistant-message", "")
+    msg = notification.get("last-assistant-message", "").strip()
     cwd = notification.get("cwd", os.getcwd())
+    phase = get_jeo_phase(cwd)
 
-    # PLAN_READY: trigger plannotator
-    if any(sig.lower() in msg.lower() for sig in PLAN_SIGNALS):
-        plan_path = os.path.join(cwd, "plan.md")
-        if not os.path.exists(plan_path):
+    # PLAN_READY: trigger plannotator (only during plan phase)
+    if phase in ("plan", ""):
+        last_line = msg.split("\n")[-1].strip() if msg else ""
+        if any(last_line.endswith(sig) for sig in PLAN_SIGNALS):
+            plan_path = os.path.join(cwd, "plan.md")
+            if not os.path.exists(plan_path):
+                return 0
+            plan_content = open(plan_path).read()
+            payload = json.dumps({"tool_input": {"plan": plan_content, "permission_mode": "acceptEdits"}})
+            feedback_file = "/tmp/plannotator_feedback.txt"
+            try:
+                with open(feedback_file, "w") as f:
+                    subprocess.run(["plannotator"], input=payload, stdout=f, stderr=f, text=True)
+                print(f"[JEO] plannotator feedback \u2192 {feedback_file}")
+            except FileNotFoundError:
+                print("[JEO] plannotator not found \u2014 skipping")
             return 0
-        plan_content = open(plan_path).read()
-        payload = json.dumps({"tool_input": {"plan": plan_content, "permission_mode": "acceptEdits"}})
-        feedback_file = "/tmp/plannotator_feedback.txt"
-        try:
-            with open(feedback_file, "w") as f:
-                subprocess.run(["plannotator"], input=payload, stdout=f, stderr=f, text=True)
-            print(f"[JEO] plannotator feedback \u2192 {feedback_file}")
-        except FileNotFoundError:
-            print("[JEO] plannotator not found \u2014 skipping")
-        return 0
 
-    # AGENTUI_READY: poll agentation HTTP API and print pending annotations
-    if any(sig.lower() in msg.lower() for sig in AGENTUI_SIGNALS):
-        base_url = "http://localhost:4747"
-        try:
-            with urllib.request.urlopen(f"{base_url}/pending", timeout=2) as r:
-                data = json.loads(r.read())
-            count = data.get("count", 0)
-            annotations = data.get("annotations", [])
-            if count == 0:
-                print("[JEO] agentation: no pending annotations")
-            else:
-                print(f"[JEO] agentation: {count} pending annotations")
-                for ann in annotations:
-                    print(f"  [{ann.get('id')}] {ann.get('element','?')} | {ann.get('comment','')[:80]}")
-                    print(f"    elementPath: {ann.get('elementPath','?')}")
-        except (urllib.error.URLError, Exception) as e:
-            print(f"[JEO] agentation server not reachable ({base_url}): {e}")
-        return 0
+    # ANNOTATE_READY: poll agentation HTTP API (only during verify/verify_ui phase)
+    if phase in ("verify", "verify_ui", ""):
+        last_line = msg.split("\n")[-1].strip() if msg else ""
+        if any(last_line.endswith(sig) for sig in ANNOTATE_SIGNALS):
+            base_url = "http://localhost:4747"
+            try:
+                with urllib.request.urlopen(f"{base_url}/pending", timeout=2) as r:
+                    data = json.loads(r.read())
+                count = data.get("count", 0)
+                annotations = data.get("annotations", [])
+                if count == 0:
+                    print("[JEO] agentation: no pending annotations")
+                else:
+                    print(f"[JEO] agentation: {count} pending annotations")
+                    for ann in annotations:
+                        sev = ann.get("severity", "suggestion")
+                        print(f"  [{sev}] {ann.get('element','?')} | {ann.get('comment','')[:80]}")
+                        print(f"    elementPath: {ann.get('elementPath','?')}")
+            except (urllib.error.URLError, Exception) as e:
+                print(f"[JEO] agentation server not reachable ({base_url}): {e}")
+            return 0
 
     return 0
 if __name__ == "__main__":
@@ -299,7 +314,7 @@ echo ""
 echo "Codex CLI usage after setup:"
 echo "  /prompts:jeo             ← Activate JEO orchestration workflow"
 echo "  notify hook: ~/.codex/hooks/jeo-notify.py"
-echo "    fires on: PLAN_READY / AGENTUI_READY signals in agent output"
+echo "    fires on: PLAN_READY / ANNOTATE_READY signals in agent output (AGENTUI_READY also accepted)"
 echo "    writes to: /tmp/plannotator_feedback.txt"
 echo ""
 ok "Codex CLI setup complete"

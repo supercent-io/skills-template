@@ -263,7 +263,7 @@ npx skills info jeo
 | `ai-tool-compliance` | `ai-tool-compliance` | 내부 AI 툴 컴플라이언스 자동화(P0/P1) |
 | `agent-browser` | `agent-browser` | 헤드리스 브라우저 자동화 |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM 사용량 모니터링 대시보드 생성 |
-| `agentation` | `agentui` | 계획·diff 시각화 검토 UI (agentui 루프) |
+| `agentation` | `annotate`, `UI검토`, `agentui` | UI 어노테이션 → 에이전트 코드 수정 (annotate watch loop) |
 | `oh-my-codex` | `omx` | Codex CLI 멀티에이전트 |
 | `ohmg` | `ohmg` | Gemini / Antigravity 워크플로우 |
 
