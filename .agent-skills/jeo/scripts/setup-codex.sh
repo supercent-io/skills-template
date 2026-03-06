@@ -58,7 +58,10 @@ else
 # PLAN phase protocol (Codex):
 #   1. Write plan to plan.md
 #   2. Run plannotator blocking (no &):
-#      python3 -c "import json; print(json.dumps({\"tool_input\": {\"plan\": open(\"plan.md\").read(), \"permission_mode\": \"acceptEdits\"}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+#      FEEDBACK_DIR=$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; d=f'/tmp/jeo-{h}'; os.makedirs(d,exist_ok=True); print(d)" 2>/dev/null || echo '/tmp')
+#      PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
+#      mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+#      python3 -c "import json; print(json.dumps({\"tool_input\": {\"plan\": open(\"plan.md\").read(), \"permission_mode\": \"acceptEdits\"}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
 #   3. Output "PLAN_READY" to trigger notify hook as backup signal
 #   4. Check /tmp/plannotator_feedback.txt: approved=true -> EXECUTE, else re-plan
 #
@@ -117,7 +120,7 @@ PYEOF
   ok "JEO developer_instructions synced in ~/.codex/config.toml"
 
   # ── 3. Create /prompts:jeo prompt file ──────────────────────────────────────
-  cat > "$JEO_PROMPT_FILE" <<PROMPTEOF
+  cat > "$JEO_PROMPT_FILE" <<'PROMPTEOF'
 # JEO — Integrated Agent Orchestration Prompt
 
 You are now operating in **JEO mode** — Integrated AI Agent Orchestration.
@@ -129,7 +132,9 @@ Before writing any code, create and review a plan:
 1. Write a detailed implementation plan in \`plan.md\` (objectives, steps, risks, acceptance criteria)
 2. Run plannotator BLOCKING (no & — wait for user review):
    \`\`\`bash
-   python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+   PLANNOTATOR_RUNTIME_HOME="$(python3 -c \"import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; print(f'/tmp/jeo-{h}/.plannotator')\")"
+   mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+   python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
    echo "PLAN_READY"
    \`\`\`
 3. Read /tmp/plannotator_feedback.txt
@@ -159,7 +164,9 @@ After all tasks complete:
 ## Key Commands
 - Plan review — run plannotator BLOCKING (no &), then output PLAN_READY:
   \`\`\`bash
-  python3 -c "import json; print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+  PLANNOTATOR_RUNTIME_HOME="$(python3 -c \"import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; print(f'/tmp/jeo-{h}/.plannotator')\")"
+  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+  python3 -c "import json; print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
   # Output PLAN_READY to trigger notify hook as backup signal
   echo "PLAN_READY"
   # Check result
@@ -224,6 +231,16 @@ def get_feedback_file(cwd: str) -> str:
     os.makedirs(feedback_dir, exist_ok=True)
     return os.path.join(feedback_dir, "plannotator_feedback.txt")
 
+
+def get_plannotator_env(cwd: str) -> dict:
+    _session_key = hashlib.md5(cwd.encode()).hexdigest()[:8]
+    runtime_home = f"/tmp/jeo-{_session_key}/.plannotator"
+    os.makedirs(runtime_home, exist_ok=True)
+    env = os.environ.copy()
+    env["HOME"] = runtime_home
+    env["PLANNOTATOR_HOME"] = runtime_home
+    return env
+
 def main() -> int:
     try:
         notification = json.loads(sys.argv[1])
@@ -255,7 +272,7 @@ def main() -> int:
             feedback_file = get_feedback_file(cwd)
             try:
                 with open(feedback_file, "w") as f:
-                    subprocess.run(["plannotator"], input=payload, stdout=f, stderr=f, text=True)
+                    subprocess.run(["plannotator"], input=payload, stdout=f, stderr=f, text=True, env=get_plannotator_env(cwd))
                 print(f"[JEO] plannotator feedback \u2192 {feedback_file}")
             except FileNotFoundError:
                 print("[JEO] plannotator not found \u2014 skipping")

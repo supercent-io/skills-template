@@ -42,10 +42,10 @@ else
   # Backup
   [[ -f "$OPENCODE_JSON" ]] && cp "$OPENCODE_JSON" "${OPENCODE_JSON}.jeo.bak"
 
-  python3 - <<PYEOF
+  OPENCODE_JSON_PATH="$OPENCODE_JSON" python3 - <<'PYEOF'
 import json, os
 
-config_path = "$OPENCODE_JSON"
+config_path = os.environ["OPENCODE_JSON_PATH"]
 try:
     with open(config_path) as f:
         config = json.load(f)
@@ -103,7 +103,9 @@ jeo_instructions = """
 ## MANDATORY: plannotator Plan Review (blocking loop)
 After writing plan.md, you MUST run plannotator and wait for approval before EXECUTE.
 Run blocking (no &):
-  python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+  PLANNOTATOR_RUNTIME_HOME="/tmp/jeo-$(python3 -c \"import hashlib,os; print(f'/tmp/jeo-{hashlib.md5(os.getcwd().encode()).hexdigest()[:8]}')\")/.plannotator"
+  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+  python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
 Then read /tmp/plannotator_feedback.txt:
   - "approved":true  → proceed to EXECUTE
   - not approved     → read annotations, revise plan.md, repeat

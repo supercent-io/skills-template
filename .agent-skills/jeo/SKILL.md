@@ -211,7 +211,9 @@ else
   # plannotator 정상 실행 경로 (기존 코드)
   FEEDBACK_DIR=$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; d=f'/tmp/jeo-{h}'; os.makedirs(d,exist_ok=True); print(d)" 2>/dev/null || echo '/tmp')
   FEEDBACK_FILE="${FEEDBACK_DIR}/plannotator_feedback.txt"
-  touch /tmp/jeo-plannotator-direct.lock && cat plan.md | plannotator > "$FEEDBACK_FILE" 2>&1
+  PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
+  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+  touch /tmp/jeo-plannotator-direct.lock && cat plan.md | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > "$FEEDBACK_FILE" 2>&1
 
   # approved 확인
   python3 -c "
@@ -234,7 +236,7 @@ mkdir -p .omc/plans .omc/logs
    - **Claude Code**: `submit_plan` MCP 도구 직접 호출
    - **Codex / Gemini / OpenCode**: blocking CLI 실행 (`&` 절대 금지):
      ```bash
-     touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+     touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="${FEEDBACK_DIR}/.plannotator" PLANNOTATOR_HOME="${FEEDBACK_DIR}/.plannotator" plannotator > /tmp/plannotator_feedback.txt 2>&1
      ```
 3. 결과 확인:
    - `approved: true` → `jeo-state.json`의 `phase`를 `"execute"`, `plan_approved`를 `true`로 업데이트 → **STEP 2 진입**
@@ -492,10 +494,12 @@ FEEDBACK_DIR=$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()
 FEEDBACK_FILE="${FEEDBACK_DIR}/plannotator_feedback.txt"
 
 # 1. plan.md 직접 작성 후 plannotator로 검토 (블로킹 실행 — & 없음)
+PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
+mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
 touch /tmp/jeo-plannotator-direct.lock && python3 -c "
 import json
 print(json.dumps({'tool_input': {'plan': open('plan.md').read(), 'permission_mode': 'acceptEdits'}}))
-" | plannotator > "$FEEDBACK_FILE" 2>&1
+" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > "$FEEDBACK_FILE" 2>&1
 # ↑ & 없이 실행: 사용자가 브라우저에서 Approve/Send Feedback 클릭까지 대기
 
 # 2. 결과 확인 후 분기
@@ -864,7 +868,10 @@ OpenCode 슬래시 커맨드:
 **plannotator 연동** (MANDATORY blocking loop):
 ```bash
 # plan.md 작성 후 blocking 실행 (& 금지) — 같은 턴 피드백 수신
-touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+FEEDBACK_DIR="/tmp/jeo-$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; print(f'/tmp/jeo-{h}')" 2>/dev/null || echo '/tmp')"
+PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
+mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
 
 # 결과 확인 후 분기
 # approved=true  → EXECUTE 진입

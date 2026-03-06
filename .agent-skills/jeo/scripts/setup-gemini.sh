@@ -32,9 +32,11 @@ fi
 # NOTE: Gemini CLI uses AfterAgent hook (not ExitPlanMode, which is Claude Code-only).
 # The primary method is agent direct blocking call — do NOT use & (background).
 # Manual blocking call (same-turn feedback):
+#   PLANNOTATOR_RUNTIME_HOME="/tmp/jeo-$(python3 -c "import hashlib,os; print(f'/tmp/jeo-{hashlib.md5(os.getcwd().encode()).hexdigest()[:8]}')")/.plannotator"
+#   mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
 #   python3 -c "import json,sys; plan=open('plan.md').read(); \
 #     sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" \
-#     | plannotator > /tmp/plannotator_feedback.txt 2>&1
+#     | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
 
 # ── 2. Configure ~/.gemini/settings.json ─────────────────────────────────────
 if ! $MD_ONLY; then
@@ -79,13 +81,16 @@ if [[ -f "$LOCK_FILE" ]]; then
   exit 0
 fi
 
+PLANNOTATOR_RUNTIME_HOME="/tmp/jeo-$(python3 -c "import hashlib,os; print(f'/tmp/jeo-{hashlib.md5(os.getcwd().encode()).hexdigest()[:8]}')")/.plannotator"
+mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+
 PLAN_FILE="$(pwd)/plan.md"
 test -f "$PLAN_FILE" || exit 0
 python3 -c "
 import json, sys
 plan = open(sys.argv[1]).read()
 sys.stdout.write(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
-" "$PLAN_FILE" | plannotator > /tmp/plannotator_feedback.txt 2>&1 || true
+" "$PLAN_FILE" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1 || true
 HOOKEOF
     chmod +x "${GEMINI_HOOK_DIR}/jeo-plannotator.sh"
 
@@ -222,7 +227,10 @@ JEO provides integrated AI agent orchestration across all AI tools.
 **PLAN** (plannotator — 직접 blocking 호출 필수):
 1. `plan.md` 작성 (목표, 단계, 리스크, 완료 기준 포함)
 2. plannotator 블로킹 실행 (& 절대 금지):
-   python3 -c "import json,sys; plan=open('"'"'plan.md'"'"').read(); sys.stdout.write(json.dumps({'"'"'tool_input'"'"':{'"'"'plan'"'"':plan,'"'"'permission_mode'"'"':'"'"'acceptEdits'"'"'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+  FEEDBACK_DIR="$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; d=f'/tmp/jeo-{h}'; os.makedirs(d,exist_ok=True); print(d)" 2>/dev/null || echo '/tmp')"
+  PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
+  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+  python3 -c "import json,sys; plan=open(\"plan.md\").read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
 3. /tmp/plannotator_feedback.txt 읽기
 4. "approved":true → EXECUTE 진입 / 미승인 → 피드백 반영 후 plan.md 수정 후 2번 반복
 NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
