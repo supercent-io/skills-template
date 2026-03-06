@@ -31,6 +31,12 @@
 
 ## Quick Start (For LLM Agents)
 
+> **Prerequisite**: Install `skills` CLI before running any `npx skills add` commands.
+>
+> ```bash
+> npm install -g skills
+> ```
+
 ```bash
 # Send to your LLM agent: read this guide and proceed with installation
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
@@ -54,6 +60,22 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ## Installation
 
+### Step 0: Install `skills` CLI
+
+All `npx skills add` commands require the `skills` CLI. Install it first:
+
+```bash
+npm install -g skills
+```
+
+Verify installation:
+
+```bash
+skills --version
+```
+
+---
+
 ### For LLM Agents
 
 If an LLM agent is helping with installation, follow these steps:
@@ -62,26 +84,6 @@ If an LLM agent is helping with installation, follow these steps:
 # Send to your LLM agent: read this guide and proceed with installation
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
-
----
-
-### For Humans
-
-#### Step 1: Install jeo (Recommended — includes all core features)
-
-`jeo` activates the complete plan → execute → track → cleanup workflow in one skill.
-
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill jeo
-```
-
-#### For Gemini CLI
-
-```bash
-gemini extensions install https://github.com/supercent-io/skills-template
-```
-
-> [Official Hooks Guide](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
 ---
 
