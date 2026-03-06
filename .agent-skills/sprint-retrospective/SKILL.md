@@ -1,9 +1,11 @@
 ---
 name: sprint-retrospective
 description: Facilitate effective sprint retrospectives for continuous team improvement. Use when conducting team retrospectives, identifying improvements, or fostering team collaboration. Handles retrospective formats, action items, and facilitation techniques.
-tags: [retrospective, agile, scrum, team-improvement, facilitation]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: retrospective, agile, scrum, team-improvement, facilitation
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Sprint Retrospective
 

@@ -1,12 +1,14 @@
 ---
 name: agentic-workflow
 description: AI 에이전트 실전 워크플로우와 생산성 기법. 명령어, 단축키, Git 통합, MCP 활용, 세션 관리 등 일상 개발 작업의 최적화 패턴 제공.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [agentic-workflow, productivity, git, mcp, commands, multi-agent]
-platforms: [Claude, Gemini, ChatGPT, Codex]
-version: 2.0.0
-source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: agentic-workflow, productivity, git, mcp, commands, multi-agent
+  platforms: Claude, Gemini, ChatGPT, Codex
+  version: 2.0.0
+  source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
 ---
+
 
 # AI 에이전트 워크플로우 (Workflow & Productivity)
 

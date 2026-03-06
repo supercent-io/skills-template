@@ -1,13 +1,15 @@
 ---
 name: copilot-coding-agent
-keyword: copilotview
 description: GitHub Copilot Coding Agent 자동화. 이슈에 ai-copilot 라벨 부착 → GitHub Actions가 GraphQL로 Copilot에 자동 할당 → Copilot이 Draft PR 생성. 원클릭 이슈-to-PR 파이프라인.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [copilot, copilotview, github-actions, issue-to-pr, draft-pr, graphql, automation, ai-agent]
-platforms: [Claude, Codex, Gemini]
-version: 1.0.0
-source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: copilot, copilotview, github-actions, issue-to-pr, draft-pr, graphql, automation, ai-agent
+  platforms: Claude, Codex, Gemini
+  keyword: copilotview
+  version: 1.0.0
+  source: "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent"
 ---
+
 
 # GitHub Copilot Coding Agent — Issue → Draft PR 자동화
 

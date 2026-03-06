@@ -1,12 +1,14 @@
 ---
 name: opencontext
 description: OpenContext를 활용한 AI 에이전트 영구 메모리 및 컨텍스트 관리. 세션/레포/날짜 간 컨텍스트 유지, 결론 저장, 문서 검색 워크플로우 제공.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [opencontext, context-management, memory, knowledge-base, multi-agent]
-platforms: [Claude, Gemini, ChatGPT, Codex, Cursor]
-version: 1.0.0
-source: OpenContext Multi-Agent Workflow Guide
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: opencontext, context-management, memory, knowledge-base, multi-agent
+  platforms: Claude, Gemini, ChatGPT, Codex, Cursor
+  version: 1.0.0
+  source: OpenContext Multi-Agent Workflow Guide
 ---
+
 
 # OpenContext 컨텍스트 관리 (Persistent Memory)
 

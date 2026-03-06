@@ -1,12 +1,14 @@
 ---
 name: agentic-development-principles
 description: AI 에이전트와 협업하는 에이전틱 개발의 범용 원칙. 분해정복, 컨텍스트 관리, 추상화 수준 선택, 자동화 철학을 정의. 모든 AI 코딩 도구에 적용 가능.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [agentic-development, principles, context-management, automation, ai-collaboration, universal]
-platforms: [Claude, ChatGPT, Gemini]
-version: 1.0.0
-source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic) - 범용화
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: agentic-development, principles, context-management, automation, ai-collaboration, universal
+  platforms: Claude, ChatGPT, Gemini
+  version: 1.0.0
+  source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic) - 범용화
 ---
+
 
 # 에이전틱 개발 원칙 (Agentic Development Principles)
 

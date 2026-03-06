@@ -1,24 +1,14 @@
 ---
 name: prompt-repetition
-description: LLM 정확도 향상을 위한 프롬프트 반복 기법. 70개 벤치마크 중 67%(47/70)에서 유의미한 성능 향상 달성. 경량 모델(haiku, flash, mini)에서 자동 적용.
-allowed-tools: []
-tags: [prompt-engineering, accuracy, optimization, lightweight-model, attention]
-platforms: [Claude, Gemini, ChatGPT, Codex]
-version: 2.0.0
-source: Google Research 2025 - Prompt Repetition Improves Non-Reasoning LLMs
-auto-apply:
-  models:
-    - claude-3-haiku
-    - claude-haiku
-    - gemini-flash
-    - gemini-flash-lite
-    - gemini-2.0-flash
-    - gpt-4o-mini
-    - gpt-low
-  trigger: auto
-  default_repetitions: 2
-  max_context_ratio: 0.8
+description: "LLM 정확도 향상을 위한 프롬프트 반복 기법. 70개 벤치마크 중 67%(47/70)에서 유의미한 성능 향상 달성. 경량 모델(haiku, flash, mini)에서 자동 적용."
+metadata:
+  tags: prompt-engineering, accuracy, optimization, lightweight-model, attention
+  platforms: Claude, Gemini, ChatGPT, Codex
+  version: 2.0.0
+  source: Google Research 2025 - Prompt Repetition Improves Non-Reasoning LLMs
+  auto-apply: "models: claude-3-haiku, claude-haiku, gemini-flash, gemini-flash-lite, gemini-2.0-flash, gpt-4o-mini, gpt-low; trigger: auto; default_repetitions: 2; max_context_ratio: 0.8"
 ---
+
 
 # Prompt Repetition (프롬프트 반복)
 

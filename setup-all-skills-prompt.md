@@ -31,9 +31,9 @@
 설치 전 다음을 확인하세요:
 
 1. **사용 중인 AI 플랫폼은 무엇인가요?**
-   - Claude Code → `omc`, `plannotator`, `ralph`, `bmad-orchestrator` 권장
-   - Gemini CLI → `ohmg`, `ralph`, `jeo` 권장
-   - OpenAI Codex CLI → `oh-my-codex`, `ralph`, `jeo` 권장
+   - Claude Code → `omc`, `plannotator`, `ralph`, `ralphmode`, `bmad-orchestrator` 권장
+   - Gemini CLI → `ohmg`, `ralph`, `ralphmode`, `jeo` 권장
+   - OpenAI Codex CLI → `oh-my-codex`, `ralph`, `ralphmode`, `jeo` 권장
    - OpenCode → oh-my-opencode 설치 필요 (Step 3 참조)
    - 모두 사용 / 모르겠음 → `jeo` 단일 설치 (전 플랫폼 통합)
 
@@ -84,19 +84,19 @@ npx skills add https://github.com/supercent-io/skills-template --skill plannotat
 **Claude Code 전용:**
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill omc --skill plannotator --skill ralph --skill vibe-kanban
+  --skill omc --skill plannotator --skill ralph --skill ralphmode --skill vibe-kanban
 ```
 
 **Gemini CLI 전용:**
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill ohmg --skill ralph --skill vibe-kanban
+  --skill ohmg --skill ralph --skill ralphmode --skill vibe-kanban
 ```
 
 **Codex CLI 전용:**
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill oh-my-codex --skill ralph
+  --skill oh-my-codex --skill ralph --skill ralphmode
 ```
 
 **Gemini CLI (확장 설치):**
@@ -106,7 +106,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: 전체 70개 스킬 설치 (기본 실행 단계)
+### Step 2: 전체 71개 스킬 설치 (기본 실행 단계)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -142,7 +142,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill git-submodule --skill git-workflow --skill jeo \
   --skill npm-git-install --skill ohmg --skill oh-my-codex \
   --skill omc --skill opencontext --skill plannotator \
-  --skill ralph --skill skill-standardization \
+  --skill ralph --skill ralphmode --skill skill-standardization \
   --skill vibe-kanban --skill workflow-automation
 ```
 
@@ -174,6 +174,8 @@ npx skills add benjitaylor/agentation
 # /agentation  ← 브라우저 UI 자동 실행, annotate watch loop 시작
 ```
 
+> **TOON Format 훅**: `~/.claude/hooks/toon-inject.mjs`가 설치되어 있으면 모든 프롬프트에 스킬 카탈로그가 자동 주입됩니다. 설정 상세: [bmad-orchestrator SKILL.md — TOON Format Integration](.agent-skills/bmad-orchestrator/SKILL.md)
+
 #### OpenCode — oh-my-opencode
 
 최신 설치 가이드를 fetch해서 구독 환경에 맞게 설치하세요:
@@ -196,6 +198,8 @@ npx skills add https://github.com/supercent-io/skills-template
 # jeo AfterAgent 훅 자동 설정 (plannotator + agentation 연동)
 bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 ```
+
+> **TOON Format 훅**: `~/.gemini/hooks/toon-skill-inject.sh`가 설치되어 있으면 `includeDirectories`를 통해 세션 시작 시 스킬 카탈로그가 자동 로드됩니다. Codex CLI는 `~/.codex/skills-toon-catalog.toon`을 `developer_instructions`에서 참조합니다.
 
 > [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
@@ -275,6 +279,7 @@ npx skills info jeo
 | `jeo` | `jeo` | 통합 오케스트레이션 (권장 시작점) — 에이전트 실행 프로토콜 내장(STEP 0: state 부트스트랩 → PLAN/plannotator → EXECUTE → VERIFY → CLEANUP). 의존: plannotator, agentation |
 | `omc` | `omc`, `autopilot` | Claude Code 멀티에이전트 |
 | `ralph` | `ralph`, `ooo`, `ooo ralph`, `ooo interview` | Ouroboros 기반 specification-first 개발 (Interview→Seed→Execute→Evaluate→Evolve) + 영구 완료 루프 |
+| `ralphmode` | `ralphmode` | Claude Code, Codex CLI, Gemini CLI용 Ralph 자동화 permission profile. repo 경계 유지, sandbox-first, secret denylist 중심 |
 | `plannotator` | `plan`, `계획` | 계획 검토 + Feedback loop |
 | `vibe-kanban` | `kanbanview` | 칸반 보드 |
 | `bmad-orchestrator` | `bmad` | 구조화 개발 |

@@ -1,10 +1,12 @@
 ---
 name: data-analysis
 description: Analyze datasets to extract insights, identify patterns, and generate reports. Use when exploring data, creating visualizations, or performing statistical analysis. Handles CSV, JSON, SQL queries, and Python pandas operations.
-tags: [data, analysis, pandas, statistics, visualization, csv, sql]
-platforms: [Claude, ChatGPT, Gemini]
-allowed-tools: [Read, Grep, Glob, Bash]
+allowed-tools: Read Grep Glob Bash
+metadata:
+  tags: data, analysis, pandas, statistics, visualization, csv, sql
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Data Analysis
 

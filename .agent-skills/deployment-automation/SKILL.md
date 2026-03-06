@@ -1,9 +1,11 @@
 ---
 name: deployment-automation
 description: Automate application deployment to cloud platforms and servers. Use when setting up CI/CD pipelines, deploying to Docker/Kubernetes, or configuring cloud infrastructure. Handles GitHub Actions, Docker, Kubernetes, AWS, Vercel, and deployment best practices.
-tags: [deployment, CI/CD, Docker, Kubernetes, AWS, GitHub-Actions, automation]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: deployment, CI/CD, Docker, Kubernetes, AWS, GitHub-Actions, automation
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Deployment Automation
 

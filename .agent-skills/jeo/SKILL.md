@@ -1,14 +1,16 @@
 ---
 name: jeo
-keyword: jeo
 description: "JEO — 통합 AI 에이전트 오케스트레이션 스킬. ralph+plannotator로 계획 수립, team/bmad로 실행, agent-browser로 브라우저 동작 검증, agentation(annotate)으로 UI 피드백 반영, 작업 완료 후 worktree 자동 정리. Claude, Codex, Gemini CLI, OpenCode 모두 지원. 설치: ralph, omc, omx, ohmg, bmad, plannotator, agent-browser, agentation."
-allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
-tags: [jeo, orchestration, ralph, plannotator, agentation, annotate, agentui, UI검토, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification, ui-feedback]
-platforms: [Claude, Codex, Gemini, OpenCode]
-version: 1.0.0
-source: supercent-io/skills-template
 compatibility: "Requires git, node>=18, bash. Optional: bun, docker."
+allowed-tools: Read Write Bash Grep Glob Task
+metadata:
+  tags: jeo, orchestration, ralph, plannotator, agentation, annotate, agentui, UI검토, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification, ui-feedback
+  platforms: Claude, Codex, Gemini, OpenCode
+  keyword: jeo
+  version: 1.0.0
+  source: supercent-io/skills-template
 ---
+
 
 # JEO — Integrated Agent Orchestration
 
@@ -38,6 +40,9 @@ mkdir -p .omc/state .omc/plans .omc/logs
   "plan_approved": false,
   "team_available": null,
   "worktrees": [],
+  "retry_count": 0,
+  "last_error": null,
+  "checkpoint": null,
   "created_at": "<ISO 8601>",
   "updated_at": "<ISO 8601>",
   "agentation": {
@@ -58,7 +63,70 @@ mkdir -p .omc/state .omc/plans .omc/logs
 
 ---
 
+### STEP 0.1: 에러 복구 프로토콜 (모든 STEP에 적용)
+
+**checkpoint 기록 — 각 STEP 진입 직후:**
+```python
+# 각 STEP 시작 시 즉시 실행 (에이전트가 직접 jeo-state.json 업데이트)
+python3 -c "
+import json, datetime, os
+f='.omc/state/jeo-state.json'
+if os.path.exists(f):
+    d=json.load(open(f))
+    d['checkpoint']='<current_phase>'   # 'plan'|'execute'|'verify'|'cleanup'
+    d['updated_at']=datetime.datetime.utcnow().isoformat()+'Z'
+    json.dump(d,open(f,'w'),indent=2)
+" 2>/dev/null || true
+```
+
+**last_error 기록 — Pre-flight 실패 또는 예외 발생 시:**
+```python
+python3 -c "
+import json, datetime, os
+f='.omc/state/jeo-state.json'
+if os.path.exists(f):
+    d=json.load(open(f))
+    d['last_error']='<에러 메시지>'
+    d['retry_count']=d.get('retry_count',0)+1
+    d['updated_at']=datetime.datetime.utcnow().isoformat()+'Z'
+    json.dump(d,open(f,'w'),indent=2)
+" 2>/dev/null || true
+```
+
+**재시작 시 checkpoint 기반 재개:**
+```python
+# jeo-state.json이 이미 존재하면 checkpoint에서 재개
+python3 -c "
+import json, os
+f='.omc/state/jeo-state.json'
+if os.path.exists(f):
+    d=json.load(open(f))
+    cp=d.get('checkpoint')
+    err=d.get('last_error')
+    if err: print(f'이전 오류: {err}')
+    if cp: print(f'재개 위치: {cp}')
+" 2>/dev/null || true
+```
+
+> **규칙**: Pre-flight에서 `exit 1` 전에 반드시 `last_error` 업데이트 + `retry_count` 증가.
+> `retry_count >= 3` 시 사용자에게 중단 여부를 확인하세요.
+
+---
+
 ### STEP 1: PLAN (건너뛰기 절대 금지)
+
+**Pre-flight (진입 전 필수):**
+```bash
+# checkpoint 기록
+python3 -c "import json,datetime,os; f='.omc/state/jeo-state.json'; d=json.load(open(f)) if os.path.exists(f) else {}; d.update({'checkpoint':'plan','updated_at':datetime.datetime.utcnow().isoformat()+'Z'}); json.dump(d,open(f,'w'),indent=2)" 2>/dev/null || true
+
+# plannotator 확인
+command -v plannotator >/dev/null 2>&1 || {
+  python3 -c "import json,datetime,os; f='.omc/state/jeo-state.json'; d=json.load(open(f)) if os.path.exists(f) else {}; d.update({'last_error':'plannotator 미설치','retry_count':d.get('retry_count',0)+1,'updated_at':datetime.datetime.utcnow().isoformat()+'Z'}); json.dump(d,open(f,'w'),indent=2)" 2>/dev/null || true
+  echo "❌ plannotator 미설치 — bash scripts/install.sh --with-plannotator"; exit 1
+}
+mkdir -p .omc/plans .omc/logs
+```
 
 1. `plan.md` 작성 (목표, 단계, 리스크, 완료 기준 포함)
 2. **plannotator 호출** (플랫폼별):
@@ -76,6 +144,19 @@ mkdir -p .omc/state .omc/plans .omc/logs
 ---
 
 ### STEP 2: EXECUTE
+
+**Pre-flight (team 가용 여부 자동 감지):**
+```bash
+# checkpoint 기록
+python3 -c "import json,datetime,os; f='.omc/state/jeo-state.json'; d=json.load(open(f)) if os.path.exists(f) else {}; d.update({'checkpoint':'execute','updated_at':datetime.datetime.utcnow().isoformat()+'Z'}); json.dump(d,open(f,'w'),indent=2)" 2>/dev/null || true
+
+TEAM_AVAILABLE=false
+if [[ -n "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-}" ]] || \
+   grep -q "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS" "${HOME}/.claude/settings.json" 2>/dev/null; then
+  TEAM_AVAILABLE=true
+fi
+python3 -c "import json,os; f='.omc/state/jeo-state.json'; d=json.load(open(f)); d['team_available']=('${TEAM_AVAILABLE}'=='true'); json.dump(d,open(f,'w'),indent=2)" 2>/dev/null || true
+```
 
 1. `jeo-state.json`의 `phase`를 `"execute"`로 업데이트
 2. **team 사용 가능 (Claude Code + omc)**:
@@ -118,6 +199,19 @@ mkdir -p .omc/state .omc/plans .omc/logs
 
 ### STEP 4: CLEANUP
 
+**Pre-flight (진입 전 확인):**
+```bash
+# checkpoint 기록
+python3 -c "import json,datetime,os; f='.omc/state/jeo-state.json'; d=json.load(open(f)) if os.path.exists(f) else {}; d.update({'checkpoint':'cleanup','updated_at':datetime.datetime.utcnow().isoformat()+'Z'}); json.dump(d,open(f,'w'),indent=2)" 2>/dev/null || true
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "⚠️ git 저장소 아님 — worktree 정리 건너뜀"
+else
+  UNCOMMITTED=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  [[ "$UNCOMMITTED" -gt 0 ]] && echo "⚠️ 미커밋 변경 ${UNCOMMITTED}건 존재 — 정리 전 커밋/stash 권장"
+fi
+```
+
 1. `jeo-state.json`의 `phase`를 `"cleanup"`으로 업데이트
 2. worktree 정리:
    ```bash
@@ -129,7 +223,14 @@ mkdir -p .omc/state .omc/plans .omc/logs
 
 ## 1. Quick Start
 
+> **소스 오브 트루스**: `https://github.com/supercent-io/skills-template`
+> `~/.claude/skills/jeo/` 등 로컬 경로는 `npx skills add`로 설치된 사본입니다.
+> 최신 버전으로 업데이트하려면 아래 명령으로 재설치하세요.
+
 ```bash
+# JEO 설치 (npx skills add — 권장)
+npx skills add https://github.com/supercent-io/skills-template --skill jeo
+
 # 전체 설치 (모든 AI 툴 + 모든 컴포넌트)
 bash scripts/install.sh --all
 
@@ -570,11 +671,14 @@ JEO는 아래 경로에 상태를 저장합니다:
 **상태 파일 구조:**
 ```json
 {
-  "phase": "plan|execute|verify|verify_ui|cleanup",
+  "phase": "plan|execute|verify|verify_ui|cleanup|done",
   "task": "현재 작업 설명",
   "plan_approved": true,
   "team_available": true,
   "worktrees": ["path/to/worktree1", "path/to/worktree2"],
+  "retry_count": 0,
+  "last_error": null,
+  "checkpoint": "plan|execute|verify|verify_ui|cleanup",
   "created_at": "2026-02-24T00:00:00Z",
   "updated_at": "2026-02-24T00:00:00Z",
   "agentation": {
@@ -594,6 +698,28 @@ JEO는 아래 경로에 상태를 저장합니다:
 
 > **agentation 필드**: `active` — watch loop 실행 여부 (hook guard 사용), `session_id` — 재개용,
 > `exit_reason` — `"all_resolved"` | `"timeout"` | `"user_cancelled"` | `"error"`
+
+> **에러 복구 필드**:
+> - `retry_count` — 에러 후 재시도 횟수. Pre-flight 실패 때마다 +1. `≥ 3`이면 사용자에게 확인 요청.
+> - `last_error` — 가장 최근 에러 메시지. 재시작 시 원인 파악에 사용.
+> - `checkpoint` — 마지막으로 시작된 phase. 재시작 시 이 phase부터 재개 (`plan|execute|verify|cleanup`).
+
+**Checkpoint 기반 재개 플로우:**
+```bash
+# 재시작 시 checkpoint 확인
+python3 -c "
+import json, os
+f='.omc/state/jeo-state.json'
+if os.path.exists(f):
+    d=json.load(open(f))
+    cp=d.get('checkpoint')
+    err=d.get('last_error')
+    rc=d.get('retry_count',0)
+    print(f'재개 위치: {cp or \"처음부터\"}')
+    if err: print(f'이전 오류 ({rc}회): {err}')
+    if rc >= 3: print('⚠️ 재시도 3회 초과 — 사용자 확인 필요')
+"
+```
 
 재시작 후 복원:
 ```bash

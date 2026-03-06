@@ -1,13 +1,15 @@
 ---
 name: ralph
-keyword: ralph
-description: Specification-first AI development powered by Ouroboros. Socratic questioning exposes hidden assumptions before writing code. Evolutionary loop (Interview → Seed → Execute → Evaluate → Evolve) runs until ontology converges. Ralph mode persists until verification passes — the boulder never stops. Use when user says "ralph", "ooo", "don't stop", "must complete", "until it works", "keep going", "interview me", or "stop prompting".
-allowed-tools: [Read, Write, Bash, Grep, Glob, WebFetch]
-tags: [ralph, ouroboros, specification-first, socratic, interview, seed, evaluate, evolve, loop, completion, self-referential, multi-platform, claude, codex, gemini, boulder, ooo]
-platforms: [Claude Code, Codex, Gemini-CLI, OpenCode]
-version: 3.0.0
-source: Q00/ouroboros
+description: "Specification-first AI development powered by Ouroboros. Socratic questioning exposes hidden assumptions before writing code. Evolutionary loop (Interview → Seed → Execute → Evaluate → Evolve) runs until ontology converges. Ralph mode persists until verification passes — the boulder never stops. Use when user says \"ralph\", \"ooo\", \"don't stop\", \"must complete\", \"until it works\", \"keep going\", \"interview me\", or \"stop prompting\"."
+allowed-tools: Read Write Bash Grep Glob WebFetch
+metadata:
+  tags: ralph, ouroboros, specification-first, socratic, interview, seed, evaluate, evolve, loop, completion, self-referential, multi-platform, claude, codex, gemini, boulder, ooo
+  platforms: Claude Code, Codex, Gemini-CLI, OpenCode
+  keyword: ralph
+  version: 3.0.0
+  source: Q00/ouroboros
 ---
+
 
 # ralph (Ouroboros) — Specification-First AI Development
 

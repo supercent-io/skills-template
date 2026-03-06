@@ -1,13 +1,11 @@
 ---
-name: pptx-presentation-builder
+name: presentation-builder
 description: Build professional PPTX presentations with brand-aligned layouts using structured deck briefs and validation steps for pitch, roadmap, and product decks.
-tags: [presentation, pptx, slides, storytelling, branding, pitch-deck]
-platforms: [Claude, ChatGPT, Gemini, Codex]
-allowed-tools:
-  - Write
-  - Read
-  - Task
+metadata:
+  tags: presentation, pptx, slides, storytelling, branding, pitch-deck
+  platforms: Claude, ChatGPT, Gemini, Codex
 ---
+
 
 # PPTX Presentation Builder
 

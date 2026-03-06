@@ -1,14 +1,11 @@
 ---
-name: image-generation-mcp
+name: image-generation
 description: Generate high-quality images via MCP (Gemini models or compatible services) using structured prompts, ratios, and validation for marketing, UI, or presentations.
-tags: [image-generation, gemini, mcp, design, creative, ai-art]
-platforms: [Claude, ChatGPT, Gemini, Codex]
-allowed-tools:
-  - mcp__gemini-cli__ask-gemini
-  - mcp__gemini-cli__brainstorm
-  - Write
-  - Read
+metadata:
+  tags: image-generation, gemini, mcp, design, creative, ai-art
+  platforms: Claude, ChatGPT, Gemini, Codex
 ---
+
 
 # Image Generation via MCP
 

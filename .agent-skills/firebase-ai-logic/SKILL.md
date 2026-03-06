@@ -1,9 +1,11 @@
 ---
 name: firebase-ai-logic
 description: Integrate Firebase AI Logic (Gemini in Firebase) for intelligent app features. Use when adding AI capabilities to Firebase apps, implementing generative AI features, or setting up Firebase AI SDK. Handles Firebase AI SDK setup, prompt engineering, and AI-powered features.
-tags: [firebase, ai, gemini, generative-ai, sdk]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: firebase, ai, gemini, generative-ai, sdk
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Firebase AI Logic Integration
 

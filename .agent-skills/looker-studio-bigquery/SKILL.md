@@ -1,9 +1,11 @@
 ---
 name: looker-studio-bigquery
 description: Design and configure Looker Studio dashboards with BigQuery data sources. Use when creating analytics dashboards, connecting BigQuery to visualization tools, or optimizing data pipeline performance. Handles BigQuery connections, custom SQL queries, scheduled queries, dashboard design, and performance optimization.
-tags: [Looker-Studio, BigQuery, dashboard, analytics, visualization, GCP, data-studio, SQL]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: Looker-Studio, BigQuery, dashboard, analytics, visualization, GCP, data-studio, SQL
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Looker Studio BigQuery Integration
 

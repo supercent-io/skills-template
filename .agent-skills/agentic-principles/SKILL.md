@@ -1,12 +1,14 @@
 ---
 name: agentic-principles
 description: AI 에이전트 협업 개발의 핵심 원칙. 분해정복, 컨텍스트 관리, 추상화 수준 선택, 자동화 철학, 검증 회고를 정의. 모든 AI 에이전트 사용 시 최적의 협업 패턴 적용.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [agentic-development, principles, context-management, automation, multi-agent]
-platforms: [Claude, Gemini, ChatGPT, Codex]
-version: 2.0.0
-source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: agentic-development, principles, context-management, automation, multi-agent
+  platforms: Claude, Gemini, ChatGPT, Codex
+  version: 2.0.0
+  source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
 ---
+
 
 # AI 에이전트 협업 핵심 원칙 (Agentic Development Principles)
 

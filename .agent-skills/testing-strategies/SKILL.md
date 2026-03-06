@@ -1,9 +1,11 @@
 ---
 name: testing-strategies
 description: Design comprehensive testing strategies for software quality assurance. Use when planning test coverage, implementing test pyramids, or setting up testing infrastructure. Handles unit testing, integration testing, E2E testing, TDD, and testing best practices.
-tags: [testing, test-strategy, TDD, unit-test, integration-test, E2E, test-pyramid]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: testing, test-strategy, TDD, unit-test, integration-test, E2E, test-pyramid
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Testing Strategies
 

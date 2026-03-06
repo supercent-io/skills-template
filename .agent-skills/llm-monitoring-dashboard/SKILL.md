@@ -1,9 +1,11 @@
 ---
 name: llm-monitoring-dashboard
 description: PM용 관리자 대시보드에 LLM 사용 모니터링 페이지를 자동 생성. Tokuin CLI 기반 토큰/비용/레이턴시 추적 + 사용자 랭킹 시스템 + 비사용자 추적 + 데이터 기반 PM 인사이트 자동 생성 + Cmd+K 글로벌 검색 + 사용자별 드릴다운 링크 탐색 포함. OpenAI/Anthropic/Gemini/OpenRouter 지원.
-tags: [LLM, monitoring, dashboard, tokuin, pm-insights, ranking, user-tracking, cost-tracking, Next.js, React, admin]
-platforms: [Claude, ChatGPT, Gemini, Codex]
+metadata:
+  tags: LLM, monitoring, dashboard, tokuin, pm-insights, ranking, user-tracking, cost-tracking, Next.js, React, admin
+  platforms: Claude, ChatGPT, Gemini, Codex
 ---
+
 
 # LLM 사용 모니터링 대시보드
 

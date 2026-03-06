@@ -1,13 +1,14 @@
 ---
 name: web-design-guidelines
-description: Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices". Fetches latest Vercel guidelines and checks files against all rules.
-tags: [UI, review, web-interface, guidelines, vercel, design-audit, UX]
-platforms: [Claude, ChatGPT, Gemini]
+description: "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\". Fetches latest Vercel guidelines and checks files against all rules."
 metadata:
   author: vercel
-  version: "1.0.0"
-  argument-hint: <file-or-pattern>
+  version: 1.0.0
+  argument-hint: "<file-or-pattern>"
+  tags: UI, review, web-interface, guidelines, vercel, design-audit, UX
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Web Interface Guidelines Review
 

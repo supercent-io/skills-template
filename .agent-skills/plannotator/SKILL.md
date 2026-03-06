@@ -1,13 +1,15 @@
 ---
 name: plannotator
-keyword: plan
 description: Interactive plan and diff review for AI coding agents. Visual browser UI for annotating agent plans — approve or request changes with structured feedback. Supports code review, image annotation, and auto-save to Obsidian/Bear Notes.
-allowed-tools: [Read, Bash, Write]
-tags: [plan, 계획, planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review, 계획검토, 설계검토]
-platforms: [Claude, OpenCode, Codex, Gemini]
-version: 0.9.2
-source: backnotprop/plannotator
+allowed-tools: Read Bash Write
+metadata:
+  tags: plan, 계획, planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review, 계획검토, 설계검토
+  platforms: Claude, OpenCode, Codex, Gemini
+  keyword: plan
+  version: 0.9.2
+  source: backnotprop/plannotator
 ---
+
 
 # plannotator — Interactive Plan & Diff Review
 

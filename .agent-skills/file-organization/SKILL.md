@@ -1,10 +1,12 @@
 ---
 name: file-organization
 description: Organize project files and folders for maintainability and scalability. Use when structuring new projects, refactoring folder structure, or establishing conventions. Handles project structure, naming conventions, and file organization best practices.
-allowed-tools: [Read, Write, Glob, Bash]
-tags: [file-organization, project-structure, folder-structure, naming-conventions]
-platforms: [Claude, ChatGPT, Gemini]
+allowed-tools: Read Write Glob Bash
+metadata:
+  tags: file-organization, project-structure, folder-structure, naming-conventions
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Project File Organization
 

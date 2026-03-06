@@ -1,10 +1,12 @@
 ---
 name: skill-standardization
 description: Standardize and validate SKILL.md files to match the project specification. Use when creating new skills, converting existing skills to standard format, or validating skill file structure. Handles section heading conversion, frontmatter standardization, and missing section detection.
-tags: [skill-management, standardization, validation, automation, scripting]
-platforms: [Claude, ChatGPT, Gemini]
-allowed-tools: [Bash, Read, Write, Edit, Glob, Grep]
+allowed-tools: Bash Read Write Edit Glob Grep
+metadata:
+  tags: skill-management, standardization, validation, automation, scripting
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Skill Standardization
 

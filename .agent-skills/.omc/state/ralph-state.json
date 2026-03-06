@@ -1,0 +1,29 @@
+{
+  "mode": "ralph",
+  "session_id": "ralph-bmad-toon-20260306",
+  "request": "bmad skill에 TOON format 통합 추가 + ClaudeCode/Codex/Gemini-CLI 훅/세팅으로 강제 적용. ultrateam(QA/LLM전문가/Skill전문가/ClaudeCode/Codex/Gemini-CLI 역할)으로 논의",
+  "status": "complete",
+  "iteration": 1,
+  "max_iterations": 10,
+  "last_checkpoint": "complete",
+  "verification_history": [
+    {
+      "iteration": 1,
+      "passed": true,
+      "score": 1.0,
+      "timestamp": "2026-03-06T00:00:00Z",
+      "deliverables": [
+        "bmad-orchestrator/SKILL.md — TOON Format Integration 섹션 추가 (Two-tier architecture, Claude Code/Codex/Gemini CLI 설정 전체 문서화)",
+        "~/.claude/hooks/toon-inject.mjs — Node.js UserPromptSubmit 훅 (심링크 추적, 3단계 키워드 매칭)",
+        "~/.claude/settings.json — toon-inject.mjs 훅 등록",
+        "~/.gemini/hooks/toon-skill-inject.sh — AfterAgent 훅 (카탈로그 갱신)",
+        "~/.gemini/settings.json — includeDirectories + AfterAgent 훅 등록",
+        "~/.gemini/toon-catalog.md — 60개 스킬 카탈로그 (1286줄)",
+        "~/.codex/skills-toon-catalog.toon — 62개 스킬 정적 카탈로그 (51KB)",
+        "~/.codex/hooks/toon-skill-inject.py — notify 훅 (키워드 감지 + 사이드카)",
+        "~/.codex/hooks/notify-dispatch.py — 멀티 훅 디스패처",
+        "~/.codex/toon-dev-instructions-addition.txt — developer_instructions 추가 텍스트"
+      ]
+    }
+  ]
+}

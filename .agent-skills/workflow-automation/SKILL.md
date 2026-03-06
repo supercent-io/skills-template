@@ -1,9 +1,11 @@
 ---
 name: workflow-automation
 description: Automate repetitive development tasks and workflows. Use when creating build scripts, automating deployments, or setting up development workflows. Handles npm scripts, Makefile, GitHub Actions workflows, and task automation.
-tags: [automation, scripts, workflow, npm-scripts, Makefile, task-runner]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: automation, scripts, workflow, npm-scripts, Makefile, task-runner
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Workflow Automation
 

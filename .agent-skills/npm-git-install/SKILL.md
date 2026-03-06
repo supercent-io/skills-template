@@ -1,13 +1,11 @@
 ---
 name: npm-git-install
 description: Install npm packages directly from GitHub repositories using git URLs. Use when installing packages from private repos, specific branches, or unreleased versions not yet on npm registry.
-tags: [npm, git, github, install, package-management, node]
-platforms: [Claude, ChatGPT, Gemini, Opencode]
-allowed-tools:
-  - Bash
-  - Read
-  - Write
+metadata:
+  tags: npm, git, github, install, package-management, node
+  platforms: Claude, ChatGPT, Gemini, Opencode
 ---
+
 
 # npm install Git Repository Guide
 

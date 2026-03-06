@@ -1,9 +1,9 @@
 # Agent Skills
 
-> v2026-03-05 · **70 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-06 · **71 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-70-brightgreen)](#skills-list-70-total)
+[![Skills](https://img.shields.io/badge/Skills-71-brightgreen)](#skills-list-71-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.0.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -15,11 +15,12 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-03-03)
+- [What's New](#whats-new-in-v2026-03-06)
 - [설치 (Install)](#설치-install)
 - [실행 가이드](#실행-가이드)
-- [Skills List (70)](#skills-list-70-total)
+- [Skills List (71)](#skills-list-71-total)
 - [Featured Tools](#featured-tools)
+- [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
 - [Related docs](#related-docs)
 - [Changelog](#changelog)
@@ -37,20 +38,16 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-03-05
+## What's New in v2026-03-06
 
 | 변경 | 내용 |
 |------|------|
-| **`agentation` v1.1.0 설치 개선** | 공식 `agentation.dev/install` 페이지 기반 SKILL.md 전면 개선. (1) **Claude Code Official Skill** `npx skills add benjitaylor/agentation` → `/agentation` 커맨드 유도 추가 (2) **`npx add-mcp`** 9+ 에이전트 자동 감지 보편 MCP 설치 방법으로 추진 (3) **Local-first 아키텍첸** 문서화 (오프라인 동작·세션 연속성·중복 없음) (4) Section 2를 3가지 경로(스킬/Universal/수동)로 개편, Section 4에 `npx add-mcp` 우선 노출 |
-| **`jeo` Bug 수정 + 에이전트 실행 프로토콜** | **[P0]** `setup-gemini.sh` — `jeo-plannotator.sh`에 state file guard 추가: JEO가 비활성 상태(`jeo-state.json` 없음)일 때 AfterAgent 훅이 잘못 plannotator를 실행하던 버그 수정. **[P1]** `jeo/SKILL.md` — `## 0. 에이전트 실행 프로토콜` 섹션 추가: ralph처럼 명령형 pseudocode 단계(STEP 0~4)로 에이전트가 jeo 키워드 감지 즉시 따를 수 있는 실행 프로토콜. **[P1]** `skills-lock.json` — `dependencies` 키 신규 추가 (plannotator + agentation, required_by: jeo) |
-| **`jeo` 상태 파일 생명주기 명세** | `jeo-state.json` 생성 → phase 전환(`plan→execute→verify→verify_ui→cleanup→done`) → agentation 필드(`active`, `exit_reason`, `annotations` 집계) 전체 생명주기를 SKILL.md에 명시. 이전에는 에이전트가 state file을 생성하는 명시적 지시 없이 실행해 훅 phase guard가 제대로 동작하지 않던 구조적 원인 해소 |
-| **`ralph` v3.0.0 — Ouroboros 통합** | [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성. Specification-first 워크플로우(Interview→Seed→Execute→Evaluate→Evolve) 통합, 9개 에이전트, Ambiguity ≤ 0.2 게이트, Ontology Similarity ≥ 0.95 수렴 조건, 3플랫폼 병렬 지원 (Claude · Codex · Gemini) |
-| **신규 `ai-tool-compliance` 스킬** | 내부 AI 툴 필수 구현 가이드(P0/P1) 기반 컴플라이언스 자동 검증. 4도메인 이진 점수(40/25/20/15), 배포 게이트, 이력 추적 |
-| **`ai-tool-compliance` P1 확장** | 기본 P0 검증 경로는 유지하고(`verify.sh` 기본 동작 변경 없음), 선택적 P1 확장 모드(`--include-p1`)와 P1 성숙도 점수(`p1_maturity_score`)를 추가. 리포트/문서는 append-only로 확장 |
-| **신규 `bmad-gds` 스킬** | BMAD Game Development Studio — Pre-production·Design·Architecture·Production·GameTest 5단계, 6 전문 에이전트 (Unity · Unreal Engine · Godot 지원) |
-| **신규 `bmad-idea` 스킬** | BMAD Creative Intelligence Suite — 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 전문 에이전트 (Carson · Maya · Victor · Dr. Quinn · Sophia) |
-| **설치 스크립트 클린 재설치** | `setup-all-skills-prompt.md` 개선 — 설치 전 기존 디렉터리(`~/.agent-skills` 및 플랫폼별 skills 경로) 자동 제거 후 새로 설치. 재설치 시 파일 충돌 없이 항상 최신 버전으로 초기화됨 |
-| **`jeo` annotate 통합** | agentation을 jeo VERIFY_UI 단계로 완전 통합. plannotator가 `plan`에서 동작하는 방식과 동일한 패턴: `annotate` 키워드 → `agentation_watch_annotations` 블로킹 → annotation ack→fix→resolve 루프. Phase guard로 plannotator와 agentation 분리, pre-flight check, RE-SNAPSHOT 검증 추가. 4대 플랫폼 모두 MCP 등록 + 설치 스크립트 업데이트 |
+| **TOON Format 전 플랫폼 훅 통합** | ultrateam 6명 설계·구현. **Claude Code**: `~/.claude/hooks/toon-inject.mjs` (Node.js, 심링크 추적, 3단계 키워드 매칭, 26-37ms). **Gemini CLI**: `toon-skill-inject.sh` + `includeDirectories`. **Codex CLI**: 정적 카탈로그 + 2-턴 사이드카 패턴 |
+| **bmad-orchestrator TOON Integration 문서화** | `SKILL.md`에 TOON Format Integration 섹션 추가. Two-tier 아키텍처: Tier 1 카탈로그 항상 주입 (~875-3,500 tokens) + Tier 2 SKILL.toon 온디맨드 (max 3개). 플랫폼별 설정 전체 문서화 |
+| **71개 SKILL.toon 전수 검증** | 모든 71개 스킬 TOON 포맷 준수 여부 검증 및 수정 완료 |
+
+> 이전 변경 내역: [Changelog](#changelog)
+
 ---
 
 ## 설치 (Install)
@@ -150,6 +147,15 @@ npx skills add https://github.com/supercent-io/skills-template --skill ralph
 
 > 상세: [docs/ralph/README.md](docs/ralph/README.md)
 
+#### Ralph 자동화 권한 프로파일 → `ralphmode`
+
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill ralphmode
+# 사용: Claude Code / Codex CLI / Gemini CLI에서 ralph 자동화용 permission profile 적용
+```
+
+> 상세: [.agent-skills/ralphmode/SKILL.md](.agent-skills/ralphmode/SKILL.md)
+
 #### 계획 시각 검토 + Feedback loop → `plannotator`
 
 ```bash
@@ -177,7 +183,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (70 total)
+## Skills List (71 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -281,7 +287,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 |-------|-------------|-----------|
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 
-### Utilities (19)
+### Utilities (20)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -302,6 +308,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `opencontext` | AI agent persistent memory | All platforms |
 | `plannotator` | Visual plan and diff review — annotate, approve, or request changes | Claude |
 | `ralph` | Self-referential completion loop for multi-turn agents | Claude |
+| `ralphmode` | Cross-platform Ralph automation permission profiles for Claude Code, Codex CLI, and Gemini CLI | Claude · Codex · Gemini |
 | `skill-standardization` | SKILL.md standardization | All platforms |
 | `vibe-kanban` | Kanban board for AI coding agents with git worktree automation | All platforms |
 | `workflow-automation` | Workflow automation | All platforms |
@@ -471,6 +478,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill bmad-orch
 | Phase Gate Review | plannotator review UI at each phase transition |
 | Obsidian Archive | Auto-save approved docs with YAML frontmatter |
 | Team Visibility | Share review link for stakeholder annotation |
+| **TOON Format Injection** | 전 플랫폼 스킬 컨텍스트 자동 주입 — Claude Code 훅 / Gemini includeDirectories / Codex 정적 카탈로그 |
 
 ---
 
@@ -491,6 +499,40 @@ bash scripts/install.sh --all   # 전체 설치
 | Verify | agent-browser | 브라우저 동작 검증 (기본) |
 | Verify UI | agentation (**annotate**) | UI 어노테이션 watch loop — pre-flight → ack→fix→resolve→re-snapshot |
 | Cleanup | worktree-cleanup.sh | 완료 후 worktree 자동 정리 |
+
+---
+
+## TOON Format Injection
+
+> **용도**: 모든 프롬프트에 스킬 컨텍스트 자동 주입 | **플랫폼**: Claude Code · Codex CLI · Gemini CLI | **상태**: stable v1.0.0
+
+TOON(Token-Oriented Object Notation) 포맷으로 스킬 카탈로그를 압축하여 AI 도구의 모든 프롬프트에 자동 주입합니다. JSON/Markdown 대비 40-50% 토큰 절감. ultrateam 6명(QA·LLM전문가·Skill전문가·ClaudeCode·Codex·Gemini-CLI)이 설계·구현했습니다.
+
+### Two-Tier Architecture
+
+- **Tier 1 (항상 주입)**: 스킬 카탈로그 인덱스 (~875-3,500 tokens) — 프롬프트마다 스킬 이름+설명+태그 자동 주입
+- **Tier 2 (온디맨드)**: 개별 SKILL.toon 전체 내용 (~292 tokens/skill, max 3) — 스킬 이름/태그 감지 시 자동 로드
+
+> 전체 71개 동시 주입 (~20,700 tokens)은 금지. Tier 1 + 온디맨드 max 3개 원칙으로 5% 이하 컨텍스트 비용 유지.
+
+### 플랫폼별 구현
+
+| 플랫폼 | 파일 | 메커니즘 | 성능 |
+|--------|------|---------|------|
+| **Claude Code** | `~/.claude/hooks/toon-inject.mjs` | `UserPromptSubmit` 훅 — Node.js, 3단계 키워드 매칭, 심링크 투명 추적 | 26-37ms |
+| **Gemini CLI** | `~/.gemini/hooks/toon-skill-inject.sh` | `includeDirectories` 세션 시작 로드 + `AfterAgent` 갱신 훅 | ~0.1s |
+| **Codex CLI** | `~/.codex/skills-toon-catalog.toon` | 정적 카탈로그 + `notify-dispatch.py` + 2-턴 사이드카 패턴 | 0ms (정적) |
+
+> **왜 Node.js인가**: `~/.claude/skills/`는 `~/.agents/skills/`로의 심링크 구조. Python `Path.rglob()`은 심링크를 따르지 않아 0개를 반환. Node.js `readdirSync`는 투명하게 추적합니다.
+
+### TOON 포맷 기본 구조
+
+```
+N:skill-name  D:description  G:tag1 tag2 tag3
+U[n]: use cases · S[n]{n,action,details}: steps · R[n]: rules · E[n]{desc,in,out}: examples
+```
+
+상세 설정: [bmad-orchestrator SKILL.md — TOON Format Integration](.agent-skills/bmad-orchestrator/SKILL.md)
 
 ---
 
@@ -532,44 +574,26 @@ bash scripts/install.sh --all   # 전체 설치
 
 ## Changelog
 
-**v2026-03-05 (latest)**:
-- **jeo: state file guard 버그 수정 (P0)**: `setup-gemini.sh`의 `jeo-plannotator.sh` 생성 블록에서 state file(`jeo-state.json`) 부재 시 즉시 `exit 0` 처리 추가. 이전에는 JEO가 비활성 상태여도 AfterAgent 훅이 `plan.md` 존재만으로 plannotator를 잘못 실행하던 버그 수정
-- **jeo: 에이전트 실행 프로토콜 추가 (P1)**: `SKILL.md`에 `## 0. 에이전트 실행 프로토콜` 섹션 삽입. jeo 키워드 감지 즉시 따를 수 있는 명령형 pseudocode 5단계(STEP 0: state 부트스트랩 → STEP 1: PLAN/plannotator → STEP 2: EXECUTE → STEP 3: VERIFY → STEP 3.1: VERIFY_UI/agentation → STEP 4: CLEANUP). ralph 스킬 패턴과 동일한 형식
-- **skills-lock.json: 의존성 명세 추가 (P1)**: `"dependencies"` 키 신규 추가 — `plannotator`(required_by: jeo, installCommand: `--with-plannotator`)와 `agentation`(required_by: jeo, installCommand: `--with-agentation`) 등록
-- **agentation v1.1.0 설치 개선**: `agentation.dev/install` 공식 페이지 기반 SKILL.md 전면 개선. Claude Code Official Skill(`npx skills add benjitaylor/agentation` → `/agentation`), Universal `npx add-mcp` 우선 노출, Local-first 아키텍첸 문서화(오프라인 동작·세션 연속성·중복 없음), 오타 수정(`jeo 실치` → `설치`), 비전 v1.1.0 뱤프
+**v2026-03-06 (latest)**:
+- **TOON Format 전 플랫폼 훅 통합**: ultrateam(QA·LLM전문가·Skill전문가·ClaudeCode·Codex·Gemini-CLI) 6명 설계·구현. Claude Code: `~/.claude/hooks/toon-inject.mjs` Node.js hook (심링크 추적, 3단계 키워드 매칭, 26-37ms). Gemini CLI: `~/.gemini/hooks/toon-skill-inject.sh` + `includeDirectories` + `AfterAgent` 훅. Codex CLI: 정적 카탈로그(`skills-toon-catalog.toon`, 62 skills) + `notify-dispatch.py` + 2-턴 사이드카 패턴
+- **bmad-orchestrator SKILL.md TOON Integration 섹션**: Two-tier 아키텍처 전체 문서화 (Tier 1 카탈로그 ~875-3,500 tokens 항상 주입 / Tier 2 SKILL.toon 온디맨드 max 3개)
+- **71개 SKILL.toon 전수 검증**: 모든 스킬 TOON 포맷 준수 여부 검증 및 수정 완료
+
+**v2026-03-05**:
+- **jeo: state file guard 버그 수정 (P0)**: AfterAgent 훅이 `jeo-state.json` 부재 시 plannotator를 잘못 실행하던 버그 수정
+- **jeo: 에이전트 실행 프로토콜 추가 (P1)**: `SKILL.md`에 `## 0. 에이전트 실행 프로토콜` 섹션 삽입. STEP 0~4 명령형 pseudocode
+- **skills-lock.json: 의존성 명세 추가 (P1)**: `plannotator` + `agentation` required_by jeo 등록
+- **agentation v1.1.0 설치 개선**: Claude Code Official Skill + Universal `npx add-mcp` + Local-first 아키텍처 문서화
 
 **v2026-03-04**:
-- **jeo annotate 통합 (v2)**: agentation VERIFY_UI 키워드를 `agentui` → `annotate`로 변경 (Korean alias: `UI검토`, `agentui` 하위 호환). Phase guard 추가로 plannotator-agentation 훅 충돌 해결 (Gemini AfterAgent, Codex notify). Pre-flight 3단계 체크, RE-SNAPSHOT 검증, jeo-state.json agentation 추적 필드, verify-loop.sh 통합 테스트, OpenCode setup Python 구문 버그 수정
-- **ralph v3.0.0**: [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반으로 전면 재작성. Specification-first 워크플로우(단계: Interview→Seed→Execute→Evaluate→Evolve) 통합, 9개 에이전트, Ambiguity ≤ 0.2 게이트, Ontology Similarity ≥ 0.95 수렴 조건, 3플랫폼 병렬 지원 (Claude · Codex · Gemini)
-- **setup-all-skills-prompt 클린 재설치**: 설치 전 기존 `~/.agent-skills` 디렉터리를 자동 제거(`rm -rf`) 후 새로 생성. 플랫폼별 동기화 경로(`~/.claude/skills`, `~/.codex/skills`, `~/.gemini/skills`, `~/.opencode/skills` 등)도 for 루프로 순차 제거 후 재생성. 재설치 시 파일 충돌·잔재 없이 클린 설치 보장
+- **jeo annotate 통합 (v2)**: VERIFY_UI 키워드 `agentui` → `annotate`. Phase guard로 plannotator-agentation 훅 충돌 해결. Pre-flight 3단계 체크, RE-SNAPSHOT 검증
+- **ralph v3.0.0**: [Q00/ouroboros](https://github.com/Q00/ouroboros) 기반 전면 재작성. Interview→Seed→Execute→Evaluate→Evolve, 9 에이전트, Ambiguity ≤ 0.2 게이트, Similarity ≥ 0.95 수렴
+- **setup-all-skills-prompt 클린 재설치**: 설치 전 기존 디렉터리 자동 제거 후 재생성
 
 **v2026-03-03 (update)**:
-- **bmad-gds**: New skill — BMAD Game Development Studio. Pre-production → Design → Technical → Production → GameTest 5단계 파이프라인, 24개 커맨드, 6 전문 에이전트 (Unity/Unreal/Godot 지원), SKILL.toon + REFERENCE.md 포함
-- **bmad-idea**: New skill — BMAD Creative Intelligence Suite (CIS). 브레인스토밍·디자인 씽킹·혁신 전략·문제 해결·스토리텔링 5개 즉시 실행 워크플로우, 5 named 에이전트 (Carson/Maya/Victor/Dr. Quinn/Sophia), SKILL.toon + REFERENCE.md 포함
-- **ai-tool-compliance P1 확장**: `verify.sh --include-p1` 옵션 추가(기본 P0 유지), `catalog-p1.json`/`catalog-all.json` 카탈로그 추가, `score.sh`에 `p1_maturity_score`/`p0_gate_score` 출력 확장, `gate.sh`에 P1 성숙도 표시 추가
-- **Workflow Toggle**: `templates/ai-tool-compliance.yml`에 `COMPLIANCE_INCLUDE_P1` 환경변수 추가(기본 `false`), 켜면 CI에서 P0+P1 동시 검증
-- **문서/리포트 확장**: `SKILL.md`와 `risk-score-report.md`에 Notion 표 정렬용 P1 v1.1 섹션을 append-only 방식으로 추가
+- **bmad-gds**: New skill — BMAD Game Development Studio. 5단계 파이프라인, 6 전문 에이전트 (Unity/Unreal/Godot)
+- **bmad-idea**: New skill — BMAD Creative Intelligence Suite. 5개 워크플로우, 5 named 에이전트
+- **ai-tool-compliance P1 확장**: `--include-p1` 옵션 추가, `p1_maturity_score` 출력, CI 토글 추가
 
-**v2026-03-03 (latest)**:
-- **ai-tool-compliance**: New skill — 내부 AI 툴 필수 구현 가이드 v1.1 기반 P0/P1 컴플라이언스 자동 검증. 4도메인 이진 점수 체계(보안 40/권한 25/비용 20/로그 15), GitHub Actions 배포 게이트, `.compliance/runs/` 이력 추적, `verify.sh` + `score.sh` 파이프라인
-
-**v2026-02-26**:
-- **agent-browser**: SKILL.md를 운영형 구조로 확장 (core workflow, verification, safeguards, troubleshooting)
-- **agent-browser**: SKILL.toon 동기화 (snapshot-interact-resnapshot + verify 단계 반영)
-- **agent-browser**: references 4종 및 templates 2종 추가
-
-**v2026-02-26**:
-- **jeo (codex setup)**: `setup-codex.sh`가 `developer_instructions`를 Codex 스키마에 맞는 top-level 문자열로 강제 동기화하도록 수정
-- **jeo (status check)**: Codex 설정 검증을 강화해 잘못된 `developer_instructions` 형식을 정확히 감지하고 안내
-
-**v2026-02-25 (latest)**:
-- **jeo**: New skill added — Integrated Agent Orchestration (ralph+plannotator → team/bmad → agent-browser verify → worktree cleanup); registered in skills.json under utilities
-- Skills list 표 형식 개편 (카테고리 재구성, 69개 전체)
-
-**v2026-02-23**:
-- **plannotator/Obsidian**: Verified Obsidian integration (2026-02-23); added automated browser limitation note (Playwright/Puppeteer cannot open obsidian:// URI); added folder organization guide (approved/, denied/, YYYY-MM/); added direct filesystem fallback pattern (SKILL.md, docs/plannotator/README.md, README.md)
-
-**v2026-02-23**:
-- **ralph**: Default `--max-iterations` changed from `5` → `100` (SKILL.md, SKILL.toon, docs/ralph/README.md)
-- **plannotator**: Primary keyword changed from `planno` → `plan`, `계획` for natural design-phase activation; `planno` retained as backward-compatible alias in tags
-- **vibe-kanban**: OpenCode MCP 설정 섹션 추가 (SKILL.md, docs/vibe-kanban/README.md); OpenCode + ulw 병렬 위임 사용 케이스 추가 (SKILL.toon v1.2.0)
+**v2026-03-03**:
+- **ai-tool-compliance**: New skill — P0/P1 컴플라이언스 자동 검증. 4도메인 이진 점수(보안 40/권한 25/비용 20/로그 15), GitHub Actions 게이트, 이력 추적

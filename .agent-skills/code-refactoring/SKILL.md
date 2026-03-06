@@ -1,15 +1,11 @@
 ---
 name: code-refactoring
 description: Simplify and refactor code while preserving behavior, improving clarity, and reducing complexity. Use when simplifying complex code, removing duplication, or applying design patterns. Handles Extract Method, DRY principle, SOLID principles, behavior validation, and refactoring patterns.
-tags: [refactoring, code-quality, DRY, SOLID, design-patterns, clean-code, simplification, behavior-preservation]
-platforms: [Claude, ChatGPT, Gemini, Codex]
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Task
+metadata:
+  tags: refactoring, code-quality, DRY, SOLID, design-patterns, clean-code, simplification, behavior-preservation
+  platforms: Claude, ChatGPT, Gemini, Codex
 ---
+
 
 # Code Refactoring
 

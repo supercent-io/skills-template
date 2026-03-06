@@ -1,14 +1,16 @@
 ---
 name: ai-tool-compliance
-keyword: compliance
 description: 내부 AI 툴 필수 구현 가이드(P0/P1) 기반으로 권한, 비용, 로그, 보안 컴플라이언스를 설계-검증-개선하는 자동화 스킬. RBAC 설계, Gateway 원칙, Firestore 정책, 행동 로그, 비용 투명성, 기준검증 시스템의 전체 라이프사이클을 지원한다.
-allowed-tools: [Read, Bash, Grep, Glob]
 compatibility: "Requires python3 (stdlib only), jq, bash, bc, curl, git. PyYAML required only for install.sh (pip install pyyaml). Optional: Notion MCP tool for Notion workspace integration."
-tags: [compliance, RBAC, security, cost-tracking, audit-log, gateway, firestore, deploy-gate, P0, quick, full, improve, slash-command]
-platforms: [Claude, Gemini, Codex, OpenCode]
-version: 1.0.0
-source: user-installed skill
+allowed-tools: Read Bash Grep Glob
+metadata:
+  tags: compliance, RBAC, security, cost-tracking, audit-log, gateway, firestore, deploy-gate, P0, quick, full, improve, slash-command
+  platforms: Claude, Gemini, Codex, OpenCode
+  keyword: compliance
+  version: 1.0.0
+  source: user-installed skill
 ---
+
 
 # ai-tool-compliance - 내부 AI 툴 컴플라이언스 자동화
 

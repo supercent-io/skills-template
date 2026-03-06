@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 60,
+  "skill_count": 61,
   "categories": {
     "documentation": [
       "technical-writing",
@@ -52,6 +52,7 @@
       "prompt-repetition",
       "omc",
       "ralph",
+      "ralphmode",
       "skill-standardization",
       "workflow-automation"
     ],
@@ -2536,6 +2537,37 @@
       ],
       "keyword": "jeo",
       "version": "1.0.0"
+    },
+    {
+      "name": "ralphmode",
+      "description": "Configure Claude Code, Codex CLI, and Gemini CLI for Ralph-style automation with fewer approval prompts while keeping project boundaries, secret denylists, and sandbox-first safety rules intact.",
+      "category": "utilities",
+      "path": "ralphmode/SKILL.md",
+      "tags": [
+        "ralph",
+        "permissions",
+        "automation",
+        "claude-code",
+        "codex-cli",
+        "gemini-cli",
+        "sandbox",
+        "trusted-folders",
+        "bypass"
+      ],
+      "platforms": [
+        "Claude Code",
+        "Codex CLI",
+        "Gemini CLI"
+      ],
+      "allowed_tools": [
+        "Read",
+        "Write",
+        "Bash",
+        "Grep",
+        "Glob"
+      ],
+      "keyword": "ralphmode",
+      "version": "0.1.0"
     },
     {
       "name": "llm-monitoring-dashboard",

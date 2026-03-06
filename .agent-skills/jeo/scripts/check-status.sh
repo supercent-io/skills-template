@@ -142,8 +142,12 @@ if [[ -f "$STATE_FILE" ]]; then
   if command -v python3 >/dev/null 2>&1; then
     PHASE=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('phase','unknown'))" 2>/dev/null || echo "unknown")
     TASK=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('task','(none)'))" 2>/dev/null || echo "(none)")
+    RETRY=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('retry_count',0))" 2>/dev/null || echo "0")
+    LAST_ERR=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); e=d.get('last_error'); print(e if e else '(none)')" 2>/dev/null || echo "(none)")
     echo "     Current phase: $PHASE"
     echo "     Task: $TASK"
+    [[ "$RETRY" -gt 0 ]] && echo "     Retry count: $RETRY"
+    [[ "$LAST_ERR" != "(none)" ]] && echo -e "     ${RED}Last error: $LAST_ERR${NC}"
   fi
   if $RESUME; then
     echo ""
@@ -166,6 +170,9 @@ state = {
     "plan_path": ".omc/plans/jeo-plan.md",
     "team_available": False,
     "worktrees": [],
+    "retry_count": 0,
+    "last_error": None,
+    "checkpoint": None,
     "bmad_phase": None,
     "created_at": now,
     "updated_at": now,

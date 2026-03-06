@@ -4,7 +4,17 @@
     "jeo": {
       "source": "supercent-io/skills-template",
       "sourceType": "github",
-      "computedHash": "a0542ad8f9be8d20cbcab965969e90b88c1fbe68ac5c67b7637850123f14aaca"
+      "version": "1.1.0",
+      "keyword": "jeo",
+      "description": "통합 AI 에이전트 오케스트레이션. ralph+plannotator 계획→team/bmad 실행→agent-browser 검증→agentation UI 피드백→worktree 정리.",
+      "tags": ["jeo", "orchestration", "ralph", "plannotator", "team", "bmad", "agent-browser", "agentation"],
+      "installCommand": "npx skills add https://github.com/supercent-io/skills-template --skill jeo",
+      "addedAt": "2026-03-05T00:00:00Z",
+      "updatedAt": "2026-03-06T00:00:00Z",
+      "changelog": {
+        "1.1.0": "retry_count/last_error/checkpoint 에러 복구 필드 추가, 모든 STEP pre-flight 체크 추가, git 저장소 감지 개선",
+        "1.0.0": "초기 릴리스 — PLAN/EXECUTE/VERIFY/VERIFY_UI/CLEANUP 전체 플로우"
+      }
     },
     "ai-tool-compliance": {
       "source": "supercent-io/skills-template",

@@ -1,12 +1,14 @@
 ---
 name: agent-configuration
 description: AI 에이전트 설정 정책 및 보안 가이드. 프로젝트 설명 파일 작성법, Hooks/Skills/Plugins 설정, 보안 정책, 팀 공유 워크플로우 정의.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [agent-configuration, superwork,spw,security, hooks, skills, plugins, multi-agent]
-platforms: [Claude, Gemini, ChatGPT, Codex]
-version: 2.0.0
-source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: agent-configuration, superwork, spw, security, hooks, skills, plugins, multi-agent
+  platforms: Claude, Gemini, ChatGPT, Codex
+  version: 2.0.0
+  source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
 ---
+
 
 # AI 에이전트 설정 정책 (Configuration & Security)
 

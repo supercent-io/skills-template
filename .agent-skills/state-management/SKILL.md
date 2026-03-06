@@ -1,9 +1,11 @@
 ---
 name: state-management
 description: Implement state management patterns for frontend applications. Use when managing global state, handling complex data flows, or coordinating state across components. Handles React Context, Redux, Zustand, Recoil, and state management best practices.
-tags: [state-management, React, Redux, Context, Zustand, Recoil, global-state]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: state-management, React, Redux, Context, Zustand, Recoil, global-state
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # State Management
 

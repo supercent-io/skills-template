@@ -1,14 +1,16 @@
 ---
 name: agentation
-keyword: agentation
 description: Visual UI annotation tool for AI agents. Drop the React toolbar into any app — humans click elements and leave feedback, agents receive structured CSS selectors, bounding boxes, and React component trees to find exact code. Supports MCP watch-loop, platform-specific hooks (Claude Code / Codex / Gemini CLI / OpenCode), webhook delivery, and autonomous self-driving critique with agent-browser.
-allowed-tools: [Read, Write, Bash, Grep, Glob]
-tags: [ui-feedback, browser-annotation, visual-feedback, mcp, react, ai-agent, design-review, css-selector]
-platforms: [Claude Code, Codex, Gemini CLI, OpenCode, Cursor, Windsurf, ChatGPT]
-version: 1.0.0
-source: benjitaylor/agentation
 compatibility: React 18+, Node.js 18+
+allowed-tools: Read Write Bash Grep Glob
+metadata:
+  tags: ui-feedback, browser-annotation, visual-feedback, mcp, react, ai-agent, design-review, css-selector
+  platforms: Claude Code, Codex, Gemini CLI, OpenCode, Cursor, Windsurf, ChatGPT
+  keyword: agentation
+  version: 1.0.0
+  source: benjitaylor/agentation
 ---
+
 
 # agentation — Visual UI Feedback Bridge for AI Agents
 

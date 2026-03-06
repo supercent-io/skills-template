@@ -1,9 +1,11 @@
 ---
 name: task-estimation
 description: Estimate software development tasks accurately using various techniques. Use when planning sprints, roadmaps, or project timelines. Handles story points, t-shirt sizing, planning poker, and estimation best practices.
-tags: [estimation, agile, sprint-planning, story-points, planning-poker]
-platforms: [Claude, ChatGPT, Gemini]
+metadata:
+  tags: estimation, agile, sprint-planning, story-points, planning-poker
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Task Estimation
 

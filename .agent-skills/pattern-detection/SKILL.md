@@ -1,10 +1,12 @@
 ---
 name: pattern-detection
 description: Detect patterns, anomalies, and trends in code and data. Use when identifying code smells, finding security vulnerabilities, or discovering recurring patterns. Handles regex patterns, AST analysis, and statistical anomaly detection.
-tags: [patterns, anomalies, regex, code-analysis, security, trends]
-platforms: [Claude, ChatGPT, Gemini]
-allowed-tools: [Read, Grep, Glob]
+allowed-tools: Read Grep Glob
+metadata:
+  tags: patterns, anomalies, regex, code-analysis, security, trends
+  platforms: Claude, ChatGPT, Gemini
 ---
+
 
 # Pattern Detection
 
