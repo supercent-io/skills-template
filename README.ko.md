@@ -31,6 +31,12 @@
 
 ## Quick Start (For LLM Agents)
 
+> **사전 준비**: `npx skills add` 명령을 실행하려면 먼저 `skills` CLI가 필요합니다.
+>
+> ```bash
+> npm install -g skills
+> ```
+
 ```bash
 # LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
@@ -54,6 +60,22 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ## 설치 (Install)
 
+### 0단계: `skills` CLI 설치
+
+모든 `npx skills add` 명령은 `skills` CLI가 필요합니다. 먼저 설치하세요:
+
+```bash
+npm install -g skills
+```
+
+설치 확인:
+
+```bash
+skills --version
+```
+
+---
+
 ### LLM 에이전트용 (For LLM Agents)
 
 LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
@@ -62,25 +84,6 @@ LLM 에이전트가 설치를 도울 경우, 다음 단계를 따르세요.
 # LLM에게 전달: 아래 가이드를 읽고 설치를 진행하세요
 curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setup-all-skills-prompt.md
 ```
----
-
-### 사람용 (For Humans)
-
-#### 1단계: jeo 설치 (권장 — 핵심 기능 전부 포함)
-
-`jeo` 하나로 계획·실행·추적·정리 워크플로우가 모두 활성화됩니다.
-
-```bash
-npx skills add https://github.com/supercent-io/skills-template --skill jeo
-```
-
-#### Gemini CLI 사용 시
-
-```bash
-gemini extensions install https://github.com/supercent-io/skills-template
-```
-
-> [Hooks 공식 가이드](https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/)
 
 ---
 
