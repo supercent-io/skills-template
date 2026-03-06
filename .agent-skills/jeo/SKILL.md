@@ -165,68 +165,33 @@ if os.path.exists(f):
             fcntl.flock(fh,fcntl.LOCK_UN)
 " 2>/dev/null || true
 
-# plannotator 가용 여부 확인 (미설치 시 텍스트 fallback — exit 1 없음)
-PLANNOTATOR_AVAILABLE=false
-command -v plannotator >/dev/null 2>&1 && PLANNOTATOR_AVAILABLE=true
+# PLAN 단계는 plannotator 필수
+if ! command -v plannotator >/dev/null 2>&1; then
+  echo "❌ plannotator 미설치: PLAN 단계는 진행할 수 없습니다."
+  echo "   설치: bash scripts/install.sh --with-plannotator"
+  exit 1
+fi
 
-if ! $PLANNOTATOR_AVAILABLE; then
-  echo ""
-  echo "⚠️  plannotator 미설치 — 텍스트 기반 계획 검토 모드로 진행합니다"
-  echo "   (시각적 검토를 원하면: bash scripts/install.sh --with-plannotator)"
-  echo ""
-  echo "📋 PLAN 내용 (plan.md):"
-  echo "---"
-  cat plan.md 2>/dev/null || echo "(plan.md 없음)"
-  echo "---"
-  echo ""
-  echo "위 계획을 검토하고 계속 진행합니다."
-  echo "❗ 계획에 문제가 있으면 지금 Ctrl+C로 중단하세요."
-  echo ""
-  # plan_approved를 true로 설정하되 fallback 방식임을 기록
-  python3 -c "
-import json, subprocess, os, fcntl, time
-try:
-    root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], stderr=subprocess.DEVNULL).decode().strip()
-except Exception:
-    root = os.getcwd()
-f = os.path.join(root, '.omc/state/jeo-state.json')
-try:
-    with open(f, 'r+') as fh:
-        fcntl.flock(fh, fcntl.LOCK_EX)
-        try:
-            d = json.load(fh)
-            d['plan_approved'] = True
-            d['plan_review_method'] = 'text_fallback'
-            d['checkpoint'] = 'plan_reviewed'
-            d['updated_at'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-            fh.seek(0)
-            json.dump(d, fh, ensure_ascii=False, indent=2)
-            fh.truncate()
-        finally:
-            fcntl.flock(fh, fcntl.LOCK_UN)
-except Exception as e:
-    print(f'[JEO] state update error: {e}')
-" 2>/dev/null || true
+# 필수 PLAN gate:
+# - approve/feedback 입력까지 반드시 대기
+# - 세션 종료 시 자동 재시작 (최대 3회)
+# - 3회 종료 시 PLAN 종료 여부 사용자 확인
+FEEDBACK_DIR=$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; d=f'/tmp/jeo-{h}'; os.makedirs(d,exist_ok=True); print(d)" 2>/dev/null || echo '/tmp')
+FEEDBACK_FILE="${FEEDBACK_DIR}/plannotator_feedback.txt"
+bash scripts/plannotator-plan-loop.sh plan.md "$FEEDBACK_FILE" 3
+PLAN_RC=$?
+
+if [ "$PLAN_RC" -eq 0 ]; then
+  echo "✅ 계획 승인됨"
+elif [ "$PLAN_RC" -eq 10 ]; then
+  echo "❌ 계획 미승인 — 피드백 반영 후 plan.md 수정하여 재시도하세요"
+  exit 1
+elif [ "$PLAN_RC" -eq 30 ] || [ "$PLAN_RC" -eq 31 ]; then
+  echo "⛔ PLAN 종료 결정(또는 확인 대기) 상태입니다. 사용자 확인 후 재시도하세요."
+  exit 1
 else
-  # plannotator 정상 실행 경로 (기존 코드)
-  FEEDBACK_DIR=$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; d=f'/tmp/jeo-{h}'; os.makedirs(d,exist_ok=True); print(d)" 2>/dev/null || echo '/tmp')
-  FEEDBACK_FILE="${FEEDBACK_DIR}/plannotator_feedback.txt"
-  PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
-  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
-  touch /tmp/jeo-plannotator-direct.lock && cat plan.md | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > "$FEEDBACK_FILE" 2>&1
-
-  # approved 확인
-  python3 -c "
-import json, sys
-try:
-    d = json.load(open('$FEEDBACK_FILE'))
-    sys.exit(0 if d.get('approved') is True else 1)
-except Exception:
-    sys.exit(1)
-" && echo "✅ 계획 승인됨" || {
-    echo "❌ 계획 미승인 또는 수정 요청됨 — plan.md를 수정 후 재시도하세요"
-    exit 1
-  }
+  echo "❌ plannotator PLAN gate 실패 (code=$PLAN_RC)"
+  exit 1
 fi
 mkdir -p .omc/plans .omc/logs
 ```
@@ -236,11 +201,12 @@ mkdir -p .omc/plans .omc/logs
    - **Claude Code**: `submit_plan` MCP 도구 직접 호출
    - **Codex / Gemini / OpenCode**: blocking CLI 실행 (`&` 절대 금지):
      ```bash
-     touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="${FEEDBACK_DIR}/.plannotator" PLANNOTATOR_HOME="${FEEDBACK_DIR}/.plannotator" plannotator > /tmp/plannotator_feedback.txt 2>&1
+     bash scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
      ```
 3. 결과 확인:
    - `approved: true` → `jeo-state.json`의 `phase`를 `"execute"`, `plan_approved`를 `true`로 업데이트 → **STEP 2 진입**
-   - 미승인 → `/tmp/plannotator_feedback.txt` 읽고 피드백 반영 → `plan.md` 수정 → 2번 반복
+   - 미승인(`exit 10`) → `/tmp/plannotator_feedback.txt` 읽고 피드백 반영 → `plan.md` 수정 → 2번 반복
+   - 세션 3회 종료(`exit 30/31`) → PLAN 종료 여부를 사용자에게 확인하고 중단/재개 결정
 
 **NEVER: `approved: true` 없이 EXECUTE 진입. NEVER: `&` 백그라운드 실행.**
 
@@ -867,11 +833,11 @@ OpenCode 슬래시 커맨드:
 
 **plannotator 연동** (MANDATORY blocking loop):
 ```bash
-# plan.md 작성 후 blocking 실행 (& 금지) — 같은 턴 피드백 수신
-FEEDBACK_DIR="/tmp/jeo-$(python3 -c "import hashlib,os; h=hashlib.md5(os.getcwd().encode()).hexdigest()[:8]; print(f'/tmp/jeo-{h}')" 2>/dev/null || echo '/tmp')"
-PLANNOTATOR_RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
-mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
-touch /tmp/jeo-plannotator-direct.lock && python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1
+# plan.md 작성 후 PLAN gate 실행 (& 금지) — 같은 턴 피드백 수신
+bash scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
+# - approve/feedback 입력까지 반드시 대기
+# - 세션 종료 시 자동 재시작 (최대 3회)
+# - 3회 종료 시 PLAN 종료 여부 확인 후 중단/재개 결정
 
 # 결과 확인 후 분기
 # approved=true  → EXECUTE 진입
