@@ -1,28 +1,28 @@
 N:llm-monitoring-dashboard
-D:Automated generation of an LLM monitoring page for PM admin dashboards. Includes Tokuin CLI-based token/cost/latency tracking, user ranking, non-user tracking, automatic PM insight generation, Cmd+K global search, and per-user drilldowns. Supports OpenAI/Anthropic/Gemini/OpenRouter.
+D:PM용 관리자 대시보드 LLM 모니터링 자동 생성. Tokuin CLI 기반 토큰/비용/레이턴시 추적, 사용자 랭킹, 비사용자 추적, PM 인사이트 자동 생성, Cmd+K 글로벌 검색, 사용자별 드릴다운 포함. OpenAI/Anthropic/Gemini/OpenRouter 지원.
 G:LLM monitoring dashboard tokuin pm-insights ranking user-tracking cost-tracking Next.js React admin
 
 U[5]:
-  LLM Cost Visibility — Real-time API cost monitoring by team and individual
-  PM Reporting Dashboard — Weekly reports on who uses AI, how much, and how
-  Adoption Rate Management — Track non-users and monitor AI adoption rates
-  Model Optimization Basis — Data-driven model switching and cost-reduction decisions
-  Extend Existing Admin Page — Add an LLM monitoring tab
+  LLM 비용 가시성 — 팀/개인별 API 사용 비용 실시간 모니터링
+  PM 보고용 대시보드 — 누가 얼마나 어떻게 AI를 쓰는지 주간 리포트
+  사용자 채택률 관리 — 비사용자 추적 및 AI 도입률 모니터링
+  모델 최적화 근거 — 데이터 기반 모델 전환/비용 절감 의사결정
+  기존 Admin 페이지 확장 — LLM 모니터링 탭 추가
 S[6]{n,action,details}:
-  0,Safety Check,bash safety-guard.sh — Validate Tokuin installation, API key hardcoding, .env gitignore, port conflicts, and data/ directory
+  0,Safety Check,bash safety-guard.sh — Tokuin 설치·API 키 하드코딩·.env gitignore·포트 충돌·data/ 디렉토리 검증
   1,Install Tokuin,curl -fsSL install.sh | bash; tokuin --version; echo "test" | tokuin --model gpt-4 (dry-run)
-  2,Collect Pipeline,categorize_prompt.py + collect-metrics.sh — Save JSONL with user context (5-minute cron)
-  3,Dashboard Frame,Next.js (recommended) or lightweight HTML — Design-token CSS variables, routing structure, SQLite DB initialization
-  4,PM Insights,User ranking API (cost-based) + non-user tracking + automatic PM insight generation
-  5,Weekly Report,generate-pm-report.sh (every Monday 09:00) + check-alerts.sh (hourly cost alerts)
+  2,Collect Pipeline,categorize_prompt.py + collect-metrics.sh — 사용자 컨텍스트 포함 JSONL 저장 (5분 크론)
+  3,Dashboard Frame,Next.js(권장) 또는 경량 HTML — 디자인 토큰 CSS 변수·라우팅 구조·SQLite DB 초기화
+  4,PM Insights,사용자 랭킹 API(비용 기준) + 비사용자 추적 + PM 자동 인사이트 생성
+  5,Weekly Report,generate-pm-report.sh (매주 월요일 09:00 자동) + check-alerts.sh (매시간 비용 알림)
 R[5]:
-  Always run Step 0 (safety-guard.sh) first
-  `--dry-run` is the default; live API calls require explicit `--allow-live`
-  API keys must be managed via environment variables/.env — never hardcode in code/HTML/logs
-  Use a consistent 3-level status color system (ok/warn/danger)
-  Do not store raw user prompts in DB — only SHA-256 hashes are allowed
+  Step 0(safety-guard.sh)를 항상 가장 먼저 실행
+  --dry-run 기본값; 실제 API 호출은 --allow-live 플래그 명시 필요
+  API 키는 반드시 환경변수/.env로 관리 — 코드/HTML/로그 직접 입력 금지
+  상태 표시는 3단계 컬러 시스템 일관 적용 (ok/warn/danger)
+  사용자 프롬프트 원문 DB 저장 금지 — SHA-256 해시만 허용
 E[4]{desc,in,out}:
-  "Quick Start","bash safety-guard.sh && tokuin install && LLM_USER_ID=dev-alice bash collect-metrics.sh 'test'","Generate data/metrics.jsonl + lightweight HTML dashboard at http://localhost:3000"
-  "Multi-user Simulation","for user in alice bob pm-charlie; do LLM_USER_ID=$user bash collect-metrics.sh '...'; done","Per-user cost ranking + non-user status + PM insights dashboard"
-  "Weekly PM Report","bash generate-pm-report.sh","reports/pm-weekly-YYYY-MM-DD.md (Executive Summary + TOP 5 + inactive users + recommended actions)"
-  "Cost Alert Test","COST_THRESHOLD_USD=0.01 bash check-alerts.sh","Print ALERT when threshold exceeded + Slack notification (if configured)"
+  "빠른 시작","bash safety-guard.sh && tokuin install && LLM_USER_ID=dev-alice bash collect-metrics.sh 'test'","data/metrics.jsonl 생성 + 경량 HTML 대시보드 http://localhost:3000"
+  "다중 사용자 시뮬레이션","for user in alice bob pm-charlie; do LLM_USER_ID=$user bash collect-metrics.sh '...'; done","사용자별 비용 랭킹 + 비사용자 현황 + PM 인사이트 대시보드"
+  "주간 PM 리포트","bash generate-pm-report.sh","reports/pm-weekly-YYYY-MM-DD.md (Executive Summary + TOP 5 + 비활성 + 권장 조치)"
+  "비용 알림 테스트","COST_THRESHOLD_USD=0.01 bash check-alerts.sh","임계값 초과 시 ALERT 출력 + Slack 알림(설정 시)"

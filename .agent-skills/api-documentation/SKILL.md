@@ -12,13 +12,13 @@ metadata:
 
 ## When to use this skill
 
-- **API Development**: When adding new endpoints
-- **External Release**: Public API launch
-- **Team Collaboration**: Frontend-backend interface definition
+- **API 개발**: 새 엔드포인트 추가 시
+- **외부 공개**: Public API 출시
+- **팀 협업**: 프론트엔드-백엔드 인터페이스 정의
 
 ## Instructions
 
-### Step 1: OpenAPI (Swagger) Spec
+### Step 1: OpenAPI (Swagger) 스펙
 
 ```yaml
 openapi: 3.0.0
@@ -173,7 +173,7 @@ security:
   - bearerAuth: []
 ```
 
-### Step 2: Generate Documentation from Code (JSDoc/Decorators)
+### Step 2: 코드에서 문서 생성 (JSDoc/Decorators)
 
 **Express + TypeScript**:
 ```typescript
@@ -215,9 +215,9 @@ router.post('/users', async (req, res) => {
 });
 ```
 
-### Step 3: Interactive Documentation
+### Step 3: 인터랙티브 문서
 
-**Swagger UI Setup**:
+**Swagger UI 설정**:
 ```typescript
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -230,7 +230,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 }));
 ```
 
-### Step 4: Examples & Guides
+### Step 4: 예제 및 가이드
 
 ```markdown
 ## API Documentation
@@ -324,7 +324,7 @@ Response includes pagination info:
 
 ## Output format
 
-### API Documentation Structure
+### API 문서 구조
 
 ```
 docs/
@@ -348,22 +348,22 @@ docs/
 
 ## Constraints
 
-### Required Rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Real Examples**: Provide working code examples
-2. **Error Cases**: Document not only success but also failure cases
-3. **Keep Updated**: Update documentation when API changes
+1. **실제 예제**: 동작하는 코드 예제 제공
+2. **에러 케이스**: 성공뿐만 아니라 실패 케이스도 문서화
+3. **최신 유지**: API 변경 시 문서도 함께 업데이트
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Real Keys in Examples**: Do not use real API keys/passwords in examples
-2. **Vague Descriptions**: Unclear descriptions like "returns data"
+1. **예제에 실제 키**: 예제에 실제 API 키/비밀번호 사용 금지
+2. **모호한 설명**: "데이터를 반환합니다" 같은 불명확한 설명
 
 ## Best practices
 
-1. **Try It Out**: Provide interactive documentation (Swagger UI)
-2. **Provide SDK**: SDK and examples for major languages
-3. **Changelog**: Document API changes
+1. **Try It Out**: 인터랙티브 문서 제공 (Swagger UI)
+2. **SDK 제공**: 주요 언어별 SDK 및 예제
+3. **Changelog**: API 변경 사항 문서화
 
 ## References
 
@@ -373,12 +373,12 @@ docs/
 
 ## Metadata
 
-### Version
-- **Current Version**: 1.0.0
-- **Last Updated**: 2025-01-01
-- **Compatible Platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#API-documentation` `#OpenAPI` `#Swagger` `#REST` `#developer-docs` `#documentation`
 
 ## Examples

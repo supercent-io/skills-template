@@ -1,22 +1,22 @@
 N:vercel-deploy
-D:Deploy apps to Vercel instantly. No authentication required - package as a tarball and return a Preview URL (live site) and Claim URL (transfer to your account). Supports Next.js/React/Vue/Svelte/Express and more.
+D:Vercel에 앱 즉시 배포. 인증 불필요 — tarball 패키징 후 Preview URL(라이브 사이트)과 Claim URL(계정 이전) 반환. Next.js/React/Vue/Svelte/Express 등 지원.
 G:deployment vercel preview production hosting serverless
 
 U[4]:
-  App deployment — when asked "Deploy my app"
-  Preview deployment — when asked "Create a preview deployment"
-  Production deployment — when asked "Deploy this to production"
-  Share link — provide both Preview URL and Claim URL
+  앱 배포 — "Deploy my app" 요청 시
+  프리뷰 배포 — "Create a preview deployment" 요청 시
+  프로덕션 배포 — "Deploy this to production" 요청 시
+  링크 공유 — Preview URL과 Claim URL 모두 제공
 S[3]{n,action,details}:
-  1,Prepare,Confirm project directory to deploy; auto-detect framework from package.json
-  2,Deploy,bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh [path] (claude.ai environment)
-  3,Present Results,Show the user both Preview URL (live immediately) + Claim URL (transfer to Vercel account)
+  1,Prepare,배포할 프로젝트 디렉토리 확인; package.json에서 프레임워크 자동 감지
+  2,Deploy,bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh [path] (claude.ai 환경)
+  3,Present Results,Preview URL(즉시 라이브) + Claim URL(Vercel 계정 이전) 모두 사용자에게 표시
 R[4]:
-  Always show both Preview URL and Claim URL
-  Do not include node_modules or .git in the tarball
-  Do not hardcode credentials (claimable deploy flow)
-  On deployment failure, show a clear error message and how to fix it
+  Preview URL과 Claim URL 항상 모두 표시
+  node_modules와 .git은 tarball에 포함하지 않음
+  인증 정보 하드코딩 금지 (claimable deploy 방식)
+  배포 실패 시 명확한 에러 메시지와 해결 방법 안내
 E[3]{desc,in,out}:
-  "Deploy current directory","bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh","✓ Deployment successful!\nPreview URL: https://skill-deploy-abc123.vercel.app\nClaim URL: https://vercel.com/claim-deployment?code=..."
-  "Deploy specific project","bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh /path/to/project","Detected framework (nextjs) + deployment complete + returned both URLs"
-  "When there's a network error","Deployment failed due to network restrictions","In claude.ai/settings/capabilities, add *.vercel.com to allowed domains and retry"
+  "현재 디렉토리 배포","bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh","✓ Deployment successful!\nPreview URL: https://skill-deploy-abc123.vercel.app\nClaim URL: https://vercel.com/claim-deployment?code=..."
+  "특정 프로젝트 배포","bash /mnt/skills/user/vercel-deploy/scripts/deploy.sh /path/to/project","프레임워크 감지(nextjs) + 배포 완료 + 두 URL 반환"
+  "네트워크 오류 시","Deployment failed due to network restrictions","claude.ai/settings/capabilities에서 *.vercel.com을 허용 도메인에 추가 후 재시도"

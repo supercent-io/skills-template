@@ -12,14 +12,14 @@ metadata:
 
 ## When to use this skill
 
-- **Slow page loads**: low Lighthouse score
-- **Slow rendering**: delayed user interactions
-- **Large bundle size**: increased download time
-- **Slow queries**: database bottlenecks
+- **느린 페이지 로드**: Lighthouse 점수 낮음
+- **느린 렌더링**: 사용자 인터랙션 지연
+- **큰 번들 크기**: 다운로드 시간 증가
+- **느린 쿼리**: 데이터베이스 병목
 
 ## Instructions
 
-### Step 1: Measure performance
+### Step 1: 성능 측정
 
 **Lighthouse (Chrome DevTools)**:
 ```bash
@@ -27,16 +27,16 @@ metadata:
 npm install -g lighthouse
 lighthouse https://example.com --view
 
-# Automate in CI
+# CI에서 자동화
 lighthouse https://example.com --output=json --output-path=./report.json
 ```
 
-**Measure Web Vitals** (React):
+**Web Vitals 측정** (React):
 ```typescript
 import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
 
 function sendToAnalytics(metric: any) {
-  // Send to Google Analytics, Datadog, etc.
+  // Google Analytics, Datadog 등으로 전송
   console.log(metric);
 }
 
@@ -47,30 +47,30 @@ getLCP(sendToAnalytics);
 getTTFB(sendToAnalytics);
 ```
 
-### Step 2: Optimize React
+### Step 2: React 최적화
 
-**React.memo (prevent unnecessary re-renders)**:
+**React.memo (불필요한 리렌더링 방지)**:
 ```tsx
-// ❌ Bad: child re-renders whenever the parent re-renders
+// ❌ 나쁜 예: 부모가 리렌더링될 때마다 자식도 리렌더링
 function ExpensiveComponent({ data }: { data: Data }) {
-  return <div>{/* complex rendering */}</div>;
+  return <div>{/* 복잡한 렌더링 */}</div>;
 }
 
-// ✅ Good: re-render only when props change
+// ✅ 좋은 예: props 변경 시에만 리렌더링
 const ExpensiveComponent = React.memo(({ data }: { data: Data }) => {
-  return <div>{/* complex rendering */}</div>;
+  return <div>{/* 복잡한 렌더링 */}</div>;
 });
 ```
 
 **useMemo & useCallback**:
 ```tsx
 function ProductList({ products, category }: Props) {
-  // ✅ Memoize filtered results
+  // ✅ 필터링 결과 메모이제이션
   const filteredProducts = useMemo(() => {
     return products.filter(p => p.category === category);
   }, [products, category]);
 
-  // ✅ Memoize callback
+  // ✅ 콜백 메모이제이션
   const handleAddToCart = useCallback((id: string) => {
     addToCart(id);
   }, []);
@@ -121,7 +121,7 @@ function Dashboard() {
 }
 ```
 
-### Step 3: Optimize bundle size
+### Step 3: 번들 크기 최적화
 
 **Webpack Bundle Analyzer**:
 ```bash
@@ -135,27 +135,27 @@ npm install --save-dev webpack-bundle-analyzer
 }
 ```
 
-**Tree Shaking (remove unused code)**:
+**Tree Shaking (사용하지 않는 코드 제거)**:
 ```typescript
-// ❌ Bad: import entire library
+// ❌ 나쁜 예: 전체 라이브러리 임포트
 import _ from 'lodash';
 
-// ✅ Good: import only what you need
+// ✅ 좋은 예: 필요한 것만 임포트
 import debounce from 'lodash/debounce';
 ```
 
 **Dynamic Imports**:
 ```typescript
-// ✅ Load only when needed
+// ✅ 필요할 때만 로드
 button.addEventListener('click', async () => {
   const { default: Chart } = await import('chart.js');
   new Chart(ctx, config);
 });
 ```
 
-### Step 4: Optimize images
+### Step 4: 이미지 최적화
 
-**Next.js Image component**:
+**Next.js Image 컴포넌트**:
 ```tsx
 import Image from 'next/image';
 
@@ -166,15 +166,15 @@ function ProductImage() {
       alt="Product"
       width={500}
       height={500}
-      priority  // for the LCP image
-      placeholder="blur"  // blur placeholder
+      priority  // LCP 이미지인 경우
+      placeholder="blur"  // 블러 플레이스홀더
       sizes="(max-width: 768px) 100vw, 50vw"
     />
   );
 }
 ```
 
-**Use WebP format**:
+**WebP 포맷 사용**:
 ```html
 <picture>
   <source srcset="image.webp" type="image/webp">
@@ -183,51 +183,51 @@ function ProductImage() {
 </picture>
 ```
 
-### Step 5: Optimize database queries
+### Step 5: 데이터베이스 쿼리 최적화
 
-**Fix the N+1 query problem**:
+**N+1 쿼리 문제 해결**:
 ```typescript
-// ❌ Bad: N+1 queries
+// ❌ 나쁜 예: N+1 queries
 const posts = await db.post.findMany();
 for (const post of posts) {
   const author = await db.user.findUnique({ where: { id: post.authorId } });
-  // 101 queries (1 + 100)
+  // 101번 쿼리 (1 + 100)
 }
 
-// ✅ Good: JOIN or include
+// ✅ 좋은 예: JOIN 또는 include
 const posts = await db.post.findMany({
   include: {
     author: true
   }
 });
-// 1 query
+// 1번 쿼리
 ```
 
-**Add indexes**:
+**인덱스 추가**:
 ```sql
--- Identify slow queries
+-- 느린 쿼리 식별
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';
 
--- Add index
+-- 인덱스 추가
 CREATE INDEX idx_users_email ON users(email);
 
--- Composite index
+-- 복합 인덱스
 CREATE INDEX idx_orders_user_date ON orders(user_id, created_at);
 ```
 
-**Caching (Redis)**:
+**캐싱 (Redis)**:
 ```typescript
 async function getUserProfile(userId: string) {
-  // 1. Check cache
+  // 1. 캐시 확인
   const cached = await redis.get(`user:${userId}`);
   if (cached) {
     return JSON.parse(cached);
   }
 
-  // 2. Query DB
+  // 2. DB 조회
   const user = await db.user.findUnique({ where: { id: userId } });
 
-  // 3. Store in cache (1 hour)
+  // 3. 캐시 저장 (1시간)
   await redis.setex(`user:${userId}`, 3600, JSON.stringify(user));
 
   return user;
@@ -236,25 +236,25 @@ async function getUserProfile(userId: string) {
 
 ## Output format
 
-### Performance optimization checklist
+### 성능 최적화 체크리스트
 
 ```markdown
 ## Frontend
-- [ ] Prevent unnecessary re-renders with React.memo
-- [ ] Use useMemo/useCallback appropriately
+- [ ] React.memo로 불필요한 리렌더링 방지
+- [ ] useMemo/useCallback 적절히 사용
 - [ ] Lazy loading & Code splitting
-- [ ] Optimize images (WebP, lazy loading)
-- [ ] Analyze and reduce bundle size
+- [ ] 이미지 최적화 (WebP, lazy loading)
+- [ ] 번들 크기 분석 및 감소
 
 ## Backend
-- [ ] Remove N+1 queries
-- [ ] Add database indexes
-- [ ] Redis caching
-- [ ] Compress API responses (gzip)
-- [ ] Use a CDN
+- [ ] N+1 쿼리 제거
+- [ ] 데이터베이스 인덱스 추가
+- [ ] Redis 캐싱
+- [ ] API Response 압축 (gzip)
+- [ ] CDN 사용
 
-## Measurement
-- [ ] Lighthouse score 90+
+## 측정
+- [ ] Lighthouse 점수 90+
 - [ ] LCP < 2.5s
 - [ ] FID < 100ms
 - [ ] CLS < 0.1
@@ -262,22 +262,22 @@ async function getUserProfile(userId: string) {
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Measure first**: profile, don't guess
-2. **Incremental improvements**: optimize one thing at a time
-3. **Performance monitoring**: track continuously
+1. **측정 먼저**: 추측하지 말고 프로파일링
+2. **점진적 개선**: 한 번에 하나씩 최적화
+3. **성능 모니터링**: 지속적으로 추적
 
-### Prohibited items (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Premature optimization**: don't optimize when there is no bottleneck
-2. **Sacrificing readability**: don't make code complex for performance
+1. **조기 최적화**: 병목이 없는데 최적화하지 않음
+2. **가독성 희생**: 성능을 위해 코드를 복잡하게 만들지 않음
 
 ## Best practices
 
-1. **80/20 rule**: 80% improvement with 20% effort
-2. **User-centered**: focus on improving real user experience
-3. **Automation**: performance regression tests in CI
+1. **80/20 법칙**: 20% 노력으로 80% 개선
+2. **사용자 중심**: 실제 사용자 경험 개선에 집중
+3. **자동화**: CI에서 성능 회귀 테스트
 
 ## References
 
@@ -287,16 +287,16 @@ async function getUserProfile(userId: string) {
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Related skills
-- [database-schema-design](../database-schema-design/SKILL.md)
-- [ui-components](../ui-component-patterns/SKILL.md)
+### 관련 스킬
+- [database-schema-design](../../backend/database/SKILL.md)
+- [ui-components](../../frontend/ui-components/SKILL.md)
 
-### Tags
+### 태그
 `#performance` `#optimization` `#React` `#caching` `#lazy-loading` `#web-vitals` `#code-quality`
 
 ## Examples

@@ -12,38 +12,38 @@ metadata:
 
 ## When to use this skill
 
-- **Feature development**: Break down a new feature into small tasks
-- **Sprint Planning**: Select work to include in the sprint
-- **Backlog Grooming**: Clean up the backlog and set priorities
+- **피처 개발**: 새 기능을 작은 태스크로 분할
+- **Sprint Planning**: 스프린트에 포함할 작업 선정
+- **Backlog Grooming**: 백로그 정리 및 우선순위 설정
 
 ## Instructions
 
-### Step 1: Write User Stories (INVEST)
+### Step 1: User Story 작성 (INVEST)
 
-**INVEST principles**:
-- **I**ndependent: Independent
-- **N**egotiable: Negotiable
-- **V**aluable: Valuable
-- **E**stimable: Estimable
-- **S**mall: Small
-- **T**estable: Testable
+**INVEST 원칙**:
+- **I**ndependent: 독립적
+- **N**egotiable: 협상 가능
+- **V**aluable: 가치 있음
+- **E**stimable: 추정 가능
+- **S**mall: 작음
+- **T**estable: 테스트 가능
 
-**Template**:
+**템플릿**:
 ```markdown
-## User Story: [title]
+## User Story: [제목]
 
-**As a** [user type]
-**I want** [feature]
-**So that** [value/reason]
+**As a** [사용자 유형]
+**I want** [기능]
+**So that** [가치/이유]
 
 ### Acceptance Criteria
-- [ ] Given [context] When [action] Then [outcome]
-- [ ] Given [context] When [action] Then [outcome]
-- [ ] Given [context] When [action] Then [outcome]
+- [ ] Given [상황] When [행동] Then [결과]
+- [ ] Given [상황] When [행동] Then [결과]
+- [ ] Given [상황] When [행동] Then [결과]
 
 ### Technical Notes
 - API endpoint: POST /api/users
-- Database: users table
+- Database: users 테이블
 - Frontend: React component
 
 ### Estimation
@@ -58,7 +58,7 @@ metadata:
 - Business Value: High
 ```
 
-**Example**:
+**예시**:
 ```markdown
 ## User Story: User Registration
 
@@ -88,7 +88,7 @@ metadata:
 - MoSCoW: Must Have
 ```
 
-### Step 2: Decompose Epic → Story → Task
+### Step 2: Epic → Story → Task 분해
 
 ```markdown
 ## Epic: User Management System
@@ -123,7 +123,7 @@ metadata:
   - [ ] Tests (2h)
 ```
 
-### Step 3: MoSCoW prioritization
+### Step 3: MoSCoW 우선순위
 
 ```markdown
 ## Feature Prioritization (MoSCoW)
@@ -192,50 +192,50 @@ metadata:
 
 ## Output format
 
-### Task board structure
+### 태스크 보드 구조
 
 ```
 Backlog → To Do → In Progress → Review → Done
 
 Backlog:
-- Sorted by priority
-- Groomed stories
+- 우선순위별 정렬
+- Grooming 완료된 스토리
 
 To Do:
-- Work selected for the sprint
-- Owner assigned
+- Sprint에 선택된 작업
+- 담당자 할당됨
 
 In Progress:
 - WIP Limit: 2 per person
-- Work in progress
+- 진행 중인 작업
 
 Review:
-- Waiting for code review
-- In QA testing
+- Code review 대기
+- QA 테스트 중
 
 Done:
-- Meets DoD
-- Deployed
+- DoD 충족
+- 배포 완료
 ```
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Clear AC**: Acceptance Criteria required
-2. **Estimation done**: Assign points to every story
-3. **Dependencies identified**: Specify prerequisite work
+1. **명확한 AC**: Acceptance Criteria 필수
+2. **추정 완료**: 모든 스토리에 포인트 할당
+3. **의존성 파악**: 선행 작업 명시
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Stories too large**: Split anything 13+ points
-2. **Vague requirements**: Avoid "improve" and "optimize"
+1. **너무 큰 스토리**: 13+ points는 분할
+2. **모호한 요구사항**: "개선한다", "최적화한다" 금지
 
 ## Best practices
 
-1. **INVEST**: Write good user stories
-2. **Definition of Ready**: Ready before sprint start
-3. **Definition of Done**: Clear completion criteria
+1. **INVEST 원칙**: 좋은 사용자 스토리 작성
+2. **Definition of Ready**: 스프린트 시작 전 준비 완료
+3. **Definition of Done**: 명확한 완료 기준
 
 ## References
 
@@ -244,12 +244,12 @@ Done:
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#task-planning` `#user-stories` `#backlog` `#sprint-planning` `#agile` `#project-management`
 
 ## Examples

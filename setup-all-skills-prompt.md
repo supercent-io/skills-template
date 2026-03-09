@@ -49,16 +49,31 @@ else
 fi
 ```
 
-3. **Declare installation path standardization variables**
+3. **Declare installation path standardization variables (force reset by default)**
 
 ```bash
+# Force full reinstall by default (set false only if you need to preserve existing paths)
+export FORCE_REINSTALL="${FORCE_REINSTALL:-true}"
+
 # Canonical path (recommended default)
 export SKILLS_CANONICAL="${HOME}/.agent-skills"
-# Remove existing installation directory and recreate
-if [ -d "${SKILLS_CANONICAL}" ]; then
-    echo "Removing existing installation directory: ${SKILLS_CANONICAL}"
-    rm -rf "${SKILLS_CANONICAL}"
+
+SKILL_DESTS=(
+  "${HOME}/.claude/skills" "${PWD}/.claude/skills"
+  "${HOME}/.codex/skills" "${PWD}/.codex/skills"
+  "${HOME}/.gemini/skills" "${PWD}/.gemini/skills"
+  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills"
+  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
+)
+
+if [ "${FORCE_REINSTALL}" = "true" ]; then
+  echo "FORCE_REINSTALL=true -> remove existing global/local skill paths"
+  rm -rf "${SKILLS_CANONICAL}"
+  for dest in "${SKILL_DESTS[@]}"; do
+    rm -rf "${dest}"
+  done
 fi
+
 mkdir -p "${SKILLS_CANONICAL}"
 ```
 
@@ -88,6 +103,8 @@ npx skills add https://github.com/supercent-io/skills-template --skill plannotat
 npx skills add https://github.com/supercent-io/skills-template \
   --skill omc --skill plannotator --skill ralph --skill ralphmode --skill vibe-kanban
 ```
+
+> **Claude Code + jeo**: jeo EXECUTE phase requires `/omc:team` and will **not** fall back to single-agent execution. Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` before running jeo.
 
 **Gemini CLI only:**
 ```bash
@@ -210,46 +227,46 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 ### Step 4: Verify Installation and Activation
 
 ```bash
-# Auto-detect installation directory
-if [ -d "${HOME}/.agent-skills" ]; then
+# Auto-detect installation directory (must be non-empty)
+is_non_empty_dir() { [ -d "$1" ] && [ -n "$(ls -A "$1" 2>/dev/null)" ]; }
+
+if is_non_empty_dir "${HOME}/.agent-skills"; then
   SKILL_SRC="${HOME}/.agent-skills"
-elif [ -d "${PWD}/.agent-skills" ]; then
+elif is_non_empty_dir "${PWD}/.agent-skills"; then
   SKILL_SRC="${PWD}/.agent-skills"
-elif [ -d "${PWD}/.agents/skills" ]; then
+elif is_non_empty_dir "${PWD}/.agents/skills"; then
   SKILL_SRC="${PWD}/.agents/skills"
 else
-  echo "skills directory not found"; exit 1
+  echo "non-empty skills directory not found"; exit 1
 fi
 
 echo "Detected skills dir: ${SKILL_SRC}"
 
-# Sync to canonical path
+# Sync to canonical path (force mirror)
 mkdir -p "${HOME}/.agent-skills"
-if [ "${SKILL_SRC}" != "${HOME}/.agent-skills" ]; then
-  cp -R "${SKILL_SRC}"/. "${HOME}/.agent-skills"/
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a --delete "${SKILL_SRC}/" "${HOME}/.agent-skills/"
+else
+  rm -rf "${HOME}/.agent-skills"
+  mkdir -p "${HOME}/.agent-skills"
+  cp -R "${SKILL_SRC}/." "${HOME}/.agent-skills/"
 fi
 
-# Remove existing platform-specific skill directories and recreate
+# Remove existing platform-specific skill directories and force copy
 for dest in \
     "${HOME}/.claude/skills" "${PWD}/.claude/skills" \
     "${HOME}/.codex/skills" "${PWD}/.codex/skills" \
     "${HOME}/.gemini/skills" "${PWD}/.gemini/skills" \
     "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
     "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"; do
-    rm -rf "${dest}"
-    mkdir -p "${dest}"
+  rm -rf "${dest}"
+  mkdir -p "${dest}"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete "${HOME}/.agent-skills/" "${dest}/"
+  else
+    cp -R "${HOME}/.agent-skills"/. "${dest}/"
+  fi
 done
-
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.claude/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.claude/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.codex/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.codex/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.gemini/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.gemini/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.config/opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.config/opencode/skills"/
 
 # Check installed skill list
 ls "${HOME}/.agent-skills" 2>/dev/null
@@ -278,7 +295,7 @@ First run after installation by platform:
 
 | Skill | Activation Keyword | Description |
 |-------|-------------------|-------------|
-| `jeo` | `jeo` | Integrated orchestration (recommended starting point) — built-in agent execution protocol (STEP 0: state bootstrap → PLAN/plannotator → EXECUTE → VERIFY → CLEANUP). Requires: plannotator, agentation |
+| `jeo` | `jeo` | Integrated orchestration (recommended starting point) — built-in agent execution protocol (STEP 0: state bootstrap → PLAN/plannotator → EXECUTE → VERIFY → CLEANUP). PLAN auto-installs `plannotator` if missing. **Claude Code**: requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`; EXECUTE must use `/omc:team`. Requires: plannotator, agentation |
 | `omc` | `omc`, `autopilot` | Claude Code multi-agent orchestration |
 | `ralph` | `ralph`, `ooo`, `ooo ralph`, `ooo interview` | Ouroboros specification-first development (Interview→Seed→Execute→Evaluate→Evolve) + persistent completion loop |
 | `ralphmode` | `ralphmode` | Ralph automation permission profiles for Claude Code, Codex CLI, Gemini CLI. Repo boundary enforcement, sandbox-first, secret denylist focused |

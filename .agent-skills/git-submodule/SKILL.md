@@ -22,31 +22,31 @@ metadata:
 
 ### Step 1: Understanding submodules
 
-Git submodule is a feature for including other Git repositories within a main Git repository.
+Git submodule은 메인 Git 저장소 내에 다른 Git 저장소를 포함시키는 기능입니다.
 
 **Key concepts**:
-- Submodules lock version by referencing a specific commit
-- Submodule paths and URLs are recorded in the `.gitmodules` file
-- Changes within a submodule are managed as separate commits
+- 서브모듈은 특정 커밋을 참조하여 버전을 고정합니다
+- `.gitmodules` 파일에 서브모듈 경로와 URL이 기록됩니다
+- 서브모듈 내 변경은 별도 커밋으로 관리됩니다
 
 ### Step 2: Adding submodules
 
-**Basic addition**:
+**기본 추가**:
 ```bash
-# Add submodule
+# 서브모듈 추가
 git submodule add <repository-url> <path>
 
-# Example: Add library to libs/lib path
+# 예: libs/lib 경로에 라이브러리 추가
 git submodule add https://github.com/example/lib.git libs/lib
 ```
 
-**Track a specific branch**:
+**특정 브랜치 추적**:
 ```bash
-# Add to track a specific branch
+# 특정 브랜치를 추적하도록 추가
 git submodule add -b main https://github.com/example/lib.git libs/lib
 ```
 
-**Commit after adding**:
+**추가 후 커밋**:
 ```bash
 git add .gitmodules libs/lib
 git commit -m "feat: add lib as submodule"
@@ -54,71 +54,71 @@ git commit -m "feat: add lib as submodule"
 
 ### Step 3: Cloning with submodules
 
-**When cloning fresh**:
+**신규 클론 시**:
 ```bash
-# Method 1: --recursive option when cloning
+# 방법 1: 클론 시 --recursive 옵션
 git clone --recursive <repository-url>
 
-# Method 2: Initialize after cloning
+# 방법 2: 클론 후 초기화
 git clone <repository-url>
 cd <repository>
 git submodule init
 git submodule update
 ```
 
-**Initialize and update in one line**:
+**한 줄로 초기화 및 업데이트**:
 ```bash
 git submodule update --init --recursive
 ```
 
 ### Step 4: Updating submodules
 
-**Update to latest remote version**:
+**원격 최신 버전으로 업데이트**:
 ```bash
-# Update all submodules to latest remote
+# 모든 서브모듈을 원격 최신으로 업데이트
 git submodule update --remote
 
-# Update a specific submodule only
+# 특정 서브모듈만 업데이트
 git submodule update --remote libs/lib
 
-# Update + merge
+# 업데이트 + 머지
 git submodule update --remote --merge
 
-# Update + rebase
+# 업데이트 + 리베이스
 git submodule update --remote --rebase
 ```
 
-**Checkout to the referenced commit**:
+**서브모듈 참조 커밋으로 체크아웃**:
 ```bash
-# Checkout submodule to the commit referenced by the main repository
+# 메인 저장소가 참조하는 커밋으로 서브모듈 체크아웃
 git submodule update
 ```
 
 ### Step 5: Working inside submodules
 
-**Working inside a submodule**:
+**서브모듈 내에서 작업**:
 ```bash
-# Navigate to submodule directory
+# 서브모듈 디렉토리로 이동
 cd libs/lib
 
-# Checkout branch (exit detached HEAD)
+# 브랜치 체크아웃 (detached HEAD 해제)
 git checkout main
 
-# Work on changes
+# 변경사항 작업
 # ... make changes ...
 
-# Commit and push within submodule
+# 서브모듈 내에서 커밋 및 푸시
 git add .
 git commit -m "feat: update library"
 git push origin main
 ```
 
-**Reflect submodule changes in main repository**:
+**메인 저장소에서 서브모듈 변경 반영**:
 ```bash
-# Move to main repository
+# 메인 저장소로 이동
 cd ..
 
-# Update submodule reference
+# 서브모듈 참조 업데이트
 git add libs/lib
 git commit -m "chore: update lib submodule reference"
 git push
@@ -126,39 +126,39 @@ git push
 
 ### Step 6: Batch operations
 
-**Run commands on all submodules**:
+**모든 서브모듈에 명령 실행**:
 ```bash
-# Pull in all submodules
+# 모든 서브모듈에서 pull
 git submodule foreach 'git pull origin main'
 
-# Check status in all submodules
+# 모든 서브모듈에서 상태 확인
 git submodule foreach 'git status'
 
-# Checkout branch in all submodules
+# 모든 서브모듈에서 브랜치 체크아웃
 git submodule foreach 'git checkout main'
 
-# Also run command on nested submodules
+# 중첩된 서브모듈에도 명령 실행
 git submodule foreach --recursive 'git fetch origin'
 ```
 
 ### Step 7: Removing submodules
 
-**Completely remove a submodule**:
+**서브모듈 완전 제거**:
 ```bash
-# 1. Deinitialize submodule
+# 1. 서브모듈 등록 해제
 git submodule deinit <path>
 
-# 2. Remove from Git
+# 2. Git에서 제거
 git rm <path>
 
-# 3. Remove cache from .git/modules
+# 3. .git/modules에서 캐시 제거
 rm -rf .git/modules/<path>
 
-# 4. Commit changes
+# 4. 변경사항 커밋
 git commit -m "chore: remove submodule"
 ```
 
-**Example: Remove libs/lib**:
+**예시: libs/lib 제거**:
 ```bash
 git submodule deinit libs/lib
 git rm libs/lib
@@ -169,96 +169,96 @@ git push
 
 ### Step 8: Checking submodule status
 
-**Check status**:
+**상태 확인**:
 ```bash
-# Check submodule status
+# 서브모듈 상태 확인
 git submodule status
 
-# Detailed status (recursive)
+# 상세 상태 (재귀적)
 git submodule status --recursive
 
-# Summary information
+# 요약 정보
 git submodule summary
 ```
 
-**Interpreting output**:
+**출력 해석**:
 ```
- 44d7d1... libs/lib (v1.0.0)      # Normal (matches referenced commit)
-+44d7d1... libs/lib (v1.0.0-1-g...)  # Local changes present
--44d7d1... libs/lib               # Not initialized
+ 44d7d1... libs/lib (v1.0.0)      # 정상 (참조 커밋과 일치)
++44d7d1... libs/lib (v1.0.0-1-g...)  # 로컬 변경 있음
+-44d7d1... libs/lib               # 초기화 안 됨
 ```
 
 ## Examples
 
-### Example 1: Adding an External Library to a Project
+### Example 1: 프로젝트에 외부 라이브러리 추가
 
 ```bash
-# 1. Add submodule
+# 1. 서브모듈 추가
 git submodule add https://github.com/lodash/lodash.git vendor/lodash
 
-# 2. Lock to a specific version (tag)
+# 2. 특정 버전(태그)으로 고정
 cd vendor/lodash
 git checkout v4.17.21
 cd ../..
 
-# 3. Commit changes
+# 3. 변경사항 커밋
 git add .
 git commit -m "feat: add lodash v4.17.21 as submodule"
 
-# 4. Push
+# 4. 푸시
 git push origin main
 ```
 
-### Example 2: Setup After Cloning a Repository with Submodules
+### Example 2: 서브모듈 포함 저장소 클론 후 설정
 
 ```bash
-# 1. Clone the repository
+# 1. 저장소 클론
 git clone https://github.com/myorg/myproject.git
 cd myproject
 
-# 2. Initialize and update submodules
+# 2. 서브모듈 초기화 및 업데이트
 git submodule update --init --recursive
 
-# 3. Check submodule status
+# 3. 서브모듈 상태 확인
 git submodule status
 
-# 4. Checkout submodule branch (for development)
+# 4. 서브모듈 브랜치 체크아웃 (개발 시)
 git submodule foreach 'git checkout main || git checkout master'
 ```
 
-### Example 3: Updating Submodules to the Latest Version
+### Example 3: 서브모듈을 최신 버전으로 업데이트
 
 ```bash
-# 1. Update all submodules to latest remote
+# 1. 모든 서브모듈을 원격 최신으로 업데이트
 git submodule update --remote --merge
 
-# 2. Review changes
+# 2. 변경사항 확인
 git diff --submodule
 
-# 3. Commit changes
+# 3. 변경사항 커밋
 git add .
 git commit -m "chore: update all submodules to latest"
 
-# 4. Push
+# 4. 푸시
 git push origin main
 ```
 
-### Example 4: Using Shared Components Across Multiple Projects
+### Example 4: 공유 컴포넌트를 여러 프로젝트에서 사용
 
 ```bash
-# In Project A
+# 프로젝트 A에서
 git submodule add https://github.com/myorg/shared-components.git src/shared
 
-# In Project B
+# 프로젝트 B에서
 git submodule add https://github.com/myorg/shared-components.git src/shared
 
-# When updating shared components (in each project)
+# 공유 컴포넌트 업데이트 시 (각 프로젝트에서)
 git submodule update --remote src/shared
 git add src/shared
 git commit -m "chore: update shared-components"
 ```
 
-### Example 5: Handling Submodules in CI/CD
+### Example 5: CI/CD에서 서브모듈 처리
 
 ```yaml
 # GitHub Actions
@@ -267,7 +267,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive  # or 'true'
+          submodules: recursive  # 또는 'true'
 
 # GitLab CI
 variables:
@@ -282,95 +282,95 @@ checkout scm: [
 
 ## Advanced workflows
 
-### Nested Submodules
+### 중첩 서브모듈 (Nested submodules)
 
 ```bash
-# Initialize all nested submodules
+# 중첩된 모든 서브모듈 초기화
 git submodule update --init --recursive
 
-# Update all nested submodules
+# 중첩된 모든 서브모듈 업데이트
 git submodule update --remote --recursive
 ```
 
-### Changing Submodule URL
+### 서브모듈 URL 변경
 
 ```bash
-# Edit the .gitmodules file
+# .gitmodules 파일 수정
 git config -f .gitmodules submodule.libs/lib.url https://new-url.git
 
-# Sync local configuration
+# 로컬 설정 동기화
 git submodule sync
 
-# Update submodule
+# 서브모듈 업데이트
 git submodule update --init --recursive
 ```
 
-### Converting a Submodule to a Regular Directory
+### 서브모듈을 일반 디렉토리로 변환
 
 ```bash
-# 1. Back up submodule contents
+# 1. 서브모듈 내용 백업
 cp -r libs/lib libs/lib-backup
 
-# 2. Remove submodule
+# 2. 서브모듈 제거
 git submodule deinit libs/lib
 git rm libs/lib
 rm -rf .git/modules/libs/lib
 
-# 3. Restore backup (excluding .git)
+# 3. 백업 복원 (.git 제외)
 rm -rf libs/lib-backup/.git
 mv libs/lib-backup libs/lib
 
-# 4. Add as regular files
+# 4. 일반 파일로 추가
 git add libs/lib
 git commit -m "chore: convert submodule to regular directory"
 ```
 
-### Saving Space with Shallow Clones
+### shallow 클론으로 공간 절약
 
 ```bash
-# Add submodule with shallow clone
+# 얕은 클론으로 서브모듈 추가
 git submodule add --depth 1 https://github.com/large/repo.git libs/large
 
-# Update existing submodule as shallow clone
+# 기존 서브모듈을 얕은 클론으로 업데이트
 git submodule update --init --depth 1
 ```
 
 ## Best practices
 
-1. **Version locking**: Always lock submodules to a specific commit/tag for reproducibility
-2. **Documentation**: Specify submodule initialization steps in README
-3. **CI configuration**: Use `--recursive` option in CI/CD pipelines
-4. **Regular updates**: Regularly update submodules for security patches and more
-5. **Branch tracking**: Configure branch tracking during development for convenience
-6. **Permission management**: Verify access permissions for submodule repositories
-7. **Shallow clone**: Use `--depth` option for large repositories to save space
-8. **Status check**: Verify status with `git submodule status` before committing
+1. **버전 고정**: 서브모듈은 항상 특정 커밋/태그로 고정하여 재현 가능성 확보
+2. **문서화**: README에 서브모듈 초기화 방법 명시
+3. **CI 설정**: CI/CD 파이프라인에서 `--recursive` 옵션 사용
+4. **정기 업데이트**: 보안 패치 등을 위해 정기적으로 서브모듈 업데이트
+5. **브랜치 추적**: 개발 중에는 브랜치 추적 설정으로 편의성 확보
+6. **권한 관리**: 서브모듈 저장소 접근 권한 확인
+7. **얕은 클론**: 대용량 저장소는 `--depth` 옵션으로 공간 절약
+8. **상태 확인**: 커밋 전 `git submodule status`로 상태 확인
 
 ## Common pitfalls
 
-- **detached HEAD**: Submodules are in detached HEAD state by default. Checkout a branch when working
-- **Missing initialization**: `git submodule update --init` is required after cloning
-- **Reference mismatch**: Must update reference in main repository after submodule changes
-- **Permission issue**: Private submodules require SSH key or token configuration
-- **Relative paths**: Using relative paths in `.gitmodules` can cause issues in forks
-- **Incomplete removal**: Must also delete `.git/modules` cache when removing a submodule
+- **detached HEAD**: 서브모듈은 기본적으로 detached HEAD 상태. 작업 시 브랜치 체크아웃 필요
+- **초기화 누락**: 클론 후 `git submodule update --init` 필수
+- **참조 불일치**: 서브모듈 변경 후 메인 저장소에서 참조 업데이트 필요
+- **권한 문제**: 비공개 서브모듈은 SSH 키 또는 토큰 설정 필요
+- **상대 경로**: `.gitmodules`의 상대 경로 사용 시 포크에서 문제 발생 가능
+- **삭제 불완전**: 서브모듈 제거 시 `.git/modules` 캐시도 삭제 필요
 
 ## Troubleshooting
 
-### Submodule not initialized
+### 서브모듈이 초기화되지 않음
 
 ```bash
-# Force initialize
+# 강제 초기화
 git submodule update --init --force
 ```
 
-### Submodule conflict
+### 서브모듈 충돌
 
 ```bash
-# Check submodule status
+# 서브모듈 상태 확인
 git submodule status
 
-# After resolving conflict, checkout desired commit
+# 충돌 해결 후 원하는 커밋으로 체크아웃
 cd libs/lib
 git checkout <desired-commit>
 cd ..
@@ -378,28 +378,28 @@ git add libs/lib
 git commit -m "fix: resolve submodule conflict"
 ```
 
-### Permission error (private repository)
+### 권한 오류 (private repository)
 
 ```bash
-# Use SSH URL
+# SSH URL 사용
 git config -f .gitmodules submodule.libs/lib.url git@github.com:org/private-lib.git
 git submodule sync
 git submodule update --init
 ```
 
-### Submodule in dirty state
+### 서브모듈 dirty 상태
 
 ```bash
-# Check changes within submodule
+# 서브모듈 내 변경사항 확인
 cd libs/lib
 git status
 git diff
 
-# Discard changes
+# 변경사항 버리기
 git checkout .
 git clean -fd
 
-# Or commit
+# 또는 커밋하기
 git add .
 git commit -m "fix: resolve changes"
 git push
@@ -407,23 +407,23 @@ git push
 
 ## Configuration
 
-### Useful Configuration
+### 유용한 설정
 
 ```bash
-# Show submodule changes in diff
+# diff에서 서브모듈 변경 표시
 git config --global diff.submodule log
 
-# Show submodule summary in status
+# status에서 서브모듈 요약 표시
 git config --global status.submoduleSummary true
 
-# Check submodule changes on push
+# push 시 서브모듈 변경 확인
 git config --global push.recurseSubmodules check
 
-# Also fetch submodules when fetching
+# fetch 시 서브모듈도 함께 fetch
 git config --global fetch.recurseSubmodules on-demand
 ```
 
-### .gitmodules Example
+### .gitmodules 예시
 
 ```ini
 [submodule "libs/lib"]

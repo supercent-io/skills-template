@@ -12,41 +12,41 @@ metadata:
 
 ## When to use this skill
 
-- **Add AI features**: integrate generative AI features into your app
-- **Firebase projects**: add AI to Firebase-based apps
-- **Text generation**: content generation, summarization, translation
-- **Image analysis**: image-based AI processing
+- **AI 기능 추가**: 앱에 생성형 AI 기능 통합
+- **Firebase 프로젝트**: Firebase 기반 앱에 AI 추가
+- **텍스트 생성**: 콘텐츠 생성, 요약, 번역
+- **이미지 분석**: 이미지 기반 AI 처리
 
 ## Instructions
 
-### Step 1: Firebase Project Setup
+### Step 1: Firebase 프로젝트 설정
 
 ```bash
-# Install Firebase CLI
+# Firebase CLI 설치
 npm install -g firebase-tools
 
-# Login
+# 로그인
 firebase login
 
-# Initialize project
+# 프로젝트 초기화
 firebase init
 ```
 
-### Step 2: Enable AI Logic
+### Step 2: AI Logic 활성화
 
-In Firebase Console:
-1. Select **Build > AI Logic**
-2. Click **Get Started**
-3. Enable the Gemini API
+Firebase Console에서:
+1. **Build > AI Logic** 선택
+2. **Get Started** 클릭
+3. Gemini API 활성화
 
-### Step 3: Install SDK
+### Step 3: SDK 설치
 
 **Web (JavaScript)**:
 ```bash
 npm install firebase @anthropic-ai/sdk
 ```
 
-**Initialization code**:
+**초기화 코드**:
 ```typescript
 import { initializeApp } from 'firebase/app';
 import { getAI, getGenerativeModel } from 'firebase/ai';
@@ -62,21 +62,21 @@ const ai = getAI(app);
 const model = getGenerativeModel(ai, { model: "gemini-2.0-flash" });
 ```
 
-### Step 4: Implement AI Features
+### Step 4: AI 기능 구현
 
-**Text generation**:
+**텍스트 생성**:
 ```typescript
 async function generateContent(prompt: string) {
   const result = await model.generateContent(prompt);
   return result.response.text();
 }
 
-// Example usage
-const response = await generateContent("Explain the key features of Firebase.");
+// 사용 예시
+const response = await generateContent("Firebase의 주요 기능을 설명해주세요.");
 console.log(response);
 ```
 
-**Streaming response**:
+**스트리밍 응답**:
 ```typescript
 async function streamContent(prompt: string) {
   const result = await model.generateContentStream(prompt);
@@ -88,7 +88,7 @@ async function streamContent(prompt: string) {
 }
 ```
 
-**Multimodal (image + text)**:
+**멀티모달 (이미지 + 텍스트)**:
 ```typescript
 async function analyzeImage(imageUrl: string, prompt: string) {
   const imagePart = {
@@ -103,14 +103,14 @@ async function analyzeImage(imageUrl: string, prompt: string) {
 }
 ```
 
-### Step 5: Configure Security Rules
+### Step 5: 보안 규칙 설정
 
 **Firebase Security Rules**:
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Protect AI request logs
+    // AI 요청 로그 보호
     match /ai_logs/{logId} {
       allow read: if request.auth != null && request.auth.uid == resource.data.userId;
       allow create: if request.auth != null;
@@ -121,38 +121,38 @@ service cloud.firestore {
 
 ## Output format
 
-### Project structure
+### 프로젝트 구조
 ```
 project/
 ├── src/
 │   ├── ai/
-│   │   ├── client.ts        # Initialize AI client
-│   │   ├── prompts.ts       # Prompt templates
-│   │   └── handlers.ts      # AI handlers
+│   │   ├── client.ts        # AI 클라이언트 초기화
+│   │   ├── prompts.ts       # 프롬프트 템플릿
+│   │   └── handlers.ts      # AI 핸들러
 │   └── firebase/
-│       └── config.ts        # Firebase config
+│       └── config.ts        # Firebase 설정
 ├── firebase.json
-└── .env.local               # API key (gitignored)
+└── .env.local               # API 키 (gitignore)
 ```
 
 ## Best practices
 
-1. **Prompt optimization**: write clear, specific prompts
-2. **Error handling**: implement a fallback when AI responses fail
-3. **Rate Limiting**: limit usage and manage costs
-4. **Caching**: cache responses for repeated requests
-5. **Security**: manage API keys via environment variables
+1. **프롬프트 최적화**: 명확하고 구체적인 프롬프트 작성
+2. **에러 처리**: AI 응답 실패 시 폴백 구현
+3. **Rate Limiting**: 사용량 제한 및 비용 관리
+4. **캐싱**: 반복 요청에 대한 응답 캐싱
+5. **보안**: API 키는 환경변수로 관리
 
 ## Constraints
 
-### Required Rules (MUST)
-1. Do not hardcode API keys in code
-2. Validate user input
-3. Implement error handling
+### 필수 규칙 (MUST)
+1. API 키를 코드에 하드코딩하지 않음
+2. 사용자 입력 검증 수행
+3. 에러 핸들링 구현
 
-### Prohibited (MUST NOT)
-1. Do not send sensitive data to the AI
-2. Do not allow unlimited API calls
+### 금지 사항 (MUST NOT)
+1. 민감한 데이터를 AI에 전송하지 않음
+2. 무제한 API 호출 허용하지 않음
 
 ## References
 
@@ -162,9 +162,9 @@ project/
 
 ## Metadata
 
-- **Version**: 1.0.0
-- **Last updated**: 2025-01-05
-- **Supported platforms**: Claude, ChatGPT, Gemini
+- **버전**: 1.0.0
+- **최종 업데이트**: 2025-01-05
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
 ## Examples
 

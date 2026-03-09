@@ -12,9 +12,9 @@ metadata:
 
 ## When to use this skill
 
-- **Repetitive tasks**: running the same commands every time
-- **Complex builds**: multi-step build processes
-- **Team onboarding**: a consistent development environment
+- **반복 작업**: 매번 같은 명령어 실행
+- **복잡한 빌드**: 여러 단계 빌드 프로세스
+- **팀 온보딩**: 일관된 개발 환경
 
 ## Instructions
 
@@ -88,7 +88,7 @@ ci: lint test build ## Run CI pipeline locally
 	@echo "✅ CI pipeline passed!"
 ```
 
-**Usage**:
+**사용**:
 ```bash
 make help        # Show all commands
 make dev         # Start development
@@ -131,7 +131,7 @@ npm test -- --onlyChanged
 echo "✅ Pre-commit checks passed!"
 ```
 
-### Step 4: Task Runner scripts
+### Step 4: Task Runner 스크립트
 
 **scripts/dev-setup.sh**:
 ```bash
@@ -221,7 +221,7 @@ fi
 echo "✅ Deployment to $ENV completed!"
 ```
 
-### Step 5: GitHub Actions workflow automation
+### Step 5: GitHub Actions Workflow 자동화
 
 **.github/workflows/ci.yml**:
 ```yaml
@@ -280,22 +280,22 @@ project/
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Idempotency**: safe to run scripts multiple times
-2. **Error handling**: clear messages on failure
-3. **Documentation**: comments on how to use the scripts
+1. **멱등성**: 스크립트 여러 번 실행해도 안전
+2. **에러 처리**: 실패 시 명확한 메시지
+3. **문서화**: 스크립트 사용법 주석
 
-### Prohibited items (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Hardcoded secrets**: do not include passwords or API keys in scripts
-2. **Destructive commands**: do not run rm -rf without confirmation
+1. **하드코딩된 비밀**: 스크립트에 비밀번호, API 키 포함 금지
+2. **파괴적 명령**: 확인 없이 rm -rf 실행 금지
 
 ## Best practices
 
-1. **Use Make**: platform-agnostic interface
-2. **Git Hooks**: automated quality checks
-3. **CI/CD**: automated with GitHub Actions
+1. **Make 사용**: 플랫폼 무관 인터페이스
+2. **Git Hooks**: 자동 품질 검사
+3. **CI/CD**: GitHub Actions로 자동화
 
 ## References
 
@@ -305,12 +305,12 @@ project/
 
 ## Metadata
 
-### Version
--- **Current version**: 1.0.0
--- **Last updated**: 2025-01-01
--- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#automation` `#scripts` `#workflow` `#npm-scripts` `#Makefile` `#utilities`
 
 ## Examples

@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-06 · **71 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-09 · **77 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-71-brightgreen)](#skills-list-71-total)
+[![Skills](https://img.shields.io/badge/Skills-77-brightgreen)](#skills-list-77-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -20,7 +20,7 @@
 - [What's New](#whats-new-in-v2026-03-06)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
-- [Skills List (71)](#skills-list-71-total)
+- [Skills List (77)](#skills-list-77-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -46,13 +46,13 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-03-06
+## What's New in v2026-03-09
 
 | Change | Details |
 |--------|---------|
-| **TOON Format — Cross-Platform Hook Integration** | Designed and implemented by a 6-person ultrateam. **Claude Code**: `~/.claude/hooks/toon-inject.mjs` (Node.js, symlink traversal, 3-tier keyword matching, 26-37ms). **Gemini CLI**: `toon-skill-inject.sh` + `includeDirectories`. **Codex CLI**: static catalog + 2-turn sidecar pattern |
-| **bmad-orchestrator TOON Integration Docs** | TOON Format Integration section added to `SKILL.md`. Two-tier architecture: Tier 1 catalog always injected (~875-3,500 tokens) + Tier 2 SKILL.toon on-demand (max 3). Full platform-specific configuration documented |
-| **71 SKILL.toon Full Validation** | All 71 skills verified and corrected for TOON format compliance |
+| **6 New Skills Added** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — total 71 → **77 skills** |
+| **54 Skills Updated** | SKILL.md and SKILL.toon content refreshed across 54 existing skills |
+| **setup-all-skills-prompt improvements** | `FORCE_REINSTALL` flag, rsync-based sync, non-empty dir detection, jeo `/omc:team` requirement note |
 
 > Previous changes: [Changelog](#changelog)
 
@@ -188,7 +188,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (71 total)
+## Skills List (77 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -214,15 +214,17 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `backend-testing` | Backend testing strategies | All platforms |
 | `database-schema-design` | Database schema design | All platforms |
 
-### Frontend (7)
+### Frontend (9)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `design-system` | Design system implementation *(in development)* | All platforms |
+| `frontend-design-system` | Production-grade UI design with design tokens, layout rules, motion guidance, and accessibility | All platforms |
 | `react-best-practices` | React & Next.js best practices | All platforms |
 | `responsive-design` | Responsive web design | All platforms |
 | `state-management` | State management patterns | All platforms |
 | `ui-component-patterns` | UI component patterns | All platforms |
+| `vercel-react-best-practices` | React & Next.js performance optimization from Vercel Engineering | Claude · Gemini · Codex |
 | `web-accessibility` | Web accessibility (a11y) | All platforms |
 | `web-design-guidelines` | Web design guidelines | All platforms |
 
@@ -278,19 +280,23 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `log-analysis` | Log analysis & debugging | All platforms |
 | `pattern-detection` | Pattern detection | All platforms |
 
-### Creative Media (3)
+### Creative Media (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `image-generation` | AI image generation *(in development)* | Claude · Gemini |
+| `image-generation-mcp` | Image generation via MCP (Gemini/compatible) with structured prompts, ratios, and validation | All platforms |
 | `pollinations-ai` | Free image generation via Pollinations.ai *(in development)* | All platforms |
+| `remotion-video-production` | Programmable video production with Remotion — scene planning, asset orchestration, validation gates | All platforms |
 | `video-production` | Video production workflows *(in development)* | All platforms |
 
-### Marketing (1)
+### Marketing (3)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
+| `marketing-skills-collection` | Marketing deliverables across CRO, copywriting, SEO, analytics, and growth (23 sub-skills) | All platforms |
+| `pptx-presentation-builder` | Professional PPTX presentations with brand-aligned layouts for pitch, roadmap, and product decks | All platforms |
 
 ### Utilities (20)
 
@@ -519,7 +525,7 @@ TOON (Token-Oriented Object Notation) compresses the skill catalog and auto-inje
 - **Tier 1 (always injected)**: Skill catalog index (~875-3,500 tokens) — skill names + descriptions + tags injected every prompt
 - **Tier 2 (on-demand)**: Individual SKILL.toon full content (~292 tokens/skill, max 3) — auto-loaded on skill name/tag detection
 
-> Injecting all 71 skills simultaneously (~20,700 tokens) is prohibited. Tier 1 + on-demand max 3 keeps context cost below 5%.
+> Injecting all 77 skills simultaneously (~22,400 tokens) is prohibited. Tier 1 + on-demand max 3 keeps context cost below 5%.
 
 ### Platform Implementations
 
@@ -552,7 +558,7 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 │   ├── skill-query-handler.py
 │   ├── skills.json
 │   ├── skills.toon
-│   └── [70 skill folders]
+│   └── [76 skill folders]
 ├── docs/
 │   ├── bmad/           ← bmad-orchestrator harness guide
 │   ├── omc/            ← oh-my-claudecode guide
@@ -580,6 +586,11 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 ---
 
 ## Changelog
+
+**v2026-03-09 (latest)**:
+- **6 new skills**: `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 71 → **77 skills**
+- **54 skills updated**: SKILL.md and SKILL.toon refreshed with latest content
+- **setup-all-skills-prompt improvements**: `FORCE_REINSTALL` env var (default true), rsync-based force-mirror sync, non-empty dir detection, jeo `/omc:team` requirement note added
 
 **v2026-03-06 (latest)**:
 - **TOON Format Cross-Platform Hook Integration**: Designed and implemented by a 6-person ultrateam (QA · LLM Expert · Skill Expert · ClaudeCode · Codex · Gemini-CLI). Claude Code: `~/.claude/hooks/toon-inject.mjs` Node.js hook (symlink traversal, 3-tier keyword matching, 26-37ms). Gemini CLI: `~/.gemini/hooks/toon-skill-inject.sh` + `includeDirectories` + `AfterAgent` hook. Codex CLI: static catalog (`skills-toon-catalog.toon`, 62 skills) + `notify-dispatch.py` + 2-turn sidecar pattern

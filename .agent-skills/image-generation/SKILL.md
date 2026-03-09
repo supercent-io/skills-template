@@ -9,14 +9,14 @@ metadata:
 
 # Image Generation via MCP
 
-AI image generation skill via MCP. Use Gemini models or compatible services to generate high-quality images for marketing, UI, and presentations.
+MCP를 통한 AI 이미지 생성 스킬입니다. Gemini 모델 또는 호환 서비스를 사용하여 마케팅, UI, 프레젠테이션용 고품질 이미지를 생성합니다.
 
 ## When to use this skill
 
-- **Marketing assets**: Hero images, banners, social media content
-- **UI/UX design**: Placeholder images, icons, illustrations
-- **Presentations**: Slide backgrounds, product visualizations
-- **Brand consistency**: Generate images based on a style guide
+- **마케팅 에셋**: 히어로 이미지, 배너, 소셜 미디어 콘텐츠
+- **UI/UX 디자인**: 플레이스홀더 이미지, 아이콘, 일러스트레이션
+- **프레젠테이션**: 슬라이드 배경, 제품 시각화
+- **브랜드 일관성**: 스타일 가이드 기반 이미지 생성
 
 ---
 
@@ -25,63 +25,63 @@ AI image generation skill via MCP. Use Gemini models or compatible services to g
 ### Step 1: Configure MCP Environment
 
 ```bash
-# Check MCP server configuration
+# MCP 서버 설정 확인
 claude mcp list
 
-# Check Gemini CLI availability
-# gemini-cli must be installed
+# Gemini CLI 사용 가능 여부 확인
+# gemini-cli가 설치되어 있어야 함
 ```
 
-**Required setup**:
-- Model name (gemini-2.5-flash, gemini-3-pro, etc.)
-- API key reference (stored as an environment variable)
+**필수 설정**:
+- Model name (gemini-2.5-flash, gemini-3-pro 등)
+- API key reference (환경 변수로 저장)
 - Output directory
 
 ### Step 2: Define the Prompt
 
-Write a structured prompt:
+구조화된 프롬프트 작성:
 
 ```markdown
-**Subject**: [main subject]
-**Style**: [style - minimal, illustration, photoreal, 3D, etc.]
-**Lighting**: [lighting - natural, studio, golden hour, etc.]
-**Mood**: [mood - calm, dynamic, professional, etc.]
-**Composition**: [composition - centered, rule of thirds, etc.]
-**Aspect Ratio**: [ratio - 16:9, 1:1, 9:16]
-**Brand Colors**: [brand color constraints]
+**Subject**: [주요 피사체]
+**Style**: [스타일 - 미니멀, 일러스트, 사진풍, 3D 등]
+**Lighting**: [조명 - 자연광, 스튜디오, 골든아워 등]
+**Mood**: [분위기 - 차분한, 역동적, 전문적 등]
+**Composition**: [구성 - 중앙 배치, 삼분할 등]
+**Aspect Ratio**: [비율 - 16:9, 1:1, 9:16]
+**Brand Colors**: [브랜드 컬러 제약사항]
 ```
 
 ### Step 3: Choose the Model
 
-| Model | Use case | Notes |
+| 모델 | 용도 | 특징 |
 |-----|------|------|
-| `gemini-3-pro-image` | High quality | Complex compositions, detail |
-| `gemini-2.5-flash-image` | Fast iteration | Prototyping, testing |
-| `gemini-2.5-pro-image` | Balanced | Quality/speed balance |
+| `gemini-3-pro-image` | 고품질 | 복잡한 구성, 디테일 |
+| `gemini-2.5-flash-image` | 빠른 반복 | 프로토타이핑, 테스트 |
+| `gemini-2.5-pro-image` | 균형 | 품질/속도 밸런스 |
 
 ### Step 4: Generate and Review
 
 ```bash
-# Generate 2-4 variants
+# 2-4개 변형 생성
 ask-gemini "Create a serene mountain landscape at sunset,
   wide 16:9, minimal style, soft gradients in brand blue #2563EB"
 
-# Iterate by changing a single variable
+# 단일 변수 변경으로 반복
 ask-gemini "Same prompt but with warm orange tones"
 ```
 
-**Review checklist**:
-- [ ] Brand fit
-- [ ] Composition clarity
-- [ ] Ratio correctness
-- [ ] Text readability (if text is included)
+**리뷰 체크리스트**:
+- [ ] 브랜드 적합성
+- [ ] 구성 명확성
+- [ ] 비율 정확성
+- [ ] 텍스트 가독성 (텍스트 포함 시)
 
 ### Step 5: Deliverables
 
-Final deliverables:
-- Final image files
-- Prompt metadata record
-- Model, ratio, usage notes
+최종 산출물:
+- 최종 이미지 파일
+- 프롬프트 메타데이터 기록
+- 모델, 비율, 사용 노트
 
 ```json
 {
@@ -146,35 +146,35 @@ Leave space for text overlay on the left side.
 
 ## Best practices
 
-1. **Specify ratio early**: Prevent unintended crops
-2. **Use style anchors**: Maintain consistent aesthetics
-3. **Iterate with constraints**: Change only one variable at a time
-4. **Track prompts**: Ensure reproducibility
-5. **Batch similar requests**: Create a consistent style set
+1. **Specify ratio early**: 의도하지 않은 크롭 방지
+2. **Use style anchors**: 일관된 미적 스타일 유지
+3. **Iterate with constraints**: 한 번에 하나의 변수만 변경
+4. **Track prompts**: 재현 가능성 확보
+5. **Batch similar requests**: 일관된 스타일 세트 생성
 
 ---
 
 ## Common pitfalls
 
-- **Vague prompts**: Specify concrete style and composition
-- **Ignoring size constraints**: Check target channel dimension requirements
-- **Overly complex scenes**: Simplify for clarity
+- **모호한 프롬프트**: 구체적인 스타일과 구성 지정 필요
+- **크기 제약 무시**: 대상 채널의 크기 요구사항 확인
+- **과도하게 복잡한 장면**: 명확성을 위해 단순화
 
 ---
 
 ## Troubleshooting
 
 ### Issue: Outputs are inconsistent
-**Cause**: Missing stable style constraints
-**Solution**: Add style references and a fixed palette
+**Cause**: 안정적인 스타일 제약 누락
+**Solution**: 스타일 레퍼런스와 고정 팔레트 추가
 
 ### Issue: Wrong aspect ratio
-**Cause**: Ratio not specified or an unsupported ratio
-**Solution**: Provide an exact ratio and regenerate
+**Cause**: 비율 미지정 또는 지원하지 않는 비율
+**Solution**: 정확한 비율 제공 후 재생성
 
 ### Issue: Brand mismatch
-**Cause**: Color codes not specified
-**Solution**: Specify brand colors via HEX codes
+**Cause**: 컬러 코드 미지정
+**Solution**: HEX 코드로 브랜드 컬러 명시
 
 ---
 
@@ -207,17 +207,17 @@ Leave space for text overlay on the left side.
 
 ### Validation & Retrospectives
 
-- **Round 1 (Orchestrator)**: Prompt completeness, ratio correctness
-- **Round 2 (Analyst)**: Style consistency, brand alignment
-- **Round 3 (Executor)**: Validate output filenames, delivery checklist
+- **Round 1 (Orchestrator)**: 프롬프트 완전성, 비율 정합성
+- **Round 2 (Analyst)**: 스타일 일관성, 브랜드 정합성
+- **Round 3 (Executor)**: 출력 파일명, 전달 체크리스트 검증
 
 ### Agent Roles
 
 | Agent | Role |
 |-------|------|
-| Claude | Prompt structuring, quality verification |
-| Gemini | Run image generation |
-| Codex | File management, batch processing |
+| Claude | 프롬프트 구성, 품질 검증 |
+| Gemini | 이미지 생성 실행 |
+| Codex | 파일 관리, 배치 처리 |
 
 ---
 

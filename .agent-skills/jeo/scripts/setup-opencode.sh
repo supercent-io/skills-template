@@ -13,12 +13,9 @@ info() { echo -e "${BLUE}→${NC} $*"; }
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true
 
-# Resolve opencode.json priority:
-# 1) cwd (project-level config), then
-# 2) ~/.config/opencode/opencode.json, then
-# 3) legacy ~/.opencode.json
+# Look for opencode.json in cwd, then home
 OPENCODE_JSON=""
-for candidate in "./opencode.json" "${HOME}/.config/opencode/opencode.json" "${HOME}/opencode.json"; do
+for candidate in "./opencode.json" "${HOME}/opencode.json" "${HOME}/.config/opencode/opencode.json"; do
   [[ -f "$candidate" ]] && OPENCODE_JSON="$candidate" && break
 done
 
@@ -31,21 +28,11 @@ if ! command -v opencode >/dev/null 2>&1; then
   warn "opencode CLI not found. Install via: npm install -g opencode-ai"
 fi
 
-# Optional runtime check: OpenCode writes SQLite/cache/state under XDG dirs.
-# If HOME-backed defaults are not writable, suggest tmp-based launcher.
-if command -v opencode >/dev/null 2>&1; then
-  OPENCODE_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/opencode"
-  if ! (mkdir -p "$OPENCODE_DATA_DIR" 2>/dev/null && [[ -w "$OPENCODE_DATA_DIR" ]]); then
-    warn "OpenCode data dir is not writable: $OPENCODE_DATA_DIR"
-    warn "Use: bash $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/run-opencode-safe.sh"
-  fi
-fi
-
 # ── 2. Configure opencode.json ────────────────────────────────────────────────
 info "Configuring opencode.json..."
 
 if [[ -z "$OPENCODE_JSON" ]]; then
-  OPENCODE_JSON="${HOME}/.config/opencode/opencode.json"
+  OPENCODE_JSON="./opencode.json"
   warn "No opencode.json found — will create at $OPENCODE_JSON"
 fi
 
@@ -53,26 +40,20 @@ if $DRY_RUN; then
   echo -e "${YELLOW}[DRY-RUN]${NC} Would configure $OPENCODE_JSON with JEO plugin"
 else
   # Backup
-  mkdir -p "$(dirname "$OPENCODE_JSON")"
   [[ -f "$OPENCODE_JSON" ]] && cp "$OPENCODE_JSON" "${OPENCODE_JSON}.jeo.bak"
 
-  OPENCODE_JSON_PATH="$OPENCODE_JSON" python3 - <<'PYEOF'
+  python3 - <<PYEOF
 import json, os
 
-config_path = os.environ["OPENCODE_JSON_PATH"]
+config_path = "$OPENCODE_JSON"
 try:
     with open(config_path) as f:
         config = json.load(f)
 except (FileNotFoundError, json.JSONDecodeError):
     config = {}
 
-# Set schema (normalize old escaped key if present)
-legacy_schema_key = "\\$schema"
-if legacy_schema_key in config:
-    if "$schema" not in config:
-        config["$schema"] = config[legacy_schema_key]
-    config.pop(legacy_schema_key)
-config.setdefault("$schema", "https://opencode.ai/config.json")
+# Set schema
+config.setdefault("\$schema", "https://opencode.ai/config.json")
 
 # Add plugins
 plugins = config.setdefault("plugin", [])
@@ -98,58 +79,60 @@ if "agentation" not in mcp_config:
 else:
     print("\u2713 agentation MCP already present")
 
-# Migrate legacy instructions to valid type (OpenCode expects array)
-legacy_instructions = config.get("instructions")
-if isinstance(legacy_instructions, str):
-    text = legacy_instructions.strip()
-    config["instructions"] = [text] if text else []
-elif legacy_instructions is not None and not isinstance(legacy_instructions, list):
-    config["instructions"] = [str(legacy_instructions)]
+# Add JEO slash commands
+instructions = config.setdefault("instructions", "")
+jeo_instructions = """
+## JEO Orchestration Commands
 
-# Register JEO slash commands in OpenCode's "command" table
-commands = config.setdefault("command", {})
-jeo_commands = {
-    "jeo-plan": {
-        "description": "JEO planning workflow (ralph + plannotator)",
-        "template": (
-            "Write plan.md, then run mandatory PLAN gate: "
-            "bash .agent-skills/jeo/scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3. "
-            "This waits for approve/feedback, restarts dead sessions up to 3 times, "
-            "and asks whether to stop PLAN after repeated failures."
-        ),
-    },
-    "jeo-exec": {
-        "description": "JEO execute workflow (team/bmad)",
-        "template": (
-            "Execute approved plan using team agents if available; otherwise use BMAD workflow phases."
-        ),
-    },
-    "jeo-annotate": {
-        "description": "Process agentation annotations (VERIFY_UI loop)",
-        "template": (
-            "Run agentation watch loop: acknowledge, implement fix, resolve, and repeat until pending count is 0."
-        ),
-    },
-    "jeo-verify": {
-        "description": "Verify browser behavior with agent-browser",
-        "template": "Run agent-browser snapshot and verify the UI/flow for the current task.",
-    },
-    "jeo-cleanup": {
-        "description": "Cleanup worktrees after JEO completion",
-        "template": "Run: bash .agent-skills/jeo/scripts/worktree-cleanup.sh",
-    },
-}
+/jeo-plan    — Start ralph+plannotator planning workflow
+/jeo-exec    — Execute with team or BMAD orchestration
+/jeo-annotate — Start agentation watch loop (VERIFY_UI); /jeo-agentui is a deprecated alias
+/jeo-verify  — Verify UI with agent-browser snapshot
+/jeo-cleanup — Clean up worktrees after completion
+## JEO Workflow
+1. PLAN: Use ralph for task planning + plannotator for visual review
+2. EXECUTE: Use omx team agents or BMAD structured phases
+3. VERIFY: agent-browser snapshot <url> for UI verification
+4. CLEANUP: bash .agent-skills/jeo/scripts/worktree-cleanup.sh
 
-added = 0
-for name, spec in jeo_commands.items():
-    if name not in commands:
-        commands[name] = spec
-        added += 1
+## Available Orchestration
+- omx: /omx:team <n>:executor "<task>"
+- BMAD: /workflow-init then follow phases
+- plannotator: /plannotator-review (code review after implementation)
 
-if added:
-    print(f"\u2713 Added {added} JEO command(s) to opencode.json")
+## MANDATORY: plannotator Plan Review (blocking loop)
+After writing plan.md, you MUST run plannotator and wait for approval before EXECUTE.
+Run blocking (no &):
+  python3 -c "import json,sys; plan=open('plan.md').read(); sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+Then read /tmp/plannotator_feedback.txt:
+  - "approved":true  → proceed to EXECUTE
+  - not approved     → read annotations, revise plan.md, repeat
+NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
+"""
+
+AGENTUI_INSTRUCTIONS = """
+
+## ANNOTATE: agentation Watch Loop (/jeo-annotate)
+When user says 'annotate' or 'agentui' (deprecated alias) or invokes /jeo-annotate (or /jeo-agentui):
+1. Ensure agentation-mcp server running: npx agentation-mcp server (HTTP :4747)
+2. Use agentation_watch_annotations MCP tool (batchWindowSeconds:10, timeoutSeconds:120) — blocking
+3. For each annotation:
+   a. agentation_acknowledge_annotation({id})
+   b. Search code via annotation.elementPath CSS selector
+   c. Apply fix based on annotation.comment
+   d. agentation_resolve_annotation({id, summary})
+4. HTTP fallback (no MCP):
+   GET  http://localhost:4747/pending
+   PATCH http://localhost:4747/annotations/:id  {status:'acknowledged'|'resolved', resolution:'<summary>'}
+5. Repeat until count=0 or 120s timeout.
+NEVER use & background. NEVER skip annotation without resolving or dismissing.
+"""
+
+if "JEO Orchestration Commands" not in instructions:
+    config["instructions"] = instructions + jeo_instructions + AGENTUI_INSTRUCTIONS
+    print("\u2713 JEO + annotate instructions added to opencode.json")
 else:
-    print("\u2713 JEO commands already present")
+    print("\u2713 JEO instructions already present")
 
 with open(config_path, "w") as f:
     json.dump(config, f, indent=2)
@@ -167,9 +150,6 @@ echo "  /jeo-annotate  \u2190 agentation watch loop (VERIFY_UI); /jeo-agentui is
 echo "  /jeo-verify    \u2190 Verify UI with agent-browser"
 echo "  /jeo-cleanup   ← Clean worktrees"
 echo "  /plannotator-review ← Code review UI"
-echo ""
-echo "If OpenCode shows 'readonly database', run:"
-echo "  bash $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/run-opencode-safe.sh"
 echo ""
 echo "  Restart OpenCode to activate plugins."
 echo ""

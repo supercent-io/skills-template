@@ -9,14 +9,14 @@ metadata:
 
 # Remotion Video Production
 
-Programmable video production skill using Remotion. Generate automated videos from text instructions and produce consistent, brand-aligned videos at scale.
+Remotion을 사용한 프로그래머블 비디오 제작 스킬입니다. 텍스트 지침에서 자동화된 비디오를 생성하고, 일관된 브랜드 비디오를 대규모로 제작합니다.
 
 ## When to use this skill
 
-- **Automated video generation**: Generate videos from text instructions
-- **Brand video production**: High-volume videos with consistent style
-- **Programmable content**: Combine narration, visuals, and animation
-- **Marketing content**: Product intros, onboarding, promo videos
+- **자동화된 비디오 생성**: 텍스트 지침에서 비디오 생성
+- **브랜드 비디오 제작**: 일관된 스타일의 대규모 비디오
+- **프로그래머블 콘텐츠**: 내레이션, 비주얼, 애니메이션 통합
+- **마케팅 콘텐츠**: 제품 소개, 온보딩, 프로모션 비디오
 
 ---
 
@@ -26,34 +26,34 @@ Programmable video production skill using Remotion. Generate automated videos fr
 
 ```yaml
 video_spec:
-  audience: [target audience]
-  goal: [video objective]
-  duration: [total length - 30s, 60s, 90s]
+  audience: [타겟 오디언스]
+  goal: [비디오 목적]
+  duration: [총 길이 - 30s, 60s, 90s]
   aspect_ratio: "16:9" | "1:1" | "9:16"
   tone: "fast" | "calm" | "cinematic"
   voice:
-    style: [narration style]
-    language: [language]
+    style: [내레이션 스타일]
+    language: [언어]
 ```
 
 ### Step 2: Outline Scenes
 
-Scene structuring template:
+씬 구조화 템플릿:
 
 ```markdown
 ## Scene Plan
 
 ### Scene 1: Hook (0:00 - 0:05)
-- **Visual**: Product logo fade-in
-- **Audio**: Upbeat intro
+- **Visual**: 제품 로고 페이드인
+- **Audio**: 업비트 인트로
 - **Text**: "Transform Your Workflow"
-- **Transition**: Fade → Scene 2
+- **Transition**: 페이드 → Scene 2
 
 ### Scene 2: Problem (0:05 - 0:15)
-- **Visual**: Problem-state illustration
-- **Audio**: Narration starts
-- **Text**: Key message overlay
-- **Transition**: Slide left
+- **Visual**: 문제 상황 일러스트
+- **Audio**: 내레이션 시작
+- **Text**: 핵심 메시지 오버레이
+- **Transition**: 슬라이드 좌측
 
 ### Scene 3: Solution (0:15 - 0:30)
 ...
@@ -62,7 +62,7 @@ Scene structuring template:
 ### Step 3: Prepare Assets
 
 ```bash
-# Asset checklist
+# 에셋 체크리스트
 assets/
 ├── logos/
 │   ├── logo-main.svg
@@ -77,11 +77,11 @@ assets/
     └── brand-font.woff2
 ```
 
-**Asset prep rules**:
-- Logo: SVG or high-resolution PNG
-- Screenshots: Normalize to the target aspect ratio
-- Audio: MP3 or WAV; normalize volume
-- Fonts: Webfont or local font files
+**에셋 준비 규칙**:
+- 로고: SVG 또는 고해상도 PNG
+- 스크린샷: 비율에 맞게 정규화
+- 오디오: MP3 또는 WAV, 볼륨 정규화
+- 폰트: 웹폰트 또는 로컬 폰트 파일
 
 ### Step 4: Implement Remotion Composition
 
@@ -124,16 +124,16 @@ const IntroScene: React.FC<{ frame: number }> = ({ frame }) => {
 ### Step 5: Render and QA
 
 ```bash
-# 1. Preview render (low quality)
+# 1. 프리뷰 렌더링 (저품질)
 npx remotion preview src/Video.tsx
 
-# 2. QA checks
-- [ ] Timing
-- [ ] Audio sync
-- [ ] Text readability
-- [ ] Smooth transitions
+# 2. QA 체크
+- [ ] 타이밍 확인
+- [ ] 오디오 싱크
+- [ ] 텍스트 가독성
+- [ ] 전환 부드러움
 
-# 3. Final render
+# 3. 최종 렌더링
 npx remotion render src/Video.tsx ProductIntro out/video.mp4
 ```
 
@@ -186,35 +186,35 @@ with callouts and 9:16 format for mobile.
 
 ## Best practices
 
-1. **Short scenes**: Keep each scene clear at 5-10 seconds
-2. **Consistent typography**: Define a typography scale
-3. **Audio sync**: Align narration cues with visuals
-4. **Template reuse**: Save reusable compositions
-5. **Safe zones**: Reserve margins for mobile aspect ratios
+1. **Short scenes**: 씬당 5-10초로 명확하게
+2. **Consistent typography**: 타이포그래피 스케일 정의
+3. **Audio sync**: 내레이션 큐와 비주얼 정렬
+4. **Template reuse**: 재사용 가능한 컴포지션 저장
+5. **Safe zones**: 모바일 비율 시 여백 확보
 
 ---
 
 ## Common pitfalls
 
-- **Text overload**: Limit the amount of text per scene
-- **Ignoring mobile safe zones**: Check edges for 9:16 outputs
-- **Final render before QA**: Always verify in preview first
+- **텍스트 과부하**: 씬당 텍스트 양 제한
+- **모바일 세이프존 무시**: 9:16 비율 시 가장자리 확인
+- **QA 전 최종 렌더링**: 항상 프리뷰 먼저 확인
 
 ---
 
 ## Troubleshooting
 
 ### Issue: Audio and visuals out of sync
-**Cause**: Frame timing mismatch
-**Solution**: Recalculate frames and align timestamps
+**Cause**: 프레임 타이밍 불일치
+**Solution**: 프레임 재계산 및 타임스탬프 정렬
 
 ### Issue: Render is slow or fails
-**Cause**: Heavy assets or effects
-**Solution**: Compress assets and simplify animations
+**Cause**: 무거운 에셋 또는 효과
+**Solution**: 에셋 압축 및 애니메이션 단순화
 
 ### Issue: Text unreadable
-**Cause**: Font size too small or insufficient contrast
-**Solution**: Use at least 24px fonts and high-contrast colors
+**Cause**: 폰트 크기 또는 대비 부족
+**Solution**: 최소 24px 폰트, 고대비 색상 사용
 
 ---
 
@@ -253,17 +253,17 @@ with callouts and 9:16 format for mobile.
 
 ### Validation & Retrospectives
 
-- **Round 1 (Orchestrator)**: Spec completeness, scene coverage
-- **Round 2 (Analyst)**: Narrative consistency, pacing review
-- **Round 3 (Executor)**: Validate render-readiness checklist
+- **Round 1 (Orchestrator)**: 스펙 완전성, 씬 커버리지
+- **Round 2 (Analyst)**: 내러티브 일관성, 페이싱 리뷰
+- **Round 3 (Executor)**: 렌더 준비 상태 체크리스트 검증
 
 ### Agent Roles
 
 | Agent | Role |
 |-------|------|
-| Claude | Scene planning, script writing |
-| Gemini | Asset analysis, optimization suggestions |
-| Codex | Generate Remotion code, run renders |
+| Claude | 씬 플래닝, 스크립트 작성 |
+| Gemini | 에셋 분석, 최적화 제안 |
+| Codex | Remotion 코드 생성, 렌더링 실행 |
 
 ---
 

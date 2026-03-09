@@ -1,100 +1,100 @@
 ---
 name: agentic-workflow
-description: Practical AI agent workflows and productivity techniques. Provides optimized patterns for daily development tasks such as commands, shortcuts, Git integration, MCP usage, and session management.
+description: AI 에이전트 실전 워크플로우와 생산성 기법. 명령어, 단축키, Git 통합, MCP 활용, 세션 관리 등 일상 개발 작업의 최적화 패턴 제공.
 allowed-tools: Read Write Bash Grep Glob
 metadata:
   tags: agentic-workflow, productivity, git, mcp, commands, multi-agent
   platforms: Claude, Gemini, ChatGPT, Codex
   version: 2.0.0
-  source: Claude Code Complete Guide - 70 tips (ykdojo + Ado Kukic)
+  source: Claude Code 완전 가이드 70가지 팁 (ykdojo + Ado Kukic)
 ---
 
 
-# AI Agent Workflow (Workflow & Productivity)
+# AI 에이전트 워크플로우 (Workflow & Productivity)
 
 ## When to use this skill
 
-- Optimize everyday AI agent work
-- Integrate Git/GitHub workflows
-- Use MCP servers
-- Manage and recover sessions
-- Apply productivity techniques
+- 일상적인 AI 에이전트 작업 최적화
+- Git/GitHub 워크플로우 통합
+- MCP 서버 활용
+- 세션 관리 및 복구
+- 생산성 향상 기법 적용
 
 ---
 
-## 1. Key commands by agent
+## 1. 에이전트별 주요 명령어
 
-### Claude Code commands
+### Claude Code 명령어
 
-| Command | Function | When to use |
+| 명령어 | 기능 | 사용 시점 |
 |--------|------|----------|
-| `/init` | Auto-generate a CLAUDE.md draft | Start a new project |
-| `/usage` | Show token usage/reset time | Start of every session |
-| `/clear` | Clear conversation history | When context is polluted; start a new task |
-| `/context` | Context window X-Ray | When performance degrades |
-| `/clone` | Clone the entire conversation | A/B experiments; backups |
-| `/mcp` | Manage MCP servers | Enable/disable MCP |
-| `!cmd` | Run immediately without Claude processing | Quick status checks |
+| `/init` | CLAUDE.md 초안 자동 생성 | 새 프로젝트 시작 |
+| `/usage` | 토큰 사용량/리셋 시간 표시 | 매 세션 시작 |
+| `/clear` | 대화 내용 초기화 | 컨텍스트 오염 시, 새 작업 시작 |
+| `/context` | 컨텍스트 윈도우 X-Ray | 성능 저하 시 |
+| `/clone` | 대화 전체 복제 | A/B 비교 실험, 백업 |
+| `/mcp` | MCP 서버 관리 | MCP 활성화/비활성화 |
+| `!cmd` | Claude 처리 없이 즉시 실행 | 빠른 상태 확인 |
 
-### Gemini CLI commands
+### Gemini CLI 명령어
 
-| Command | Function |
+| 명령어 | 기능 |
 |--------|------|
-| `gemini` | Start a conversation |
-| `@file` | Add file context |
-| `-m model` | Select model |
+| `gemini` | 대화 시작 |
+| `@file` | 파일 컨텍스트 추가 |
+| `-m model` | 모델 선택 |
 
-### Codex CLI commands
+### Codex CLI 명령어
 
-| Command | Function |
+| 명령어 | 기능 |
 |--------|------|
-| `codex` | Start a conversation |
-| `codex run` | Run a command |
+| `codex` | 대화 시작 |
+| `codex run` | 명령 실행 |
 
 ---
 
-## 2. Keyboard shortcuts (Claude Code)
+## 2. 키보드 단축키 (Claude Code)
 
-### Essential shortcuts
+### 필수 단축키
 
-| Shortcut | Function | Importance |
+| 단축키 | 기능 | 중요도 |
 |--------|------|--------|
-| `Esc Esc` | Cancel the last task immediately | Highest |
-| `Ctrl+R` | Search prompt history | High |
-| `Shift+Tab` x2 | Toggle plan mode | High |
-| `Tab` / `Enter` | Accept prompt suggestion | Medium |
-| `Ctrl+B` | Send to background | Medium |
-| `Ctrl+G` | Edit in external editor | Low |
+| `Esc Esc` | 마지막 작업 즉시 취소 | 최고 |
+| `Ctrl+R` | 이전 프롬프트 히스토리 검색 | 높음 |
+| `Shift+Tab` x2 | 계획 모드 토글 | 높음 |
+| `Tab` / `Enter` | 프롬프트 제안 수락 | 중간 |
+| `Ctrl+B` | 백그라운드로 보내기 | 중간 |
+| `Ctrl+G` | 외부 에디터로 편집 | 낮음 |
 
-### Editor editing shortcuts
+### 에디터 편집 단축키
 
-| Shortcut | Function |
+| 단축키 | 기능 |
 |--------|------|
-| `Ctrl+A` | Move to start of line |
-| `Ctrl+E` | Move to end of line |
-| `Ctrl+W` | Delete previous word |
-| `Ctrl+U` | Delete to start of line |
-| `Ctrl+K` | Delete to end of line |
+| `Ctrl+A` | 줄 시작으로 이동 |
+| `Ctrl+E` | 줄 끝으로 이동 |
+| `Ctrl+W` | 이전 단어 삭제 |
+| `Ctrl+U` | 줄 시작까지 삭제 |
+| `Ctrl+K` | 줄 끝까지 삭제 |
 
 ---
 
-## 3. Session management
+## 3. 세션 관리
 
-### Claude Code sessions
+### Claude Code 세션
 ```bash
-# Continue the last conversation
+# 마지막 대화 이어서 시작
 claude --continue
 
-# Resume a specific session
+# 특정 세션 재개
 claude --resume <session-name>
 
-# Name the session during the conversation
+# 대화 중 이름 지정
 /rename stripe-integration
 ```
 
-### Recommended aliases
+### 권장 별칭 설정
 ```bash
-# ~/.zshrc or ~/.bashrc
+# ~/.zshrc 또는 ~/.bashrc
 alias c='claude'
 alias cc='claude --continue'
 alias cr='claude --resume'
@@ -104,109 +104,109 @@ alias cx='codex'
 
 ---
 
-## 4. Git workflow
+## 4. Git 워크플로우
 
-### Auto-generate commit messages
+### 자동 커밋 메시지 생성
 ```
-"Analyze the changes, write an appropriate commit message, then commit"
-```
-
-### Auto-generate draft PR
-```
-"Create a draft PR from the current branch's changes.
-Make the title summarize the changes, and list the key changes in the body."
+"변경 사항을 분석하고 적절한 커밋 메시지를 작성한 후 커밋해줘"
 ```
 
-### Use Git worktrees
+### Draft PR 자동 생성
+```
+"현재 브랜치의 변경 사항으로 draft PR을 만들어줘.
+제목은 변경 내용을 요약하고, 본문에는 주요 변경 사항을 리스트로 작성해줘."
+```
+
+### Git Worktrees 활용
 ```bash
-# Work on multiple branches simultaneously
+# 여러 브랜치 동시 작업
 git worktree add ../myapp-feature-auth feature/auth
 git worktree add ../myapp-hotfix hotfix/critical-bug
 
-# Independent AI sessions per worktree
-Tab 1: ~/myapp-feature-auth → new feature development
-Tab 2: ~/myapp-hotfix → urgent bug fix
-Tab 3: ~/myapp (main) → keep main branch
+# 각 worktree에서 독립적 AI 세션
+탭 1: ~/myapp-feature-auth → 새 기능 개발
+탭 2: ~/myapp-hotfix → 긴급 버그 수정
+탭 3: ~/myapp (main) → 메인 브랜치 유지
 ```
 
-### PR review workflow
+### PR 리뷰 워크플로우
 ```
-1. "Run gh pr checkout 123 and summarize this PR's changes"
-2. "Analyze changes in src/auth/middleware.ts. Check for security issues or performance problems"
-3. "Is there a way to make this logic more efficient?"
-4. "Apply the improvements you suggested and run tests"
+1. "gh pr checkout 123을 실행하고 이 PR의 변경 사항을 요약해줘"
+2. "src/auth/middleware.ts 파일의 변경점을 분석해줘. 보안 이슈나 성능 문제가 있는지 확인해줘"
+3. "이 로직을 더 효율적으로 바꿀 방법이 있을까?"
+4. "네가 제안한 개선 사항을 적용하고 테스트를 실행해줘"
 ```
 
 ---
 
-## 5. Using MCP servers (Multi-Agent)
+## 5. MCP 서버 활용 (Multi-Agent)
 
-### Key MCP servers
+### 주요 MCP 서버
 
-| MCP server | Function | Use case |
+| MCP 서버 | 기능 | 용도 |
 |----------|------|------|
-| Playwright | Control web browser | E2E tests |
-| Supabase | Database queries | Direct DB access |
-| Firecrawl | Web crawling | Data collection |
-| Gemini-CLI | Large-scale analysis | 1M+ token analysis |
-| Codex-CLI | Run commands | Build, deploy |
+| Playwright | 웹 브라우저 제어 | E2E 테스트 |
+| Supabase | 데이터베이스 쿼리 | DB 직접 접근 |
+| Firecrawl | 웹 크롤링 | 데이터 수집 |
+| Gemini-CLI | 대용량 분석 | 1M+ 토큰 분석 |
+| Codex-CLI | 명령 실행 | 빌드, 배포 |
 
-### MCP usage examples
+### MCP 활용 예시
 ```bash
-# Gemini: large-scale analysis
-> ask-gemini "@src/ Analyze the structure of the entire codebase"
+# Gemini: 대용량 분석
+> ask-gemini "@src/ 전체 코드베이스 구조 분석해줘"
 
-# Codex: run commands
+# Codex: 명령 실행
 > shell "docker-compose up -d"
 > shell "npm test && npm run build"
 ```
 
-### MCP optimization
+### MCP 최적화
 ```bash
-# Disable unused MCP servers
+# 사용하지 않는 MCP 비활성화
 /mcp
 
-# Recommended numbers
-# - MCP servers: fewer than 10
-# - Active tools: fewer than 80
+# 권장 수치
+# - MCP 서버: 10개 미만
+# - 활성 도구: 80개 미만
 ```
 
 ---
 
-## 6. Multi-Agent workflow patterns
+## 6. Multi-Agent 워크플로우 패턴
 
-### Orchestration pattern
+### 오케스트레이션 패턴
 ```
-[Claude] Plan → [Gemini] Analysis/research → [Claude] Write code → [Codex] Run/test → [Claude] Synthesize results
-```
-
-### Practical example: API design + implementation + testing
-```
-1. [Claude] Design API spec using the skill
-2. [Gemini] ask-gemini "@src/ Analyze existing API patterns" - large-scale codebase analysis
-3. [Claude] Implement code based on the analysis
-4. [Codex] shell "npm test && npm run build" - test and build
-5. [Claude] Create final report
+[Claude] 계획 수립 → [Gemini] 분석/리서치 → [Claude] 코드 작성 → [Codex] 실행/테스트 → [Claude] 결과 종합
 ```
 
-### TDD workflow
+### 실전 예시: API 설계 + 구현 + 테스트
 ```
-"Work using TDD. First write a failing test,
-then write code that makes the test pass."
+1. [Claude] 스킬 기반 API 스펙 설계
+2. [Gemini] ask-gemini "@src/ 기존 API 패턴 분석" - 대용량 코드베이스 분석
+3. [Claude] 분석 결과 기반 코드 구현
+4. [Codex] shell "npm test && npm run build" - 테스트 및 빌드
+5. [Claude] 최종 리포트 생성
+```
 
-# The AI:
-# 1. Write a failing test
+### TDD 워크플로우
+```
+"TDD 방식으로 작업해줘. 먼저 실패하는 테스트를 작성하고,
+그 테스트를 통과시키는 코드를 작성해줘."
+
+# AI가:
+# 1. 실패하는 테스트 작성
 # 2. git commit -m "Add failing test for user auth"
-# 3. Write minimal code to pass the test
-# 4. Run tests → confirm they pass
+# 3. 테스트를 통과시키는 최소한의 코드 작성
+# 4. 테스트 실행 → 통과 확인
 # 5. git commit -m "Implement user auth to pass test"
 ```
 
 ---
 
-## 7. Container workflow
+## 7. 컨테이너 워크플로우
 
-### Docker container setup
+### Docker 컨테이너 설정
 ```dockerfile
 FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y \
@@ -216,42 +216,42 @@ WORKDIR /workspace
 CMD ["/bin/bash"]
 ```
 
-### Safe experimentation environment
+### 안전한 실험 환경
 ```bash
-# Build and run the container
+# 컨테이너 빌드 및 실행
 docker build -t ai-sandbox .
 docker run -it --rm \
   -v $(pwd):/workspace \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   ai-sandbox
 
-# Do experimental work inside the container
+# 컨테이너 안에서 실험적 작업 수행
 ```
 
 ---
 
-## 8. Troubleshooting
+## 8. 문제 해결
 
-### When context is overloaded
+### 컨텍스트 과다 시
 ```bash
-/context  # Check usage
-/clear    # Reset context
+/context  # 사용량 확인
+/clear    # 컨텍스트 초기화
 
-# Or create HANDOFF.md and start a new session
+# 또는 HANDOFF.md 생성 후 새 세션
 ```
 
-### Cancel a task
+### 작업 취소
 ```
-Esc Esc  # Cancel the last task immediately
+Esc Esc  # 마지막 작업 즉시 취소
 ```
 
-### When performance degrades
+### 성능 저하 시
 ```bash
-# Check MCP/tool counts
+# MCP/도구 수 확인
 /mcp
 
-# Disable unnecessary MCP servers
-# Reset context
+# 불필요한 MCP 비활성화
+# 컨텍스트 초기화
 ```
 
 ---
@@ -259,31 +259,31 @@ Esc Esc  # Cancel the last task immediately
 ## Quick Reference Card
 
 ```
-=== Essential commands ===
-/clear      reset context
-/context    check usage
-/usage      check tokens
-/init       generate project description file
-!command    run immediately
+=== 필수 명령어 ===
+/clear      컨텍스트 초기화
+/context    사용량 확인
+/usage      토큰 확인
+/init       프로젝트 설명 파일 생성
+!command    즉시 실행
 
-=== Shortcuts ===
-Esc Esc     cancel task
-Ctrl+R      search history
-Shift+Tab×2 plan mode
-Ctrl+B      background
+=== 단축키 ===
+Esc Esc     작업 취소
+Ctrl+R      히스토리 검색
+Shift+Tab×2 계획 모드
+Ctrl+B      백그라운드
 
-=== CLI flags ===
---continue  continue conversation
---resume    resume session
--p "prompt" headless mode
+=== CLI 플래그 ===
+--continue  대화 이어가기
+--resume    세션 복구
+-p "prompt" Headless 모드
 
 === Multi-Agent ===
-Claude      plan/code generation
-Gemini      large-scale analysis
-Codex       run commands
+Claude      계획/코드 생성
+Gemini      대용량 분석
+Codex       명령 실행
 
-=== Troubleshooting ===
-Context overloaded → /clear
-Cancel task → Esc Esc
-Performance degradation → check /context
+=== 문제 해결 ===
+컨텍스트 과다 → /clear
+작업 취소 → Esc Esc
+성능 저하 → /context 확인
 ```

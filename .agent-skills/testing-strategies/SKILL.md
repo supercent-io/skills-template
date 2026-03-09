@@ -12,45 +12,45 @@ metadata:
 
 ## When to use this skill
 
-- **New project**: define a testing strategy
-- **Quality issues**: bugs happen frequently
-- **Before refactoring**: build a safety net
-- **CI/CD setup**: automated tests
+- **신규 프로젝트**: 테스트 전략 수립
+- **품질 문제**: 버그 빈번히 발생
+- **리팩토링 전**: 안전망 구축
+- **CI/CD 구축**: 자동화된 테스트
 
 ## Instructions
 
-### Step 1: Understand the Test Pyramid
+### Step 1: Test Pyramid 이해
 
 ```
        /\
-      /E2E\          ← few (slow, expensive)
+      /E2E\          ← 적음 (느림, 비용 높음)
      /______\
     /        \
-   /Integration\    ← medium
+   /Integration\    ← 중간
   /____________\
  /              \
-/   Unit Tests   \  ← many (fast, inexpensive)
+/   Unit Tests   \  ← 많음 (빠름, 비용 낮음)
 /________________\
 ```
 
-**Ratio guide**:
+**비율 가이드**:
 - Unit: 70%
 - Integration: 20%
 - E2E: 10%
 
-### Step 2: Unit testing strategy
+### Step 2: Unit Testing 전략
 
-**Given-When-Then pattern**:
+**Given-When-Then 패턴**:
 ```typescript
 describe('calculateDiscount', () => {
   it('should apply 10% discount for orders over $100', () => {
-    // Given: setup
+    // Given: 주어진 상황
     const order = { total: 150, customerId: '123' };
 
-    // When: perform action
+    // When: 행동을 실행
     const discount = calculateDiscount(order);
 
-    // Then: verify result
+    // Then: 결과 검증
     expect(discount).toBe(15);
   });
 
@@ -67,9 +67,9 @@ describe('calculateDiscount', () => {
 });
 ```
 
-**Mocking strategy**:
+**Mocking 전략**:
 ```typescript
-// Mock external dependencies
+// 외부 의존성 모킹
 jest.mock('../services/emailService');
 import { sendEmail } from '../services/emailService';
 
@@ -94,7 +94,7 @@ describe('UserService', () => {
 
 ### Step 3: Integration Testing
 
-**API endpoint tests**:
+**API 엔드포인트 테스트**:
 ```typescript
 describe('POST /api/users', () => {
   beforeEach(async () => {
@@ -116,18 +116,18 @@ describe('POST /api/users', () => {
       username: 'testuser'
     });
 
-    // Verify it was actually saved to the DB
+    // DB에 실제로 저장되었는지 확인
     const user = await db.user.findUnique({ where: { email: 'test@example.com' } });
     expect(user).toBeTruthy();
   });
 
   it('should reject duplicate email', async () => {
-    // Create first user
+    // 첫 번째 사용자 생성
     await request(app)
       .post('/api/users')
       .send({ email: 'test@example.com', username: 'user1', password: 'Pass123!' });
 
-    // Attempt duplicate
+    // 중복 시도
     const response = await request(app)
       .post('/api/users')
       .send({ email: 'test@example.com', username: 'user2', password: 'Pass123!' });
@@ -144,27 +144,27 @@ import { test, expect } from '@playwright/test';
 
 test.describe('User Registration Flow', () => {
   test('should complete full registration process', async ({ page }) => {
-    // 1. Visit homepage
+    // 1. 홈페이지 방문
     await page.goto('http://localhost:3000');
 
-    // 2. Click Sign Up button
+    // 2. 회원가입 버튼 클릭
     await page.click('text=Sign Up');
 
-    // 3. Fill out form
+    // 3. 폼 작성
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="username"]', 'testuser');
     await page.fill('input[name="password"]', 'Password123!');
 
-    // 4. Submit
+    // 4. 제출
     await page.click('button[type="submit"]');
 
-    // 5. Confirm success message
+    // 5. 성공 메시지 확인
     await expect(page.locator('text=Welcome')).toBeVisible();
 
-    // 6. Confirm redirect to dashboard
+    // 6. 대시보드로 리다이렉트 확인
     await expect(page).toHaveURL('http://localhost:3000/dashboard');
 
-    // 7. Confirm user info is displayed
+    // 7. 사용자 정보 표시 확인
     await expect(page.locator('text=testuser')).toBeVisible();
   });
 
@@ -184,25 +184,25 @@ test.describe('User Registration Flow', () => {
 **Red-Green-Refactor Cycle**:
 
 ```typescript
-// 1. RED: write a failing test
+// 1. RED: 실패하는 테스트 작성
 describe('isPalindrome', () => {
   it('should return true for palindrome', () => {
     expect(isPalindrome('racecar')).toBe(true);
   });
 });
 
-// 2. GREEN: minimal code to pass the test
+// 2. GREEN: 테스트 통과하는 최소 코드
 function isPalindrome(str: string): boolean {
   return str === str.split('').reverse().join('');
 }
 
-// 3. REFACTOR: improve the code
+// 3. REFACTOR: 코드 개선
 function isPalindrome(str: string): boolean {
   const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, '');
   return cleaned === cleaned.split('').reverse().join('');
 }
 
-// 4. Additional test cases
+// 4. 추가 테스트 케이스
 it('should ignore case and spaces', () => {
   expect(isPalindrome('A man a plan a canal Panama')).toBe(true);
 });
@@ -214,7 +214,7 @@ it('should return false for non-palindrome', () => {
 
 ## Output format
 
-### Testing strategy document
+### 테스트 전략 문서
 
 ```markdown
 ## Testing Strategy
@@ -243,24 +243,24 @@ it('should return false for non-palindrome', () => {
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Test isolation**: each test is independent
-2. **Fast feedback**: unit tests should be fast (<1 min)
-3. **Deterministic**: same input → same result
+1. **테스트 격리**: 각 테스트는 독립적
+2. **Fast Feedback**: Unit tests는 빠르게 (<1분)
+3. **Deterministic**: 같은 입력 → 같은 결과
 
-### Prohibited items (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Test dependencies**: do not let test A depend on test B
-2. **Production DB**: do not use a real DB in tests
-3. **Sleep/Timeout**: avoid time-based tests
+1. **테스트 의존성**: 테스트 A가 테스트 B에 의존 금지
+2. **프로덕션 DB**: 테스트에서 실제 DB 사용 금지
+3. **Sleep/Timeout**: 시간 기반 테스트 지양
 
 ## Best practices
 
-1. **AAA pattern**: Arrange-Act-Assert
-2. **Test names**: "should ... when ..."
-3. **Edge Cases**: boundary values, null, empty values
-4. **Happy Path + Sad Path**: both success/failure scenarios
+1. **AAA 패턴**: Arrange-Act-Assert
+2. **테스트 이름**: "should ... when ..."
+3. **Edge Cases**: 경계값, null, 빈 값 테스트
+4. **Happy Path + Sad Path**: 성공/실패 시나리오 모두
 
 ## References
 
@@ -271,16 +271,16 @@ it('should return false for non-palindrome', () => {
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Related skills
-- [backend-testing](../backend-testing/SKILL.md)
+### 관련 스킬
+- [backend-testing](../../backend/testing/SKILL.md)
 - [code-review](../code-review/SKILL.md)
 
-### Tags
+### 태그
 `#testing` `#test-strategy` `#TDD` `#unit-test` `#integration-test` `#E2E` `#code-quality`
 
 ## Examples

@@ -13,13 +13,13 @@ metadata:
 
 ## When to use this skill
 
-- **New Projects**: Initial folder structure design
-- **Project Growth**: Refactoring when complexity increases
-- **Team Standardization**: Establish consistent structure
+- **신규 프로젝트**: 초기 폴더 구조 설계
+- **프로젝트 성장**: 복잡도 증가 시 리팩토링
+- **팀 표준화**: 일관된 구조 확립
 
 ## Instructions
 
-### Step 1: React/Next.js Project Structure
+### Step 1: React/Next.js 프로젝트 구조
 
 ```
 src/
@@ -77,7 +77,7 @@ src/
     └── theme.ts
 ```
 
-### Step 2: Node.js/Express Backend Structure
+### Step 2: Node.js/Express 백엔드 구조
 
 ```
 src/
@@ -134,7 +134,7 @@ src/
 └── index.ts                  # Entry point
 ```
 
-### Step 3: Feature-Based Structure (Large-Scale Apps)
+### Step 3: Feature-Based 구조 (대규모 앱)
 
 ```
 src/
@@ -173,9 +173,9 @@ src/
     └── config/
 ```
 
-### Step 4: Naming Conventions
+### Step 4: 명명 규칙 (Naming Conventions)
 
-**File Names**:
+**파일명**:
 ```
 Components:       PascalCase.tsx
 Hooks:            camelCase.ts        (useAuth.ts)
@@ -185,16 +185,16 @@ Types:            camelCase.types.ts  (user.types.ts)
 Tests:            *.test.ts, *.spec.ts
 ```
 
-**Folder Names**:
+**폴더명**:
 ```
 kebab-case:       user-profile/
-camelCase:        userProfile/       (optional: hooks/, utils/)
-PascalCase:       UserProfile/       (optional: components/)
+camelCase:        userProfile/       (선택: hooks/, utils/)
+PascalCase:       UserProfile/       (선택: components/)
 
-✅ Consistency is key (entire team uses the same rules)
+✅ 일관성이 중요 (팀 전체가 같은 규칙 사용)
 ```
 
-**Variable/Function Names**:
+**변수/함수명**:
 ```typescript
 // Components: PascalCase
 const UserProfile = () => {};
@@ -205,7 +205,7 @@ function getUserById() {}
 // Constants: UPPER_SNAKE_CASE
 const API_BASE_URL = 'https://api.example.com';
 
-// Private: _prefix (optional)
+// Private: _prefix (선택)
 class User {
   private _id: string;
 
@@ -218,29 +218,29 @@ const hasPermission = false;
 const canEdit = true;
 ```
 
-### Step 5: index.ts Barrel Files
+### Step 5: index.ts 배럴 파일
 
 **components/ui/index.ts**:
 ```typescript
-// ✅ Good example: Re-export named exports
+// ✅ 좋은 예: Named exports 재export
 export { Button } from './Button/Button';
 export { Input } from './Input/Input';
 export { Modal } from './Modal/Modal';
 
-// Usage:
+// 사용:
 import { Button, Input } from '@/components/ui';
 ```
 
-**❌ Bad example**:
+**❌ 나쁜 예**:
 ```typescript
-// Re-export everything (impairs tree-shaking)
+// 모든 것을 재export (tree-shaking 저해)
 export * from './Button';
 export * from './Input';
 ```
 
 ## Output format
 
-### Project Template
+### 프로젝트 템플릿
 
 ```
 my-app/
@@ -267,23 +267,23 @@ my-app/
 
 ## Constraints
 
-### Required Rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Consistency**: Entire team uses the same rules
-2. **Clear Folder Names**: Roles must be explicit
-3. **Max Depth**: Recommend 5 levels or fewer
+1. **일관성**: 팀 전체가 같은 규칙 사용
+2. **명확한 폴더명**: 역할이 명확해야 함
+3. **최대 깊이**: 5단계 이하 권장
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Excessive Nesting**: Avoid 7+ levels of folder depth
-2. **Vague Names**: Avoid utils2/, helpers/, misc/
-3. **Circular Dependencies**: Prohibit A → B → A references
+1. **과도한 중첩**: 폴더 깊이 7단계 이상 지양
+2. **모호한 이름**: utils2/, helpers/, misc/ 지양
+3. **순환 의존성**: A → B → A 참조 금지
 
 ## Best practices
 
-1. **Colocation**: Keep related files close (component + styles + tests)
-2. **Feature-Based**: Modularize by feature
-3. **Path Aliases**: Simplify imports with `@/`
+1. **Colocation**: 관련 파일은 가까이 (컴포넌트 + 스타일 + 테스트)
+2. **Feature-Based**: 기능별로 모듈화
+3. **Path Aliases**: `@/` 사용으로 import 간소화
 
 **tsconfig.json**:
 ```json
@@ -299,12 +299,12 @@ my-app/
 }
 ```
 
-**Usage**:
+**사용**:
 ```typescript
-// ❌ Bad example
+// ❌ 나쁜 예
 import { Button } from '../../../components/ui/Button';
 
-// ✅ Good example
+// ✅ 좋은 예
 import { Button } from '@/components/ui';
 ```
 
@@ -316,12 +316,12 @@ import { Button } from '@/components/ui';
 
 ## Metadata
 
-### Version
-- **Current Version**: 1.0.0
-- **Last Updated**: 2025-01-01
-- **Compatible Platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#file-organization` `#project-structure` `#folder-structure` `#naming-conventions` `#utilities`
 
 ## Examples

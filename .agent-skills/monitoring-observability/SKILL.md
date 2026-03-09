@@ -12,16 +12,16 @@ metadata:
 
 ## When to use this skill
 
-- **Before Production Deployment**: Essential monitoring system setup
-- **Performance Issues**: Identify bottlenecks
-- **Incident Response**: Quick root cause identification
-- **SLA Compliance**: Track availability/response times
+- **프로덕션 배포 전**: 모니터링 시스템 필수 구축
+- **성능 문제 발생**: 병목 지점 식별
+- **장애 대응**: 빠른 원인 파악
+- **SLA 준수**: 가용성/응답시간 추적
 
 ## Instructions
 
-### Step 1: Metrics Collection (Prometheus)
+### Step 1: 메트릭 수집 (Prometheus)
 
-**Application Instrumentation** (Node.js):
+**애플리케이션 계측** (Node.js):
 ```typescript
 import express from 'express';
 import promClient from 'prom-client';
@@ -97,7 +97,7 @@ rule_files:
   - 'alert_rules.yml'
 ```
 
-### Step 2: Alert Rules
+### Step 2: 알림 규칙
 
 **alert_rules.yml**:
 ```yaml
@@ -157,7 +157,7 @@ groups:
           description: "Memory usage is {{ $value }}%"
 ```
 
-### Step 3: Log Aggregation (Structured Logging)
+### Step 3: 로그 집계 (Structured Logging)
 
 **Winston (Node.js)**:
 ```typescript
@@ -207,9 +207,9 @@ app.use((req, res, next) => {
 });
 ```
 
-### Step 4: Grafana Dashboard
+### Step 4: Grafana 대시보드
 
-**dashboard.json** (example):
+**dashboard.json** (예시):
 ```json
 {
   "dashboard": {
@@ -322,48 +322,48 @@ app.get('/health', async (req, res) => {
 
 ## Output format
 
-### Monitoring Dashboard Configuration
+### 모니터링 대시보드 구성
 
 ```
 Golden Signals:
-1. Latency (Response Time)
+1. Latency (응답 시간)
    - P50, P95, P99 percentiles
-   - Per API endpoint
+   - API 엔드포인트별
 
-2. Traffic (Request Volume)
+2. Traffic (요청량)
    - Requests per second
-   - Per endpoint, per status code
+   - 엔드포인트별, 상태 코드별
 
-3. Errors (Error Rate)
+3. Errors (에러율)
    - 5xx error rate
    - 4xx error rate
-   - Per error type
+   - 에러 타입별
 
-4. Saturation (Resource Utilization)
-   - CPU usage
-   - Memory usage
+4. Saturation (리소스 사용률)
+   - CPU 사용률
+   - 메모리 사용률
    - Disk I/O
    - Network bandwidth
 ```
 
 ## Constraints
 
-### Required Rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Structured Logging**: JSON format logs
-2. **Metric Labels**: Maintain uniqueness (be careful of high cardinality)
-3. **Prevent Alert Fatigue**: Only critical alerts
+1. **Structured Logging**: JSON 형식 로그
+2. **Metric Labels**: 고유성 유지 (high cardinality 주의)
+3. **Alert Fatigue 방지**: 중요한 알림만
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Do Not Log Sensitive Data**: Never log passwords, API keys
-2. **Excessive Metrics**: Unnecessary metrics waste resources
+1. **민감정보 로깅 금지**: 비밀번호, API 키 절대 로깅하지 않음
+2. **과도한 메트릭**: 불필요한 메트릭은 리소스 낭비
 
 ## Best practices
 
-1. **Define SLO**: Clearly define Service Level Objectives
-2. **Write Runbooks**: Document response procedures per alert
-3. **Dashboards**: Customize dashboards as needed per team
+1. **SLO 정의**: Service Level Objectives 명확히
+2. **Runbook 작성**: 알림별 대응 절차 문서화
+3. **Dashboards**: 팀별 필요한 대시보드 커스터마이징
 
 ## References
 
@@ -373,16 +373,16 @@ Golden Signals:
 
 ## Metadata
 
-### Version
-- **Current Version**: 1.0.0
-- **Last Updated**: 2025-01-01
-- **Compatible Platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Related Skills
-- [deployment](../deployment/SKILL.md): Monitoring alongside deployment
-- [security](../security/SKILL.md): Security event monitoring
+### 관련 스킬
+- [deployment](../deployment/SKILL.md): 배포와 함께 모니터링
+- [security](../security/SKILL.md): 보안 이벤트 모니터링
 
-### Tags
+### 태그
 `#monitoring` `#observability` `#Prometheus` `#Grafana` `#logging` `#metrics` `#infrastructure`
 
 ## Examples

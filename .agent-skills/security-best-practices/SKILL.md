@@ -12,16 +12,16 @@ metadata:
 
 ## When to use this skill
 
-- **New project**: consider security from the start
-- **Security audit**: inspect and fix vulnerabilities
-- **Public API**: harden APIs accessible externally
-- **Compliance**: comply with GDPR, PCI-DSS, etc.
+- **신규 프로젝트**: 처음부터 보안 고려
+- **보안 감사**: 취약점 점검 및 수정
+- **API 공개**: 외부 접근 API 보안 강화
+- **컴플라이언스**: GDPR, PCI-DSS 등 준수
 
 ## Instructions
 
-### Step 1: Enforce HTTPS and security headers
+### Step 1: HTTPS 강제 및 보안 헤더
 
-**Express.js security middleware**:
+**Express.js 보안 미들웨어**:
 ```typescript
 import express from 'express';
 import helmet from 'helmet';
@@ -29,7 +29,7 @@ import rateLimit from 'express-rate-limit';
 
 const app = express();
 
-// Helmet: automatically set security headers
+// Helmet: 보안 헤더 자동 설정
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -51,7 +51,7 @@ app.use(helmet({
   }
 }));
 
-// Enforce HTTPS
+// HTTPS 강제
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production' && !req.secure) {
     return res.redirect(301, `https://${req.headers.host}${req.url}`);
@@ -59,10 +59,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate limiting (DDoS prevention)
+// Rate Limiting (DDoS 방지)
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per IP
+  windowMs: 15 * 60 * 1000, // 15분
+  max: 100, // IP당 최대 100 요청
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -70,19 +70,19 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-// Stricter for auth endpoints
+// Auth 엔드포인트는 더 엄격하게
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5, // only 5 times per 15 minutes
-  skipSuccessfulRequests: true // do not count successful requests
+  max: 5, // 15분에 5번만
+  skipSuccessfulRequests: true // 성공 요청은 카운트하지 않음
 });
 
 app.use('/api/auth/login', authLimiter);
 ```
 
-### Step 2: Input validation (SQL Injection, XSS prevention)
+### Step 2: Input Validation (SQL Injection, XSS 방지)
 
-**Joi validation**:
+**Joi 검증**:
 ```typescript
 import Joi from 'joi';
 
@@ -93,22 +93,22 @@ const userSchema = Joi.object({
 });
 
 app.post('/api/users', async (req, res) => {
-  // 1. Validate input
+  // 1. Input 검증
   const { error, value } = userSchema.validate(req.body);
 
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  // 2. Prevent SQL Injection: Parameterized Queries
-  // ❌ Bad example
+  // 2. SQL Injection 방지: Parameterized Queries
+  // ❌ 나쁜 예
   // db.query(`SELECT * FROM users WHERE email = '${email}'`);
 
-  // ✅ Good example
+  // ✅ 좋은 예
   const user = await db.query('SELECT * FROM users WHERE email = ?', [value.email]);
 
-  // 3. Prevent XSS: Output Encoding
-  // React/Vue escape automatically; otherwise use a library
+  // 3. XSS 방지: Output Encoding
+  // React/Vue는 자동으로 escape, 그 외는 라이브러리 사용
   import DOMPurify from 'isomorphic-dompurify';
   const sanitized = DOMPurify.sanitize(userInput);
 
@@ -116,7 +116,7 @@ app.post('/api/users', async (req, res) => {
 });
 ```
 
-### Step 3: Prevent CSRF
+### Step 3: CSRF 방지
 
 **CSRF Token**:
 ```typescript
@@ -128,17 +128,17 @@ app.use(cookieParser());
 // CSRF protection
 const csrfProtection = csrf({ cookie: true });
 
-// Provide CSRF token
+// CSRF 토큰 제공
 app.get('/api/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-// Validate CSRF on all POST/PUT/DELETE requests
+// 모든 POST/PUT/DELETE 요청에 CSRF 검증
 app.post('/api/*', csrfProtection, (req, res, next) => {
   next();
 });
 
-// Use on the client
+// 클라이언트에서 사용
 // fetch('/api/users', {
 //   method: 'POST',
 //   headers: {
@@ -148,9 +148,9 @@ app.post('/api/*', csrfProtection, (req, res, next) => {
 // });
 ```
 
-### Step 4: Manage secrets
+### Step 4: Secrets 관리
 
-**.env (never commit)**:
+**.env (절대 커밋하지 않음)**:
 ```bash
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/mydb
@@ -177,21 +177,21 @@ stringData:
 ```
 
 ```typescript
-// Read from environment variables
+// 환경변수에서 읽기
 const dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) {
   throw new Error('DATABASE_URL environment variable is required');
 }
 ```
 
-### Step 5: Secure API authentication
+### Step 5: API 인증 보안
 
 **JWT + Refresh Token Rotation**:
 ```typescript
-// Short-lived access token (15 minutes)
+// Access Token 짧게 (15분)
 const accessToken = jwt.sign({ userId }, ACCESS_SECRET, { expiresIn: '15m' });
 
-// Long-lived refresh token (7 days), store in DB
+// Refresh Token 길게 (7일), DB에 저장
 const refreshToken = jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: '7d' });
 await db.refreshToken.create({
   userId,
@@ -199,16 +199,16 @@ await db.refreshToken.create({
   expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 });
 
-// Refresh token rotation: re-issue on each use
+// Refresh Token Rotation: 사용 시마다 새로 발급
 app.post('/api/auth/refresh', async (req, res) => {
   const { refreshToken } = req.body;
 
   const payload = jwt.verify(refreshToken, REFRESH_SECRET);
 
-  // Invalidate existing token
+  // 기존 토큰 무효화
   await db.refreshToken.delete({ where: { token: refreshToken } });
 
-  // Issue new tokens
+  // 새 토큰 발급
   const newAccessToken = jwt.sign({ userId: payload.userId }, ACCESS_SECRET, { expiresIn: '15m' });
   const newRefreshToken = jwt.sign({ userId: payload.userId }, REFRESH_SECRET, { expiresIn: '7d' });
 
@@ -224,40 +224,40 @@ app.post('/api/auth/refresh', async (req, res) => {
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **HTTPS Only**: HTTPS required in production
-2. **Separate secrets**: manage via environment variables; never hardcode in code
-3. **Input Validation**: validate all user input
-4. **Parameterized Queries**: prevent SQL Injection
-5. **Rate Limiting**: DDoS prevention
+1. **HTTPS Only**: 프로덕션에서 HTTPS 필수
+2. **Secrets 분리**: 환경변수로 관리, 절대 코드에 하드코딩 금지
+3. **Input Validation**: 모든 사용자 입력 검증
+4. **Parameterized Queries**: SQL Injection 방지
+5. **Rate Limiting**: DDoS 방지
 
-### Prohibited items (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **No eval()**: code injection risk
-2. **No direct innerHTML**: XSS risk
-3. **No committing secrets**: never commit .env files
+1. **eval() 사용 금지**: 코드 인젝션 위험
+2. **innerHTML 직접 사용**: XSS 위험
+3. **Secrets 커밋**: .env 파일 절대 커밋하지 않음
 
-## OWASP Top 10 checklist
+## OWASP Top 10 체크리스트
 
 ```markdown
-- [ ] A01: Broken Access Control - RBAC, authorization checks
-- [ ] A02: Cryptographic Failures - HTTPS, encryption
+- [ ] A01: Broken Access Control - RBAC, 권한 검증
+- [ ] A02: Cryptographic Failures - HTTPS, 암호화
 - [ ] A03: Injection - Parameterized Queries, Input Validation
 - [ ] A04: Insecure Design - Security by Design
-- [ ] A05: Security Misconfiguration - Helmet, change default passwords
-- [ ] A06: Vulnerable Components - npm audit, regular updates
-- [ ] A07: Authentication Failures - strong auth, MFA
-- [ ] A08: Data Integrity Failures - signature validation, CSRF prevention
-- [ ] A09: Logging Failures - security event logging
-- [ ] A10: SSRF - validate outbound requests
+- [ ] A05: Security Misconfiguration - Helmet, 기본 비밀번호 변경
+- [ ] A06: Vulnerable Components - npm audit, 정기 업데이트
+- [ ] A07: Authentication Failures - 강력한 인증, MFA
+- [ ] A08: Data Integrity Failures - 서명 검증, CSRF 방지
+- [ ] A09: Logging Failures - 보안 이벤트 로깅
+- [ ] A10: SSRF - 외부 요청 검증
 ```
 
 ## Best practices
 
-1. **Principle of Least Privilege**: grant minimal privileges
-2. **Defense in Depth**: layered security
-3. **Security Audits**: regular security reviews
+1. **Principle of Least Privilege**: 최소 권한 부여
+2. **Defense in Depth**: 다층 보안
+3. **Security Audits**: 정기적인 보안 점검
 
 ## References
 
@@ -267,16 +267,16 @@ app.post('/api/auth/refresh', async (req, res) => {
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Related skills
-- [authentication-setup](../authentication-setup/SKILL.md)
-- [deployment](../deployment-automation/SKILL.md)
+### 관련 스킬
+- [authentication-setup](../../backend/authentication/SKILL.md)
+- [deployment](../deployment/SKILL.md)
 
-### Tags
+### 태그
 `#security` `#OWASP` `#HTTPS` `#CORS` `#XSS` `#SQL-injection` `#CSRF` `#infrastructure`
 
 ## Examples

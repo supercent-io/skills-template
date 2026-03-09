@@ -13,15 +13,15 @@ metadata:
 
 ## When to use this skill
 
-- **New Projects**: Initial environment setup
-- **Multiple Environments**: Separate dev, staging, production
-- **Team Collaboration**: Share consistent environments
+- **신규 프로젝트**: 초기 환경 설정
+- **다중 환경**: dev, staging, production 분리
+- **팀 협업**: 일관된 환경 공유
 
 ## Instructions
 
-### Step 1: .env File Structure
+### Step 1: .env 파일 구조
 
-**.env.example** (template):
+**.env.example** (템플릿):
 ```bash
 # Application
 NODE_ENV=development
@@ -66,9 +66,9 @@ ENABLE_2FA=false
 ENABLE_ANALYTICS=true
 ```
 
-**.env.local** (per developer):
+**.env.local** (개발자별):
 ```bash
-# Developer personal settings (add to .gitignore)
+# 개발자 개인 설정 (.gitignore에 추가)
 DATABASE_URL=postgresql://localhost:5432/myapp_dev
 LOG_LEVEL=debug
 ```
@@ -79,7 +79,7 @@ NODE_ENV=production
 PORT=8080
 APP_URL=https://myapp.com
 
-DATABASE_URL=${DATABASE_URL}  # Injected from environment variables
+DATABASE_URL=${DATABASE_URL}  # 환경변수에서 주입
 REDIS_URL=${REDIS_URL}
 
 JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
@@ -89,7 +89,7 @@ LOG_LEVEL=warn
 ENABLE_2FA=true
 ```
 
-### Step 2: Type-Safe Environment Variables (TypeScript)
+### Step 2: Type-Safe 환경변수 (TypeScript)
 
 **config/env.ts**:
 ```typescript
@@ -127,7 +127,7 @@ export const env = envSchema.parse(process.env);
 // console.log(env.DATABASE_URL); // Type-safe!
 ```
 
-**Error Handling**:
+**에러 처리**:
 ```typescript
 try {
   const env = envSchema.parse(process.env);
@@ -142,7 +142,7 @@ try {
 }
 ```
 
-### Step 3: Per-Environment Config Files
+### Step 3: 환경별 Config 파일
 
 **config/index.ts**:
 ```typescript
@@ -206,7 +206,7 @@ for (const envVar of requiredEnvVars) {
 export default config;
 ```
 
-### Step 4: Environment-Specific Configuration Files
+### Step 4: 환경별 설정 파일
 
 **config/environments/development.ts**:
 ```typescript
@@ -244,7 +244,7 @@ export default {
 };
 ```
 
-**config/index.ts** (unified):
+**config/index.ts** (통합):
 ```typescript
 import development from './environments/development';
 import production from './environments/production';
@@ -260,7 +260,7 @@ const configs = {
 export const environmentConfig = configs[env];
 ```
 
-### Step 5: Docker Environment Variables
+### Step 5: Docker 환경변수
 
 **docker-compose.yml**:
 ```yaml
@@ -294,13 +294,13 @@ services:
 
 ```
 project/
-├── .env.example           # Template (commit)
-├── .env                   # Local (gitignore)
-├── .env.local             # Per developer (gitignore)
-├── .env.production        # Production (gitignore or vault)
+├── .env.example           # 템플릿 (커밋)
+├── .env                   # 로컬 (gitignore)
+├── .env.local             # 개발자별 (gitignore)
+├── .env.production        # 프로덕션 (gitignore or vault)
 ├── config/
-│   ├── index.ts           # Main configuration
-│   ├── env.ts             # Environment variable validation
+│   ├── index.ts           # 메인 설정
+│   ├── env.ts             # 환경변수 검증
 │   └── environments/
 │       ├── development.ts
 │       ├── production.ts
@@ -318,22 +318,22 @@ project/
 
 ## Constraints
 
-### Required Rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Provide .env.example**: List of required environment variables
-2. **Validation**: Error when required environment variables are missing
-3. **.gitignore**: Never commit .env files
+1. **.env.example 제공**: 필요한 환경변수 목록
+2. **검증**: 필수 환경변수 누락 시 에러
+3. **.gitignore**: .env 파일 절대 커밋하지 않음
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **Commit Secrets**: Never commit .env files
-2. **Hardcoding**: Do not hardcode environment-specific settings in code
+1. **Secrets 커밋**: .env 파일 절대 커밋하지 않음
+2. **하드코딩**: 코드에 환경별 설정 하드코딩 금지
 
 ## Best practices
 
-1. **12 Factor App**: Manage configuration via environment variables
-2. **Type Safety**: Runtime validation with Zod
-3. **Secrets Management**: Use AWS Secrets Manager, Vault
+1. **12 Factor App**: 환경변수로 설정 관리
+2. **Type Safety**: Zod로 런타임 검증
+3. **Secrets Management**: AWS Secrets Manager, Vault 사용
 
 ## References
 
@@ -343,12 +343,12 @@ project/
 
 ## Metadata
 
-### Version
-- **Current Version**: 1.0.0
-- **Last Updated**: 2025-01-01
-- **Compatible Platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#environment` `#configuration` `#env-variables` `#dotenv` `#config-management` `#utilities`
 
 ## Examples

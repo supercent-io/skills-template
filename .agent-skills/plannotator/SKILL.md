@@ -3,7 +3,7 @@ name: plannotator
 description: Interactive plan and diff review for AI coding agents. Visual browser UI for annotating agent plans — approve or request changes with structured feedback. Supports code review, image annotation, and auto-save to Obsidian/Bear Notes.
 allowed-tools: Read Bash Write
 metadata:
-  tags: plan, planning, planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review, plan-review, design-review
+  tags: plan, 계획, planno, plannotator, plan-review, diff-review, code-review, claude-code, opencode, annotation, visual-review, 계획검토, 설계검토
   platforms: Claude, OpenCode, Codex, Gemini
   keyword: plan
   version: 0.9.2
@@ -13,7 +13,7 @@ metadata:
 
 # plannotator — Interactive Plan & Diff Review
 
-> Keyword: `plan` | Source: https://github.com/backnotprop/plannotator
+> Keyword: `plan`, `계획` (alias: `planno`) | Source: https://github.com/backnotprop/plannotator
 >
 > Annotate and review AI coding agent plans visually, share with your team, send feedback with one click.
 > Works with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex CLI**.
@@ -220,7 +220,6 @@ What it does:
 - Backs up existing files before modifying
 
 Usage in Gemini CLI after setup:
-
 ```bash
 # Enter planning mode (hook fires when you exit)
 gemini --approval-mode plan
@@ -256,7 +255,6 @@ What it does:
 - Backs up existing config before modifying
 
 Usage in Codex CLI after setup:
-
 ```bash
 # Use the plannotator agent prompt
 /prompts:plannotator
@@ -478,7 +476,6 @@ vault/plannotator/
 ```
 
 Create subfolders manually (Obsidian detects them automatically):
-
 ```bash
 mkdir -p ~/path/to/vault/plannotator/approved
 mkdir -p ~/path/to/vault/plannotator/denied
@@ -486,7 +483,6 @@ mkdir -p ~/path/to/vault/plannotator/2026-02
 ```
 
 Or write directly to any subfolder:
-
 ```bash
 cp ~/.plannotator/plans/<name>-approved.md ~/path/to/vault/plannotator/approved/
 ```
@@ -513,7 +509,6 @@ open "bear://x-callback-url/create?title=Plannotator%20Check&text=Bear%20callbac
 ### Troubleshooting
 
 **Vault not detected:**
-
 ```bash
 # 1. Check Obsidian config exists
 ls ~/Library/Application\ Support/obsidian/obsidian.json  # macOS
@@ -525,7 +520,6 @@ open /Applications/Obsidian.app
 ```
 
 **Plans not saving:**
-
 ```bash
 # Check write permissions on vault folder
 ls -la ~/path/to/vault/plannotator/

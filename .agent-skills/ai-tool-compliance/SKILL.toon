@@ -15,7 +15,7 @@ S[7]{n,action,details}:
   3,Scan,Glob project files matching check_targets — collect candidate files per rule
   4,Analyze,Grep check_patterns on candidates — determine must_contain/must_not_contain matches
   5,Judge,Apply Pass/Fail/Warning/N/A verdict per rule based on pattern match results
-  6,Score,Calculate fixed-point risk score: Security(35) + Auth(30) + Cost(20) + Logging(15) = 100 out of 100
+  6,Score,Calculate fixed-point risk score: 보안(35) + 권한(30) + 비용(20) + 로그(15) = 100점 만점
   7,Report,Generate risk-score-report.md + remediation-task.json for each Fail — gate exit code
 
 R[4]:

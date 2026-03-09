@@ -49,16 +49,31 @@ else
 fi
 ```
 
-3. **설치 경로 표준화 변수 선언**
+3. **설치 경로 표준화 변수 선언 (기본값: 강제 초기화)**
 
 ```bash
+# 기본은 강제 재설치 (기존 경로를 유지하려면 false로 설정)
+export FORCE_REINSTALL="${FORCE_REINSTALL:-true}"
+
 # Canonical path (권장 기본 경로)
 export SKILLS_CANONICAL="${HOME}/.agent-skills"
-# 기존 설치 디렉터리가 있으면 제거 후 새로 생성
-if [ -d "${SKILLS_CANONICAL}" ]; then
-    echo "기존 설치 디렉터리 제거: ${SKILLS_CANONICAL}"
-    rm -rf "${SKILLS_CANONICAL}"
+
+SKILL_DESTS=(
+  "${HOME}/.claude/skills" "${PWD}/.claude/skills"
+  "${HOME}/.codex/skills" "${PWD}/.codex/skills"
+  "${HOME}/.gemini/skills" "${PWD}/.gemini/skills"
+  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills"
+  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
+)
+
+if [ "${FORCE_REINSTALL}" = "true" ]; then
+  echo "FORCE_REINSTALL=true -> 글로벌/로컬 스킬 경로 제거"
+  rm -rf "${SKILLS_CANONICAL}"
+  for dest in "${SKILL_DESTS[@]}"; do
+    rm -rf "${dest}"
+  done
 fi
+
 mkdir -p "${SKILLS_CANONICAL}"
 ```
 
@@ -88,6 +103,8 @@ npx skills add https://github.com/supercent-io/skills-template --skill plannotat
 npx skills add https://github.com/supercent-io/skills-template \
   --skill omc --skill plannotator --skill ralph --skill ralphmode --skill vibe-kanban
 ```
+
+> **Claude Code + jeo**: jeo EXECUTE 단계는 반드시 `/omc:team`을 사용해야 하며 단일 에이전트로 degrade하지 않습니다. jeo 실행 전 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`을 설정하세요.
 
 **Gemini CLI 전용:**
 ```bash
@@ -210,46 +227,46 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 ### Step 4: 설치 확인 및 활성화 안내
 
 ```bash
-# 설치 디렉터리 자동 탐지
-if [ -d "${HOME}/.agent-skills" ]; then
+# 설치 디렉터리 자동 탐지 (비어있지 않은 디렉터리만 허용)
+is_non_empty_dir() { [ -d "$1" ] && [ -n "$(ls -A "$1" 2>/dev/null)" ]; }
+
+if is_non_empty_dir "${HOME}/.agent-skills"; then
   SKILL_SRC="${HOME}/.agent-skills"
-elif [ -d "${PWD}/.agent-skills" ]; then
+elif is_non_empty_dir "${PWD}/.agent-skills"; then
   SKILL_SRC="${PWD}/.agent-skills"
-elif [ -d "${PWD}/.agents/skills" ]; then
+elif is_non_empty_dir "${PWD}/.agents/skills"; then
   SKILL_SRC="${PWD}/.agents/skills"
 else
-  echo "skills directory not found"; exit 1
+  echo "non-empty skills directory not found"; exit 1
 fi
 
 echo "Detected skills dir: ${SKILL_SRC}"
 
-# Canonical 경로로 동기화
+# Canonical 경로로 동기화 (강제 미러링)
 mkdir -p "${HOME}/.agent-skills"
-if [ "${SKILL_SRC}" != "${HOME}/.agent-skills" ]; then
-  cp -R "${SKILL_SRC}"/. "${HOME}/.agent-skills"/
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a --delete "${SKILL_SRC}/" "${HOME}/.agent-skills/"
+else
+  rm -rf "${HOME}/.agent-skills"
+  mkdir -p "${HOME}/.agent-skills"
+  cp -R "${SKILL_SRC}/." "${HOME}/.agent-skills/"
 fi
 
-# 플랫폼별 기존 skills 디렉터리 제거 후 새로 생성
+# 플랫폼별 기존 skills 디렉터리 제거 후 강제 복사
 for dest in \
     "${HOME}/.claude/skills" "${PWD}/.claude/skills" \
     "${HOME}/.codex/skills" "${PWD}/.codex/skills" \
     "${HOME}/.gemini/skills" "${PWD}/.gemini/skills" \
     "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
     "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"; do
-    rm -rf "${dest}"
-    mkdir -p "${dest}"
+  rm -rf "${dest}"
+  mkdir -p "${dest}"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete "${HOME}/.agent-skills/" "${dest}/"
+  else
+    cp -R "${HOME}/.agent-skills"/. "${dest}/"
+  fi
 done
-
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.claude/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.claude/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.codex/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.codex/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.gemini/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.gemini/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${HOME}/.config/opencode/skills"/
-cp -R "${HOME}/.agent-skills"/. "${PWD}/.config/opencode/skills"/
 
 # 설치된 스킬 목록 확인
 ls "${HOME}/.agent-skills" 2>/dev/null
@@ -278,7 +295,7 @@ npx skills info jeo
 
 | 스킬 | 활성화 키워드 | 설명 |
 |------|-------------|------|
-| `jeo` | `jeo` | 통합 오케스트레이션 (권장 시작점) — 에이전트 실행 프로토콜 내장(STEP 0: state 부트스트랩 → PLAN/plannotator → EXECUTE → VERIFY → CLEANUP). 의존: plannotator, agentation |
+| `jeo` | `jeo` | 통합 오케스트레이션 (권장 시작점) — 에이전트 실행 프로토콜 내장(STEP 0: state 부트스트랩 → PLAN/plannotator → EXECUTE → VERIFY → CLEANUP). PLAN 단계에서 `plannotator`가 없으면 자동 설치. **Claude Code**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 필수, EXECUTE는 `/omc:team`으로만 실행. 의존: plannotator, agentation |
 | `omc` | `omc`, `autopilot` | Claude Code 멀티에이전트 |
 | `ralph` | `ralph`, `ooo`, `ooo ralph`, `ooo interview` | Ouroboros 기반 specification-first 개발 (Interview→Seed→Execute→Evaluate→Evolve) + 영구 완료 루프 |
 | `ralphmode` | `ralphmode` | Claude Code, Codex CLI, Gemini CLI용 Ralph 자동화 permission profile. repo 경계 유지, sandbox-first, secret denylist 중심 |

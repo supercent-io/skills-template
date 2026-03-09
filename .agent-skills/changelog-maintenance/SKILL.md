@@ -12,13 +12,13 @@ metadata:
 
 ## When to use this skill
 
-- **Before release**: organize changes before shipping a version
-- **Continuous**: update whenever significant changes occur
-- **Migration guide**: document breaking changes
+- **릴리스 전**: 버전 출시 전 변경사항 정리
+- **지속적**: 주요 변경 발생 시마다 업데이트
+- **마이그레이션 가이드**: Breaking changes 문서화
 
 ## Instructions
 
-### Step 1: Keep a Changelog format
+### Step 1: Keep a Changelog 형식
 
 **CHANGELOG.md**:
 ```markdown
@@ -107,32 +107,32 @@ Initial release
 
 ### Step 2: Semantic Versioning
 
-**Version number**: `MAJOR.MINOR.PATCH`
+**버전 번호**: `MAJOR.MINOR.PATCH`
 
 ```
 Given a version number MAJOR.MINOR.PATCH, increment:
 
 MAJOR (1.0.0 → 2.0.0): Breaking changes
-  - API changes break existing code
-  - Example: adding required parameters, changing response structure
+  - API 변경으로 기존 코드가 동작하지 않음
+  - 예: 필수 파라미터 추가, 응답 구조 변경
 
 MINOR (1.1.0 → 1.2.0): Backward-compatible features
-  - Add new features
-  - Existing functionality continues to work
-  - Example: new API endpoints, optional parameters
+  - 새로운 기능 추가
+  - 기존 기능은 그대로 동작
+  - 예: 새 API 엔드포인트, optional 파라미터
 
 PATCH (1.1.1 → 1.1.2): Backward-compatible bug fixes
-  - Bug fixes
-  - Security patches
-  - Example: fixing memory leaks, fixing typos
+  - 버그 수정
+  - 보안 패치
+  - 예: 메모리 누수 수정, 타이포 수정
 ```
 
-**Examples**:
-- `1.0.0` → `1.0.1`: bug fix
-- `1.0.1` → `1.1.0`: new feature
+**예시**:
+- `1.0.0` → `1.0.1`: 버그 수정
+- `1.0.1` → `1.1.0`: 새 기능 추가
 - `1.1.0` → `2.0.0`: Breaking change
 
-### Step 3: Release Notes (user-friendly)
+### Step 3: Release Notes (사용자 친화적)
 
 ```markdown
 # Release Notes v1.2.0
@@ -185,7 +185,7 @@ See [CHANGELOG.md](CHANGELOG.md) for complete details.
 **Upgrade Instructions**: [docs/upgrade-to-v1.2.md](docs/upgrade-to-v1.2.md)
 ```
 
-### Step 4: Breaking Changes migration guide
+### Step 4: Breaking Changes 마이그레이션 가이드
 
 ```markdown
 # Migration Guide: v1.x to v2.0
@@ -259,31 +259,31 @@ const users = response.data;
 ## Output format
 
 ```
-CHANGELOG.md             # Developer-facing detailed log
-RELEASES.md              # User-facing release notes
+CHANGELOG.md             # 개발자용 상세 로그
+RELEASES.md              # 사용자용 릴리스 노트
 docs/migration/
-  ├── v1-to-v2.md        # Migration guide
+  ├── v1-to-v2.md        # 마이그레이션 가이드
   └── v2-to-v3.md
 ```
 
 ## Constraints
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Reverse chronological**: latest version at the top
-2. **Include dates**: ISO 8601 format (YYYY-MM-DD)
-3. **Categorize entries**: Added, Changed, Fixed, etc.
+1. **역순 정렬**: 최신 버전이 위에
+2. **날짜 포함**: ISO 8601 형식 (YYYY-MM-DD)
+3. **카테고리 분류**: Added, Changed, Fixed, etc.
 
-### Prohibited items (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **No copying Git logs**: write from the user's perspective
-2. **Vague wording**: "Bug fixes", "Performance improvements" (be specific)
+1. **Git Log 복사 금지**: 사용자 관점으로 작성
+2. **모호한 표현**: "버그 수정", "성능 개선" (구체적으로)
 
 ## Best practices
 
-1. **Keep a Changelog**: follow the standard format
-2. **Semantic Versioning**: consistent version management
-3. **Breaking Changes**: provide a migration guide
+1. **Keep a Changelog**: 표준 형식 따르기
+2. **Semantic Versioning**: 일관된 버전 관리
+3. **Breaking Changes**: 마이그레이션 가이드 제공
 
 ## References
 
@@ -292,12 +292,12 @@ docs/migration/
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Tags
+### 태그
 `#changelog` `#release-notes` `#versioning` `#semantic-versioning` `#documentation`
 
 ## Examples

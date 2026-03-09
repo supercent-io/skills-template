@@ -1,24 +1,24 @@
 N:video-production
-D:Programmable video production with Remotion. Generate automated, brand-consistent videos at scale from text instructions using scene planning, asset orchestration, and validation gates.
+D:Remotion으로 프로그래머블 비디오 제작. 텍스트 지침에서 씬 플래닝, 에셋 오케스트레이션, 검증 게이트를 통해 자동화된 브랜드 일관성 비디오를 대규모로 생성.
 G:video remotion animation storytelling automation react
 
 U[4]:
-  Automated video generation — auto-generate videos from text instructions
-  High-volume brand video production — produce in bulk with consistent style
-  Marketing content — product intros, onboarding, promo videos
-  Programmable content — integrate narration·visuals·animation
+  자동화 비디오 생성 — 텍스트 지침에서 비디오 자동 생성
+  브랜드 비디오 대규모 제작 — 일관된 스타일로 대량 제작
+  마케팅 콘텐츠 — 제품 소개, 온보딩, 프로모션 비디오
+  프로그래머블 콘텐츠 — 내레이션·비주얼·애니메이션 통합
 S[5]{n,action,details}:
-  1,Video Spec,define audience·goal·duration(30s/60s/90s)·aspect_ratio(16:9/1:1/9:16)·tone·voice
-  2,Scene Plan,structure each scene — specify Visual·Audio·Text·Transition·Duration
-  3,Prepare Assets,checklist for logos(SVG)·screenshots(normalized)·audio(MP3·volume normalized)·fonts(woff2)
-  4,Implement Remotion,compose <Composition> component; animate with interpolate; layer with AbsoluteFill
-  5,Render & QA,npx remotion preview → verify timing/audio sync/text readability/transitions → final render
+  1,Video Spec,audience·goal·duration(30s/60s/90s)·aspect_ratio(16:9/1:1/9:16)·tone·voice 정의
+  2,Scene Plan,각 씬 구조화 — Visual·Audio·Text·Transition·Duration 명세
+  3,Prepare Assets,logos(SVG)·screenshots(정규화)·audio(MP3·볼륨정규화)·fonts(woff2) 체크리스트
+  4,Implement Remotion,<Composition> 컴포넌트 구성; interpolate로 애니메이션; AbsoluteFill로 레이어
+  5,Render & QA,npx remotion preview → 타이밍/오디오싱크/텍스트가독성/전환 확인 → 최종 render
 R[5]:
-  Limit each scene to a clear 5-10 seconds
-  Define and apply a consistent typography scale
-  Align narration cues with visuals (audio sync)
-  Ensure edge safe zones for mobile aspect ratios (9:16)
-  Always run preview QA before final render
+  씬당 5-10초로 명확하게 제한
+  타이포그래피 스케일 일관되게 정의 및 적용
+  내레이션 큐와 비주얼 정렬 (오디오 싱크)
+  모바일 비율(9:16) 시 가장자리 세이프존 확보
+  최종 렌더 전 항상 프리뷰 QA 먼저 확인
 E[2]{desc,in,out}:
-  "60s product intro","Create a 60s product intro video with 6 scenes, upbeat tone, 16:9","Scene breakdown (Hook/Problem/Solution/Features/SocialProof/CTA) + Remotion file structure"
-  "Onboarding walkthrough","Generate a 45s onboarding walkthrough using screenshots, 9:16 mobile format","5-step scene plan + asset list (screenshots·callouts) + text overlays + mobile-safe margins"
+  "제품 인트로 60초","Create a 60s product intro video with 6 scenes, upbeat tone, 16:9","씬 브레이크다운(Hook/Problem/Solution/Features/SocialProof/CTA) + Remotion 파일 구조"
+  "온보딩 워크스루","Generate a 45s onboarding walkthrough using screenshots, 9:16 mobile format","5단계 씬 플랜 + 에셋 목록(스크린샷·콜아웃) + 텍스트 오버레이 + 모바일 세이프 마진"

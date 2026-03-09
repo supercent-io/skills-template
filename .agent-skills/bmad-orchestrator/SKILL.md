@@ -28,27 +28,27 @@ metadata:
 npx skills add https://github.com/supercent-io/skills-template --skill bmad-orchestrator
 ```
 
-## Notes for Codex Usage
+## Codex 사용 참고
 
-`bmad-orchestrator`'s default execution path is Claude Code.
-To run the same flow directly in Codex, we recommend operating BMAD stages via a higher-level orchestration path such as `omx`/`ohmg`.
+`bmad-orchestrator`의 기본 실행 경로는 Claude Code입니다.
+Codex에서 직접 동일한 흐름으로 사용하려면 `omx`/`ohmg` 등 상위 오케스트레이션 경로를 통해 BMAD 단계를 운영하는 것을 권장합니다.
 
 ---
 
 ## BMAD Execution Commands
 
-## Platform Support Status (Current)
+## 플랫폼별 적용 상태 (현재 지원 기준)
 
-| Platform | Current support mode | Requirements |
+| 플랫폼 | 현재 지원 방식 | 적용 조건 |
 |---|---|---|
-| Gemini CLI | Native (recommended) | Register the `bmad` keyword, then run `/workflow-init` |
-| Claude Code | Native (recommended) | Install skill + `remember` pattern |
-| OpenCode | Orchestration integration | Use an `omx`/`ohmg`/`omx`-style bridge |
-| Codex | Orchestration integration | Use an `omx`/`ohmg`-style bridge |
+| Gemini CLI | 네이티브(권장) | `bmad` 키워드 등록 후 `/workflow-init` 실행 |
+| Claude Code | 네이티브(권장) | 스킬 설치 + `기억해` 패턴 |
+| OpenCode | 오케스트레이션 연동 | `omx`/`ohmg`/`omx` 류 브릿지 사용 |
+| Codex | 오케스트레이션 연동 | `omx`/`ohmg`류 브릿지 사용 |
 
-Possible with `this skill alone`:
-- Gemini CLI/Claude Code: **Yes**
-- OpenCode/Codex: **Yes (via orchestration)**
+`현재 스킬만`으로 가능한지:
+- Gemini CLI/Claude Code: **가능**
+- OpenCode/Codex: **가능(오케스트레이션 경유)**
 
 Use these in your AI session:
 
@@ -149,3 +149,4 @@ tags: [bmad, phase-2, prd, myapp]
 | Phase 2 → 3 | PRD / Tech Spec | `bash scripts/phase-gate-review.sh docs/prd-*.md` |
 | Phase 3 → 4 | Architecture | `bash scripts/phase-gate-review.sh docs/architecture-*.md` |
 | Phase 4 done | Sprint Plan | `bash scripts/phase-gate-review.sh docs/sprint-status.yaml` |
+

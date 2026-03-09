@@ -1,6 +1,6 @@
 ---
 name: opencontext
-description: Persistent memory and context management for AI agents using OpenContext. Keep context across sessions/repos/dates, store conclusions, and provide document search workflows.
+description: OpenContext를 활용한 AI 에이전트 영구 메모리 및 컨텍스트 관리. 세션/레포/날짜 간 컨텍스트 유지, 결론 저장, 문서 검색 워크플로우 제공.
 allowed-tools: Read Write Bash Grep Glob
 metadata:
   tags: opencontext, context-management, memory, knowledge-base, multi-agent
@@ -10,76 +10,76 @@ metadata:
 ---
 
 
-# OpenContext Context Management (Persistent Memory)
+# OpenContext 컨텍스트 관리 (Persistent Memory)
 
-> Give your AI assistant persistent memory.
-> Stop repeating explanations, and build smarter.
+> AI 어시스턴트에게 영구 메모리를 부여하세요.
+> 반복 설명을 멈추고, 더 스마트하게 빌드하세요.
 
 ## When to use this skill
 
-- When you need to keep context across sessions
-- When you need to record project background/decisions
-- When you need to search prior conclusions/lessons
-- When you need knowledge sharing in a Multi-Agent workflow
-- When you want to reduce repetitive background explanations
+- 세션 간 컨텍스트 유지가 필요할 때
+- 프로젝트 배경/결정사항을 기록해야 할 때
+- 이전 결론/교훈을 검색해야 할 때
+- Multi-Agent 워크플로우에서 지식 공유가 필요할 때
+- 반복적인 배경 설명을 줄이고 싶을 때
 
 ---
 
-## 1. Core concepts
+## 1. 핵심 개념
 
-### Problem
-When working with an AI assistant, context gets lost (across sessions, repos, and dates). You end up repeating background, re-explaining decisions, and sometimes the assistant continues with incorrect assumptions.
+### 문제점
+AI 어시스턴트로 작업할 때 컨텍스트가 손실됩니다 (세션, 레포, 날짜 간). 배경 설명을 반복하고, 결정을 다시 설명하며, 때때로 어시스턴트가 잘못된 가정으로 계속 진행합니다.
 
-### Solution
-**OpenContext** is a lightweight personal context/knowledge store for AI assistants.
+### 해결책
+**OpenContext**는 AI 어시스턴트를 위한 경량 개인 컨텍스트/지식 저장소입니다.
 
 ```
-[Load context] → [Do work] → [Store conclusions]
+[컨텍스트 로드] → [작업 수행] → [결론 저장]
 ```
 
-### Default paths
-| Item | Path |
+### 기본 경로
+| 항목 | 경로 |
 |------|------|
 | **Contexts** | `~/.opencontext/contexts` |
 | **Database** | `~/.opencontext/opencontext.db` |
 
 ---
 
-## 2. Install and initialize
+## 2. 설치 및 초기화
 
-### Install CLI
+### CLI 설치
 ```bash
 npm install -g @aicontextlab/cli
-# Or use npx
+# 또는 npx 사용
 npx @aicontextlab/cli <command>
 ```
 
-### Initialize (run inside the repo)
+### 초기화 (레포 내에서 실행)
 ```bash
 cd your-project
 oc init
 ```
 
-**What `oc init` does:**
-- Prepare the global context store (on first run)
-- Generate user-level commands/skills + mcp.json for the selected tool
-- Update the repo's AGENTS.md
+**`oc init` 수행 작업:**
+- 글로벌 컨텍스트 저장소 준비 (최초 실행 시)
+- 선택한 도구에 대한 user-level commands/skills + mcp.json 생성
+- 레포의 AGENTS.md 갱신
 
 ---
 
 ## 3. Slash Commands
 
-### Beginner-friendly commands
+### 초보자 친화 명령어
 
-| Command | Purpose |
+| Command | 용도 |
 |---------|------|
-| `/opencontext-help` | When you don't know where to start |
-| `/opencontext-context` | **(Recommended default)** Load background before work |
-| `/opencontext-search` | Search existing documents |
-| `/opencontext-create` | Create a new document/idea |
-| `/opencontext-iterate` | Store conclusions and citations |
+| `/opencontext-help` | 어디서 시작할지 모를 때 |
+| `/opencontext-context` | **(기본 권장)** 작업 전 배경 로드 |
+| `/opencontext-search` | 기존 문서 검색 |
+| `/opencontext-create` | 새 문서/아이디어 작성 |
+| `/opencontext-iterate` | 결론 및 인용 저장 |
 
-### Install locations
+### 설치 위치
 ```
 # Slash Commands
 Cursor:      ~/.cursor/commands
@@ -97,51 +97,51 @@ Claude Code: ~/.claude/mcp.json
 
 ---
 
-## 4. Core CLI commands
+## 4. 핵심 CLI 명령어
 
-### Folder/document management
+### 폴더/문서 관리
 ```bash
-# List folders
+# 폴더 목록 조회
 oc folder ls --all
 
-# Create folder
+# 폴더 생성
 oc folder create project-a -d "My project"
 
-# Create document
+# 문서 생성
 oc doc create project-a design.md -d "Design doc"
 
-# List documents
+# 문서 목록 조회
 oc doc ls project-a
 ```
 
-### Search & manifest
+### 검색 & 매니페스트
 ```bash
-# Search (keyword/hybrid/vector)
+# 검색 (키워드/하이브리드/벡터)
 oc search "your query" --mode keyword --format json
 
-# Generate a manifest (list of files the AI should read)
+# 매니페스트 생성 (AI가 읽을 파일 목록)
 oc context manifest project-a --limit 10
 ```
 
-### Search modes
-| Mode | Description | Requirements |
+### 검색 모드
+| 모드 | 설명 | 요구사항 |
 |------|------|----------|
-| `--mode keyword` | Keyword-based search | No embeddings required |
-| `--mode vector` | Vector search | Embeddings + index required |
-| `--mode hybrid` | Hybrid (default) | Embeddings + index required |
+| `--mode keyword` | 키워드 기반 검색 | 임베딩 불필요 |
+| `--mode vector` | 벡터 검색 | 임베딩 + 인덱스 필요 |
+| `--mode hybrid` | 하이브리드 (기본값) | 임베딩 + 인덱스 필요 |
 
-### Embedding configuration (for semantic search)
+### 임베딩 설정 (시맨틱 검색용)
 ```bash
-# Set API key
+# API Key 설정
 oc config set EMBEDDING_API_KEY "<<your_key>>"
 
-# (Optional) Set base URL
+# (선택) Base URL 설정
 oc config set EMBEDDING_API_BASE "https://api.openai.com/v1"
 
-# (Optional) Set model
+# (선택) 모델 설정
 oc config set EMBEDDING_MODEL "text-embedding-3-small"
 
-# Build index
+# 인덱스 빌드
 oc index build
 ```
 
@@ -151,105 +151,105 @@ oc index build
 
 ### OpenContext MCP Tools
 ```bash
-oc_list_folders    # List folders
-oc_list_docs       # List documents
-oc_manifest        # Generate manifest
-oc_search          # Search documents
-oc_create_doc      # Create document
-oc_get_link        # Generate stable link
+oc_list_folders    # 폴더 목록 조회
+oc_list_docs       # 문서 목록 조회
+oc_manifest        # 매니페스트 생성
+oc_search          # 문서 검색
+oc_create_doc      # 문서 생성
+oc_get_link        # 안정적 링크 생성
 ```
 
-### Multi-Agent integration
+### Multi-Agent 통합
 ```bash
-# Gemini: large-scale analysis
-ask-gemini "Analyze the structure of the entire codebase"
+# Gemini: 대용량 분석
+ask-gemini "전체 코드베이스 구조 분석해줘"
 
-# Codex: run commands
+# Codex: 명령 실행
 shell "docker-compose up -d"
 
-# OpenContext: store results
-oc doc create project-a conclusions.md -d "Analysis conclusions"
+# OpenContext: 결과 저장
+oc doc create project-a conclusions.md -d "분석 결론"
 ```
 
 ---
 
-## 6. Multi-Agent workflow integration
+## 6. Multi-Agent 워크플로우 통합
 
 ### Orchestration Pattern
 ```
-[Claude] Plan
+[Claude] 계획 수립
     ↓
-[Gemini] Analysis/research + OpenContext search
+[Gemini] 분석/리서치 + OpenContext 검색
     ↓
-[Claude] Write code
+[Claude] 코드 작성
     ↓
-[Codex] Run/test
+[Codex] 실행/테스트
     ↓
-[Claude] Synthesize results + store in OpenContext
+[Claude] 결과 종합 + OpenContext 저장
 ```
 
-### Practical example: API design + implementation + testing
+### 실전 예시: API 설계 + 구현 + 테스트
 ```bash
-# 1. [Claude] Design API spec using the skill
-/opencontext-context   # Load project background
+# 1. [Claude] 스킬 기반 API 스펙 설계
+/opencontext-context   # 프로젝트 배경 로드
 
-# 2. [Gemini] Analyze a large codebase
-ask-gemini "@src/ Analyze existing API patterns"
+# 2. [Gemini] 대용량 코드베이스 분석
+ask-gemini "@src/ 기존 API 패턴 분석"
 
-# 3. [Claude] Implement code based on the analysis
-# (Use context loaded from OpenContext)
+# 3. [Claude] 분석 결과 기반 코드 구현
+# (OpenContext에서 로드한 컨텍스트 활용)
 
-# 4. [Codex] Test and build
+# 4. [Codex] 테스트 및 빌드
 shell "npm test && npm run build"
 
-# 5. [Claude] Create final report + store conclusions
-/opencontext-iterate   # Store decisions and lessons learned
+# 5. [Claude] 최종 리포트 생성 + 결론 저장
+/opencontext-iterate   # 결정사항 및 교훈 저장
 ```
 
 ---
 
-## 7. Recommended daily workflow
+## 7. 권장 일일 워크플로우
 
-### Before work (1 min)
+### 작업 전 (1분)
 ```bash
 /opencontext-context
 ```
-- Load project background + known pitfalls
+- 프로젝트 배경 + 알려진 함정 로드
 
-### During work
+### 작업 중
 ```bash
 /opencontext-search
 ```
-- Search existing conclusions when unsure
+- 불확실할 때 기존 결론 검색
 
-### After work (2 min)
+### 작업 후 (2분)
 ```bash
 /opencontext-iterate
 ```
-- Record decisions, pitfalls, and next steps
+- 결정사항, 함정, 다음 단계 기록
 
-### High-ROI document types
-- **Acceptance Criteria** - acceptance criteria
-- **Common Pitfalls** - common pitfalls
-- **API Contracts** - API contracts
-- **Dependency Versions** - dependency versions
+### 고ROI 문서 유형
+- **Acceptance Criteria** - 수락 기준
+- **Common Pitfalls** - 자주 발생하는 함정
+- **API Contracts** - API 계약
+- **Dependency Versions** - 의존성 버전
 
 ---
 
-## 8. Stable links (Stable Links)
+## 8. 안정적 링크 (Stable Links)
 
-Keep links stable across renames/moves by referencing document IDs:
+문서 ID 기반 참조로 이름/이동에도 링크 유지:
 
 ```markdown
 [label](oc://doc/<stable_id>)
 ```
 
-### Generate a link via CLI
+### CLI로 링크 생성
 ```bash
 oc doc link <doc_path>
 ```
 
-### Generate a link via MCP
+### MCP로 링크 생성
 ```bash
 oc_get_link doc_path="Product/api-spec"
 ```
@@ -258,58 +258,58 @@ oc_get_link doc_path="Product/api-spec"
 
 ## 9. Desktop App & Web UI
 
-### Desktop App (recommended)
-- Manage/search/edit context with a native UI
-- Use without the CLI
-- Automatic index builds (in the background)
+### Desktop App (권장)
+- 네이티브 UI로 컨텍스트 관리/검색/편집
+- CLI 없이 사용 가능
+- 자동 인덱스 빌드 (백그라운드)
 
-**Citation features:**
-| Action | How | Result |
+**인용 기능:**
+| 액션 | 방법 | 효과 |
 |------|------|------|
-| Cite text snippet | Select text → right-click → "Copy Citation" | Agent reads the snippet + source |
-| Cite document | Click the citation icon next to the document title | Agent reads the full document + obtains stable_id |
-| Cite folder | Right-click folder → "Copy Folder Citation" | Agent bulk-reads all docs in the folder |
+| 텍스트 스니펫 인용 | 텍스트 선택 → 우클릭 → "Copy Citation" | Agent가 스니펫 + 출처 읽음 |
+| 문서 인용 | 문서 제목 옆 인용 아이콘 클릭 | Agent가 전체 문서 + stable_id 획득 |
+| 폴더 인용 | 폴더 우클릭 → "Copy Folder Citation" | Agent가 폴더 내 모든 문서 일괄 읽음 |
 
 ### Web UI
 ```bash
 oc ui
-# Default URL: http://127.0.0.1:4321
+# 기본 주소: http://127.0.0.1:4321
 ```
 
 ---
 
 ## Quick Reference
 
-### Essential workflow
+### 필수 워크플로우
 ```
-Before: /opencontext-context (load background)
-During: /opencontext-search (search)
-After: /opencontext-iterate (store)
+작업 전: /opencontext-context (배경 로드)
+작업 중: /opencontext-search (검색)
+작업 후: /opencontext-iterate (저장)
 ```
 
-### Core CLI commands
+### 핵심 CLI 명령어
 ```bash
-oc init              # Initialize project
-oc folder ls --all   # List folders
-oc doc ls <folder>   # List documents
-oc search "query"    # Search
-oc doc create ...    # Create document
+oc init              # 프로젝트 초기화
+oc folder ls --all   # 폴더 목록
+oc doc ls <folder>   # 문서 목록
+oc search "query"    # 검색
+oc doc create ...    # 문서 생성
 ```
 
 ### MCP Tools
 ```
-oc_list_folders  list folders
-oc_list_docs     list documents
-oc_search        search
-oc_manifest      manifest
-oc_create_doc    create document
-oc_get_link      generate link
+oc_list_folders  폴더 목록
+oc_list_docs     문서 목록
+oc_search        검색
+oc_manifest      매니페스트
+oc_create_doc    문서 생성
+oc_get_link      링크 생성
 ```
 
-### Paths
+### 경로
 ```
-~/.opencontext/contexts      context store
-~/.opencontext/opencontext.db  database
+~/.opencontext/contexts      컨텍스트 저장소
+~/.opencontext/opencontext.db  데이터베이스
 ```
 
 ---

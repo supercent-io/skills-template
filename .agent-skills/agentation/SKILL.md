@@ -62,20 +62,20 @@ npm install agentation -D
 
 **Requirements**: React 18+, desktop browser, zero runtime deps beyond React (desktop only — no mobile)
 
-> 🔗 **Local-first by design**: Annotations are stored locally and auto-sync when connected to the MCP server.
-> - **Offline operation** — Annotations can be created without a server
-> - **Session continuity** — Same session persists after page refresh, no duplicates
-> - **Agent-first** — resolve/dismiss is handled by the agent
+> 🔗 **Local-first by design**: 어노테이션은 로컈에 저장되며 MCP 서버에 연결될 때 자동 동기화됩니다.
+> - **오프라인 동작** — 서버 없이도 어노테이션 생성 가능
+> - **세션 연속성** — 페이지 새로고침 후에도 동일 세션 유지, 중복 없음
+> - **에이전트 우선** — resolve/dismiss는 에이전트 쭄인지로 슈주됨
 
-### 2.2 MCP Server — Universal Setup (Recommended)
+### 2.2 MCP Server — Universal Setup (권장)
 
-> **Fastest method** — Auto-detects all installed agents and configures them (Claude Code, Cursor, Codex, Windsurf, and 9+ more agents):
+> **가장 빠른 방법** — 설치된 모든 에이전트를 자동 감지하여 설정 (Claude Code, Cursor, Codex, Windsurf 등 9+ 에이전트):
 
 ```bash
 npx add-mcp "npx -y agentation-mcp server"
 ```
 
-Or install manually:
+또는 수동 설치:
 
 ```bash
 npm install agentation-mcp -D
@@ -84,9 +84,9 @@ npx agentation-mcp server --port 8080   # custom port
 npx agentation-mcp doctor          # verify setup
 ```
 
-### 2.3 Claude Code — Official Skill (Minimal Setup)
+### 2.3 Claude Code — Official Skill (최소 설정)
 
-> Recommended for Claude Code users — automatically handles framework detection, package installation, and layout integration:
+> Claude Code 사용자에게 권장하는 방식 — 프레임워크 자동 감지, 패키지 설치, 레이아웃 연동을 자동으로 처리합니다:
 
 ```bash
 npx skills add benjitaylor/agentation
@@ -171,14 +171,14 @@ export default function App({ Component, pageProps }) {
 
 ## 4. MCP Server Setup — All Platforms
 
-**Fastest method — Universal (auto-detects 9+ agents):**
+**가장 빠른 방법 — Universal (9+ 에이전트 자동 감지):**
 ```bash
 npx add-mcp "npx -y agentation-mcp server"
 ```
 
-> [add-mcp](https://github.com/neondatabase/add-mcp) auto-detects Claude Code, Cursor, Codex, Windsurf, and more, writing directly to the correct config.
+> [add-mcp](https://github.com/neondatabase/add-mcp)는 Claude Code, Cursor, Codex, Windsurf 등을 자동 감지하여 올바른 config에 바로 작성합니다.
 
-**Start server / verify:**
+**서버 시작 / 검증:**
 
 ```bash
 npx agentation-mcp server          # HTTP :4747 + MCP stdio
@@ -190,19 +190,19 @@ npx agentation-mcp doctor          # verify setup
 
 ### Claude Code (`.claude/`)
 
-**Minimal setup — Official Claude Code Skill (Recommended):**
+**최소 설정 — Official Claude Code Skill (권장):**
 ```bash
 npx skills add benjitaylor/agentation
-# In Claude Code:
+# Claude Code에서:
 /agentation
 ```
 
-**Universal MCP auto-setup (Claude Code + 9+ agents):**
+**Universal MCP 자동 설정 (Claude Code 포함 9+ 에이전트):**
 ```bash
 npx add-mcp "npx -y agentation-mcp server"
 ```
 
-**Interactive wizard (Claude Code only):**
+**Interactive wizard (Claude Code 전용):**
 ```bash
 npx agentation-mcp init
 ```
@@ -655,109 +655,109 @@ import {
 
 ## 12. jeo Integration (annotate keyword)
 
-> agentation integrates as the **VERIFY_UI** phase of the jeo skill.
-> This follows the same pattern as plannotator operating in `planui` / `ExitPlanMode`.
-> `annotate` is the primary keyword. `agentui` is kept as a backward-compatible alias.
+> agentation은 jeo 스킬의 **VERIFY_UI** 단계로 통합됩니다.
+> plannotator가 `planui` / `ExitPlanMode`에서 동작하는 방식과 동일한 패턴입니다.
+> `annotate`가 기본 키워드입니다. `agentui`는 하위 호환 별칭으로 유지됩니다.
 
-### How it works
+### 엄게나 작동 방식
 
 ```
 plannotator (planui):         agentation (annotate):
-Write plan.md                   Mount <Agentation> in app UI
-    ↓ blocking                       ↓ blocking
-Run plannotator             agentation_watch_annotations
+plan.md 작성                   앱 UI에 <Agentation> 마운트
+    ↓ 블로킹                        ↓ 블로킹
+plannotator 실행            agentation_watch_annotations
     ↓                              ↓
-Approve/Feedback in UI        Create annotation in UI
+UI에서 Approve/Feedback       UI에서 어노테이션 생성
     ↓                              ↓
-Confirm approved:true          annotation ack→fix→resolve
+approved:true 확인             annotation ack→fix→resolve
     ↓                              ↓
-Enter EXECUTE                 Next step or loop
+EXECUTE 진입                  다음 단계 또는 루프
 ```
 
-### Trigger Keywords
+### 트리거 키워드
 
-| Keyword | Platform | Action |
+| 키워드 | 플랫폼 | 동작 |
 |--------|----------|------|
-| `annotate` | Claude Code | `agentation_watch_annotations` MCP blocking call |
-| `annotate` | Codex | `ANNOTATE_READY` signal → `jeo-notify.py` HTTP polling |
-| `annotate` | Gemini | GEMINI.md instruction: HTTP REST polling pattern |
-| `/jeo-annotate` | OpenCode | opencode.json `mcp.agentation` + instructions |
-| `agentui` *(deprecated)* | All platforms | Same behavior as above — backward-compatible alias |
-| `UI review` | All platforms | Same as `annotate` |
+| `annotate` | Claude Code | `agentation_watch_annotations` MCP 블로킹 호출 |
+| `annotate` | Codex | `ANNOTATE_READY` 신호 → `jeo-notify.py` HTTP 폴링 |
+| `annotate` | Gemini | GEMINI.md 지시: HTTP REST 폴링 패턴 |
+| `/jeo-annotate` | OpenCode | opencode.json `mcp.agentation` + 지시사항 |
+| `agentui` *(deprecated)* | 전체 플랫폼 | 위와 동일 동작 — 하위 호환 별칭 |
+| `UI검토` | 전체 플랫폼 | `annotate`와 동일 |
 
-### Using with jeo
+### jeo에서 사용하기
 
 ```bash
-# 1. agentation auto-registered when installing jeo
+# 1. jeo 설치 시 agentation 자동 등록
 bash .agent-skills/jeo/scripts/install.sh --with-agentation
-# Or full install:
+# 또는 전체 설치:
 bash .agent-skills/jeo/scripts/install.sh --all
 
-# 2. Mount agentation component in app
-# app/layout.tsx or pages/_app.tsx:
+# 2. 앱에 agentation 컴포넌트 마운트
+# app/layout.tsx 또는 pages/_app.tsx:
 #   <Agentation endpoint="http://localhost:4747" />
 
-# 3. Start MCP server
+# 3. MCP 서버 실행
 npx agentation-mcp server
 
-# 4. Enter annotate keyword in agent → watch loop starts (agentui also works as backward-compatible alias)
-# Claude Code: direct MCP tool call
-# Codex: output ANNOTATE_READY (or AGENTUI_READY) → notify hook auto-polls
-# Gemini: GEMINI.md HTTP polling pattern
-# OpenCode: /jeo-annotate slash command (or /jeo-agentui — deprecated)
+# 4. 에이전트에서 annotate 키워드 입력 → watch loop 시작 (agentui도 하위 호환 동작)
+# Claude Code: MCP 도구 직접 호출
+# Codex: ANNOTATE_READY (또는 AGENTUI_READY) 출력 → notify hook 자동 폴링
+# Gemini: GEMINI.md HTTP 폴링 패턴
+# OpenCode: /jeo-annotate 슬래시 커맨드 (또는 /jeo-agentui — deprecated)
 ```
 
-### Separation from plannotator (Phase Guard)
+### plannotator와의 분리 (Phase Guard)
 
-plannotator and agentation use the same blocking loop pattern but **only operate in different phases**:
+plannotator와 agentation은 동일한 블로킹 루프 패턴을 사용하지만 **다른 phase에서만 동작**합니다:
 
-| Tool | Allowed phase | Hook Guard |
+| 도구 | 허용 phase | Hook Guard |
 |------|-----------|------------|
 | **plannotator** | `plan` only | `jeo-state.json` → `phase === "plan"` |
 | **agentation** | `verify` / `verify_ui` only | `jeo-state.json` → `phase === "verify_ui"` |
 
-Each platform's hook script checks the `phase` field in `jeo-state.json` to prevent execution in the wrong phase.
-Without this guard, both tools could run simultaneously in Gemini's `AfterAgent` hook.
+각 플랫폼의 hook 스크립트는 `jeo-state.json`의 `phase` 필드를 확인하여 잘못된 phase에서 실행되지 않습니다.
+이 guard가 없으면 Gemini의 `AfterAgent` 훅에서 두 도구가 동시에 실행될 수 있습니다.
 
 ### Pre-flight Check
 
-3-step check before entering VERIFY_UI:
-1. **Server status**: `GET /health` — whether agentation-mcp server is running
-2. **Session exists**: `GET /sessions` — whether `<Agentation>` component is mounted
-3. **Pending annotations**: `GET /pending` — number of annotations to process
+VERIFY_UI 진입 전 3단계 확인:
+1. **서버 상태**: `GET /health` — agentation-mcp 서버 실행 여부
+2. **세션 존재**: `GET /sessions` — `<Agentation>` 컴포넌트 마운트 여부
+3. **대기 annotation**: `GET /pending` — 처리할 annotation 수
 
-After passing, set `phase` in `jeo-state.json` to `"verify_ui"` and `agentation.active` to `true`.
+통과 후 `jeo-state.json`의 `phase`를 `"verify_ui"`로, `agentation.active`를 `true`로 설정.
 
-### Loop Verification Test
+### Loop 검증 테스트
 
 ```bash
-# Run agentation watch loop integration test
+# agentation watch loop 통합 테스트 실행
 bash .agent-skills/agentation/scripts/verify-loop.sh
 
-# Quick test (skip error cases)
+# 빠른 테스트 (에러 케이스 생략)
 bash .agent-skills/agentation/scripts/verify-loop.sh --quick
 ```
 
-4-step verification: Server Health → Annotation CRUD → ACK-RESOLVE Cycle → Error Cases
+4단계 검증: Server Health → Annotation CRUD → ACK-RESOLVE Cycle → Error Cases
 
-### Evaluation Flow (jeo VERIFY_UI phase)
+### 평가 플로우 (jeo VERIFY_UI 단계)
 
 ```
 jeo "<task>"
     │
-[1] PLAN (plannotator loop)    ← approve plan.md
+[1] PLAN (plannotator loop)    ← plan.md 승인
 [2] EXECUTE (team/bmad)
 [3] VERIFY
     ├─ agent-browser snapshot
     ├─ Pre-flight check (server + session + pending)
-    └─ annotate → VERIFY_UI (agentation loop)   ← this phase (agentui also backward-compatible)
+    └─ annotate → VERIFY_UI (agentation loop)   ← 이 단계 (agentui도 하위 호환)
         ├─ ACK → FIND → FIX → RESOLVE
-        ├─ RE-SNAPSHOT (agent-browser)  ← re-check after fix
-        └─ update agentation fields in jeo-state.json
+        ├─ RE-SNAPSHOT (agent-browser)  ← 수정 후 재확인
+        └─ jeo-state.json agentation 필드 업데이트
 [4] CLEANUP
 ```
 
-> For detailed jeo integration: see [jeo SKILL.md](../jeo/SKILL.md) Section 3.3.1 detailed workflow
+> 자세한 jeo 통합 내용: [jeo SKILL.md](../jeo/SKILL.md) Section 3.3.1 상세 워크플로우 확인
 
 
 ## References

@@ -12,55 +12,55 @@ metadata:
 
 ## When to use this skill
 
-Specific situations that should trigger this skill:
+이 스킬을 트리거해야 하는 구체적인 상황을 나열합니다:
 
-- **New feature development**: Write tests first using TDD (Test-Driven Development)
-- **Adding API endpoints**: Test success and failure cases for REST APIs
-- **Bug fixes**: Add tests to prevent regressions
-- **Before refactoring**: Write tests that guarantee existing behavior
-- **CI/CD setup**: Build automated test pipelines
+- **새 기능 개발**: TDD(Test-Driven Development) 방식으로 테스트 먼저 작성
+- **API 엔드포인트 추가**: REST API의 성공/실패 케이스 테스트
+- **버그 수정**: 회귀 방지를 위한 테스트 추가
+- **리팩토링 전**: 기존 동작을 보장하는 테스트 작성
+- **CI/CD 설정**: 자동화된 테스트 파이프라인 구축
 
-## Input Format
+## 입력 형식 (Input Format)
 
-Format and required/optional information to collect from the user:
+사용자로부터 받아야 할 입력의 형식과 필수/선택 정보:
 
-### Required information
-- **Framework**: Express, Django, FastAPI, Spring Boot, etc.
-- **Test tool**: Jest, Pytest, Mocha/Chai, JUnit, etc.
-- **Test target**: API endpoints, business logic, DB operations, etc.
+### 필수 정보
+- **프레임워크**: Express, Django, FastAPI, Spring Boot 등
+- **테스트 도구**: Jest, Pytest, Mocha/Chai, JUnit 등
+- **테스트 대상**: API 엔드포인트, 비즈니스 로직, DB 작업 등
 
-### Optional information
-- **Database**: PostgreSQL, MySQL, MongoDB (default: in-memory DB)
-- **Mocking library**: jest.mock, sinon, unittest.mock (default: framework built-in)
-- **Coverage target**: 80%, 90%, etc. (default: 80%)
-- **E2E tool**: Supertest, TestClient, RestAssured (optional)
+### 선택 정보
+- **데이터베이스**: PostgreSQL, MySQL, MongoDB (기본값: in-memory DB)
+- **모킹 라이브러리**: jest.mock, sinon, unittest.mock (기본값: 프레임워크 내장)
+- **커버리지 목표**: 80%, 90% 등 (기본값: 80%)
+- **E2E 도구**: Supertest, TestClient, RestAssured (선택)
 
-### Input example
+### 입력 예시
 
 ```
-Test the user authentication endpoints for an Express.js API:
-- Framework: Express + TypeScript
-- Test tool: Jest + Supertest
-- Target: POST /auth/register, POST /auth/login
-- DB: PostgreSQL (in-memory for tests)
-- Coverage: 90% or above
+Express.js API의 사용자 인증 엔드포인트를 테스트해줘:
+- 프레임워크: Express + TypeScript
+- 테스트 도구: Jest + Supertest
+- 대상: POST /auth/register, POST /auth/login
+- DB: PostgreSQL (테스트용 in-memory)
+- 커버리지: 90% 이상
 ```
 
 ## Instructions
 
-Step-by-step task order to follow precisely.
+단계별로 정확하게 따라야 할 작업 순서를 명시합니다.
 
-### Step 1: Set up the test environment
+### Step 1: 테스트 환경 설정
 
-Install and configure the test framework and tools.
+테스트 프레임워크 및 도구를 설치하고 설정합니다.
 
-**Tasks**:
-- Install test libraries
-- Configure test database (in-memory or separate DB)
-- Separate environment variables (.env.test)
-- Configure jest.config.js or pytest.ini
+**작업 내용**:
+- 테스트 라이브러리 설치
+- 테스트 데이터베이스 설정 (in-memory 또는 별도 DB)
+- 환경변수 분리 (.env.test)
+- jest.config.js 또는 pytest.ini 설정
 
-**Example** (Node.js + Jest + Supertest):
+**예시** (Node.js + Jest + Supertest):
 ```bash
 npm install --save-dev jest ts-jest @types/jest supertest @types/supertest
 ```
@@ -89,43 +89,43 @@ module.exports = {
 };
 ```
 
-**setup.ts** (global test configuration):
+**setup.ts** (테스트 전역 설정):
 ```typescript
 import { db } from '../database';
 
-// Reset DB before each test
+// 각 테스트 전 DB 초기화
 beforeEach(async () => {
   await db.migrate.latest();
   await db.seed.run();
 });
 
-// Clean up after each test
+// 각 테스트 후 정리
 afterEach(async () => {
   await db.migrate.rollback();
 });
 
-// Close connection after all tests complete
+// 모든 테스트 완료 후 연결 종료
 afterAll(async () => {
   await db.destroy();
 });
 ```
 
-### Step 2: Write Unit Tests (business logic)
+### Step 2: Unit Test 작성 (비즈니스 로직)
 
-Write unit tests for individual functions and classes.
+개별 함수/클래스의 단위 테스트를 작성합니다.
 
-**Tasks**:
-- Test pure functions (no dependencies)
-- Isolate dependencies via mocking
-- Test edge cases (boundary values, exceptions)
-- AAA pattern (Arrange-Act-Assert)
+**작업 내용**:
+- 순수 함수 테스트 (의존성 없음)
+- 모킹을 통한 의존성 격리
+- Edge case 테스트 (경계값, 예외)
+- AAA 패턴 (Arrange-Act-Assert)
 
-**Decision criteria**:
-- No external dependencies (DB, API) -> pure Unit Test
-- External dependencies present -> use Mock/Stub
-- Complex logic -> test various input cases
+**판단 기준**:
+- 외부 의존성(DB, API) 없음 → 순수 Unit Test
+- 외부 의존성 있음 → Mock/Stub 사용
+- 복잡한 로직 → 다양한 입력 케이스 테스트
 
-**Example** (password validation function):
+**예시** (비밀번호 검증 함수):
 ```typescript
 // src/utils/password.ts
 export function validatePassword(password: string): { valid: boolean; errors: string[] } {
@@ -202,24 +202,24 @@ describe('validatePassword', () => {
 });
 ```
 
-### Step 3: Integration Test (API endpoints)
+### Step 3: Integration Test (API 엔드포인트)
 
-Write integration tests for API endpoints.
+API 엔드포인트의 통합 테스트를 작성합니다.
 
-**Tasks**:
-- Test HTTP requests/responses
-- Success cases (200, 201)
-- Failure cases (400, 401, 404, 500)
-- Authentication/authorization tests
-- Input validation tests
+**작업 내용**:
+- HTTP 요청/응답 테스트
+- 성공 케이스 (200, 201)
+- 실패 케이스 (400, 401, 404, 500)
+- 인증/권한 테스트
+- 입력 검증 테스트
 
-**Checklist**:
-- [x] Verify status code
-- [x] Validate response body structure
-- [x] Confirm database state changes
-- [x] Validate error messages
+**확인 사항**:
+- [x] Status code 확인
+- [x] Response body 구조 검증
+- [x] Database 상태 변화 확인
+- [x] 에러 메시지 검증
 
-**Example** (Express.js + Supertest):
+**예시** (Express.js + Supertest):
 ```typescript
 // src/__tests__/api/auth.test.ts
 import request from 'supertest';
@@ -241,14 +241,14 @@ describe('POST /auth/register', () => {
     expect(response.body).toHaveProperty('accessToken');
     expect(response.body.user.email).toBe('test@example.com');
 
-    // Verify the record was actually saved to DB
+    // DB에 실제로 저장되었는지 확인
     const user = await db.user.findUnique({ where: { email: 'test@example.com' } });
     expect(user).toBeTruthy();
     expect(user.username).toBe('testuser');
   });
 
   it('should reject duplicate email', async () => {
-    // Create first user
+    // 첫 번째 사용자 생성
     await request(app)
       .post('/api/auth/register')
       .send({
@@ -257,7 +257,7 @@ describe('POST /auth/register', () => {
         password: 'Password123!'
       });
 
-    // Second attempt with same email
+    // 같은 이메일로 두 번째 시도
     const response = await request(app)
       .post('/api/auth/register')
       .send({
@@ -288,7 +288,7 @@ describe('POST /auth/register', () => {
       .post('/api/auth/register')
       .send({
         email: 'test@example.com'
-        // username, password omitted
+        // username, password 누락
       });
 
     expect(response.status).toBe(400);
@@ -297,7 +297,7 @@ describe('POST /auth/register', () => {
 
 describe('POST /auth/login', () => {
   beforeEach(async () => {
-    // Create test user
+    // 테스트용 사용자 생성
     await request(app)
       .post('/api/auth/register')
       .send({
@@ -346,24 +346,24 @@ describe('POST /auth/login', () => {
 });
 ```
 
-### Step 4: Authentication/Authorization Tests
+### Step 4: 인증/권한 테스트
 
-Test JWT tokens and role-based access control.
+JWT 토큰 및 권한 기반 접근 제어를 테스트합니다.
 
-**Tasks**:
-- Confirm 401 when accessing without a token
-- Confirm successful access with a valid token
-- Test expired token handling
-- Role-based permission tests
+**작업 내용**:
+- 토큰 없이 접근 시 401 확인
+- 유효한 토큰으로 접근 성공 확인
+- 만료된 토큰 처리 테스트
+- Role-based 권한 테스트
 
-**Example**:
+**예시**:
 ```typescript
 describe('Protected Routes', () => {
   let accessToken: string;
   let adminToken: string;
 
   beforeEach(async () => {
-    // Regular user token
+    // 일반 사용자 토큰
     const userResponse = await request(app)
       .post('/api/auth/register')
       .send({
@@ -373,7 +373,7 @@ describe('Protected Routes', () => {
       });
     accessToken = userResponse.body.accessToken;
 
-    // Admin token
+    // 관리자 토큰
     const adminResponse = await request(app)
       .post('/api/auth/register')
       .send({
@@ -381,12 +381,12 @@ describe('Protected Routes', () => {
         username: 'admin',
         password: 'Password123!'
       });
-    // Update role to 'admin' in DB
+    // DB에서 role을 'admin'으로 변경
     await db.user.update({
       where: { email: 'admin@example.com' },
       data: { role: 'admin' }
     });
-    // Log in again to get a new token
+    // 다시 로그인해서 새 토큰 받기
     const loginResponse = await request(app)
       .post('/api/auth/login')
       .send({
@@ -446,17 +446,17 @@ describe('Protected Routes', () => {
 });
 ```
 
-### Step 5: Mocking and Test Isolation
+### Step 5: Mocking 및 테스트 격리
 
-Mock external dependencies to isolate tests.
+외부 의존성을 모킹하여 테스트를 격리합니다.
 
-**Tasks**:
-- Mock external APIs
-- Mock email sending
-- Mock file system
-- Mock time-related functions
+**작업 내용**:
+- 외부 API 모킹
+- 이메일 발송 모킹
+- 파일 시스템 모킹
+- 시간 관련 함수 모킹
 
-**Example** (mocking an external API):
+**예시** (외부 API 모킹):
 ```typescript
 // src/services/emailService.ts
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
@@ -478,7 +478,7 @@ export async function sendVerificationEmail(email: string, token: string): Promi
 // src/__tests__/services/emailService.test.ts
 import { sendVerificationEmail } from '../../services/emailService';
 
-// Mock fetch
+// fetch 모킹
 global.fetch = jest.fn();
 
 describe('sendVerificationEmail', () => {
@@ -519,15 +519,15 @@ describe('sendVerificationEmail', () => {
 
 ## Output format
 
-Defines the exact format that outputs must follow.
+결과물이 따라야 할 정확한 형식을 정의합니다.
 
-### Basic structure
+### 기본 구조
 
 ```
-project/
+프로젝트/
 ├── src/
 │   ├── __tests__/
-│   │   ├── setup.ts                 # Global test configuration
+│   │   ├── setup.ts                 # 테스트 전역 설정
 │   │   ├── utils/
 │   │   │   └── password.test.ts     # Unit tests
 │   │   ├── services/
@@ -540,7 +540,7 @@ project/
 └── package.json
 ```
 
-### Test run scripts (package.json)
+### 테스트 실행 스크립트 (package.json)
 
 ```json
 {
@@ -553,7 +553,7 @@ project/
 }
 ```
 
-### Coverage report
+### 커버리지 리포트
 
 ```bash
 $ npm run test:coverage
@@ -572,54 +572,54 @@ All files                 |   92.5  |   88.3   |   95.2  |   92.8  |
 
 ## Constraints
 
-Rules and prohibitions that must be strictly followed.
+반드시 지켜야 할 규칙과 금지 사항을 명시합니다.
 
-### Required rules (MUST)
+### 필수 규칙 (MUST)
 
-1. **Test isolation**: Each test must be runnable independently
-   - Reset state with beforeEach/afterEach
-   - Do not depend on test execution order
+1. **테스트 격리**: 각 테스트는 독립적으로 실행 가능해야 함
+   - beforeEach/afterEach로 상태 초기화
+   - 테스트 순서에 의존하지 않음
 
-2. **Clear test names**: The name must convey what the test verifies
+2. **명확한 테스트명**: 테스트가 무엇을 검증하는지 이름에서 알 수 있어야 함
    - ✅ 'should reject duplicate email'
    - ❌ 'test1'
 
-3. **AAA pattern**: Arrange (setup) - Act (execute) - Assert (verify) structure
-   - Improves readability
-   - Clarifies test intent
+3. **AAA 패턴**: Arrange(준비) - Act(실행) - Assert(검증) 구조
+   - 가독성 향상
+   - 테스트 의도 명확화
 
-### Prohibited (MUST NOT)
+### 금지 사항 (MUST NOT)
 
-1. **No production DB**: Tests must use a separate or in-memory DB
-   - Risk of losing real data
-   - Cannot isolate tests
+1. **프로덕션 DB 사용 금지**: 테스트는 별도 DB 또는 in-memory DB 사용
+   - 실제 데이터 손실 위험
+   - 테스트 격리 불가
 
-2. **No real external API calls**: Mock all external services
-   - Removes network dependency
-   - Speeds up tests
-   - Reduces costs
+2. **실제 외부 API 호출 금지**: 외부 서비스는 모킹
+   - 네트워크 의존성 제거
+   - 테스트 속도 향상
+   - 비용 절감
 
-3. **No Sleep/Timeout abuse**: Use fake timers for time-based tests
+3. **Sleep/Timeout 남용 금지**: 시간 기반 테스트는 가짜 타이머 사용
    - jest.useFakeTimers()
-   - Prevents test slowdowns
+   - 테스트 속도 저하 방지
 
-### Security rules
+### 보안 규칙
 
-- **No hardcoded secrets**: Never hardcode API keys or passwords in test code
-- **Separate environment variables**: Use .env.test file
+- **민감정보 하드코딩 금지**: 테스트 코드에도 API 키, 비밀번호 하드코딩 금지
+- **환경변수 분리**: .env.test 파일 사용
 
 ## Examples
 
-### Example 1: Python FastAPI tests (Pytest)
+### 예시 1: Python FastAPI 테스트 (Pytest)
 
-**Situation**: Testing a FastAPI REST API
+**상황**: FastAPI REST API 테스트
 
-**User request**:
+**사용자 요청**:
 ```
-Test the user API built with FastAPI using pytest.
+FastAPI로 만든 사용자 API를 pytest로 테스트해줘.
 ```
 
-**Final result**:
+**최종 결과**:
 ```python
 # tests/conftest.py
 import pytest
@@ -728,28 +728,28 @@ def test_protected_route_with_token(client):
 
 ## Best practices
 
-### Quality improvements
+### 품질 향상
 
-1. **TDD (Test-Driven Development)**: Write tests before writing code
-   - Clarifies requirements
-   - Improves design
-   - Naturally achieves high coverage
+1. **TDD (Test-Driven Development)**: 코드 작성 전에 테스트 먼저
+   - 요구사항 명확화
+   - 설계 개선
+   - 높은 커버리지 자연스럽게 달성
 
-2. **Given-When-Then pattern**: Write tests in BDD style
+2. **Given-When-Then 패턴**: BDD 스타일로 테스트 작성
    ```typescript
    it('should return 404 when user not found', async () => {
-     // Given: a non-existent user ID
+     // Given: 존재하지 않는 사용자 ID
      const nonExistentId = 'non-existent-uuid';
 
-     // When: attempting to look up that user
+     // When: 해당 사용자 조회 시도
      const response = await request(app).get(`/users/${nonExistentId}`);
 
-     // Then: 404 response
+     // Then: 404 응답
      expect(response.status).toBe(404);
    });
    ```
 
-3. **Test Fixtures**: Reusable test data
+3. **Test Fixtures**: 재사용 가능한 테스트 데이터
    ```typescript
    const validUser = {
      email: 'test@example.com',
@@ -758,21 +758,21 @@ def test_protected_route_with_token(client):
    };
    ```
 
-### Efficiency improvements
+### 효율성 개선
 
-- **Parallel execution**: Speed up tests with Jest's `--maxWorkers` option
-- **Snapshot Testing**: Save snapshots of UI components or JSON responses
-- **Coverage thresholds**: Enforce minimum coverage in jest.config.js
+- **병렬 실행**: Jest의 `--maxWorkers` 옵션으로 테스트 속도 향상
+- **Snapshot Testing**: UI 컴포넌트나 JSON 응답 스냅샷 저장
+- **Coverage 임계값**: jest.config.js에서 최소 커버리지 강제
 
-## Common Issues
+## 자주 발생하는 문제 (Common Issues)
 
-### Issue 1: Test failures caused by shared state between tests
+### 문제 1: 테스트 간 상태 공유로 인한 실패
 
-**Symptom**: Passes individually but fails when run together
+**증상**: 개별 실행은 성공하지만 전체 실행 시 실패
 
-**Cause**: DB state shared due to missing beforeEach/afterEach
+**원인**: beforeEach/afterEach 누락으로 DB 상태 공유
 
-**Fix**:
+**해결방법**:
 ```typescript
 beforeEach(async () => {
   await db.migrate.rollback();
@@ -780,13 +780,13 @@ beforeEach(async () => {
 });
 ```
 
-### Issue 2: "Jest did not exit one second after the test run"
+### 문제 2: "Jest did not exit one second after the test run"
 
-**Symptom**: Process does not exit after tests complete
+**증상**: 테스트 완료 후 프로세스가 종료되지 않음
 
-**Cause**: DB connections, servers, etc. not cleaned up
+**원인**: DB 연결, 서버 등이 정리되지 않음
 
-**Fix**:
+**해결방법**:
 ```typescript
 afterAll(async () => {
   await db.destroy();
@@ -794,20 +794,20 @@ afterAll(async () => {
 });
 ```
 
-### Issue 3: Async test timeout
+### 문제 3: 비동기 테스트 타임아웃
 
-**Symptom**: "Timeout - Async callback was not invoked"
+**증상**: "Timeout - Async callback was not invoked"
 
-**Cause**: Missing async/await or unhandled Promise
+**원인**: async/await 누락 또는 Promise 미처리
 
-**Fix**:
+**해결방법**:
 ```typescript
-// Bad
+// ❌ 나쁜 예
 it('should work', () => {
-  request(app).get('/users');  // Promise not handled
+  request(app).get('/users');  // Promise 미처리
 });
 
-// Good
+// ✅ 좋은 예
 it('should work', async () => {
   await request(app).get('/users');
 });
@@ -815,30 +815,30 @@ it('should work', async () => {
 
 ## References
 
-### Official docs
+### 공식 문서
 - [Jest Documentation](https://jestjs.io/docs/getting-started)
 - [Pytest Documentation](https://docs.pytest.org/)
 - [Supertest GitHub](https://github.com/visionmedia/supertest)
 
-### Learning resources
+### 학습 자료
 - [Testing JavaScript with Kent C. Dodds](https://testingjavascript.com/)
 - [Test-Driven Development by Example (Kent Beck)](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530)
 
-### Tools
-- [Istanbul/nyc](https://istanbul.js.org/) - code coverage
-- [nock](https://github.com/nock/nock) - HTTP mocking
-- [faker.js](https://fakerjs.dev/) - test data generation
+### 도구
+- [Istanbul/nyc](https://istanbul.js.org/) - 코드 커버리지
+- [nock](https://github.com/nock/nock) - HTTP 모킹
+- [faker.js](https://fakerjs.dev/) - 테스트 데이터 생성
 
 ## Metadata
 
-### Version
-- **Current version**: 1.0.0
-- **Last updated**: 2025-01-01
-- **Compatible platforms**: Claude, ChatGPT, Gemini
+### 버전
+- **현재 버전**: 1.0.0
+- **최종 업데이트**: 2025-01-01
+- **호환 플랫폼**: Claude, ChatGPT, Gemini
 
-### Related skills
-- [api-design](../api-design/SKILL.md): Design APIs alongside tests
-- [authentication-setup](../authentication/SKILL.md): Test authentication systems
+### 관련 스킬
+- [api-design](../api-design/SKILL.md): API와 함께 테스트 설계
+- [authentication-setup](../authentication/SKILL.md): 인증 시스템 테스트
 
-### Tags
+### 태그
 `#testing` `#backend` `#Jest` `#Pytest` `#unit-test` `#integration-test` `#TDD` `#API-test`

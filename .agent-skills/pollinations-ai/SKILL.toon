@@ -1,28 +1,28 @@
 N:pollinations-ai
-D:Generate and save images via the free, open-source Pollinations.ai API. No signup/API key required. URL-based generation, custom parameters (width/height/model/seed), Python automation scripts, and batch generation.
+D:Pollinations.ai 무료 오픈소스 API로 이미지 생성 및 저장. 가입/API 키 불필요. URL 기반 생성, 커스텀 파라미터(width/height/model/seed), Python 자동화 스크립트, 배치 생성 지원.
 G:image-generation pollinations free api creative ai-art url-based
 
 U[5]:
-  Rapid prototyping - generate placeholder images instantly
-  Marketing assets - hero images, banners, social media content
-  Creative exploration - quickly test different styles and compositions
-  Free alternative - replace paid image generation services
-  Automation workflows - URL-based, script-friendly API
+  빠른 프로토타이핑 — 플레이스홀더 이미지 즉시 생성
+  마케팅 에셋 — 히어로 이미지, 배너, 소셜 미디어 콘텐츠
+  크리에이티브 탐색 — 다양한 스타일과 구성 빠른 테스트
+  무료 대안 — 유료 이미지 생성 서비스 대체
+  자동화 워크플로우 — URL 기반 스크립트 친화적 API
 S[6]{n,action,details}:
   1,API URL,https://image.pollinations.ai/prompt/{PROMPT}?width=&height=&model=&seed=&nologo=true
-  2,Prompt Craft,Use structure: [Subject], [Style], [Lighting], [Mood], [Composition], [Quality modifiers]
-  3,Model Select,flux(best quality) / turbo(fast iteration) / stable-diffusion(balanced)
-  4,Generate & Save,requests.get(url, params) -> save response.content to a file; URL encoding required
-  5,Batch Generate,Create variants from a prompts list; use seed for reproducibility
-  6,Document,generation_metadata.json - record prompt/model/width/height/seed/output_file/timestamp
+  2,Prompt Craft,[Subject], [Style], [Lighting], [Mood], [Composition], [Quality modifiers] 구조 사용
+  3,Model Select,flux(최고품질) / turbo(빠른 반복) / stable-diffusion(균형)
+  4,Generate & Save,requests.get(url, params) → response.content를 파일로 저장; URL encode 필수
+  5,Batch Generate,prompts 리스트로 변형 생성; seed로 재현성 확보
+  6,Document,generation_metadata.json — prompt/model/width/height/seed/output_file/timestamp 기록
 R[5]:
-  Specify style/lighting/mood/quality modifiers explicitly in the prompt
-  Set aspect ratio first - prevent unintended cropping
-  Fix seed for reproducible results
-  URL encoding required (use urllib.parse.quote)
-  Save generation metadata - ensure reproducibility for repeat work
+  프롬프트에 스타일·조명·분위기·품질 수식어 구체적으로 명시
+  비율을 먼저 지정 — 의도하지 않은 크롭 방지
+  seed 고정으로 재현 가능한 결과 확보
+  URL 인코딩 필수 (urllib.parse.quote 사용)
+  생성 메타데이터 저장 — 반복 작업 재현성 보장
 E[4]{desc,in,out}:
-  "Website hero","generate_image('serene mountain landscape at sunset, wide 16:9, minimal', 'hero.jpg', 1920, 1080, 'flux')","1920x1080 hero image, minimal style"
-  "Product thumbnail","generate_image('futuristic dashboard UI, 1:1, dark theme, glow effects', 'thumb.jpg', 1024, 1024)","1024x1024 square, app store-ready"
-  "Social banner","generate_image('LinkedIn banner, gradient purple to blue, text space left', 'banner.jpg', 1584, 396)","LinkedIn-optimized size 1584x396"
-  "Batch seed variants","for seed in [100,200,300,400]: generate_image(prompt, f'v_{seed}.jpg', seed=seed)","4 variant images by seed"
+  "웹사이트 히어로","generate_image('serene mountain landscape at sunset, wide 16:9, minimal', 'hero.jpg', 1920, 1080, 'flux')","1920x1080 히어로 이미지, 미니멀 스타일"
+  "제품 썸네일","generate_image('futuristic dashboard UI, 1:1, dark theme, glow effects', 'thumb.jpg', 1024, 1024)","1024x1024 정사각형, 앱스토어 준비"
+  "소셜 배너","generate_image('LinkedIn banner, gradient purple to blue, text space left', 'banner.jpg', 1584, 396)","LinkedIn 최적화 치수 1584x396"
+  "배치 시드 변형","for seed in [100,200,300,400]: generate_image(prompt, f'v_{seed}.jpg', seed=seed)","시드별 4개 변형 이미지"

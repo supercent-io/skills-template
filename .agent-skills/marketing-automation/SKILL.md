@@ -9,13 +9,13 @@ metadata:
 
 # Marketing Skills Collection
 
-A collection of 23 sub-skills for marketing deliverables. Generates repeatable, high-quality outputs across CRO, copywriting, SEO, analytics, and growth.
+마케팅 딜리버러블을 위한 23개 서브스킬 컬렉션입니다. CRO, 카피라이팅, SEO, 애널리틱스, 그로스 영역에서 반복 가능한 고품질 산출물을 생성합니다.
 
 ## When to use this skill
 
-- **Marketing Deliverables Needed**: CRO, copy, SEO, analytics, growth outputs
-- **Repeatable High-Quality Outputs**: Generate assets tuned to a single KPI
-- **Business Goal → Skill Mapping**: Convert goals to specific marketing sub-skills
+- **마케팅 딜리버러블 필요**: CRO, 카피, SEO, 분석, 그로스 산출물
+- **반복 가능한 고품질 산출물**: 단일 KPI에 맞춘 에셋 생성
+- **비즈니스 목표 → 스킬 매핑**: 목표를 구체적인 마케팅 서브스킬로 변환
 
 ---
 
@@ -24,45 +24,45 @@ A collection of 23 sub-skills for marketing deliverables. Generates repeatable, 
 ### CRO (Conversion Rate Optimization)
 | Sub-Skill | Description |
 |-----------|-------------|
-| `page-cro` | Landing page conversion rate optimization |
-| `signup-flow` | Signup flow optimization |
-| `onboarding` | Onboarding experience improvement |
-| `form-optimization` | Form optimization (fields, UX) |
-| `paywall` | Paywall/pricing page optimization |
+| `page-cro` | 랜딩 페이지 전환율 최적화 |
+| `signup-flow` | 회원가입 플로우 최적화 |
+| `onboarding` | 온보딩 경험 개선 |
+| `form-optimization` | 폼 최적화 (필드, UX) |
+| `paywall` | 페이월/프라이싱 페이지 최적화 |
 
 ### Copywriting
 | Sub-Skill | Description |
 |-----------|-------------|
-| `copywriting` | Ad/marketing copy writing |
-| `copy-editing` | Improve existing copy |
-| `email-sequence` | Email sequence design |
-| `social-content` | Social media content |
+| `copywriting` | 광고/마케팅 카피 작성 |
+| `copy-editing` | 기존 카피 개선 |
+| `email-sequence` | 이메일 시퀀스 설계 |
+| `social-content` | 소셜 미디어 콘텐츠 |
 
 ### SEO
 | Sub-Skill | Description |
 |-----------|-------------|
-| `seo-audit` | SEO audit and improvements |
-| `programmatic-seo` | Programmatic SEO pages |
-| `comparison-page` | Comparison page writing |
-| `schema-markup` | Structured data markup |
+| `seo-audit` | SEO 감사 및 개선점 |
+| `programmatic-seo` | 프로그래매틱 SEO 페이지 |
+| `comparison-page` | 비교 페이지 작성 |
+| `schema-markup` | 구조화된 데이터 마크업 |
 
 ### Ads & Analytics
 | Sub-Skill | Description |
 |-----------|-------------|
-| `analytics-tracking` | Analytics tracking setup |
-| `paid-ads` | Paid ads strategy/copy |
-| `ab-test` | A/B test design |
+| `analytics-tracking` | 분석 트래킹 설정 |
+| `paid-ads` | 유료 광고 전략/카피 |
+| `ab-test` | A/B 테스트 설계 |
 
 ### Strategy & Growth
 | Sub-Skill | Description |
 |-----------|-------------|
-| `launch-strategy` | Product launch strategy |
-| `pricing-strategy` | Pricing strategy |
-| `retention` | Retention improvement strategy |
-| `churn-analysis` | Churn analysis |
-| `growth-experiments` | Growth experiment design |
-| `referral-program` | Referral program design |
-| `content-strategy` | Content strategy |
+| `launch-strategy` | 제품 런칭 전략 |
+| `pricing-strategy` | 가격 전략 |
+| `retention` | 리텐션 개선 전략 |
+| `churn-analysis` | 이탈 분석 |
+| `growth-experiments` | 그로스 실험 설계 |
+| `referral-program` | 추천 프로그램 설계 |
+| `content-strategy` | 콘텐츠 전략 수립 |
 
 ---
 
@@ -72,102 +72,102 @@ A collection of 23 sub-skills for marketing deliverables. Generates repeatable, 
 
 ```yaml
 marketing_brief:
-  objective: [single KPI - conversion rate, CTR, activation]
+  objective: [단일 KPI - conversion rate, CTR, activation]
   target_audience:
-    segment: [customer segment]
-    pain_points: [key pain points]
-    terminology: [terms they use]
+    segment: [고객 세그먼트]
+    pain_points: [주요 문제점]
+    terminology: [사용하는 용어]
   channel: [LP, email, social, SEO, ads]
-  format: [format]
+  format: [형식]
   offer:
-    value_prop: [value proposition]
-    positioning: [positioning]
-    proof_points: [proof points]
+    value_prop: [가치 제안]
+    positioning: [포지셔닝]
+    proof_points: [증거 포인트]
 ```
 
 ### Step 2: Select the Sub-Skill
 
-Select the appropriate sub-skill for the situation:
+상황에 맞는 서브스킬 선택:
 
 ```bash
-# When CRO is needed
+# CRO 필요 시
 → page-cro, signup-flow, onboarding, form-optimization, paywall
 
-# When copy is needed
+# 카피 필요 시
 → copywriting, copy-editing, email-sequence, social-content
 
-# When SEO is needed
+# SEO 필요 시
 → seo-audit, programmatic-seo, comparison-page, schema-markup
 
-# When ads/analytics are needed
+# 광고/분석 필요 시
 → analytics-tracking, paid-ads, ab-test
 
-# When strategy/growth is needed
+# 전략/그로스 필요 시
 → launch-strategy, pricing-strategy, retention, churn-analysis, growth-experiments
 ```
 
 ### Step 3: Build the Prompt
 
-Build structured prompt:
+구조화된 프롬프트 작성:
 
 ```markdown
 ## Marketing Asset Request
 
 ### Product Context
-- **Product**: [product name]
-- **Category**: [category]
-- **Stage**: [stage - early, growth, mature]
+- **Product**: [제품명]
+- **Category**: [카테고리]
+- **Stage**: [단계 - early, growth, mature]
 
 ### Audience
-- **Segment**: [target segment]
-- **Pain Points**: [1-3 pain points]
-- **Current State**: [solution they currently use]
+- **Segment**: [타겟 세그먼트]
+- **Pain Points**: [1-3개 문제점]
+- **Current State**: [현재 사용하는 솔루션]
 
 ### Offer
-- **Value Prop**: [core value proposition]
-- **Differentiator**: [differentiation point]
-- **Proof**: [trust elements - numbers, clients, awards]
+- **Value Prop**: [핵심 가치 제안]
+- **Differentiator**: [차별화 포인트]
+- **Proof**: [신뢰 요소 - 숫자, 고객사, 수상]
 
 ### Constraints
-- **Tone**: [tone - professional, casual, bold]
-- **Brand Voice**: [brand voice guide]
-- **Do NOT**: [things to avoid]
+- **Tone**: [톤 - professional, casual, bold]
+- **Brand Voice**: [브랜드 보이스 가이드]
+- **Do NOT**: [하지 말아야 할 것들]
 
 ### Output Format
-- [desired format - table, checklist, bullets]
+- [원하는 형식 - table, checklist, bullets]
 ```
 
 ### Step 4: Generate and Validate
 
 ```bash
-# Generate
-claude task "generate marketing asset with sub-skill name"
+# 생성
+claude task "sub-skill명으로 마케팅 에셋 생성"
 
-# Validation checklist
-- [ ] KPI alignment
-- [ ] Target audience fit
-- [ ] Brand voice consistency
-- [ ] Actionability
+# 검증 체크리스트
+- [ ] KPI 정합성
+- [ ] 타겟 오디언스 적합성
+- [ ] 브랜드 보이스 일관성
+- [ ] 실행 가능성 (actionable)
 ```
 
 ### Step 5: Handoff + Measurement
 
 ```markdown
 ## Implementation Checklist
-- [ ] Asset publishing
-- [ ] Tracking event setup
-- [ ] Success threshold definition
+- [ ] 에셋 퍼블리싱
+- [ ] 트래킹 이벤트 설정
+- [ ] 성공 임계값 정의
 
 ## Tracking Events
 | Event | Description | Success Threshold |
 |-------|-------------|-------------------|
-| page_view | Page view | baseline |
-| cta_click | CTA click | +20% vs control |
-| signup_complete | Signup complete | +15% vs control |
+| page_view | 페이지 조회 | baseline |
+| cta_click | CTA 클릭 | +20% vs control |
+| signup_complete | 가입 완료 | +15% vs control |
 
 ## A/B Test Proposals
-1. [Hypothesis 1]: [variant] vs [control]
-2. [Hypothesis 2]: [variant] vs [control]
+1. [가설 1]: [변형] vs [컨트롤]
+2. [가설 2]: [변형] vs [컨트롤]
 ```
 
 ---
@@ -256,34 +256,34 @@ Include: H1, meta description, comparison table, CTA.
 
 ## Best practices
 
-1. **One KPI per deliverable**: Avoid mixed objectives
-2. **Audience specificity**: Use segment-specific needs and terminology
-3. **Instrument measurement**: Set up tracking before launch
-4. **Iterate with data**: Treat outputs as hypotheses
+1. **One KPI per deliverable**: 혼합 목표 방지
+2. **Audience specificity**: 세그먼트별 니즈와 용어 사용
+3. **Instrument measurement**: 런칭 전 트래킹 설정
+4. **Iterate with data**: 산출물은 가설로 취급
 
 ---
 
 ## Common pitfalls
 
-- **Mixed Objectives**: Multiple goals in one asset
-- **Missing Audience Context**: Unclear who it's for
-- **No Tracking/Validation Plan**: Unable to measure impact
+- **다중 목표 혼합**: 하나의 에셋에 여러 목표
+- **오디언스 컨텍스트 누락**: 누구를 위한 것인지 불명확
+- **트래킹/검증 계획 없음**: 효과 측정 불가
 
 ---
 
 ## Troubleshooting
 
 ### Issue: Output is generic
-**Cause**: Vague product/audience information
-**Solution**: Provide positioning, competitors, proof points
+**Cause**: 모호한 제품/오디언스 정보
+**Solution**: 포지셔닝, 경쟁사, 증거 포인트 제공
 
 ### Issue: Output conflicts with brand voice
-**Cause**: No tone/voice constraints
-**Solution**: Provide brand do/don't list and sample copy
+**Cause**: 톤/보이스 제약 없음
+**Solution**: 브랜드 do/don't 리스트와 샘플 카피 제공
 
 ### Issue: Can't measure impact
-**Cause**: Tracking events not defined
-**Solution**: Define events and success thresholds in advance
+**Cause**: 트래킹 이벤트 미정의
+**Solution**: 사전에 이벤트와 성공 임계값 정의
 
 ---
 
@@ -317,17 +317,17 @@ Include: H1, meta description, comparison table, CTA.
 
 ### Validation & Retrospectives
 
-- **Round 1 (Orchestrator)**: Coverage of 23 sub-skills across 5 categories
-- **Round 2 (Analyst)**: KPI alignment, prompt structure review
-- **Round 3 (Executor)**: Output format, actionability check
+- **Round 1 (Orchestrator)**: 5개 카테고리 23개 서브스킬 커버리지
+- **Round 2 (Analyst)**: KPI 정합성, 프롬프트 구조 리뷰
+- **Round 3 (Executor)**: 출력 형식, 실행 가능성 체크
 
 ### Agent Roles
 
 | Agent | Role |
 |-------|------|
-| Claude | Brief composition, asset generation |
-| Gemini | Competitor research, trend analysis |
-| Codex | Tracking code generation, automation |
+| Claude | 브리프 구성, 에셋 생성 |
+| Gemini | 경쟁사 리서치, 트렌드 분석 |
+| Codex | 트래킹 코드 생성, 자동화 |
 
 ---
 
