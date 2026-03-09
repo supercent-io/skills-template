@@ -1,28 +1,28 @@
 N:ralphmode
-D:[ralphmode] Claude Code, Codex CLI, Gemini CLI에서 ralph 또는 jeo 자동화를 위해 승인 팝업을 줄이는 권한 프로파일. 핵심은 전역 허용이 아니라 repo 또는 disposable sandbox 경계를 먼저 정하고, secrets와 파괴적 명령은 계속 막는 것이다.
+D:[ralphmode] Permission profile for Claude Code, Codex CLI, and Gemini CLI to reduce approval popups for ralph/jeo automation. Key idea: don't globally allow everything; first define repo or disposable sandbox boundaries, and keep blocking secrets and destructive commands.
 G:ralph permissions automation claude-code codex-cli gemini-cli sandbox bypass trusted-folders denylist jeo
 
 U[5]:
-  ralph 또는 jeo를 반복 실행할 때 승인 팝업 때문에 흐름이 끊길 때
-  Claude Code, Codex CLI, Gemini CLI를 같은 저장소 기준으로 맞춰야 할 때
-  repo 범위 자동화와 진짜 YOLO 모드를 분리해서 운용해야 할 때
-  .env secrets destructive shell 차단선을 유지한 채 자동화를 확대할 때
-  플랫폼별 최신 permission 모델 차이를 정리해 써야 할 때
+  When approval popups break flow while repeatedly running ralph or jeo
+  When you need to align Claude Code, Codex CLI, and Gemini CLI settings for the same repo
+  When you must separate repo-scoped automation from true YOLO mode
+  When expanding automation while keeping guardrails for .env/secrets/destructive shell commands
+  When you need to summarize the latest permission model differences by platform
 
 S[5]{n,action,details}:
-  1,Define-Boundary,프로젝트 루트와 denylist(.env secrets rm -rf sudo)를 먼저 고정한다
-  2,Choose-Profile,Claude는 acceptEdits 또는 bypassPermissions Codex는 approval_policy+sandbox_mode Gemini는 Trusted Folder를 선택한다
-  3,Apply-Local,가능하면 프로젝트 로컬 설정에만 적용하고 전역 기본값은 sandbox 전용으로 제한한다
-  4,Run-Ralph,boundary check -> permission profile -> ralph or jeo -> verify 순서로 실행한다
-  5,Review-Revert,임시 bypass였으면 작업 후 원복하고 팀에 적용 프로파일을 기록한다
+  1,Define-Boundary,Lock down the project root and denylist (.env secrets rm -rf sudo) first
+  2,Choose-Profile,Choose: Claude acceptEdits or bypassPermissions; Codex approval_policy+sandbox_mode; Gemini Trusted Folder
+  3,Apply-Local,Apply only to project-local settings when possible; limit global defaults to sandbox-only
+  4,Run-Ralph,Run in order: boundary check -> permission profile -> ralph or jeo -> verify
+  5,Review-Revert,If this was a temporary bypass, revert after work and document the applied profile for the team
 
 R[4]:
-  자세한 템플릿은 references/permission-profiles.md에서 플랫폼별로 필요한 섹션만 읽는다
-  Codex는 2026-03-06 기준 공식 모델이 permissions.allow/deny보다 approval_policy sandbox_mode rules 중심이라는 점을 우선 적용한다
-  Gemini는 Trusted Folder로 질문 횟수만 줄일 뿐 Claude 같은 전역 YOLO 모드는 없다
-  full bypass는 disposable sandbox에서만 사용하고 일상 repo 기본값으로 두지 않는다
+  For detailed templates, read only the required sections per platform in references/permission-profiles.md
+  For Codex (as of 2026-03-06), prioritize the official model centered on approval_policy, sandbox_mode, and rules over permissions.allow/deny
+  Gemini only reduces prompts via Trusted Folder; it does not have a global YOLO mode like Claude
+  Use full bypass only in a disposable sandbox and never as the default for day-to-day repo work
 
 E[3]{desc,in,out}:
-  "Claude repo preset","project .claude/settings.json에 acceptEdits + allow/deny 적용","repo 내부 수정은 빨라지고 secrets와 위험 명령은 계속 차단"
-  "Codex repo preset","approval_policy=never sandbox_mode=workspace-write","workspace 범위 자동화"
-  "Gemini trust-only","repo 루트만 Trust this folder 선택","동일 폴더 재진입 시 승인 감소"
+  "Claude repo preset","Apply acceptEdits + allow/deny in project .claude/settings.json","Edits within the repo get faster while secrets and dangerous commands stay blocked"
+  "Codex repo preset","approval_policy=never sandbox_mode=workspace-write","Workspace-scoped automation"
+  "Gemini trust-only","Trust only the repo root folder","Fewer approvals when re-entering the same folder"

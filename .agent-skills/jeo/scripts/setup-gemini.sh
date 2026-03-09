@@ -31,10 +31,8 @@ fi
 
 # NOTE: Gemini CLI uses AfterAgent hook (not ExitPlanMode, which is Claude Code-only).
 # The primary method is agent direct blocking call — do NOT use & (background).
-# Manual blocking call (same-turn feedback):
-#   python3 -c "import json,sys; plan=open('plan.md').read(); \
-#     sys.stdout.write(json.dumps({'tool_input':{'plan':plan,'permission_mode':'acceptEdits'}}))" \
-#     | plannotator > /tmp/plannotator_feedback.txt 2>&1
+# Manual blocking call (same-turn feedback, auto-installs plannotator if missing):
+#   bash .agent-skills/jeo/scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
 
 # ── 2. Configure ~/.gemini/settings.json ─────────────────────────────────────
 if ! $MD_ONLY; then
@@ -81,11 +79,44 @@ fi
 
 PLAN_FILE="$(pwd)/plan.md"
 test -f "$PLAN_FILE" || exit 0
-python3 -c "
+LOOP_SCRIPT_CANDIDATES=(
+  "$(pwd)/.agent-skills/jeo/scripts/plannotator-plan-loop.sh"
+  "$HOME/.codex/skills/jeo/scripts/plannotator-plan-loop.sh"
+  "$HOME/.agent-skills/jeo/scripts/plannotator-plan-loop.sh"
+)
+
+LOOP_SCRIPT=""
+for candidate in "${LOOP_SCRIPT_CANDIDATES[@]}"; do
+  if [[ -f "$candidate" ]]; then
+    LOOP_SCRIPT="$candidate"
+    break
+  fi
+done
+
+if [[ -n "$LOOP_SCRIPT" ]]; then
+  set +e
+  bash "$LOOP_SCRIPT" "$PLAN_FILE" /tmp/plannotator_feedback.txt 3
+  LOOP_RC=$?
+  set -e
+  # plannotator-plan-loop.sh already writes to jeo-state.json on approved/feedback.
+  # Log result for AfterAgent hook visibility.
+  if [[ "$LOOP_RC" -eq 0 ]]; then
+    echo "[JEO] plannotator approved=true (written to jeo-state.json)"
+  elif [[ "$LOOP_RC" -eq 10 ]]; then
+    echo "[JEO] plannotator approved=false — feedback written to jeo-state.json"
+  elif [[ "$LOOP_RC" -eq 32 ]]; then
+    echo "[JEO] plannotator unavailable: localhost bind blocked (sandbox/CI)." >&2
+    echo "[JEO] run PLAN gate in local TTY to use manual fallback approve/feedback." >&2
+  fi
+else
+  PLANNOTATOR_RUNTIME_HOME="/tmp/jeo-$(python3 -c "import hashlib,os; print(f'/tmp/jeo-{hashlib.md5(os.getcwd().encode()).hexdigest()[:8]}')")/.plannotator"
+  mkdir -p "$PLANNOTATOR_RUNTIME_HOME"
+  python3 -c "
 import json, sys
 plan = open(sys.argv[1]).read()
 sys.stdout.write(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
-" "$PLAN_FILE" | plannotator > /tmp/plannotator_feedback.txt 2>&1 || true
+" "$PLAN_FILE" | env HOME="$PLANNOTATOR_RUNTIME_HOME" PLANNOTATOR_HOME="$PLANNOTATOR_RUNTIME_HOME" plannotator > /tmp/plannotator_feedback.txt 2>&1 || true
+fi
 HOOKEOF
     chmod +x "${GEMINI_HOOK_DIR}/jeo-plannotator.sh"
 
@@ -139,6 +170,32 @@ hooks = settings.setdefault("hooks", {})
 # AfterAgent is the correct Gemini CLI hook (ExitPlanMode is Claude Code-only)
 after_agent = hooks.setdefault("AfterAgent", [])
 
+# Migrate old-format entries (flat {"type":"command",...}) to new matcher format
+migrated = False
+new_after_agent = []
+for entry in after_agent:
+    if "matcher" in entry and "hooks" in entry:
+        # Ensure timeout on plannotator hooks (1800s for blocking UI wait)
+        for h in entry.get("hooks", []):
+            if "plannotator" in h.get("command", "") and "timeout" not in h:
+                h["timeout"] = 1800
+                migrated = True
+        new_after_agent.append(entry)
+    elif entry.get("type") == "command":
+        # Old format -> wrap in new matcher format
+        if "timeout" not in entry:
+            entry["timeout"] = 300
+        new_after_agent.append({"matcher": "", "hooks": [entry]})
+        migrated = True
+    else:
+        new_after_agent.append(entry)
+if migrated:
+    hooks["AfterAgent"] = new_after_agent
+    after_agent = new_after_agent
+    with open(settings_path, "w") as f:
+        json.dump(settings, f, indent=2)
+    print("\\u2713 AfterAgent hooks migrated to new matcher format with timeouts")
+
 # Check if jeo plannotator hook already exists (old or new form)
 planno_exists = any(
     any(
@@ -155,6 +212,7 @@ if not planno_exists:
             "name": "plannotator-review",
             "type": "command",
             "command": f"bash {hook_path}",
+            "timeout": 1800,
             "description": "plan.md 감지 시 plannotator 실행 (AfterAgent backup)"
         }]
     })
@@ -180,6 +238,7 @@ if not agentation_exists:
             "name": "agentation-check",
             "type": "command",
             "command": f"bash {agentation_hook_path}",
+            "timeout": 300,
             "description": "VERIFY_UI phase: check pending agentation annotations"
         }]
     })
@@ -221,10 +280,16 @@ JEO provides integrated AI agent orchestration across all AI tools.
 
 **PLAN** (plannotator — 직접 blocking 호출 필수):
 1. `plan.md` 작성 (목표, 단계, 리스크, 완료 기준 포함)
-2. plannotator 블로킹 실행 (& 절대 금지):
-   python3 -c "import json,sys; plan=open('"'"'plan.md'"'"').read(); sys.stdout.write(json.dumps({'"'"'tool_input'"'"':{'"'"'plan'"'"':plan,'"'"'permission_mode'"'"':'"'"'acceptEdits'"'"'}}))" | plannotator > /tmp/plannotator_feedback.txt 2>&1
+2. PLAN gate 실행 (& 절대 금지, plannotator 없으면 자동 설치 후 계속 진행):
+  bash .agent-skills/jeo/scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
+  # 동작 보장:
+  # - approve/feedback 입력까지 반드시 대기
+  # - 세션 종료 시 자동 재시작 (최대 3회)
+  # - 3회 종료 시 PLAN 종료 여부를 사용자에게 확인
+  # - exit 32 시 localhost bind 차단(sandbox/CI): local TTY에서 수동 PLAN gate 실행
 3. /tmp/plannotator_feedback.txt 읽기
 4. "approved":true → EXECUTE 진입 / 미승인 → 피드백 반영 후 plan.md 수정 후 2번 반복
+5. PLAN gate exit 32면 인프라 차단이므로 local TTY에서 PLAN gate 재실행
 NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
 
 **EXECUTE** (BMAD for Gemini):

@@ -83,7 +83,17 @@ except Exception:
   if $TEAMS_ENABLED; then
     ok "Claude Code — experimental agent teams enabled"; ((PASS++)) || true
   else
-    warn "Claude Code — experimental agent teams not enabled"; ((WARN++)) || true
+    err "Claude Code — experimental agent teams not enabled (required for JEO team execution)"; ((FAIL++)) || true
+  fi
+  if grep -q '"agentation"' "${HOME}/.claude/settings.json" 2>/dev/null; then
+    ok "Claude Code — agentation MCP configured"; ((PASS++)) || true
+  else
+    warn "Claude Code — agentation MCP not configured"; ((WARN++)) || true
+  fi
+  if grep -q "localhost:4747/pending" "${HOME}/.claude/settings.json" 2>/dev/null; then
+    ok "Claude Code — agentation prompt hook configured"; ((PASS++)) || true
+  else
+    warn "Claude Code — agentation prompt hook not configured"; ((WARN++)) || true
   fi
 else
   warn "Claude Code — ~/.claude/settings.json not found"; ((WARN++)) || true
@@ -113,6 +123,16 @@ PYEOF
   else
     warn "Codex CLI — /prompts:jeo not found"; ((WARN++)) || true
   fi
+  if grep -q "jeo-notify.py" "${HOME}/.codex/config.toml" 2>/dev/null; then
+    ok "Codex CLI — notify hook configured"; ((PASS++)) || true
+  else
+    warn "Codex CLI — notify hook missing"; ((WARN++)) || true
+  fi
+  if grep -q 'agent-turn-complete' "${HOME}/.codex/config.toml" 2>/dev/null; then
+    ok "Codex CLI — tui notifications include agent-turn-complete"; ((PASS++)) || true
+  else
+    warn "Codex CLI — tui notifications missing agent-turn-complete"; ((WARN++)) || true
+  fi
 else
   warn "Codex CLI — ~/.codex/config.toml not found"; ((WARN++)) || true
 fi
@@ -136,7 +156,7 @@ if [[ -f "${HOME}/.gemini/GEMINI.md" ]]; then
 fi
 
 # OpenCode
-for candidate in "./opencode.json" "${HOME}/opencode.json"; do
+for candidate in "./opencode.json" "${HOME}/opencode.json" "${HOME}/.config/opencode/opencode.json"; do
   if [[ -f "$candidate" ]]; then
     if grep -q "plannotator" "$candidate" 2>/dev/null; then
       ok "OpenCode — plannotator plugin configured ($candidate)"; ((PASS++)) || true
@@ -152,6 +172,7 @@ echo ""
 info "JEO State"
 GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 STATE_FILE="$GIT_ROOT/.omc/state/jeo-state.json"
+PHASE="unknown"
 if [[ -f "$STATE_FILE" ]]; then
   ok "State file found: $STATE_FILE"
   if command -v python3 >/dev/null 2>&1; then
@@ -174,10 +195,11 @@ else
   warn "No active JEO state (no workflow in progress)"
   if $RESUME && command -v python3 >/dev/null 2>&1; then
     info "Initializing fresh JEO state file for new session..."
-    mkdir -p ".omc/state"
-    python3 - <<'PYEOF'
+    mkdir -p "$GIT_ROOT/.omc/state" "$GIT_ROOT/.omc/plans"
+    GIT_ROOT="$GIT_ROOT" python3 - <<'PYEOF'
 import json, datetime, os, uuid
 now = datetime.datetime.utcnow().isoformat() + "Z"
+git_root = os.environ["GIT_ROOT"]
 state = {
     "mode": "jeo",
     "phase": "plan",
@@ -197,11 +219,12 @@ state = {
     "created_at": now,
     "updated_at": now
 }
-os.makedirs(".omc/state", exist_ok=True)
-os.makedirs(".omc/plans", exist_ok=True)
-with open(".omc/state/jeo-state.json", "w") as f:
+os.makedirs(os.path.join(git_root, ".omc", "state"), exist_ok=True)
+os.makedirs(os.path.join(git_root, ".omc", "plans"), exist_ok=True)
+state_path = os.path.join(git_root, ".omc", "state", "jeo-state.json")
+with open(state_path, "w") as f:
     json.dump(state, f, indent=2)
-print("✓ Fresh JEO state initialized at .omc/state/jeo-state.json (phase: plan)")
+print(f"✓ Fresh JEO state initialized at {state_path} (phase: plan)")
 PYEOF
   elif [[ -z "${1:-}" ]]; then
     echo "     Tip: Run with --resume to initialize state for a new session"

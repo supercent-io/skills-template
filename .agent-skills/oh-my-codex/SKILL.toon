@@ -1,26 +1,26 @@
 N:oh-my-codex
-D:Codex CLI용 멀티에이전트 오케스트레이션 레이어. 30개 특화 에이전트, 40+ 워크플로우 스킬, tmux 팀 모드, 영구 MCP 서버, staged pipeline(plan→prd→exec→verify→fix) 제공.
+D:Multi-agent orchestration layer for Codex CLI. Provides 30 specialized agents, 40+ workflow skills, tmux team mode, persistent MCP servers, and a staged pipeline (plan->prd->exec->verify->fix).
 G:omx multi-agent orchestration codex openai team-mode mcp-servers workflow
 
 U[5]:
-  복잡한 멀티에이전트 워크플로우 오케스트레이션 (Codex CLI)
-  tmux 병렬 팀 워커 실행으로 대규모 작업 협업
-  영구 MCP 서버로 상태·메모리·코드 인텔리전스 활용
-  staged pipeline 실행 (plan→prd→exec→verify→fix)
-  역할 기반 에이전트 프롬프트로 특화 작업 수행
+  Orchestrate complex multi-agent workflows (Codex CLI)
+  Collaborate on large tasks via parallel tmux team workers
+  Use persistent MCP servers for state, memory, and code intelligence
+  Run staged pipeline (plan->prd->exec->verify->fix)
+  Perform specialized work via role-based agent prompts
 S[5]{n,action,details}:
   1,Install,npm install -g oh-my-codex && omx setup && omx doctor
-  2,Launch,omx --xhigh --madmax (권장; high reasoning + dangerously-bypass-approvals)
+  2,Launch,omx --xhigh --madmax (recommended; high reasoning + dangerously-bypass-approvals)
   3,Role Prompts,/prompts:architect "analyze..." / /prompts:executor "implement..." / /prompts:security-reviewer "audit..."
   4,Workflow Skills,$plan "$task" / $autopilot "$task" / $team 3:executor "$task" / $ulw (ultrawork)
-  5,Team Mode,omx team 4:executor "$task" → status/resume/shutdown 관리
+  5,Team Mode,omx team 4:executor "$task" -> manage status/resume/shutdown
 R[4]:
-  omx doctor로 설치/런타임 진단 먼저 실행
-  staged pipeline은 plan→prd→exec→verify→fix 순서 준수
-  team mode는 omx doctor --team으로 사전 검증
-  MCP 서버 omx_state로 세션 간 상태 유지
+  Run omx doctor first for install/runtime diagnostics
+  Follow staged pipeline order: plan->prd->exec->verify->fix
+  Pre-verify team mode with omx doctor --team
+  Persist state across sessions with MCP server omx_state
 E[4]{desc,in,out}:
-  "설치 및 초기화","npm install -g oh-my-codex && omx setup && omx doctor","OMX 설치 완료, prompts/skills/MCP 설정 완료"
-  "팀 모드 실행","omx team 4:executor 'fix all TypeScript errors'","4개 병렬 executor 에이전트가 tmux에서 동시 실행"
-  "코드 리뷰","$code-review (Codex 내에서)","quality·security·api reviewer 종합 코드 리뷰 보고서"
-  "자율 실행","$autopilot 'implement user registration with email verification'","plan→prd→exec→verify까지 자동 단계 실행"
+  "Install and initialize","npm install -g oh-my-codex && omx setup && omx doctor","OMX installed; prompts/skills/MCP configured"
+  "Run team mode","omx team 4:executor 'fix all TypeScript errors'","4 parallel executor agents run concurrently in tmux"
+  "Code review","$code-review (inside Codex)","Combined code review report from quality/security/api reviewers"
+  "Autonomous execution","$autopilot 'implement user registration with email verification'","Automatically runs stages through plan->prd->exec->verify"

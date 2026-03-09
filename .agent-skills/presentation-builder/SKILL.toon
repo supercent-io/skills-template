@@ -1,23 +1,23 @@
 N:presentation-builder
-D:브랜드 가이드라인에 맞춘 전문 PPTX 프레젠테이션 빌더. 피치덱, 로드맵, 제품 덱을 구조화된 브리프와 검증 단계로 슬라이드별 콘텐츠와 스피커 노트를 포함하여 생성.
+D:Professional PPTX presentation builder aligned with brand guidelines. Generates pitch decks, roadmaps, and product decks with slide-by-slide content and speaker notes using structured briefs and validation steps.
 G:presentation pptx slides storytelling branding pitch-deck
 
 U[3]:
-  전문 슬라이드 덱 생성 — 프롬프트에서 프레젠테이션 자동 생성
-  브랜드 일관성 보장 — 컬러/폰트/스타일 가이드라인 엄수
-  반복 가능한 템플릿 — 피치덱/로드맵/제품 덱 표준화
+  Generate professional slide decks — auto-generate presentations from prompts
+  Ensure brand consistency — adhere to color/font/style guidelines
+  Reusable templates — standardize pitch/roadmap/product decks
 S[5]{n,action,details}:
-  1,Brand Kit,colors(primary/secondary/accent)·fonts(heading/body)·logo·style(tone/corners/shadows) 정의
-  2,Deck Brief,Meta(제목/청중/목표/발표시간) + 슬라이드 목록(번호/타입/제목/핵심메시지)
-  3,Generate Slides,슬라이드 타입별 레이아웃 생성 (Title/Agenda/Problem/Solution/Features/Stats/Team/CTA)
-  4,Review,레이아웃 균형·타이포 계층·슬라이드당 하나의 아이디어·데이터 출처 확인
-  5,Export Handoff,presentation.pptx + assets/ + 편집 노트 + 폰트 임베딩/해상도/링크 체크
+  1,Brand Kit,Define colors(primary/secondary/accent)·fonts(heading/body)·logo·style(tone/corners/shadows)
+  2,Deck Brief,Meta(title/audience/goal/duration) + slide list(number/type/title/key message)
+  3,Generate Slides,Generate layouts per slide type (Title/Agenda/Problem/Solution/Features/Stats/Team/CTA)
+  4,Review,Layout balance·typography hierarchy·one idea per slide·data source verification
+  5,Export Handoff,presentation.pptx + assets/ + editing notes + font embedding/resolution/link check
 R[4]:
-  슬라이드당 하나의 아이디어 — 과밀 방지
-  스피커 노트 활용하여 슬라이드 텍스트 최소화
-  정의된 브랜드 토큰만 사용 — 임의 색상/폰트 금지
-  논리적 내러티브 아크 — 문제→해결→증거→CTA
+  One idea per slide — avoid overcrowding
+  Use speaker notes to minimize text on slides
+  Use only defined brand tokens — no arbitrary colors/fonts
+  Logical narrative arc — Problem→Solution→Evidence→CTA
 E[3]{desc,in,out}:
-  "로드맵 덱","Create a 5-slide roadmap deck for Q2-Q4. Target: Engineering leadership","Title·Executive Summary·Gantt Timeline·Dependencies & Risks·Next Steps 슬라이드"
-  "투자자 피치덱","Build a 10-slide investor pitch deck for AI SaaS, Series A $5M target","슬라이드별 콘텐츠+스피커노트+시각화·브랜드 스타일·명확한 Ask 슬라이드"
-  "제품 데모덱","Create an 8-slide product demo deck for enterprise. Focus: Features, integrations, security","기능 쇼케이스·통합 다이어그램·보안 컴플라이언스·성공 사례·Trial CTA"
+  "Roadmap Deck","Create a 5-slide roadmap deck for Q2-Q4. Target: Engineering leadership","Title·Executive Summary·Gantt Timeline·Dependencies & Risks·Next Steps slides"
+  "Investor Pitch Deck","Build a 10-slide investor pitch deck for AI SaaS, Series A $5M target","Slide-by-slide content+speaker notes+visualization·brand style·clear Ask slide"
+  "Product Demo Deck","Create an 8-slide product demo deck for enterprise. Focus: Features, integrations, security","Feature showcase·integration diagram·security compliance·success stories·Trial CTA"

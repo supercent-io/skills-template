@@ -1,31 +1,31 @@
 N:react-best-practices
-D:Vercel Engineering의 React/Next.js 성능 최적화 가이드라인. 45개 규칙 8개 카테고리 — 워터폴 제거(CRITICAL), 번들 최적화(CRITICAL), SSR, RSC, 리렌더 최적화 포함.
+D:React/Next.js performance optimization guidelines from Vercel Engineering. 45 rules across 8 categories — eliminating waterfalls (CRITICAL), bundle optimization (CRITICAL), SSR, RSC, and re-render optimization.
 G:React Next.js performance optimization vercel waterfalls bundle-size RSC frontend
 
 U[5]:
-  React 컴포넌트 작성 — 성능 안티패턴 방지
-  Next.js 데이터 페칭 — 워터폴 제거, 병렬 처리
-  번들 사이즈 최적화 — barrel import 제거, dynamic import
-  코드 리뷰 — 45개 규칙 기반 퍼포먼스 문제 감지
-  리팩토링 — 기존 React/Next.js 코드 최적화
+  Writing React components — avoid performance anti-patterns
+  Next.js data fetching — remove waterfalls, parallelize
+  Bundle size optimization — remove barrel imports, use dynamic imports
+  Code review — detect performance issues using the 45-rule set
+  Refactoring — optimize existing React/Next.js code
 S[8]{n,action,details}:
-  1,Waterfalls(CRITICAL),Promise.all()로 독립 fetch 병렬화; Suspense로 스트리밍; await를 실제 사용 위치로 지연
-  2,Bundle(CRITICAL),barrel import 금지(lucide-react 직접 경로); next/dynamic으로 heavy 컴포넌트 지연 로드
-  3,Server Perf(HIGH),React.cache()로 요청별 중복 제거; LRU 캐시로 요청 간 캐싱; after()로 논블로킹 작업
-  4,Client Fetch(MEDIUM-HIGH),SWR로 자동 요청 중복 제거; 글로벌 이벤트 리스너 중복 방지
-  5,Re-render(MEDIUM),useCallback+functional setState로 안정 콜백; 비싼 작업은 memoized 컴포넌트로 분리
-  6,Rendering(MEDIUM),static JSX 컴포넌트 외부 호이스트; content-visibility로 긴 리스트 최적화
-  7,JS Perf(LOW-MEDIUM),Map/Set으로 O(1) 조회; 루프에서 객체 프로퍼티 캐시; 조기 반환(early exit)
-  8,Advanced(LOW),이벤트 핸들러 ref 저장; useLatest로 안정 콜백 ref
+  1,Waterfalls(CRITICAL),Parallelize independent fetches with Promise.all(); stream with Suspense; defer await to where it's actually used
+  2,Bundle(CRITICAL),Prohibit barrel imports (use direct lucide-react paths); lazy-load heavy components with next/dynamic
+  3,Server Perf(HIGH),Deduplicate per-request with React.cache(); cache across requests with an LRU cache; run non-blocking work with after()
+  4,Client Fetch(MEDIUM-HIGH),Automatic request deduplication with SWR; deduplicate global event listeners
+  5,Re-render(MEDIUM),Stable callbacks via useCallback + functional setState; split expensive work into memoized components
+  6,Rendering(MEDIUM),Hoist static JSX outside components; optimize long lists with content-visibility
+  7,JS Perf(LOW-MEDIUM),O(1) lookups with Map/Set; cache object properties in loops; early return (early exit)
+  8,Advanced(LOW),Store event handlers in refs; useLatest for stable callback refs
 R[6]:
-  독립적인 fetch는 반드시 Promise.all()로 병렬화
-  barrel 파일 import 금지 — 직접 경로로 import
-  무거운 컴포넌트는 next/dynamic으로 지연 로드
-  useCallback 의존성에 상태 직접 참조 금지 — functional setState 사용
-  sort() 대신 toSorted() 사용 (불변성 보장)
-  React.cache() 내 인라인 객체 금지 (캐시 미스 방지)
+  Always parallelize independent fetches with Promise.all()
+  No barrel file imports — import from direct paths
+  Lazy-load heavy components with next/dynamic
+  Do not reference state directly in useCallback dependencies — use functional setState
+  Use toSorted() instead of sort() (preserves immutability)
+  No inline objects inside React.cache() (prevents cache misses)
 E[4]{desc,in,out}:
-  "워터폴 제거","const user = await fetchUser(); const posts = await fetchPosts();","const [user, posts] = await Promise.all([fetchUser(), fetchPosts()])"
-  "barrel import 최적화","import { Check, X, Menu } from 'lucide-react'","import Check from 'lucide-react/dist/esm/icons/check'"
+  "Eliminate waterfalls","const user = await fetchUser(); const posts = await fetchPosts();","const [user, posts] = await Promise.all([fetchUser(), fetchPosts()])"
+  "Barrel import optimization","import { Check, X, Menu } from 'lucide-react'","import Check from 'lucide-react/dist/esm/icons/check'"
   "dynamic import","import { MonacoEditor } from './monaco-editor'","const MonacoEditor = dynamic(() => import('./monaco-editor').then(m => m.MonacoEditor), { ssr: false })"
-  "functional setState","setItems([...items, ...newItems]) — items 의존성","setItems(curr => [...curr, ...newItems]) — 빈 의존성 배열"
+  "functional setState","setItems([...items, ...newItems]) — items dependency","setItems(curr => [...curr, ...newItems]) — empty dependency array"
