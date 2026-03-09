@@ -17,7 +17,7 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-03-06)
+- [What's New](#whats-new-in-v2026-03-09)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
 - [Skills List (77)](#skills-list-77-total)
@@ -51,8 +51,15 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | Change | Details |
 |--------|---------|
 | **6 New Skills Added** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — total 71 → **77 skills** |
-| **54 Skills Updated** | SKILL.md and SKILL.toon content refreshed across 54 existing skills |
-| **setup-all-skills-prompt improvements** | `FORCE_REINSTALL` flag, rsync-based sync, non-empty dir detection, jeo `/omc:team` requirement note |
+| **jeo v1.2.1: Gemini/Antigravity repeated plannotator call fix** | `plannotator-plan-loop.sh` now writes `plan_approved` + `phase` to `jeo-state.json` on approval. SKILL.md PLAN block now has a GUARD that reads `jeo-state.json` and skips plannotator if already approved in a previous turn. Prevents infinite re-invocation in hook-based environments. |
+| **jeo v1.2.1: Claude Code now requires team mode** | In Claude Code, `jeo` no longer falls back to single-agent execution. EXECUTE must use `/omc:team`. |
+| **jeo v1.2.1: plannotator Claude Code fix (P0)** | `plannotator` is hook-only in Claude Code. Removed non-existent `submit_plan` MCP tool call; replaced with correct `EnterPlanMode` → write plan → `ExitPlanMode` hook flow. `bmad-orchestrator/SKILL.md` updated with platform-specific clarifications. |
+| **jeo v1.2.1: plannotator auto-install before PLAN** | `jeo` now auto-runs `bash scripts/ensure-plannotator.sh` when `plannotator` is missing. Dynamic script path discovery block added to PLAN pre-flight. |
+| **ralphmode v0.2.0: Mid-Execution Approval Checkpoints** | Added Step 6 with platform-specific dangerous operation blocking. Claude Code `PreToolUse` hook (exit 2 block) + Gemini CLI `BeforeTool` hook (non-zero exit block) + Codex CLI `approval_policy="unless-allow-listed"` + OpenCode prompt contract. Tier 1/2/3 classification table included. |
+| **jeo v1.2.1: Codex config.toml stray quote fix** | `setup-codex.sh` guards the legacy JEO strip regex — only runs when no `developer_instructions = """` block exists, preventing the closing `"""` from being consumed on re-runs. |
+| **jeo v1.2.1: Gemini CLI plannotator feedback wait fix** | AfterAgent hooks now include `timeout: 1800` for plannotator. Old-format hooks without `matcher`/`hooks` wrapper are auto-migrated. |
+| **jeo v1.2.1: Claude Code hooks format fix** | Fixed `UserPromptSubmit` hooks to use new matcher format (`{"matcher": "*", "hooks": [...]}`). `setup-claude.sh` now auto-migrates old-format entries on re-run. |
+| **bmad-orchestrator: English localization** | Korean sections translated to English for consistency across all skill files. |
 
 > Previous changes: [Changelog](#changelog)
 

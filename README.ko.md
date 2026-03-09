@@ -17,7 +17,7 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-03-06)
+- [What's New](#whats-new-in-v2026-03-09)
 - [설치 (Install)](#설치-install)
 - [실행 가이드](#실행-가이드)
 - [Skills List (77)](#skills-list-77-total)
@@ -51,8 +51,15 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | 변경 | 내용 |
 |------|------|
 | **신규 스킬 6개 추가** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 총 71 → **77개** |
-| **54개 스킬 업데이트** | SKILL.md 및 SKILL.toon 콘텐츠 최신화 |
-| **setup-all-skills-prompt 개선** | `FORCE_REINSTALL` 환경변수, rsync 기반 동기화, 비어있지 않은 디렉토리 감지, jeo `/omc:team` 필수 사항 추가 |
+| **jeo v1.2.1: Gemini/Antigravity plannotator 반복 호출 버그 수정** | PLAN 블록에 GUARD 추가 — `jeo-state.json`에서 `plan_approved=true` 감지 시 plannotator 재호출 방지. hook 기반 환경에서의 무한 재호출 문제 해결. |
+| **jeo v1.2.1: Claude Code team 모드 필수화** | Claude Code에서 단일 에이전트 실행 폴백 제거. EXECUTE는 반드시 `/omc:team` 사용. |
+| **jeo v1.2.1: plannotator Claude Code 동작 방식 수정 (P0)** | `plannotator`는 hook-only 바이너리. 존재하지 않는 `submit_plan` MCP 툴 호출 제거. `EnterPlanMode` → plan 작성 → `ExitPlanMode` 훅 방식으로 교체. `bmad-orchestrator/SKILL.md`도 플랫폼별 방식 명확화. |
+| **jeo v1.2.1: plannotator 자동 설치** | plannotator 미설치 시 `bash scripts/ensure-plannotator.sh` 자동 실행. PLAN pre-flight에 동적 스크립트 경로 탐색 블록 추가. |
+| **ralphmode v0.2.0: 실행 중 승인 체크포인트 추가** | Step 6 추가 — 플랫폼별 위험 작업 차단 메커니즘. Claude Code `PreToolUse` 훅(exit 2) + Gemini CLI `BeforeTool` 훅 + Codex CLI `approval_policy` + OpenCode prompt contract. Tier 1/2/3 분류표 포함. |
+| **jeo v1.2.1: Codex config.toml 따옴표 버그 수정** | 재실행 시 `developer_instructions` 블록의 닫는 `"""` 소비 방지. |
+| **jeo v1.2.1: Gemini CLI plannotator 피드백 대기 수정** | AfterAgent 훅에 `timeout: 1800` 추가. 구식 훅 형식 자동 마이그레이션. |
+| **jeo v1.2.1: Claude Code 훅 형식 수정** | `UserPromptSubmit` 훅을 새 matcher 형식으로 변경. `setup-claude.sh`에서 구식 형식 자동 마이그레이션. |
+| **bmad-orchestrator: 영문 로컬라이제이션** | 한국어 섹션 영어로 통일. |
 
 > 이전 변경 내역: [Changelog](#changelog)
 
