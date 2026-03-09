@@ -434,7 +434,7 @@ else:
 # Add agentation [[mcp_servers]] if missing (check both array-of-tables and table formats)
 if not re.search(r'(?ms)^\[\[mcp_servers\]\]\s*\nname\s*=\s*"agentation"\s*\n', content) and \
    not re.search(r'(?m)^\[mcp_servers\.agentation\]', content):
-    agentation_block = '\n[[mcp_servers]]\nname = "agentation"\ncommand = "npx"\nargs = ["-y", "agentation-mcp", "server"]\n'
+    agentation_block = '\n[mcp_servers.agentation]\ncommand = "npx"\nargs = ["-y", "agentation-mcp", "server"]\n'
     content = content.rstrip() + agentation_block
     print("\u2713 agentation MCP server added to config.toml")
 else:

@@ -795,8 +795,7 @@ bash scripts/setup-codex.sh
 
 **agentation MCP config** (`~/.codex/config.toml`):
 ```toml
-[[mcp_servers]]
-name = "agentation"
+[mcp_servers.agentation]
 command = "npx"
 args = ["-y", "agentation-mcp", "server"]
 ```
