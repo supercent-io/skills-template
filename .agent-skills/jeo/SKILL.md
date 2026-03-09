@@ -7,7 +7,7 @@ metadata:
   tags: jeo, orchestration, ralph, plannotator, agentation, annotate, agentui, UI검토, team, bmad, omc, omx, ohmg, agent-browser, multi-agent, workflow, worktree-cleanup, browser-verification, ui-feedback
   platforms: Claude, Codex, Gemini, OpenCode
   keyword: jeo
-  version: 1.2.1
+  version: 1.2.2
   source: supercent-io/skills-template
 ---
 
@@ -41,6 +41,7 @@ If `.omc/state/jeo-state.json` does not exist, create it:
   "phase": "plan",
   "task": "<감지된 task>",
   "plan_approved": false,
+  "plan_gate_status": "pending",
   "team_available": null,
   "retry_count": 0,
   "last_error": null,
@@ -231,10 +232,11 @@ elif [ "$PLAN_RC" -eq 10 ]; then
   echo "❌ Plan not approved — apply feedback, revise plan.md, and retry"
   exit 1
 elif [ "$PLAN_RC" -eq 32 ]; then
-  echo "⚠️ Cannot open plannotator UI (localhost bind unavailable)."
-  echo "   - TTY environment: proceed with manual PLAN gate (approve/feedback/stop)"
-  echo "   - Non-TTY environment: confirm with user and retry locally (non-sandbox)"
-  exit 1
+  echo "⚠️ plannotator UI unavailable (sandbox/CI). Entering Conversation Approval Mode:"
+  echo "   1. Output plan.md content to user in conversation"
+  echo "   2. Ask user: 'approve' to proceed or provide feedback"
+  echo "   3. DO NOT proceed to EXECUTE until user explicitly approves"
+  exit 32
 elif [ "$PLAN_RC" -eq 30 ] || [ "$PLAN_RC" -eq 31 ]; then
   echo "⛔ PLAN exit decision (or awaiting confirmation). Confirm with user before retrying."
   exit 1
@@ -553,6 +555,12 @@ Common flow:
 - Review plan in browser → Approve or Send Feedback
 - Approve (`"approved":true`) → enter [2] EXECUTE step
 - Feedback → read `/tmp/plannotator_feedback.txt` annotations and replan (loop)
+- **exit 32 (sandbox/CI — Conversation Approval Mode)**:
+  1. Output full `plan.md` content to user
+  2. Ask: "⚠️ plannotator UI unavailable. Reply 'approve' to proceed or provide feedback."
+  3. **WAIT for user response — do NOT proceed to EXECUTE**
+  4. On approval → update `jeo-state.json` `plan_approved=true, plan_gate_status="manual_approved"` → EXECUTE
+  5. On feedback → revise `plan.md`, retry loop, repeat
 
 **Claude Code manual run:**
 ```
@@ -948,7 +956,7 @@ JEO stores state at the following paths:
   "session_id": "<uuid>",
   "task": "current task description",
   "plan_approved": true,
-  "plan_review_method": null,
+  "plan_gate_status": "pending|approved|feedback_required|infrastructure_blocked|manual_approved",
   "team_available": true,
   "retry_count": 0,
   "last_error": null,
@@ -1056,6 +1064,7 @@ bash scripts/worktree-cleanup.sh
 | plannotator not running | JEO first auto-runs `bash scripts/ensure-plannotator.sh`; if it still fails, run `bash .agent-skills/plannotator/scripts/check-status.sh` |
 | plannotator not opening in Claude Code | plannotator is hook-only. Do NOT call it via MCP or CLI. Use `EnterPlanMode` → write plan → `ExitPlanMode`; the hook fires automatically. Verify hook is set: `cat ~/.claude/settings.json \| python3 -c "import sys,json;h=json.load(sys.stdin).get('hooks',{});print(h.get('PermissionRequest','missing'))"` |
 | plannotator feedback not received | Remove `&` background execution → run blocking, then check `/tmp/plannotator_feedback.txt` (Codex/Gemini/OpenCode only) |
+| Codex에서 plan 승인 없이 EXECUTE 진행 | `jeo-state.json`의 `plan_gate_status` 확인. `infrastructure_blocked`이면 exit 32 발생 — Conversation Approval Mode로 사용자에게 직접 plan.md 보여주고 승인 요청 필요 |
 | Codex startup failure (`invalid type: map, expected a string`) | Re-run `bash scripts/setup-codex.sh` and confirm `developer_instructions` in `~/.codex/config.toml` is a top-level string |
 | Gemini feedback loop missing | Add blocking direct call instruction to `~/.gemini/GEMINI.md` |
 | worktree conflict | `git worktree prune && git worktree list` |

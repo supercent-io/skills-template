@@ -50,6 +50,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 | 변경 | 내용 |
 |------|------|
+| **jeo v1.2.2: Codex plannotator 블로킹 대기 버그 수정** | `plannotator-plan-loop.sh`가 모든 종료 경로(approved/feedback_required/infrastructure_blocked)에서 `plan_gate_status`를 `jeo-state.json`에 기록. `jeo-notify.py`에 `write_plan_gate_result()` 추가로 게이트 결과를 상태 파일에 반영. **Conversation Approval Mode** 추가: exit 32 발생 시 에이전트가 plan.md를 대화에 출력하고 사용자의 명시적 승인을 기다림 — sandbox 환경에서 PLAN 게이트를 건너뛰는 문제 해결. |
 | **신규 스킬 6개 추가** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 총 71 → **77개** |
 | **jeo v1.2.1: Gemini/Antigravity plannotator 반복 호출 버그 수정** | PLAN 블록에 GUARD 추가 — `jeo-state.json`에서 `plan_approved=true` 감지 시 plannotator 재호출 방지. hook 기반 환경에서의 무한 재호출 문제 해결. |
 | **jeo v1.2.1: Claude Code team 모드 필수화** | Claude Code에서 단일 에이전트 실행 폴백 제거. EXECUTE는 반드시 `/omc:team` 사용. |
@@ -593,6 +594,7 @@ U[n]: use cases · S[n]{n,action,details}: steps · R[n]: rules · E[n]{desc,in,
 ## Changelog
 
 **v2026-03-09 (latest)**:
+- **jeo v1.2.2: Codex plannotator 블로킹 대기 버그 수정**: `plannotator-plan-loop.sh`에 `write_state_gate_status()` 함수 추가, 모든 exit 경로에서 `plan_gate_status` 기록. `jeo-notify.py`에 `write_plan_gate_result()` 추가로 게이트 결과 상태 반영. Conversation Approval Mode 추가: exit 32 시 에이전트가 plan.md를 인라인 출력하고 사용자 'approve' 응답을 기다림 — sandbox에서 PLAN 게이트 우회 방지.
 - **신규 스킬 6개**: `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 71 → **77개**
 - **54개 스킬 업데이트**: SKILL.md / SKILL.toon 콘텐츠 최신화
 - **setup-all-skills-prompt 개선**: `FORCE_REINSTALL` 플래그(기본 true), rsync 강제 미러 동기화, 비어있지 않은 디렉토리 감지, jeo `/omc:team` 필수 사항 안내 추가

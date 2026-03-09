@@ -156,8 +156,13 @@ Before writing any code, create and review a plan:
 3. Read /tmp/plannotator_feedback.txt
 4. If \`"approved":true\` → proceed to EXECUTE
 5. If NOT approved → read annotations, revise plan.md, repeat from step 2
-6. If PLAN gate exits with 32 → localhost bind blocked. run PLAN gate in local TTY (manual fallback)
-NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true.
+6. **If PLAN gate exits with 32 → CONVERSATION APPROVAL MODE (MANDATORY)**:
+   - Output the full contents of \`plan.md\` to the user in the conversation
+   - Ask explicitly: "⚠️ plannotator UI unavailable in this environment. Please review the plan above and reply 'approve' to proceed, or provide feedback."
+   - **STOP and wait for user response. Do NOT proceed to EXECUTE until user approves.**
+   - On 'approve'/'yes'/'ok': update \`jeo-state.json\` \`plan_approved=true, plan_gate_status="manual_approved"\` → EXECUTE
+   - On feedback text: revise \`plan.md\`, retry \`plannotator-plan-loop.sh\`, repeat
+NEVER skip plannotator. NEVER proceed to EXECUTE without approved=true or explicit user approval in conversation.
 
 ### Step 2: EXECUTE (BMAD workflow for Codex)
 Use BMAD structured phases:
@@ -280,6 +285,39 @@ def get_plan_loop_script(cwd: str):
             return p
     return None
 
+def write_plan_gate_result(cwd: str, rc: int, feedback_file: str) -> None:
+    """Write plannotator gate result to jeo-state.json."""
+    state_path = os.path.join(cwd, '.omc', 'state', 'jeo-state.json')
+    if not os.path.exists(state_path):
+        return
+    try:
+        import fcntl, datetime
+        with open(state_path, 'r+') as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                d = json.load(fh)
+                if rc == 0:
+                    d['plan_approved'] = True
+                    d['phase'] = 'execute'
+                    d['plan_gate_status'] = 'approved'
+                elif rc == 10:
+                    d['plan_approved'] = False
+                    d['plan_gate_status'] = 'feedback_required'
+                    try:
+                        d['plannotator_feedback'] = json.load(open(feedback_file))
+                    except Exception:
+                        pass
+                elif rc == 32:
+                    d['plan_gate_status'] = 'infrastructure_blocked'
+                    d['last_error'] = 'localhost bind unavailable (sandbox/CI)'
+                d['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
+                fh.seek(0); json.dump(d, fh, indent=2); fh.truncate()
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+    except Exception:
+        pass
+
+
 def main() -> int:
     try:
         notification = json.loads(sys.argv[1])
@@ -319,9 +357,10 @@ def main() -> int:
                 )
                 if result.stdout:
                     print(result.stdout.strip())
+                write_plan_gate_result(cwd, result.returncode, feedback_file)
                 if result.returncode == 32:
                     print("[JEO] plannotator unavailable: localhost bind blocked (sandbox/CI).")
-                    print("[JEO] run PLAN gate in local TTY to use manual fallback approve/feedback.")
+                    print("[JEO] CONVERSATION APPROVAL MODE: agent must output plan.md and request explicit user approval.")
                 print(f"[JEO] plannotator loop result code={result.returncode} feedback={feedback_file}")
             else:
                 plan_content = open(plan_path).read()

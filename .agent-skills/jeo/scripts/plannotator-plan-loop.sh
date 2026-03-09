@@ -57,6 +57,32 @@ with open(path, "w", encoding="utf-8") as f:
 PYEOF
 }
 
+write_state_gate_status() {
+  local status="$1"
+  JEO_GATE_STATUS="$status" python3 -c "
+import json, os, subprocess, datetime
+try:
+    root = subprocess.check_output(['git','rev-parse','--show-toplevel'], stderr=subprocess.DEVNULL).decode().strip()
+except Exception:
+    root = os.getcwd()
+f = os.path.join(root, '.omc/state/jeo-state.json')
+if os.path.exists(f):
+    try:
+        import fcntl
+        with open(f, 'r+') as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                d = json.load(fh)
+                d['plan_gate_status'] = os.environ['JEO_GATE_STATUS']
+                d['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
+                fh.seek(0); json.dump(d, fh, indent=2); fh.truncate()
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+    except Exception:
+        pass
+" 2>/dev/null || true
+}
+
 manual_fallback_gate() {
   if [[ ! -t 0 || ! -t 1 ]]; then
     return 32
@@ -105,6 +131,9 @@ if [[ "${JEO_SKIP_LISTEN_PROBE:-0}" != "1" ]]; then
     manual_fallback_gate
     probe_rc=$?
     set -e
+    if [[ "$probe_rc" -eq 32 ]]; then
+      write_state_gate_status "infrastructure_blocked"
+    fi
     exit "$probe_rc"
   fi
 fi
@@ -149,6 +178,7 @@ if os.path.exists(state_path):
         s = json.load(open(state_path))
         s['plan_approved'] = True
         s['phase'] = 'execute'
+        s['plan_gate_status'] = 'approved'
         s['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
         with open(state_path, 'w') as f:
             json.dump(s, f, indent=2)
@@ -176,6 +206,7 @@ if os.path.exists(state_path):
                 pass
         s['plan_approved'] = False
         s['plannotator_feedback'] = fb
+        s['plan_gate_status'] = 'feedback_required'
         s['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
         with open(state_path, 'w') as f:
             json.dump(s, f, indent=2)
@@ -191,6 +222,9 @@ PYEOF
     manual_fallback_gate
     fallback_rc=$?
     set -e
+    if [[ "$fallback_rc" -eq 32 ]]; then
+      write_state_gate_status "infrastructure_blocked"
+    fi
     exit "$fallback_rc"
   fi
 
@@ -205,5 +239,6 @@ fallback_rc=$?
 set -e
 if [[ "$fallback_rc" -eq 32 ]]; then
   echo "[JEO][PLAN] confirmation required. stop and ask user whether to continue PLAN." >&2
+  write_state_gate_status "infrastructure_blocked"
 fi
 exit "$fallback_rc"

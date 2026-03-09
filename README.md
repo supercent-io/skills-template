@@ -50,6 +50,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 | Change | Details |
 |--------|---------|
+| **jeo v1.2.2: Codex plannotator blocking wait fix** | `plannotator-plan-loop.sh` now writes `plan_gate_status` (`approved`/`feedback_required`/`infrastructure_blocked`) to `jeo-state.json` on every exit. `jeo-notify.py` gains `write_plan_gate_result()` that persists gate results back to state. `jeo.md` prompt and `SKILL.md` gain **Conversation Approval Mode** for exit 32: agent outputs plan.md inline and waits for explicit user approval rather than skipping the gate. |
 | **6 New Skills Added** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — total 71 → **77 skills** |
 | **jeo v1.2.1: Gemini/Antigravity repeated plannotator call fix** | `plannotator-plan-loop.sh` now writes `plan_approved` + `phase` to `jeo-state.json` on approval. SKILL.md PLAN block now has a GUARD that reads `jeo-state.json` and skips plannotator if already approved in a previous turn. Prevents infinite re-invocation in hook-based environments. |
 | **jeo v1.2.1: Claude Code now requires team mode** | In Claude Code, `jeo` no longer falls back to single-agent execution. EXECUTE must use `/omc:team`. |
@@ -595,6 +596,7 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 ## Changelog
 
 **v2026-03-09 (latest)**:
+- **jeo v1.2.2: Codex plannotator blocking wait fix**: `plannotator-plan-loop.sh` writes `plan_gate_status` to `jeo-state.json` on all exit paths (approved/feedback_required/infrastructure_blocked). `jeo-notify.py` gains `write_plan_gate_result()` to persist gate results. **Conversation Approval Mode** added: on exit 32, agent outputs plan.md content inline and waits for explicit user 'approve' before entering EXECUTE — prevents skipping the plan gate in sandbox environments.
 - **6 new skills**: `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 71 → **77 skills**
 - **54 skills updated**: SKILL.md and SKILL.toon refreshed with latest content
 - **setup-all-skills-prompt improvements**: `FORCE_REINSTALL` env var (default true), rsync-based force-mirror sync, non-empty dir detection, jeo `/omc:team` requirement note added
