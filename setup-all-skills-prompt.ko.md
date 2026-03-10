@@ -49,12 +49,9 @@ else
 fi
 ```
 
-3. **설치 경로 표준화 변수 선언 (기본값: 강제 초기화)**
+3. **설치 경로 표준화 변수 선언 및 기존 경로 초기화**
 
 ```bash
-# 기본은 강제 재설치 (기존 경로를 유지하려면 false로 설정)
-export FORCE_REINSTALL="${FORCE_REINSTALL:-true}"
-
 # Canonical path (권장 기본 경로)
 export SKILLS_CANONICAL="${HOME}/.agent-skills"
 
@@ -66,15 +63,15 @@ SKILL_DESTS=(
   "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
 )
 
-if [ "${FORCE_REINSTALL}" = "true" ]; then
-  echo "FORCE_REINSTALL=true -> 글로벌/로컬 스킬 경로 제거"
-  rm -rf "${SKILLS_CANONICAL}"
-  for dest in "${SKILL_DESTS[@]}"; do
-    rm -rf "${dest}"
-  done
-fi
+# 항상 기존 스킬 경로를 초기화하여 클린 설치 보장
+echo "클린 설치를 위해 기존 스킬 경로 삭제 중..."
+rm -rf "${SKILLS_CANONICAL}"
+for dest in "${SKILL_DESTS[@]}"; do
+  rm -rf "${dest}"
+done
 
 mkdir -p "${SKILLS_CANONICAL}"
+echo "✅ 스킬 경로 초기화 완료"
 ```
 
 ---
@@ -129,6 +126,24 @@ gemini extensions install https://github.com/supercent-io/skills-template
 ---
 
 ### Step 2: 전체 79개 스킬 설치 (기본 실행 단계)
+
+> **실행 전 반드시 기존 스킬 디렉토리를 완전 삭제합니다 — 이전 설치 잔여물이나 Step 1 부분 설치가 남아있으면 기존 파일이 스킵될 수 있습니다.**
+
+```bash
+# 전체 설치 전 모든 스킬 경로 삭제 (무조건 실행 — 항상 필수)
+_SKILLS_CANONICAL="${HOME}/.agent-skills"
+for _dest in \
+  "${_SKILLS_CANONICAL}" \
+  "${HOME}/.claude/skills"  "${PWD}/.claude/skills" \
+  "${HOME}/.codex/skills"   "${PWD}/.codex/skills" \
+  "${HOME}/.gemini/skills"  "${PWD}/.gemini/skills" \
+  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
+  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"; do
+  rm -rf "${_dest}"
+done
+mkdir -p "${_SKILLS_CANONICAL}"
+echo "✅ 스킬 디렉토리 초기화 완료 — 클린 설치 준비됨"
+```
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \

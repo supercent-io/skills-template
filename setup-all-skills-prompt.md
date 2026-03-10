@@ -49,12 +49,9 @@ else
 fi
 ```
 
-3. **Declare installation path standardization variables (force reset by default)**
+3. **Declare installation path standardization variables and wipe existing paths**
 
 ```bash
-# Force full reinstall by default (set false only if you need to preserve existing paths)
-export FORCE_REINSTALL="${FORCE_REINSTALL:-true}"
-
 # Canonical path (recommended default)
 export SKILLS_CANONICAL="${HOME}/.agent-skills"
 
@@ -66,15 +63,15 @@ SKILL_DESTS=(
   "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
 )
 
-if [ "${FORCE_REINSTALL}" = "true" ]; then
-  echo "FORCE_REINSTALL=true -> remove existing global/local skill paths"
-  rm -rf "${SKILLS_CANONICAL}"
-  for dest in "${SKILL_DESTS[@]}"; do
-    rm -rf "${dest}"
-  done
-fi
+# Always wipe existing skill paths to guarantee a clean install
+echo "Wiping existing skill paths for clean install..."
+rm -rf "${SKILLS_CANONICAL}"
+for dest in "${SKILL_DESTS[@]}"; do
+  rm -rf "${dest}"
+done
 
 mkdir -p "${SKILLS_CANONICAL}"
+echo "✅ Skill paths cleared"
 ```
 
 ---
@@ -129,6 +126,24 @@ gemini extensions install https://github.com/supercent-io/skills-template
 ---
 
 ### Step 2: Full 79-Skill Installation (Default Execution Step)
+
+> **Always wipe existing skill directories before running — ensures no stale skills from previous installs or Step 1 partial install remain.**
+
+```bash
+# Wipe all skill paths before full install (unconditional — always required)
+_SKILLS_CANONICAL="${HOME}/.agent-skills"
+for _dest in \
+  "${_SKILLS_CANONICAL}" \
+  "${HOME}/.claude/skills"  "${PWD}/.claude/skills" \
+  "${HOME}/.codex/skills"   "${PWD}/.codex/skills" \
+  "${HOME}/.gemini/skills"  "${PWD}/.gemini/skills" \
+  "${HOME}/.opencode/skills" "${PWD}/.opencode/skills" \
+  "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"; do
+  rm -rf "${_dest}"
+done
+mkdir -p "${_SKILLS_CANONICAL}"
+echo "✅ All skill directories wiped — ready for clean install"
+```
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
