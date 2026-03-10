@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-10 · **78 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-10 · **79 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-78-brightgreen)](#skills-list-78-total)
+[![Skills](https://img.shields.io/badge/Skills-79-brightgreen)](#skills-list-79-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -20,13 +20,12 @@
 - [What's New](#whats-new-in-v2026-03-10)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
-- [Skills List (78)](#skills-list-78-total)
+- [Skills List (79)](#skills-list-79-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
 - [Recommended Harness OSS](#recommended-harness-oss)
 - [Related Docs](#related-docs)
-- [Changelog](#changelog)
 
 ---
 
@@ -63,8 +62,6 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 | **jeo v1.2.1: Gemini CLI plannotator feedback wait fix** | AfterAgent hooks now include `timeout: 1800` for plannotator. Old-format hooks without `matcher`/`hooks` wrapper are auto-migrated. |
 | **jeo v1.2.1: Claude Code hooks format fix** | Fixed `UserPromptSubmit` hooks to use new matcher format (`{"matcher": "*", "hooks": [...]}`). `setup-claude.sh` now auto-migrates old-format entries on re-run. |
 | **bmad-orchestrator: English localization** | Korean sections translated to English for consistency across all skill files. |
-
-> Previous changes: [Changelog](#changelog)
 
 ---
 
@@ -207,7 +204,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (78 total)
+## Skills List (79 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -316,7 +313,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 | `marketing-skills-collection` | Marketing deliverables across CRO, copywriting, SEO, analytics, and growth (23 sub-skills) | All platforms |
 
-### Utilities (23)
+### Utilities (24)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -337,6 +334,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `omc` | oh-my-claudecode — Teams-first multi-agent orchestration | Claude |
 | `opencontext` | AI agent persistent memory | All platforms |
 | `plannotator` | Visual plan and diff review — annotate, approve, or request changes | Claude |
+| `playwriter` | Playwright-based browser automation via Chrome extension + MCP/CLI — connects to your running browser with existing logins/cookies for authenticated, stateful web automation | All platforms |
 | `ralph` | Self-referential completion loop for multi-turn agents | Claude |
 | `ralphmode` | Cross-platform Ralph automation permission profiles for Claude Code, Codex CLI, and Gemini CLI | Claude · Codex · Gemini |
 | `skill-standardization` | SKILL.md standardization | All platforms |
@@ -623,50 +621,3 @@ Open-source agent harnesses and orchestration frameworks that pair well with Age
 | jeo | `jeo` · `annotate` | [.agent-skills/jeo/SKILL.md](.agent-skills/jeo/SKILL.md) |
 | Recommended Harness OSS | — | [docs/harness/README.md](docs/harness/README.md) |
 
----
-
-## Changelog
-
-**v2026-03-10 (latest)**:
-- `survey` added — cross-platform landscape scan inspired by `groundwork`, with shared `.survey/{slug}/` outputs and `settings / rules / hooks` normalization for Claude/Codex/Gemini — 76 → **77 skills**
-- `presentation-builder` now uses `slides-grab`; duplicate `pptx-presentation-builder` removed — 77 → **76 skills**
-
-**v2026-03-09**:
-- **jeo v1.2.2: Codex plannotator blocking wait fix**: `plannotator-plan-loop.sh` writes `plan_gate_status` to `jeo-state.json` on all exit paths (approved/feedback_required/infrastructure_blocked). `jeo-notify.py` gains `write_plan_gate_result()` to persist gate results. **Conversation Approval Mode** added: on exit 32, agent outputs plan.md content inline and waits for explicit user 'approve' before entering EXECUTE — prevents skipping the plan gate in sandbox environments.
-- **6 new skills**: `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 71 → **77 skills**
-- **54 skills updated**: SKILL.md and SKILL.toon refreshed with latest content
-- **setup-all-skills-prompt improvements**: `FORCE_REINSTALL` env var (default true), rsync-based force-mirror sync, non-empty dir detection, jeo `/omc:team` requirement note added
-
-**v2026-03-06 (latest)**:
-- **TOON Format Cross-Platform Hook Integration**: Designed and implemented by a 6-person ultrateam (QA · LLM Expert · Skill Expert · ClaudeCode · Codex · Gemini-CLI). Claude Code: `~/.claude/hooks/toon-inject.mjs` Node.js hook (symlink traversal, 3-tier keyword matching, 26-37ms). Gemini CLI: `~/.gemini/hooks/toon-skill-inject.sh` + `includeDirectories` + `AfterAgent` hook. Codex CLI: static catalog (`skills-toon-catalog.toon`, 62 skills) + `notify-dispatch.py` + 2-turn sidecar pattern
-- **bmad-orchestrator SKILL.md TOON Integration section**: Full two-tier architecture documentation (Tier 1 catalog ~875-3,500 tokens always injected / Tier 2 SKILL.toon on-demand max 3)
-- **71 SKILL.toon full validation**: All skills verified and corrected for TOON format compliance
-
-**v2026-03-06 (bug fixes)**:
-- **jeo + bmad-orchestrator comprehensive fixes**: Schema alignment, graceful degradation, session-isolated paths
-  - Removed zombie `worktrees` field from jeo state schema; added `retry_count`, `last_error`, `checkpoint` error recovery fields
-  - Fixed `TEAM_AVAILABLE_BOOL` export for python3 subshell inheritance
-  - Session-isolated plannotator feedback path via `hashlib.md5`
-  - Replaced `exit 1` with graceful skip → CLEANUP on agentation failure
-  - bmad-orchestrator v1.0.0 → v1.1.0; removed unrelated TOON section (~232 lines)
-  - `phase-gate-review.sh`: multi-tier `find_workflow_name()` for hyphenated workflow names
-  - `check-status.sh`: fixed nested while-loop stdin consumption via python3 subprocess
-
-**v2026-03-05**:
-- **jeo: state file guard bug fix (P0)**: Fixed bug where AfterAgent hook incorrectly ran plannotator when `jeo-state.json` was missing
-- **jeo: agent execution protocol added (P1)**: Inserted `## 0. Agent Execution Protocol` section in `SKILL.md`. STEP 0–4 imperative pseudocode
-- **skills-lock.json: dependency spec added (P1)**: Registered `plannotator` + `agentation` as required_by jeo
-- **agentation v1.1.0 installation improvements**: Claude Code Official Skill + Universal `npx add-mcp` + Local-first architecture documentation
-
-**v2026-03-04**:
-- **jeo annotate integration (v2)**: VERIFY_UI keyword `agentui` → `annotate`. Phase guard resolves plannotator-agentation hook conflicts. Pre-flight 3-step check, RE-SNAPSHOT verification
-- **ralph v3.0.0**: Full rewrite based on [Q00/ouroboros](https://github.com/Q00/ouroboros). Interview→Seed→Execute→Evaluate→Evolve, 9 agents, Ambiguity ≤ 0.2 gate, Similarity ≥ 0.95 convergence
-- **setup-all-skills-prompt clean reinstall**: Auto-remove existing directories before recreating
-
-**v2026-03-03 (update)**:
-- **bmad-gds**: New skill — BMAD Game Development Studio. 5-stage pipeline, 6 specialist agents (Unity/Unreal/Godot)
-- **bmad-idea**: New skill — BMAD Creative Intelligence Suite. 5 workflows, 5 named agents
-- **ai-tool-compliance P1 expansion**: Added `--include-p1` option, `p1_maturity_score` output, CI toggle
-
-**v2026-03-03**:
-- **ai-tool-compliance**: New skill — Automated P0/P1 compliance validation. 4-domain binary scoring (security 40/permissions 25/cost 20/logging 15), GitHub Actions gate, history tracking
