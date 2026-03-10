@@ -128,7 +128,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 78-Skill Installation (Default Execution Step)
+### Step 2: Full 79-Skill Installation (Default Execution Step)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -165,7 +165,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill environment-setup --skill file-organization \
   --skill git-submodule --skill git-workflow --skill jeo \
   --skill npm-git-install --skill ohmg --skill oh-my-codex \
-  --skill omc --skill opencontext --skill plannotator \
+  --skill omc --skill opencontext --skill plannotator --skill playwriter \
   --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
   --skill fabric

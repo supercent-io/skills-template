@@ -576,9 +576,11 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 │   ├── skill-query-handler.py
 │   ├── skills.json
 │   ├── skills.toon
-│   └── [78 skill folders]
+│   └── [79 skill folders]
 ├── docs/
 │   ├── bmad/           ← bmad-orchestrator harness guide
+│   ├── bmad-gds/       ← BMAD Game Development Studio guide
+│   ├── bmad-idea/      ← BMAD Creative Intelligence Suite guide
 │   ├── harness/        ← recommended harness OSS guide (EN + KO)
 │   ├── omc/            ← oh-my-claudecode guide
 │   ├── plannotator/    ← plan & diff review (v0.9.0, multi-tool)
@@ -618,6 +620,8 @@ Open-source agent harnesses and orchestration frameworks that pair well with Age
 | ralph | `ralph` | [docs/ralph/README.md](docs/ralph/README.md) |
 | omc | `omc` | [docs/omc/README.md](docs/omc/README.md) |
 | bmad-orchestrator | `bmad` | [docs/bmad/README.md](docs/bmad/README.md) |
+| bmad-gds | `bmad-gds` | [docs/bmad-gds/README.md](docs/bmad-gds/README.md) |
+| bmad-idea | `bmad-idea` | [docs/bmad-idea/README.md](docs/bmad-idea/README.md) |
 | jeo | `jeo` · `annotate` | [.agent-skills/jeo/SKILL.md](.agent-skills/jeo/SKILL.md) |
 | Recommended Harness OSS | — | [docs/harness/README.md](docs/harness/README.md) |
 
