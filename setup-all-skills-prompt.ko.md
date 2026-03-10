@@ -37,7 +37,7 @@
    - Gemini CLI → `ohmg`, `ralph`, `ralphmode`, `jeo` 권장
    - OpenAI Codex CLI → `oh-my-codex`, `ralph`, `ralphmode`, `jeo` 권장
    - OpenCode → oh-my-opencode 설치 필요 (Step 3 참조)
-   - 모두 사용 / 모르겠음 → `jeo` 단일 설치 (전 플랫폼 통합)
+   - 모두 사용 / 모르겠음 → `jeo` + `survey` 설치 (`survey`는 탐색, `jeo`는 실행)
 
 2. **`skills` CLI가 설치되어 있나요?**
 
@@ -85,6 +85,9 @@ Step 0 결과에 따라 실행하세요:
 
 **모든 플랫폼 (권장 시작점):**
 ```bash
+# 리서치 우선 survey 스킬
+npx skills add https://github.com/supercent-io/skills-template --skill survey
+
 # jeo 핵심 스킬
 npx skills add https://github.com/supercent-io/skills-template --skill jeo
 
@@ -125,7 +128,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: 전체 72개 스킬 설치 (기본 실행 단계)
+### Step 2: 전체 73개 스킬 설치 (기본 실행 단계)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -161,7 +164,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill git-submodule --skill git-workflow --skill jeo \
   --skill npm-git-install --skill ohmg --skill oh-my-codex \
   --skill omc --skill opencontext --skill plannotator \
-  --skill ralph --skill ralphmode --skill skill-standardization \
+  --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
   --skill fabric
 ```
@@ -309,6 +312,7 @@ npx skills info jeo
 | `bmad-idea` | `bmad-idea` | 창의적 아이디어 · 디자인 씽킹 · 혁신 전략 |
 | `ai-tool-compliance` | `ai-tool-compliance` | 내부 AI 툴 컴플라이언스 자동화(P0/P1) |
 | `agent-browser` | `agent-browser` | 헤드리스 브라우저 자동화 |
+| `survey` | `survey` | 계획이나 구현 전에 문제공간을 정리하는 전 플랫폼 리서치 스킬 |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM 사용량 모니터링 대시보드 생성 |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI 어노테이션 → 에이전트 코드 수정. 설치: `npx add-mcp "npx -y agentation-mcp server"` (Universal) 또는 `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first 아키텍처, 오프라인 동작, 세션 연속성 지원. |
 | `oh-my-codex` | `omx` | Codex CLI 멀티에이전트 |

@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-10 · **76 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-10 · **77 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-76-brightgreen)](#skills-list-76-total)
+[![Skills](https://img.shields.io/badge/Skills-77-brightgreen)](#skills-list-77-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -20,7 +20,7 @@
 - [What's New](#whats-new-in-v2026-03-10)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
-- [Skills List (76)](#skills-list-76-total)
+- [Skills List (77)](#skills-list-77-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -51,6 +51,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 | Change | Details |
 |--------|---------|
+| **survey: cross-platform landscape scan added** | Added `survey`, a platform-neutral research skill inspired by `groundwork`. It keeps the 4-lane discovery flow, writes shared artifacts to `.survey/{slug}/`, and adds a Claude/Codex/Gemini abstraction layer for `settings`, `rules`, and `hooks`, bringing the repository from 76 to **77 skills**. |
 | **presentation-builder: slides-grab workflow adopted** | `presentation-builder` now uses `slides-grab` for HTML-first deck creation, visual editing, validation, and PPTX/PDF export. Removed duplicate `pptx-presentation-builder`, bringing the repository from 77 to **76 skills**. |
 | **jeo v1.2.2: Codex plannotator blocking wait fix** | `plannotator-plan-loop.sh` now writes `plan_gate_status` (`approved`/`feedback_required`/`infrastructure_blocked`) to `jeo-state.json` on every exit. `jeo-notify.py` gains `write_plan_gate_result()` that persists gate results back to state. `jeo.md` prompt and `SKILL.md` gain **Conversation Approval Mode** for exit 32: agent outputs plan.md inline and waits for explicit user approval rather than skipping the gate. |
 | **jeo v1.2.1: Gemini/Antigravity repeated plannotator call fix** | `plannotator-plan-loop.sh` now writes `plan_approved` + `phase` to `jeo-state.json` on approval. SKILL.md PLAN block now has a GUARD that reads `jeo-state.json` and skips plannotator if already approved in a previous turn. Prevents infinite re-invocation in hook-based environments. |
@@ -117,6 +118,15 @@ jeo "describe your task here"
 ---
 
 ### Choose by What You Need
+
+#### Cross-platform problem-space scan before planning → `survey`
+
+```bash
+npx skills add https://github.com/supercent-io/skills-template --skill survey
+# Usage: survey "problem, idea, or capability to research"
+```
+
+> Details: [.agent-skills/survey/SKILL.md](.agent-skills/survey/SKILL.md)
 
 #### Claude Code multi-agent orchestration → `omc`
 
@@ -197,7 +207,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (76 total)
+## Skills List (77 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -306,7 +316,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 | `marketing-skills-collection` | Marketing deliverables across CRO, copywriting, SEO, analytics, and growth (23 sub-skills) | All platforms |
 
-### Utilities (20)
+### Utilities (21)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -329,6 +339,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `ralph` | Self-referential completion loop for multi-turn agents | Claude |
 | `ralphmode` | Cross-platform Ralph automation permission profiles for Claude Code, Codex CLI, and Gemini CLI | Claude · Codex · Gemini |
 | `skill-standardization` | SKILL.md standardization | All platforms |
+| `survey` | Cross-platform landscape scan before planning or implementation; saves shared discovery artifacts and normalizes agent-platform differences into settings/rules/hooks | Claude · Codex · Gemini · OpenCode |
 | `vibe-kanban` | Kanban board for AI coding agents with git worktree automation | All platforms |
 | `workflow-automation` | Workflow automation | All platforms |
 
@@ -646,6 +657,7 @@ A Claude Code plugin implementing the Plan-Do-Check-Act (PDCA) quality cycle wit
 ## Changelog
 
 **v2026-03-10 (latest)**:
+- `survey` added — cross-platform landscape scan inspired by `groundwork`, with shared `.survey/{slug}/` outputs and `settings / rules / hooks` normalization for Claude/Codex/Gemini — 76 → **77 skills**
 - `presentation-builder` now uses `slides-grab`; duplicate `pptx-presentation-builder` removed — 77 → **76 skills**
 
 **v2026-03-09**:

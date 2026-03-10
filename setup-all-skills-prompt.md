@@ -37,7 +37,7 @@ Before installation, confirm:
    - Gemini CLI → recommend `ohmg`, `ralph`, `ralphmode`, `jeo`
    - OpenAI Codex CLI → recommend `oh-my-codex`, `ralph`, `ralphmode`, `jeo`
    - OpenCode → requires oh-my-opencode installation (see Step 3)
-   - All / Unsure → install `jeo` only (unified cross-platform integration)
+   - All / Unsure → install `jeo` + `survey` (`survey` for discovery, `jeo` for delivery)
 
 2. **Is the `skills` CLI installed?**
 
@@ -85,6 +85,9 @@ Execute based on Step 0 results:
 
 **All platforms (recommended starting point):**
 ```bash
+# research-first survey skill
+npx skills add https://github.com/supercent-io/skills-template --skill survey
+
 # jeo core skill
 npx skills add https://github.com/supercent-io/skills-template --skill jeo
 
@@ -125,7 +128,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 72-Skill Installation (Default Execution Step)
+### Step 2: Full 73-Skill Installation (Default Execution Step)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -161,7 +164,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill git-submodule --skill git-workflow --skill jeo \
   --skill npm-git-install --skill ohmg --skill oh-my-codex \
   --skill omc --skill opencontext --skill plannotator \
-  --skill ralph --skill ralphmode --skill skill-standardization \
+  --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
   --skill fabric
 ```
@@ -309,6 +312,7 @@ First run after installation by platform:
 | `bmad-idea` | `bmad-idea` | Creative ideas · design thinking · innovation strategy |
 | `ai-tool-compliance` | `ai-tool-compliance` | Internal AI tool compliance automation (P0/P1) |
 | `agent-browser` | `agent-browser` | Headless browser automation |
+| `survey` | `survey` | Cross-platform landscape scan before planning or implementation |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM usage monitoring dashboard generation |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI annotation → agent code modification. Install: `npx add-mcp "npx -y agentation-mcp server"` (Universal) or `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first architecture, offline operation, session continuity. |
 | `oh-my-codex` | `omx` | Codex CLI multi-agent orchestration |

@@ -19,6 +19,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill jeo
 npx skills add https://github.com/supercent-io/skills-template --skill ohmg
 npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
 npx skills add https://github.com/supercent-io/skills-template --skill plannotator
+npx skills add https://github.com/supercent-io/skills-template --skill survey
 ```
 
 ### oh-my-ag MCP Setup
@@ -68,7 +69,7 @@ repository to the current project.
 
 ---
 
-## Skills List (61 functional)
+## Skills List (62 functional)
 
 > Skills marked *(in development)* exist on disk but do not yet have a SKILL.toon file.
 
@@ -166,7 +167,7 @@ repository to the current project.
 |-------|-------------|-----------|
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 
-### Utilities (18)
+### Utilities (19)
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `agent-browser` | Fast headless browser CLI for AI agents | All platforms |
@@ -186,6 +187,7 @@ repository to the current project.
 | `ralph` | Self-referential completion loop for multi-turn agents | Claude |
 | `ralphmode` | Cross-platform Ralph automation permission profiles for Claude Code, Codex CLI, and Gemini CLI | Claude · Codex · Gemini |
 | `skill-standardization` | SKILL.md standardization | All platforms |
+| `survey` | Cross-platform landscape scan before planning or implementation | Claude · Codex · Gemini · OpenCode |
 | `vibe-kanban` | Kanban board for AI coding agents with git worktree automation | All platforms |
 | `workflow-automation` | Workflow automation | All platforms |
 
@@ -304,4 +306,4 @@ npx skills add <skill-name>
 
 ---
 
-**Version**: 4.7.1 | **Updated**: 2026-03-10 | **Skills**: 61 functional | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.7.1 | **Updated**: 2026-03-10 | **Skills**: 62 functional | **Format**: TOON (Default) | **Structure**: Flat

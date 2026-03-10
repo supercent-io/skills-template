@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "skill_count": 61,
+  "skill_count": 62,
   "categories": {
     "documentation": [
       "technical-writing",
@@ -54,6 +54,7 @@
       "ralph",
       "ralphmode",
       "skill-standardization",
+      "survey",
       "workflow-automation"
     ],
     "code-quality": [
@@ -2589,6 +2590,17 @@
       "platforms": ["Claude", "Gemini", "ChatGPT", "Codex", "Cursor", "Windsurf", "OpenCode"],
       "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob"],
       "keyword": "agentation",
+      "version": "1.0.0"
+    },
+    {
+      "name": "survey",
+      "description": "Cross-platform landscape scan before planning or implementation. Researches context, workarounds, existing solutions, and structural gaps, then writes reusable survey artifacts for OMC, OMX, OHMG, and general agent workflows.",
+      "category": "utilities",
+      "path": ".agent-skills/survey/SKILL.md",
+      "tags": ["survey", "landscape-scan", "research", "discovery", "groundwork", "omc", "omx", "ohmg", "claude", "codex", "gemini", "hooks", "rules", "settings"],
+      "platforms": ["Claude Code", "Codex", "Gemini-CLI", "OpenCode"],
+      "allowed_tools": ["Read", "Write", "Bash", "Grep", "Glob", "WebFetch"],
+      "keyword": "survey",
       "version": "1.0.0"
     }
   ],
