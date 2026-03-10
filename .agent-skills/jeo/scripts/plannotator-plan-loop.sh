@@ -29,6 +29,17 @@ if ! [[ "$MAX_RESTARTS" =~ ^[0-9]+$ ]] || [[ "$MAX_RESTARTS" -lt 1 ]]; then
   exit 2
 fi
 
+PLAN_HASH="$(python3 - "$PLAN_FILE" <<'PYEOF'
+import hashlib, pathlib, sys
+path = pathlib.Path(sys.argv[1])
+try:
+    data = path.read_text(encoding="utf-8")
+except Exception:
+    data = ""
+print(hashlib.sha256(data.encode("utf-8")).hexdigest() if data else "")
+PYEOF
+)"
+
 SESSION_KEY="$(python3 -c "import hashlib,os; print(hashlib.md5(os.getcwd().encode()).hexdigest()[:8])" 2>/dev/null || echo "default")"
 FEEDBACK_DIR="/tmp/jeo-${SESSION_KEY}"
 RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
@@ -83,6 +94,143 @@ if os.path.exists(f):
 " 2>/dev/null || true
 }
 
+persist_plan_state() {
+  local gate_status="$1"
+  local approved="$2"
+  local review_method="${3:-plannotator}"
+  local feedback_path="${4:-}"
+  JEO_GATE_STATUS="$gate_status" \
+  JEO_APPROVED="$approved" \
+  JEO_REVIEW_METHOD="$review_method" \
+  JEO_PLAN_HASH="$PLAN_HASH" \
+  JEO_FEEDBACK_FILE="$feedback_path" \
+  python3 - <<'PYEOF'
+import datetime
+import json
+import os
+import subprocess
+
+try:
+    root = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"],
+        stderr=subprocess.DEVNULL,
+        text=True,
+    ).strip()
+except Exception:
+    root = os.getcwd()
+
+state_path = os.path.join(root, ".omc", "state", "jeo-state.json")
+if not os.path.exists(state_path):
+    raise SystemExit(0)
+
+try:
+    import fcntl
+except Exception:
+    fcntl = None
+
+feedback_payload = None
+feedback_file = os.environ.get("JEO_FEEDBACK_FILE", "")
+if feedback_file and os.path.exists(feedback_file):
+    try:
+        feedback_payload = json.load(open(feedback_file))
+    except Exception:
+        feedback_payload = None
+
+with open(state_path, "r+", encoding="utf-8") as fh:
+    if fcntl:
+        fcntl.flock(fh, fcntl.LOCK_EX)
+    try:
+        state = json.load(fh)
+        gate_status = os.environ.get("JEO_GATE_STATUS", "pending")
+        approved = os.environ.get("JEO_APPROVED", "false").lower() == "true"
+        review_method = os.environ.get("JEO_REVIEW_METHOD", "plannotator")
+        plan_hash = os.environ.get("JEO_PLAN_HASH", "")
+        state["plan_gate_status"] = gate_status
+        state["plan_approved"] = approved
+        state["plan_review_method"] = review_method
+        state["plan_current_hash"] = plan_hash
+        state["last_reviewed_plan_hash"] = plan_hash
+        state["last_reviewed_plan_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+        if approved:
+            state["phase"] = "execute"
+        elif gate_status == "feedback_required" and feedback_payload is not None:
+            state["plannotator_feedback"] = feedback_payload
+        state["updated_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+        fh.seek(0)
+        json.dump(state, fh, ensure_ascii=False, indent=2)
+        fh.truncate()
+    finally:
+        if fcntl:
+            fcntl.flock(fh, fcntl.LOCK_UN)
+PYEOF
+}
+
+prepare_state_for_plan_hash() {
+  JEO_PLAN_HASH="$PLAN_HASH" python3 - <<'PYEOF'
+import datetime
+import json
+import os
+import subprocess
+import sys
+
+try:
+    root = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"],
+        stderr=subprocess.DEVNULL,
+        text=True,
+    ).strip()
+except Exception:
+    root = os.getcwd()
+
+state_path = os.path.join(root, ".omc", "state", "jeo-state.json")
+if not os.path.exists(state_path):
+    raise SystemExit(0)
+
+state = json.load(open(state_path, encoding="utf-8"))
+current_hash = os.environ.get("JEO_PLAN_HASH", "")
+last_hash = state.get("last_reviewed_plan_hash")
+gate_status = state.get("plan_gate_status", "pending")
+
+if current_hash and last_hash == current_hash and gate_status in {"approved", "manual_approved"}:
+    print("SKIP_APPROVED")
+    raise SystemExit(0)
+if current_hash and last_hash == current_hash and gate_status == "feedback_required":
+    print("SKIP_FEEDBACK")
+    raise SystemExit(0)
+if current_hash and last_hash == current_hash and gate_status == "infrastructure_blocked":
+    print("SKIP_BLOCKED")
+    raise SystemExit(0)
+
+state["plan_current_hash"] = current_hash
+if current_hash and last_hash and current_hash != last_hash and gate_status != "pending":
+    state["plan_gate_status"] = "pending"
+    state["plan_approved"] = False
+    state["updated_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+    with open(state_path, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+    print("RESET_FOR_NEW_HASH")
+PYEOF
+}
+
+STATE_PLAN_GUARD="$(prepare_state_for_plan_hash 2>/dev/null || true)"
+case "$STATE_PLAN_GUARD" in
+  SKIP_APPROVED)
+    echo "[JEO][PLAN] plan gate already approved for current plan hash — skipping re-entry." >&2
+    exit 0
+    ;;
+  SKIP_FEEDBACK)
+    echo "[JEO][PLAN] feedback already recorded for current plan hash — revise the plan before re-opening plannotator." >&2
+    exit 10
+    ;;
+  SKIP_BLOCKED)
+    echo "[JEO][PLAN] infrastructure-blocked state already recorded for current plan hash — waiting for manual approval path." >&2
+    exit 32
+    ;;
+  RESET_FOR_NEW_HASH)
+    echo "[JEO][PLAN] detected revised plan content — resetting gate status to pending." >&2
+    ;;
+esac
+
 manual_fallback_gate() {
   if [[ ! -t 0 || ! -t 1 ]]; then
     return 32
@@ -95,12 +243,14 @@ manual_fallback_gate() {
   case "${choice,,}" in
     a|approve)
       write_manual_feedback_json "true" "manual-approve (fallback gate)"
+      persist_plan_state "manual_approved" "true" "manual" "$FEEDBACK_FILE"
       echo "[JEO][PLAN] manual approved=true" >&2
       return 0
       ;;
     f|feedback)
       read -r -p "피드백 내용을 입력하세요: " fb
       write_manual_feedback_json "false" "${fb:-manual-feedback (fallback gate)}"
+      persist_plan_state "feedback_required" "false" "manual" "$FEEDBACK_FILE"
       echo "[JEO][PLAN] manual approved=false (feedback)" >&2
       return 10
       ;;
@@ -169,50 +319,13 @@ PYEOF
 
   if [[ "$rc" -eq 0 ]]; then
     echo "[JEO][PLAN] approved=true"
-    # Persist approval to jeo-state.json so agent skips re-calling on next turn
-    python3 - <<'PYEOF'
-import json, os, datetime
-state_path = os.path.join(os.getcwd(), '.omc/state/jeo-state.json')
-if os.path.exists(state_path):
-    try:
-        s = json.load(open(state_path))
-        s['plan_approved'] = True
-        s['phase'] = 'execute'
-        s['plan_gate_status'] = 'approved'
-        s['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
-        with open(state_path, 'w') as f:
-            json.dump(s, f, indent=2)
-    except Exception:
-        pass
-PYEOF
+    persist_plan_state "approved" "true" "plannotator" "$FEEDBACK_FILE"
     exit 0
   fi
 
   if [[ "$rc" -eq 10 ]]; then
     echo "[JEO][PLAN] approved=false (feedback)"
-    # Persist feedback to jeo-state.json so agent reads it on next turn
-    python3 - "$FEEDBACK_FILE" <<'PYEOF'
-import json, os, sys, datetime
-state_path = os.path.join(os.getcwd(), '.omc/state/jeo-state.json')
-feedback_path = sys.argv[1] if len(sys.argv) > 1 else ''
-if os.path.exists(state_path):
-    try:
-        s = json.load(open(state_path))
-        fb = {}
-        if feedback_path and os.path.exists(feedback_path):
-            try:
-                fb = json.load(open(feedback_path))
-            except Exception:
-                pass
-        s['plan_approved'] = False
-        s['plannotator_feedback'] = fb
-        s['plan_gate_status'] = 'feedback_required'
-        s['updated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
-        with open(state_path, 'w') as f:
-            json.dump(s, f, indent=2)
-    except Exception:
-        pass
-PYEOF
+    persist_plan_state "feedback_required" "false" "plannotator" "$FEEDBACK_FILE"
     exit 10
   fi
 

@@ -60,11 +60,21 @@ else
 #   1. Write plan to plan.md
 #   2. Run mandatory PLAN gate (auto-installs plannotator if missing, blocks for feedback/approve, retries dead sessions up to 3):
 #      bash ${JEO_SKILL_DIR}/scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
+#      Rule: if the current plan hash already has a terminal gate result
+#      (approved/manual_approved/feedback_required/infrastructure_blocked), do not reopen plannotator.
+#      Only a revised plan.md resets the gate to pending.
 #   3. Output "PLAN_READY" to trigger notify hook as backup signal
 #   4. Check result:
 #      - approved=true -> EXECUTE
 #      - approved=false -> re-plan
 #      - exit 32 -> localhost bind blocked (sandbox/CI). run PLAN gate in local TTY
+#   5. Never emit PLAN_READY in execute/verify phases.
+#
+# VERIFY_UI submit gate protocol:
+#   1. Enter verify_ui and set agentation.submit_gate_status="waiting_for_submit"
+#   2. Wait until the user clicks Send Annotations / onSubmit in agentation
+#   3. Only then emit "ANNOTATE_READY" (or "AGENTUI_READY" for compatibility)
+#   4. notify hook may fetch /pending only after that explicit submit signal
 #
 # BMAD commands (fallback when team unavailable):
 #   /workflow-init   — initialize BMAD workflow
@@ -102,8 +112,11 @@ def parse_existing_instructions(text: str) -> str:
     return ""
 
 existing = parse_existing_instructions(content)
-if "Keyword: jeo | Platforms: Codex, Claude, Gemini, OpenCode" in existing:
-    merged = existing
+jeo_pattern = re.compile(
+    r'(?ms)^# JEO Orchestration Workflow\n.*?^# Tools: agent-browser, playwriter, plannotator\s*$'
+)
+if jeo_pattern.search(existing):
+    merged = jeo_pattern.sub(jeo_instruction.strip(), existing).strip()
 else:
     merged = (existing.rstrip() + "\n\n" if existing.strip() else "") + jeo_instruction.strip()
 
@@ -153,6 +166,9 @@ Before writing any code, create and review a plan:
    bash .agent-skills/jeo/scripts/plannotator-plan-loop.sh plan.md /tmp/plannotator_feedback.txt 3
    echo "PLAN_READY"
    \`\`\`
+   Same-hash guard:
+   - if \`plan_gate_status\` is already terminal for the current plan hash, do not reopen plannotator
+   - only a modified plan resets the gate to \`pending\`
 3. Read /tmp/plannotator_feedback.txt
 4. If \`"approved":true\` → proceed to EXECUTE
 5. If NOT approved → read annotations, revise plan.md, repeat from step 2
@@ -177,6 +193,15 @@ If the task has browser UI:
 - Run: \`agent-browser snapshot http://localhost:3000\`
 - Check UI elements via accessibility tree (-i flag)
 - Save screenshot: \`agent-browser screenshot <url> -o verify.png\`
+
+### Step 3.1: VERIFY_UI (agentation submit gate)
+If \`annotate\` / \`agentui\` is requested:
+1. Update \`.omc/state/jeo-state.json\` to \`phase="verify_ui"\`
+2. Set \`agentation.submit_gate_status="waiting_for_submit"\`
+3. Wait until the human actually clicks **Send Annotations** / triggers \`onSubmit\`
+4. Only then emit \`ANNOTATE_READY\`
+5. Process agentation annotations after the notify hook reports submitted items
+Never read \`/pending\` before the submit gate opens.
 
 ### Step 4: CLEANUP (worktree)
 After all tasks complete:
@@ -216,10 +241,20 @@ Save progress to: \`.omc/state/jeo-state.json\`
   "phase": "plan|execute|verify|verify_ui|cleanup|done",
   "task": "current task description",
   "plan_approved": false,
+  "plan_gate_status": "pending",
+  "plan_current_hash": null,
+  "last_reviewed_plan_hash": null,
+  "plan_review_method": null,
   "team_available": false,
   "retry_count": 0,
   "last_error": null,
-  "checkpoint": null
+  "checkpoint": null,
+  "agentation": {
+    "submit_gate_status": "idle",
+    "submit_signal": null,
+    "submit_received_at": null,
+    "submitted_annotation_count": 0
+  }
 }
 \`\`\`
 
@@ -246,6 +281,7 @@ import hashlib, json, os, re, subprocess, sys, urllib.request, urllib.error, tim
 # Exact signal strings (matched as standalone lines, allowing surrounding whitespace)
 PLAN_SIGNALS = ["PLAN_READY"]
 ANNOTATE_SIGNALS = ["ANNOTATE_READY", "AGENTUI_READY"]
+PLAN_TERMINAL_STATUSES = {"approved", "manual_approved", "feedback_required", "infrastructure_blocked"}
 
 def get_jeo_phase(cwd: str) -> str:
     """Read current JEO phase from state file. Returns empty string if not available."""
@@ -255,6 +291,44 @@ def get_jeo_phase(cwd: str) -> str:
             return json.load(f).get("phase", "")
     except (FileNotFoundError, json.JSONDecodeError, KeyError):
         return ""
+
+
+def get_state_path(cwd: str) -> str:
+    return os.path.join(cwd, ".omc", "state", "jeo-state.json")
+
+
+def load_state(cwd: str) -> dict:
+    state_path = get_state_path(cwd)
+    try:
+        with open(state_path) as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def update_state(cwd: str, mutator) -> None:
+    state_path = get_state_path(cwd)
+    if not os.path.exists(state_path):
+        return
+    try:
+        import fcntl, datetime
+
+        with open(state_path, "r+") as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                try:
+                    data = json.load(fh)
+                except Exception:
+                    data = {}
+                mutator(data)
+                data["updated_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+                fh.seek(0)
+                json.dump(data, fh, indent=2)
+                fh.truncate()
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+    except Exception:
+        pass
 
 def get_feedback_file(cwd: str) -> str:
     """Return session-isolated feedback file path based on cwd MD5."""
@@ -284,6 +358,26 @@ def get_plan_loop_script(cwd: str):
         if os.path.exists(p):
             return p
     return None
+
+
+def compute_plan_hash(plan_path: str) -> str:
+    try:
+        with open(plan_path, "rb") as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+    except Exception:
+        return ""
+
+
+def should_skip_plan_gate(cwd: str, plan_path: str) -> bool:
+    state = load_state(cwd)
+    current_hash = compute_plan_hash(plan_path)
+    if not current_hash:
+        return False
+    return (
+        state.get("phase") == "plan"
+        and state.get("plan_gate_status") in PLAN_TERMINAL_STATUSES
+        and state.get("last_reviewed_plan_hash") == current_hash
+    )
 
 def write_plan_gate_result(cwd: str, rc: int, feedback_file: str) -> None:
     """Write plannotator gate result to jeo-state.json."""
@@ -344,6 +438,12 @@ def main() -> int:
             if plan_path is None:
                 print("[JEO] plan.md not found in known locations")
                 return 0
+            if should_skip_plan_gate(cwd, plan_path):
+                state = load_state(cwd)
+                print(
+                    f"[JEO] plan gate skipped: current hash already reviewed ({state.get('plan_gate_status', 'unknown')})"
+                )
+                return 0
             feedback_file = get_feedback_file(cwd)
             loop_script = get_plan_loop_script(cwd)
             if loop_script:
@@ -373,15 +473,33 @@ def main() -> int:
                     print("[JEO] plannotator not found \u2014 skipping")
             return 0
 
-    # ANNOTATE_READY: poll agentation HTTP API (only during verify/verify_ui phase)
-    if phase in ("verify", "verify_ui"):
+    # ANNOTATE_READY: poll agentation HTTP API only after explicit submit signal in VERIFY_UI
+    if phase == "verify_ui":
         if any(re.search(rf'(?m)^{re.escape(sig)}\s*$', msg or '') for sig in ANNOTATE_SIGNALS):
+            state = load_state(cwd)
+            agentation = state.get("agentation", {})
+            if agentation.get("submit_gate_status") == "submitted":
+                print("[JEO] agentation submit gate already opened for this turn")
+            else:
+                def mark_submitted(data):
+                    agentation_state = data.setdefault("agentation", {})
+                    agentation_state["submit_gate_status"] = "submitted"
+                    agentation_state["submit_signal"] = "codex-notify"
+                    agentation_state["submit_received_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+                update_state(cwd, mark_submitted)
             base_url = "http://localhost:4747"
             try:
                 with urllib.request.urlopen(f"{base_url}/pending", timeout=2) as r:
                     data = json.loads(r.read())
                 count = data.get("count", 0)
                 annotations = data.get("annotations", [])
+                def record_count(state_data):
+                    agentation_state = state_data.setdefault("agentation", {})
+                    agentation_state["submitted_annotation_count"] = count
+                    if count == 0:
+                        agentation_state["submit_gate_status"] = "waiting_for_submit"
+                update_state(cwd, record_count)
                 if count == 0:
                     print("[JEO] agentation: no pending annotations")
                 else:
