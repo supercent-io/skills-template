@@ -1,14 +1,14 @@
 ---
 name: fabric
-description: AI prompt orchestration CLI using reusable Patterns. Use for YouTube summarization, document analysis, content extraction, and any AI task via stdin/stdout piping across 15+ providers.
+description: AI prompt orchestration CLI using reusable Patterns. Use for YouTube summarization, document analysis, content extraction, code explanation, writing assistance, and any AI task via stdin/stdout piping across 20+ providers.
 license: CC-BY-4.0
-compatibility: All platforms. Requires fabric CLI installed (Go-based binary). Works with OpenAI, Anthropic, Google, Azure, Bedrock, Groq, Ollama, and 15+ other AI providers.
+compatibility: All platforms. Requires fabric CLI installed (Go-based binary or Homebrew). Works with OpenAI, Anthropic, Google, Azure, Bedrock, Groq, Ollama, and 20+ other AI providers.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   author: supercent-io
   keyword: fabric
   platforms: All platforms
-  tags: fabric, patterns, ai-prompts, youtube, summarize, extract-wisdom, piping, cli, multi-provider, openai, claude, gemini
+  tags: fabric, patterns, ai-prompts, youtube, summarize, extract-wisdom, piping, cli, multi-provider, openai, claude, gemini, ollama
 allowed-tools: Read Write Bash Grep Glob
 ---
 
@@ -19,11 +19,12 @@ Fabric is an open-source AI prompt orchestration framework by Daniel Miessler. I
 ## When to use this skill
 
 - Summarize or extract insights from YouTube videos, articles, or documents
-- Apply any of 200+ pre-built AI patterns to content via Unix piping
+- Apply any of 250+ pre-built AI patterns to content via Unix piping
 - Route different patterns to different AI providers (OpenAI, Claude, Gemini, etc.)
 - Create custom patterns for repeatable AI workflows
 - Run Fabric as a REST API server for integration with other tools
 - Process command output, files, or clipboard content through AI patterns
+- Use as an AI agent utility — pipe any tool output through patterns for intelligent summarization
 
 ## Instructions
 
@@ -59,6 +60,9 @@ git log --oneline -20 | fabric -p summarize
 
 # Process clipboard (macOS)
 pbpaste | fabric -p summarize
+
+# Pipe from curl
+curl -s https://example.com/article | fabric -p summarize
 ```
 
 ### Step 3: Discover patterns
@@ -73,22 +77,28 @@ fabric -u
 # Search patterns by keyword
 fabric -l | grep summary
 fabric -l | grep code
+fabric -l | grep security
 ```
 
 Key patterns:
 
 | Pattern | Purpose |
 |---------|---------|
-| `summarize` | Summarize any content |
-| `extract_wisdom` | Extract insights, quotes, habits from text |
-| `analyze_paper` | Break down academic papers |
+| `summarize` | Summarize any content into key points |
+| `extract_wisdom` | Extract insights, quotes, habits, and lessons |
+| `analyze_paper` | Break down academic papers into actionable insights |
 | `explain_code` | Explain code in plain language |
-| `write_essay` | Write essays from a topic or notes |
-| `clean_text` | Remove noise from raw text |
-| `analyze_claims` | Fact-check and analyze claims |
-| `create_summary` | Create a structured summary |
+| `write_essay` | Write essays from a topic or rough notes |
+| `clean_text` | Remove noise and formatting from raw text |
+| `analyze_claims` | Fact-check and assess credibility of claims |
+| `create_summary` | Create a structured, markdown summary |
 | `rate_content` | Rate and score content quality |
 | `label_and_rate` | Categorize and score content |
+| `improve_writing` | Polish and improve text clarity |
+| `create_tags` | Generate relevant tags for content |
+| `ask_secure_by_design` | Review code or systems for security issues |
+| `capture_thinkers_work` | Extract the core ideas of a thinker or author |
+| `create_investigation_visualization` | Create a visual map of complex investigations |
 
 ### Step 4: Process YouTube videos
 
@@ -108,7 +118,7 @@ fabric -y "https://youtube.com/watch?v=VIDEO_ID" --transcript-with-timestamps
 
 ### Step 5: Create custom patterns
 
-Each pattern is a directory with a `system.md` file inside `~/.config/fabric/patterns/`:
+Each pattern is a directory with a `system.md` file inside `~/.config/fabric/patterns/`. The body should follow this structure:
 
 ```bash
 mkdir -p ~/.config/fabric/patterns/my-pattern
@@ -117,15 +127,22 @@ cat > ~/.config/fabric/patterns/my-pattern/system.md << 'EOF'
 
 You are an expert at [task]. Your job is to [specific goal].
 
+Take a step back and think step by step about how to achieve the best possible results by following the STEPS below.
+
 # STEPS
 
 1. [Step 1]
 2. [Step 2]
 
-# OUTPUT FORMAT
+# OUTPUT INSTRUCTIONS
 
-- [Format instruction 1]
+- Only output Markdown.
 - [Format instruction 2]
+- Do not give warnings or notes; only output the requested sections.
+
+# INPUT
+
+INPUT:
 EOF
 ```
 
@@ -162,6 +179,44 @@ cat paper.txt | fabric -p summarize | fabric -p extract_wisdom
 cat document.txt | fabric -p extract_wisdom > insights.md
 ```
 
+### Step 7: Use in AI agent workflows
+
+Fabric is a powerful utility for AI agents — pipe any tool output through patterns for intelligent analysis:
+
+```bash
+# Analyze test failures
+npm test 2>&1 | fabric -p analyze_logs
+
+# Summarize git history for a PR description
+git log --oneline origin/main..HEAD | fabric -p create_summary
+
+# Explain a code diff
+git diff HEAD~1 | fabric -p explain_code
+
+# Summarize build errors
+make build 2>&1 | fabric -p summarize
+
+# Analyze security vulnerabilities in code
+cat src/auth.py | fabric -p ask_secure_by_design
+
+# Process log files
+cat /var/log/app.log | tail -100 | fabric -p analyze_logs
+```
+
+#### REST API server mode
+
+Run Fabric as a microservice and call it from other tools:
+
+```bash
+# Start server
+fabric --serve --port 8080
+
+# Call via HTTP
+curl -X POST http://localhost:8080/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompts":[{"userInput":"Summarize this","patternName":"summarize"}]}'
+```
+
 ## Best practices
 
 - Run `fabric -u` before first use and regularly to get the latest community patterns.
@@ -171,9 +226,11 @@ cat document.txt | fabric -p extract_wisdom > insights.md
 - Keep custom patterns in `~/.config/fabric/patterns/` — they persist across updates.
 - For YouTube, transcript extraction works best with videos that have captions enabled.
 - Chain patterns with Unix pipes for multi-step processing workflows.
+- Follow the IDENTITY → STEPS → OUTPUT INSTRUCTIONS structure when creating custom patterns.
 
 ## References
 
 - [Fabric GitHub](https://github.com/danielmiessler/Fabric)
 - [Pattern Library](https://github.com/danielmiessler/Fabric/tree/main/patterns)
 - [Installation Guide](https://github.com/danielmiessler/Fabric#installation)
+- [Custom Pattern Guide](https://github.com/danielmiessler/Fabric/blob/main/patterns/README.md)
