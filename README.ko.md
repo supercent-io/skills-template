@@ -134,13 +134,13 @@ npx skills add https://github.com/supercent-io/skills-template --skill omc
 
 > 상세: [docs/omc/README.md](docs/omc/README.md)
 
-#### OpenAI Codex CLI 멀티에이전트 → `oh-my-codex` (omx)
+#### OpenAI Codex CLI 멀티에이전트 → `omx`
 
 ```bash
-npx skills add https://github.com/supercent-io/skills-template --skill oh-my-codex
+npx skills add https://github.com/supercent-io/skills-template --skill omx
 ```
 
-> 상세: [.agent-skills/oh-my-codex/SKILL.md](.agent-skills/oh-my-codex/SKILL.md)
+> 상세: [.agent-skills/omx/SKILL.md](.agent-skills/omx/SKILL.md)
 
 #### Gemini / Antigravity 워크플로우 → `ohmg`
 
@@ -330,7 +330,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `jeo` | Integrated AI orchestration: ralph+plannotator → team/bmad → agent-browser verify → agentation(annotate) UI피드백 → worktree cleanup | Claude · Codex · Gemini · OpenCode |
 | `npm-git-install` | Install npm from GitHub | All platforms |
 | `ohmg` | Multi-agent orchestration for Antigravity workflows | Claude · Gemini |
-| `oh-my-codex` | Multi-agent orchestration for OpenAI Codex CLI *(in development)* | Codex |
+| `omx` | Multi-agent orchestration for OpenAI Codex CLI *(in development)* | Codex |
 | `omc` | oh-my-claudecode — Teams-first multi-agent orchestration | Claude |
 | `opencontext` | AI agent persistent memory | All platforms |
 | `plannotator` | Visual plan and diff review — annotate, approve, or request changes | Claude |

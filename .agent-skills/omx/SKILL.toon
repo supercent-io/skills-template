@@ -1,4 +1,4 @@
-N:oh-my-codex
+N:omx
 D:Multi-agent orchestration layer for Codex CLI. Provides 30 specialized agents, 40+ workflow skills, tmux team mode, persistent MCP servers, and a staged pipeline (plan->prd->exec->verify->fix).
 G:omx multi-agent orchestration codex openai team-mode mcp-servers workflow
 

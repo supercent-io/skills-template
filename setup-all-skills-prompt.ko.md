@@ -35,7 +35,7 @@
 1. **사용 중인 AI 플랫폼은 무엇인가요?**
    - Claude Code → `omc`, `plannotator`, `ralph`, `ralphmode`, `bmad-orchestrator` 권장
    - Gemini CLI → `ohmg`, `ralph`, `ralphmode`, `jeo` 권장
-   - OpenAI Codex CLI → `oh-my-codex`, `ralph`, `ralphmode`, `jeo` 권장
+   - OpenAI Codex CLI → `omx`, `ralph`, `ralphmode`, `jeo` 권장
    - OpenCode → oh-my-opencode 설치 필요 (Step 3 참조)
    - 모두 사용 / 모르겠음 → `jeo` + `survey` 설치 (`survey`는 탐색, `jeo`는 실행)
 
@@ -118,7 +118,7 @@ npx skills add https://github.com/supercent-io/skills-template \
 **Codex CLI 전용:**
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill oh-my-codex --skill ralph --skill ralphmode
+  --skill omx --skill ralph --skill ralphmode
 ```
 
 **Gemini CLI (확장 설치):**
@@ -164,7 +164,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill ai-tool-compliance \
   --skill environment-setup --skill file-organization \
   --skill git-submodule --skill git-workflow --skill jeo \
-  --skill npm-git-install --skill ohmg --skill oh-my-codex \
+  --skill npm-git-install --skill ohmg --skill omx \
   --skill omc --skill opencontext --skill plannotator --skill playwriter \
   --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
@@ -317,7 +317,7 @@ npx skills info jeo
 | `survey` | `survey` | 계획이나 구현 전에 문제공간을 정리하는 전 플랫폼 리서치 스킬 |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM 사용량 모니터링 대시보드 생성 |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI 어노테이션 → 에이전트 코드 수정. 설치: `npx add-mcp "npx -y agentation-mcp server"` (Universal) 또는 `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first 아키텍처, 오프라인 동작, 세션 연속성 지원. |
-| `oh-my-codex` | `omx` | Codex CLI 멀티에이전트 |
+| `omx` | `omx` | Codex CLI 멀티에이전트 |
 | `ohmg` | `ohmg` | Gemini / Antigravity 워크플로우 |
 
 ---

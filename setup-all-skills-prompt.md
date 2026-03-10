@@ -35,7 +35,7 @@ Before installation, confirm:
 1. **Which AI platform are you using?**
    - Claude Code → recommend `omc`, `plannotator`, `ralph`, `ralphmode`, `bmad-orchestrator`
    - Gemini CLI → recommend `ohmg`, `ralph`, `ralphmode`, `jeo`
-   - OpenAI Codex CLI → recommend `oh-my-codex`, `ralph`, `ralphmode`, `jeo`
+   - OpenAI Codex CLI → recommend `omx`, `ralph`, `ralphmode`, `jeo`
    - OpenCode → requires oh-my-opencode installation (see Step 3)
    - All / Unsure → install `jeo` + `survey` (`survey` for discovery, `jeo` for delivery)
 
@@ -118,7 +118,7 @@ npx skills add https://github.com/supercent-io/skills-template \
 **Codex CLI only:**
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill oh-my-codex --skill ralph --skill ralphmode
+  --skill omx --skill ralph --skill ralphmode
 ```
 
 **Gemini CLI (extension install):**
@@ -164,7 +164,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill ai-tool-compliance \
   --skill environment-setup --skill file-organization \
   --skill git-submodule --skill git-workflow --skill jeo \
-  --skill npm-git-install --skill ohmg --skill oh-my-codex \
+  --skill npm-git-install --skill ohmg --skill omx \
   --skill omc --skill opencontext --skill plannotator --skill playwriter \
   --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
@@ -317,7 +317,7 @@ First run after installation by platform:
 | `survey` | `survey` | Cross-platform landscape scan before planning or implementation |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM usage monitoring dashboard generation |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI annotation → agent code modification. Install: `npx add-mcp "npx -y agentation-mcp server"` (Universal) or `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first architecture, offline operation, session continuity. |
-| `oh-my-codex` | `omx` | Codex CLI multi-agent orchestration |
+| `omx` | `omx` | Codex CLI multi-agent orchestration |
 | `ohmg` | `ohmg` | Gemini / Antigravity workflows |
 
 ---
