@@ -68,7 +68,7 @@ repository to the current project.
 
 ---
 
-## Skills List (60 functional)
+## Skills List (61 functional)
 
 > Skills marked *(in development)* exist on disk but do not yet have a SKILL.toon file.
 
@@ -170,6 +170,7 @@ repository to the current project.
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `agent-browser` | Fast headless browser CLI for AI agents | All platforms |
+| `fabric` | AI prompt orchestration CLI using reusable Patterns for YouTube, documents, and content via piping | All platforms |
 | `copilot-coding-agent` | GitHub Copilot Coding Agent — Issue → Draft PR automation | Claude · Codex |
 | `environment-setup` | Environment setup | All platforms |
 | `file-organization` | File & folder organization | All platforms |
@@ -303,4 +304,4 @@ npx skills add <skill-name>
 
 ---
 
-**Version**: 4.7.0 | **Updated**: 2026-03-06 | **Skills**: 60 functional | **Format**: TOON (Default) | **Structure**: Flat
+**Version**: 4.7.1 | **Updated**: 2026-03-10 | **Skills**: 61 functional | **Format**: TOON (Default) | **Structure**: Flat

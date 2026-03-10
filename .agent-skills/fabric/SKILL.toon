@@ -1,0 +1,28 @@
+N:fabric
+D:AI prompt orchestration CLI by Daniel Miessler. Apply 200+ reusable Patterns via stdin/stdout piping for YouTube summarization, document analysis, content extraction, and more. Supports 15+ AI providers (OpenAI, Claude, Gemini, Ollama, etc.).
+G:fabric patterns ai-prompts youtube summarize extract-wisdom piping cli multi-provider openai claude gemini ollama
+
+U[5]:
+  Summarize YouTube videos or documents with a single pipe command
+  Apply 200+ pre-built AI patterns to any text content
+  Extract insights, wisdom, or structure from articles and papers
+  Route different patterns to different AI providers for cost/quality optimization
+  Create and share custom patterns for repeatable AI workflows
+
+S[5]{n,action,details}:
+  1,Install,curl -fsSL https://raw.githubusercontent.com/danielmiessler/fabric/main/scripts/installer/install.sh | bash; then fabric --setup to configure API keys
+  2,Discover,fabric -l to list patterns; fabric -u to update from repo; fabric -l | grep <term> to search
+  3,Pipe,cat file.txt | fabric -p <pattern> --stream or echo "text" | fabric -p summarize
+  4,YouTube,fabric -y "https://youtube.com/watch?v=ID" -p extract_wisdom or --transcript for raw text
+  5,Custom,mkdir -p ~/.config/fabric/patterns/my-pattern; write system.md with identity/steps/output-format sections
+
+R[4]:
+  Run fabric -u before first use and regularly to get latest community patterns
+  Use --stream for long documents to see output progressively
+  Create shell aliases (alias wisdom="fabric -p extract_wisdom") for frequent patterns
+  Chain patterns with pipes: cat doc.txt | fabric -p summarize | fabric -p extract_wisdom
+
+E[3]{desc,in,out}:
+  "YouTube summary","fabric -y https://youtube.com/watch?v=ID -p summarize","Structured summary of video content"
+  "Document wisdom","cat article.txt | fabric -p extract_wisdom --stream","Insights, quotes, and habits extracted from the text"
+  "Custom pattern","echo 'topic' | fabric -p my-pattern","Output per custom system.md prompt instructions"

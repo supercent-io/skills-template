@@ -125,7 +125,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 71-Skill Installation (Default Execution Step)
+### Step 2: Full 72-Skill Installation (Default Execution Step)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -162,7 +162,8 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill npm-git-install --skill ohmg --skill oh-my-codex \
   --skill omc --skill opencontext --skill plannotator \
   --skill ralph --skill ralphmode --skill skill-standardization \
-  --skill vibe-kanban --skill workflow-automation
+  --skill vibe-kanban --skill workflow-automation \
+  --skill fabric
 ```
 
 > Skip condition is only allowed when the user explicitly requests (`core only`, `minimal install`, `quick install`).
