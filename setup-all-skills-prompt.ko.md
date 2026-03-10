@@ -167,6 +167,8 @@ npx skills add https://github.com/supercent-io/skills-template \
 
 > 생략 조건은 사용자 명시 요청(`핵심만`, `최소 설치`, `빠른 설치`)일 때만 허용합니다.
 
+> `presentation-builder` 참고: 이 스킬은 이제 `slides-grab` 워크플로우를 전제로 합니다. 실제 사용 전 Node.js 18+ 환경에서 `npx playwright install chromium`을 실행하고, 작업 환경에서 `slides-grab --help`가 정상 동작하는지 확인하세요.
+
 ---
 
 ### Step 3: 플랫폼별 추가 도구 설치

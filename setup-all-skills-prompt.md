@@ -167,6 +167,8 @@ npx skills add https://github.com/supercent-io/skills-template \
 
 > Skip condition is only allowed when the user explicitly requests (`core only`, `minimal install`, `quick install`).
 
+> `presentation-builder` note: this skill now assumes a `slides-grab` workflow. Before first real use, install Node.js 18+, run `npx playwright install chromium`, and ensure `slides-grab --help` succeeds in the working environment.
+
 ---
 
 ### Step 3: Platform-Specific Additional Tool Installation

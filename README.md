@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-09 · **77 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-10 · **76 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-77-brightgreen)](#skills-list-77-total)
+[![Skills](https://img.shields.io/badge/Skills-76-brightgreen)](#skills-list-76-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -17,10 +17,10 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-03-09)
+- [What's New](#whats-new-in-v2026-03-10)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
-- [Skills List (77)](#skills-list-77-total)
+- [Skills List (76)](#skills-list-76-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -46,12 +46,12 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-03-09
+## What's New in v2026-03-10
 
 | Change | Details |
 |--------|---------|
+| **presentation-builder: slides-grab workflow adopted** | `presentation-builder` now uses `slides-grab` for HTML-first deck creation, visual editing, validation, and PPTX/PDF export. Removed duplicate `pptx-presentation-builder`, bringing the repository from 77 to **76 skills**. |
 | **jeo v1.2.2: Codex plannotator blocking wait fix** | `plannotator-plan-loop.sh` now writes `plan_gate_status` (`approved`/`feedback_required`/`infrastructure_blocked`) to `jeo-state.json` on every exit. `jeo-notify.py` gains `write_plan_gate_result()` that persists gate results back to state. `jeo.md` prompt and `SKILL.md` gain **Conversation Approval Mode** for exit 32: agent outputs plan.md inline and waits for explicit user approval rather than skipping the gate. |
-| **6 New Skills Added** | `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — total 71 → **77 skills** |
 | **jeo v1.2.1: Gemini/Antigravity repeated plannotator call fix** | `plannotator-plan-loop.sh` now writes `plan_approved` + `phase` to `jeo-state.json` on approval. SKILL.md PLAN block now has a GUARD that reads `jeo-state.json` and skips plannotator if already approved in a previous turn. Prevents infinite re-invocation in hook-based environments. |
 | **jeo v1.2.1: Claude Code now requires team mode** | In Claude Code, `jeo` no longer falls back to single-agent execution. EXECUTE must use `/omc:team`. |
 | **jeo v1.2.1: plannotator Claude Code fix (P0)** | `plannotator` is hook-only in Claude Code. Removed non-existent `submit_plan` MCP tool call; replaced with correct `EnterPlanMode` → write plan → `ExitPlanMode` hook flow. `bmad-orchestrator/SKILL.md` updated with platform-specific clarifications. |
@@ -196,7 +196,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (77 total)
+## Skills List (76 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -266,7 +266,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `changelog-maintenance` | Changelog management | All platforms |
-| `presentation-builder` | Presentation builder *(in development)* | All platforms |
+| `presentation-builder` | Build editable presentations with slides-grab, including visual review and PPTX/PDF export | All platforms |
 | `technical-writing` | Technical documentation | All platforms |
 | `user-guide-writing` | User guides & tutorials | All platforms |
 
@@ -298,13 +298,12 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `remotion-video-production` | Programmable video production with Remotion — scene planning, asset orchestration, validation gates | All platforms |
 | `video-production` | Video production workflows *(in development)* | All platforms |
 
-### Marketing (3)
+### Marketing (2)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 | `marketing-skills-collection` | Marketing deliverables across CRO, copywriting, SEO, analytics, and growth (23 sub-skills) | All platforms |
-| `pptx-presentation-builder` | Professional PPTX presentations with brand-aligned layouts for pitch, roadmap, and product decks | All platforms |
 
 ### Utilities (20)
 
@@ -533,7 +532,7 @@ TOON (Token-Oriented Object Notation) compresses the skill catalog and auto-inje
 - **Tier 1 (always injected)**: Skill catalog index (~875-3,500 tokens) — skill names + descriptions + tags injected every prompt
 - **Tier 2 (on-demand)**: Individual SKILL.toon full content (~292 tokens/skill, max 3) — auto-loaded on skill name/tag detection
 
-> Injecting all 77 skills simultaneously (~22,400 tokens) is prohibited. Tier 1 + on-demand max 3 keeps context cost below 5%.
+> Injecting all 76 skills simultaneously (~22,100 tokens) is prohibited. Tier 1 + on-demand max 3 keeps context cost below 5%.
 
 ### Platform Implementations
 
@@ -595,7 +594,10 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 
 ## Changelog
 
-**v2026-03-09 (latest)**:
+**v2026-03-10 (latest)**:
+- `presentation-builder` now uses `slides-grab`; duplicate `pptx-presentation-builder` removed — 77 → **76 skills**
+
+**v2026-03-09**:
 - **jeo v1.2.2: Codex plannotator blocking wait fix**: `plannotator-plan-loop.sh` writes `plan_gate_status` to `jeo-state.json` on all exit paths (approved/feedback_required/infrastructure_blocked). `jeo-notify.py` gains `write_plan_gate_result()` to persist gate results. **Conversation Approval Mode** added: on exit 32, agent outputs plan.md content inline and waits for explicit user 'approve' before entering EXECUTE — prevents skipping the plan gate in sandbox environments.
 - **6 new skills**: `frontend-design-system`, `image-generation-mcp`, `marketing-skills-collection`, `pptx-presentation-builder`, `remotion-video-production`, `vercel-react-best-practices` — 71 → **77 skills**
 - **54 skills updated**: SKILL.md and SKILL.toon refreshed with latest content

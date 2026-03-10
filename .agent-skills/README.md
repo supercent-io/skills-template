@@ -130,7 +130,7 @@ repository to the current project.
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `changelog-maintenance` | Changelog management | All platforms |
-| `presentation-builder` | Presentation builder *(in development)* | All platforms |
+| `presentation-builder` | slides-grab-based presentation builder with visual review and PPTX/PDF export | All platforms |
 | `technical-writing` | Technical documentation | All platforms |
 | `user-guide-writing` | User guides & tutorials | All platforms |
 
