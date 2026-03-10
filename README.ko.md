@@ -24,6 +24,7 @@
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
+- [추천 Harness OSS](#추천-harness-oss)
 - [Related docs](#related-docs)
 - [Changelog](#changelog)
 
@@ -574,6 +575,56 @@ U[n]: use cases · S[n]{n,action,details}: steps · R[n]: rules · E[n]{desc,in,
 ├── install.sh / flatten_skills.py
 └── README.md
 ```
+
+---
+
+## 추천 Harness OSS
+
+Agent Skills와 함께 사용하기 좋은 오픈소스 에이전트 하네스 및 오케스트레이션 프레임워크 모음입니다. GitHub 스타 순으로 정렬되어 있습니다 (2026-03-10 기준).
+
+### Harness 비교 테이블
+
+| 레포지토리 | 스타 | 포크 | 설명 | 주요 특장점 |
+|-----------|-----:|-----:|------|-------------|
+| [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) | 182k | 46.2k | 지속적 에이전트 구축·실행을 위한 접근성 높은 AI 플랫폼 | 플랫폼 수준 에이전트 관리, Forge 툴킷, 노코드 UI, 벤치마크 시스템 |
+| [superpowers](https://github.com/obra/superpowers) | 75.7k | 5.9k | 코딩 에이전트를 위한 컴포저블 스킬 프레임워크 & 개발 방법론 | 컴포저블 스킬 정의, TDD 우선, 체계적 워크플로우 계약, 다중 에이전트 호환 |
+| [AutoGen](https://github.com/microsoft/autogen) | 55.4k | 8.3k | Microsoft의 멀티 에이전트 대화 및 에이전트 AI 프레임워크 | 계층형 API(Core/AgentChat/Extensions), AutoGen Studio 노코드 UI, MCP 지원, Magentic-One |
+| [CrewAI](https://github.com/crewAIInc/crewAI) | 45.7k | 6.1k | 역할극 기반 자율 AI 에이전트 오케스트레이션 프레임워크 | 역할 기반 에이전트 오케스트레이션, 협업 지능, 독립 Python 프레임워크 |
+| [smolagents](https://github.com/huggingface/smolagents) | 25.9k | 2.4k | HuggingFace의 코드 사고 경량 에이전트 라이브러리 | 핵심 ~1,000줄, 모델 불가지론, E2B/Docker 샌드박스, MCP·LangChain 호환 |
+| [agency-agents](https://github.com/msitarzewski/agency-agents) | 21.2k | 3.3k | 9개 부서로 구성된 61개 특화 AI 에이전트 | 폭넓은 전문 에이전트 구성, 부서별 역할 조직화, 플러그앤플레이 역할 정의 |
+| [bkit-claude-code](https://github.com/popup-studio-ai/bkit-claude-code) | 366 | 94 | Claude Code용 PDCA 방법론 + CTO 주도 에이전트 팀 | PDCA 품질 사이클, 구조화된 워크플로우, 자동 문서화, Claude Code 네이티브 통합 |
+
+### 상세 소개
+
+#### [superpowers](https://github.com/obra/superpowers) — 컴포저블 스킬 프레임워크
+
+Agent Skills와 철학적으로 가장 유사한 프레임워크. 컴포저블 스킬 정의를 중심으로 하며, TDD와 체계적인 개발 워크플로우 계약을 강조합니다. 여러 코딩 에이전트와 호환됩니다.
+
+**주요 특장점:**
+- 컴포저블 스킬 정의 (`SKILL.md` 포맷과 개념적으로 유사)
+- TDD 우선 방법론 — 구현 전 테스트를 하네스가 강제
+- Claude Code, Codex CLI 등 다양한 코딩 에이전트와 호환
+- 체계적인 워크플로우 계약으로 범위 이탈 및 에이전트 드리프트 방지
+
+#### [agency-agents](https://github.com/msitarzewski/agency-agents) — 61개 전문 에이전트 역할
+
+프론트엔드 위저드, 백엔드 엔지니어, 커뮤니티 매니저, QA 스페셜리스트 등 9개 부서에 걸쳐 61개 AI 에이전트를 제공합니다. 각 에이전트는 명확한 역할, 성격, 업무 범위를 가집니다.
+
+**주요 특장점:**
+- 명확한 역할 경계를 가진 61개 에이전트 페르소나
+- 9개 조직 부서 (프론트엔드, 백엔드, DevOps, 커뮤니티, QA 등)
+- 어떤 LLM 플랫폼에서도 바로 사용 가능한 에이전트 정의
+- 모듈형 구성 — 필요한 에이전트 서브셋만 선택 사용 가능
+
+#### [bkit-claude-code](https://github.com/popup-studio-ai/bkit-claude-code) — Claude Code를 위한 PDCA 하네스
+
+PDCA(Plan-Do-Check-Act) 품질 사이클을 CTO 주도 에이전트 팀과 함께 구현한 Claude Code 플러그인. 각 단계에서 구조화된 게이트와 자동 문서화를 제공합니다.
+
+**주요 특장점:**
+- PDCA 방법론을 각 단계 품질 게이트가 있는 개발 하네스로 구현
+- CTO 에이전트 팀 조율 및 명확한 조직 계층 구조
+- PDCA 각 단계에서 자동 문서 생성
+- 이 템플릿의 `omc`, `jeo` 스킬과 자연스럽게 연동
 
 ---
 

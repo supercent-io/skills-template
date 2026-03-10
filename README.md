@@ -24,6 +24,7 @@
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
+- [Recommended Harness OSS](#recommended-harness-oss)
 - [Related Docs](#related-docs)
 - [Changelog](#changelog)
 
@@ -576,6 +577,56 @@ Full configuration: [bmad-orchestrator SKILL.md — TOON Format Integration](.ag
 ├── README.md           ← English (default)
 └── README.ko.md        ← 한국어
 ```
+
+---
+
+## Recommended Harness OSS
+
+A curated list of open-source agent harnesses and orchestration frameworks that pair well with Agent Skills. Sorted by GitHub stars (as of 2026-03-10).
+
+### Harness Comparison Table
+
+| Repository | Stars | Forks | Description | Key Strengths |
+|-----------|------:|------:|-------------|---------------|
+| [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) | 182k | 46.2k | Accessible AI platform for building and running continuous agents | Platform-level agent management, Forge toolkit for custom agents, no-code UI, benchmark system |
+| [superpowers](https://github.com/obra/superpowers) | 75.7k | 5.9k | Agentic skills framework & software development methodology that works | Composable skill definitions, TDD-first, systematic workflow contracts, multi-agent compatibility |
+| [AutoGen](https://github.com/microsoft/autogen) | 55.4k | 8.3k | Microsoft's multi-agent conversation & agentic AI programming framework | Layered API (Core/AgentChat/Extensions), AutoGen Studio no-code UI, MCP support, Magentic-One for complex workflows |
+| [CrewAI](https://github.com/crewAIInc/crewAI) | 45.7k | 6.1k | Framework for orchestrating role-playing autonomous AI agents | Role-based agent orchestration, collaborative intelligence, independent Python framework, high-level + low-level API |
+| [smolagents](https://github.com/huggingface/smolagents) | 25.9k | 2.4k | HuggingFace's barebones code-thinking agent library | ~1,000 LOC core, model-agnostic, code-first thinking, E2B/Docker sandboxing, MCP + LangChain compatible |
+| [agency-agents](https://github.com/msitarzewski/agency-agents) | 21.2k | 3.3k | 61 specialized AI agents organized across 9 divisions | Broad specialist agent roster, division-based organization (Frontend/Backend/QA/Community…), plug-and-play role definitions |
+| [bkit-claude-code](https://github.com/popup-studio-ai/bkit-claude-code) | 366 | 94 | PDCA methodology + CTO-led agent teams for Claude Code | PDCA quality cycle as dev harness, structured workflows, auto documentation, Claude Code native integration |
+
+### Highlights
+
+#### [superpowers](https://github.com/obra/superpowers) — Composable Skills Framework
+
+Closest in philosophy to Agent Skills. Built around composable skill definitions with emphasis on TDD and systematic development workflow contracts. Works across multiple coding agents.
+
+**Key strengths:**
+- Composable skill definitions (conceptually similar to `SKILL.md` format)
+- TDD-first methodology enforced by the harness — tests before implementation
+- Compatible with Claude Code, Codex CLI, and other coding agents
+- Systematic workflow contracts prevent scope creep and agent drift
+
+#### [agency-agents](https://github.com/msitarzewski/agency-agents) — 61 Specialized Agent Roles
+
+A comprehensive roster of AI agents organized into 9 divisions: Frontend Wizards, Backend Engineers, Community Managers, QA Specialists, and more. Each agent has a defined role, personality, and scope.
+
+**Key strengths:**
+- 61 distinct agent personalities with clear role boundaries
+- 9 organizational divisions (Frontend, Backend, DevOps, Community, QA, etc.)
+- Drop-in agent definitions compatible with any LLM platform
+- Modular — use any subset independently
+
+#### [bkit-claude-code](https://github.com/popup-studio-ai/bkit-claude-code) — PDCA for Claude Code
+
+A Claude Code plugin implementing the Plan-Do-Check-Act (PDCA) quality cycle with CTO-led agent teams. Designed for AI-native development with structured phase gates and automatic documentation.
+
+**Key strengths:**
+- PDCA methodology as a structured development harness with quality gates at each phase
+- CTO-agent team coordination with clear organizational hierarchy
+- Automatic documentation generation at each PDCA phase
+- Pairs naturally with `omc` and `jeo` skills in this template
 
 ---
 
