@@ -128,7 +128,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 73-Skill Installation (Default Execution Step)
+### Step 2: Full 78-Skill Installation (Default Execution Step)
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
@@ -139,7 +139,8 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill prompt-repetition --skill api-design \
   --skill api-documentation --skill authentication-setup \
   --skill backend-testing --skill database-schema-design \
-  --skill design-system --skill react-best-practices \
+  --skill design-system --skill frontend-design-system \
+  --skill react-best-practices --skill vercel-react-best-practices \
   --skill responsive-design --skill state-management \
   --skill ui-component-patterns --skill web-accessibility \
   --skill web-design-guidelines --skill code-refactoring \
@@ -156,8 +157,9 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill codebase-search --skill data-analysis \
   --skill log-analysis --skill pattern-detection \
   --skill llm-monitoring-dashboard \
-  --skill image-generation --skill pollinations-ai \
-  --skill video-production --skill marketing-automation \
+  --skill image-generation --skill image-generation-mcp --skill pollinations-ai \
+  --skill remotion-video-production --skill video-production \
+  --skill marketing-automation --skill marketing-skills-collection \
   --skill agent-browser --skill agentation --skill copilot-coding-agent \
   --skill ai-tool-compliance \
   --skill environment-setup --skill file-organization \

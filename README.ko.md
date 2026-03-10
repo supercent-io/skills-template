@@ -2,11 +2,11 @@
 
 > 🌐 Language / 언어: **[English](README.md)** | **한국어**
 
-> v2026-03-10 · **77 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-10 · **78 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-77-brightgreen)](#skills-list-77-total)
-[![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.0.0-orange)](docs/bmad/README.md)
+[![Skills](https://img.shields.io/badge/Skills-78-brightgreen)](#skills-list-78-total)
+[![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
 
@@ -20,7 +20,7 @@
 - [What's New](#whats-new-in-v2026-03-10)
 - [설치 (Install)](#설치-install)
 - [실행 가이드](#실행-가이드)
-- [Skills List (77)](#skills-list-77-total)
+- [Skills List (78)](#skills-list-78-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -207,7 +207,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (77 total)
+## Skills List (78 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -316,7 +316,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `marketing-automation` | Marketing automation *(in development)* | All platforms |
 | `marketing-skills-collection` | CRO·카피라이팅·SEO·애널리틱스·그로스 마케팅 산출물 생성 (23개 서브스킬) | All platforms |
 
-### Utilities (21)
+### Utilities (23)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -326,6 +326,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `bmad-idea` | BMAD Creative Intelligence Suite — brainstorming, design thinking, innovation strategy, problem-solving, storytelling | Claude · Gemini · Codex · OpenCode |
 | `copilot-coding-agent` | GitHub Copilot Coding Agent — Issue → Draft PR automation | Claude · Codex |
 | `environment-setup` | Environment setup | All platforms |
+| `fabric` | AI prompt orchestration CLI using reusable Patterns — YouTube summarization, document analysis, content extraction via 200+ Patterns and 15+ AI providers | All platforms |
 | `file-organization` | File & folder organization | All platforms |
 | `git-submodule` | Git submodule management | All platforms |
 | `git-workflow` | Git workflow management | All platforms |
@@ -576,7 +577,7 @@ U[n]: use cases · S[n]{n,action,details}: steps · R[n]: rules · E[n]{desc,in,
 │   ├── skill-query-handler.py
 │   ├── skills.json
 │   ├── skills.toon
-│   └── [76 skill folders]
+│   └── [78 skill folders]
 ├── docs/
 │   ├── bmad/           ← bmad-orchestrator harness guide
 │   ├── harness/        ← 추천 harness OSS 가이드 (EN + KO)
