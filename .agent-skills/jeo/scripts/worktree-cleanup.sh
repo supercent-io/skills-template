@@ -123,6 +123,26 @@ else
   ok "Stale worktree references pruned"
 fi
 
+# ── Deactivate ralphmode (revert project permissionMode) ─────────────────────
+_PLAN_GATE_SCRIPT=""
+for _candidate in \
+  "$(dirname "${BASH_SOURCE[0]}")/claude-plan-gate.py" \
+  "$HOME/.agent-skills/jeo/scripts/claude-plan-gate.py" \
+  "$HOME/.claude/skills/jeo/scripts/claude-plan-gate.py"; do
+  if [[ -f "$_candidate" ]]; then
+    _PLAN_GATE_SCRIPT="$_candidate"
+    break
+  fi
+done
+
+if [[ -n "$_PLAN_GATE_SCRIPT" ]] && command -v python3 >/dev/null 2>&1; then
+  if $DRY_RUN; then
+    echo -e "${YELLOW}[DRY-RUN]${NC} Would deactivate ralphmode (restore project permissionMode)"
+  else
+    python3 "$_PLAN_GATE_SCRIPT" --deactivate 2>&1 || true
+  fi
+fi
+
 # ── Update JEO state ──────────────────────────────────────────────────────────
 STATE_FILE="$GIT_ROOT/.omc/state/jeo-state.json"
 if [[ -f "$STATE_FILE" ]] && command -v python3 >/dev/null 2>&1; then

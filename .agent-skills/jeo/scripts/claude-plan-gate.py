@@ -3,10 +3,17 @@
 
 Wraps the Claude Code ExitPlanMode hook so JEO can skip redundant plannotator
 launches when the current plan content has already been reviewed.
+
+On approval (plannotator exit code 0), ralphmode is automatically activated:
+- jeo-state.json: ralphmode_active=true, plan_gate_status="approved"
+- project .claude/settings.json: permissionMode="acceptEdits"
+This allows the EXECUTE phase (/omc:team) to run with minimal approval prompts.
+Ralphmode is deactivated at CLEANUP (worktree-cleanup.sh resets permissionMode).
 """
 
 from __future__ import annotations
 
+import datetime
 import hashlib
 import json
 import os
@@ -17,6 +24,7 @@ from typing import Any
 
 
 SKIP_STATUSES = {"approved", "manual_approved", "feedback_required", "infrastructure_blocked"}
+RALPHMODE_PERMISSION = "acceptEdits"
 
 
 def git_root() -> Path:
@@ -114,7 +122,82 @@ def run_plannotator(payload: str) -> int:
     return proc.returncode
 
 
+def activate_ralphmode(root: Path, state: dict[str, Any]) -> None:
+    """Activate ralphmode after plan approval.
+
+    - Sets ralphmode_active=true in jeo-state.json
+    - Writes permissionMode=acceptEdits to project .claude/settings.json
+      so the EXECUTE phase (/omc:team) runs with minimal approval prompts.
+    """
+    now = datetime.datetime.utcnow().isoformat() + "Z"
+    state["plan_approved"] = True
+    state["plan_gate_status"] = "approved"
+    state["ralphmode_active"] = True
+    state["ralphmode_activated_at"] = now
+    state["updated_at"] = now
+    save_state(root, state)
+
+    # Write project-local .claude/settings.json with acceptEdits
+    project_settings_path = root / ".claude" / "settings.json"
+    try:
+        project_settings_path.parent.mkdir(parents=True, exist_ok=True)
+        ps: dict[str, Any] = {}
+        if project_settings_path.exists():
+            try:
+                ps = json.loads(project_settings_path.read_text(encoding="utf-8"))
+            except Exception:
+                ps = {}
+        previous = ps.get("permissionMode", "default")
+        ps["permissionMode"] = RALPHMODE_PERMISSION
+        ps["_ralphmode_previous_permission"] = previous
+        project_settings_path.write_text(json.dumps(ps, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(
+            f"[JEO] ✅ Plan approved → ralphmode activated"
+            f" (permissionMode: {previous!r} → {RALPHMODE_PERMISSION!r})."
+            f" EXECUTE phase ready.",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        print(f"[JEO] ⚠️  ralphmode profile write failed: {exc}", file=sys.stderr)
+
+
+def deactivate_ralphmode(root: Path) -> None:
+    """Revert permissionMode to the previous value saved before ralphmode activation.
+
+    Called by worktree-cleanup.sh (or manually) at CLEANUP phase.
+    """
+    project_settings_path = root / ".claude" / "settings.json"
+    if not project_settings_path.exists():
+        return
+    try:
+        ps = json.loads(project_settings_path.read_text(encoding="utf-8"))
+        if ps.get("permissionMode") != RALPHMODE_PERMISSION:
+            return  # Already reverted or never set
+        previous = ps.pop("_ralphmode_previous_permission", "default")
+        if previous == "default":
+            ps.pop("permissionMode", None)
+        else:
+            ps["permissionMode"] = previous
+        project_settings_path.write_text(json.dumps(ps, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        # Update jeo-state.json
+        state = load_state(root)
+        if state:
+            state["ralphmode_active"] = False
+            state["updated_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+            save_state(root, state)
+
+        print(f"[JEO] ralphmode deactivated (permissionMode restored to {previous!r}).", file=sys.stderr)
+    except Exception as exc:
+        print(f"[JEO] ⚠️  ralphmode deactivation failed: {exc}", file=sys.stderr)
+
+
 def main() -> int:
+    # Support --deactivate flag for use in CLEANUP (worktree-cleanup.sh)
+    if "--deactivate" in sys.argv:
+        deactivate_ralphmode(git_root())
+        return 0
+
     payload = sys.stdin.read()
     root = git_root()
     state = load_state(root)
@@ -129,7 +212,13 @@ def main() -> int:
         return 0
 
     reset_for_revised_plan(root, state, current_hash)
-    return run_plannotator(payload)
+    rc = run_plannotator(payload)
+
+    if rc == 0:
+        # Plan approved — activate ralphmode for the EXECUTE phase
+        activate_ralphmode(root, load_state(root))
+
+    return rc
 
 
 if __name__ == "__main__":
