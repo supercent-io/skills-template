@@ -10,13 +10,24 @@
 
 **80 AI agent skills · TOON Format · Cross-platform**
 
-[Quick Start](#quick-start) · [Skills List](#skills-list-80-total) · [Installation](#installation) · [한국어](README.ko.md)
+[Quick Start](#-quick-start) · [Skills List](#-skills-list-80-total) · [Installation](#-installation) · [한국어](README.ko.md)
 
 </div>
 
 ---
 
-## Quick Start
+## 💡 What is Agent Skills?
+
+**80 AI agent skills · TOON Format · Cross-platform**
+
+Agent Skills is a curated collection of 80 AI agent skills for LLM-based development workflows. Built around the `jeo` orchestration protocol, it provides:
+- Unified orchestration across Claude Code, Gemini CLI, OpenAI Codex, and OpenCode
+- Plan → Execute → Verify → Cleanup automated pipelines
+- Multi-agent team coordination with parallel execution
+
+---
+
+## 🚀 Quick Start
 
 > **Prerequisite**: Install `skills` CLI before running `npx skills add`.
 >
@@ -38,7 +49,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## Architecture
+## 🏗 Architecture
 
 ```mermaid
 graph TD
@@ -59,7 +70,7 @@ graph TD
 
 ---
 
-## What's New in v2026-03-11
+## 🆕 What's New in v2026-03-11
 
 | Change | Details |
 |--------|---------|
@@ -70,7 +81,7 @@ graph TD
 
 ---
 
-## Installation
+## 📦 Installation
 
 ### Step 0: Install `skills` CLI
 
@@ -126,11 +137,11 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 ---
 
-## Skills List (80 total)
+## 📚 Skills List (80 total)
 
 > Full manifest: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
-### Core Orchestration (10)
+### 🎯 Core Orchestration (10)
 
 | Skill | Keyword | Platform | Description |
 |-------|---------|----------|-------------|
@@ -145,7 +156,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `bmad-idea` | `bmad-idea` | All | Creative intelligence — 5 specialist ideation agents |
 | `survey` | `survey` | All | Pre-implementation landscape scan |
 
-### Planning & Review (5)
+### 📋 Planning & Review (5)
 
 | Skill | Keyword | Description |
 |-------|---------|-------------|
@@ -155,7 +166,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `playwriter` | `playwriter` | Playwright automation connecting to live browser |
 | `vibe-kanban` | `kanbanview` | Visual Kanban board with git worktree isolation |
 
-### Agent Development (7)
+### 🤖 Agent Development (7)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -167,7 +178,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `prompt-repetition` | LLM accuracy via prompt repetition technique | All |
 | `skill-standardization` | SKILL.md validation against Agent Skills spec | All |
 
-### Backend (5)
+### ⚙️ Backend (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -177,7 +188,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `backend-testing` | Unit/integration/API test strategies | All |
 | `database-schema-design` | SQL/NoSQL schema design | All |
 
-### Frontend (9)
+### 🎨 Frontend (9)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -191,7 +202,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `web-accessibility` | WCAG 2.1 compliance | All |
 | `web-design-guidelines` | Web Interface Guidelines compliance review | All |
 
-### Code Quality (5)
+### 🔍 Code Quality (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -201,7 +212,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `performance-optimization` | Speed, efficiency, scalability optimization | All |
 | `testing-strategies` | Test pyramid, coverage, flaky-test hardening | All |
 
-### Infrastructure (10)
+### 🏗 Infrastructure (10)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -216,7 +227,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `system-environment-setup` | Reproducible environment configuration | All |
 | `vercel-deploy` | Vercel deployment automation | All |
 
-### Documentation (4)
+### 📝 Documentation (4)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -225,7 +236,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `technical-writing` | Technical documentation and specs | All |
 | `user-guide-writing` | User guides and tutorials | All |
 
-### Project Management (4)
+### 📊 Project Management (4)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -234,7 +245,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `task-estimation` | Story points, t-shirt sizing, planning poker | All |
 | `task-planning` | Task breakdown and user stories | All |
 
-### Search & Analysis (5)
+### 🔭 Search & Analysis (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -244,7 +255,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `log-analysis` | Log analysis and incident debugging | All |
 | `pattern-detection` | Pattern and anomaly detection | All |
 
-### Creative Media (5)
+### 🎬 Creative Media (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -254,14 +265,14 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `remotion-video-production` | Programmable video production with Remotion | All |
 | `video-production` | Video production workflows *(in development)* | All |
 
-### Marketing (2)
+### 📢 Marketing (2)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `marketing-automation` | Marketing automation *(in development)* | All |
 | `marketing-skills-collection` | 23 sub-skills: CRO, copywriting, SEO, analytics, growth | All |
 
-### Utilities (9)
+### 🔧 Utilities (9)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
@@ -277,7 +288,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 ---
 
-## TOON Format Injection
+## 🧬 TOON Format Injection
 
 TOON (Token-Oriented Object Notation) compresses the skill catalog and auto-injects it into every prompt. **40-50% token savings** vs JSON/Markdown.
 
@@ -292,7 +303,7 @@ TOON (Token-Oriented Object Notation) compresses the skill catalog and auto-inje
 
 ---
 
-## Featured Tools
+## 🔮 Featured Tools
 
 ### jeo — Integrated Agent Orchestration
 > Keyword: `jeo` · `annotate` | Platforms: Claude · Codex · Gemini · OpenCode
@@ -338,7 +349,7 @@ npx vibe-kanban
 
 ---
 
-## Recommended Harness OSS
+## 🌐 Recommended Harness OSS
 
 | Repository | Stars | Description |
 |-----------|------:|-------------|
@@ -352,7 +363,7 @@ npx vibe-kanban
 
 ---
 
-## Structure
+## 📁 Structure
 
 ```text
 .
@@ -366,7 +377,7 @@ npx vibe-kanban
 
 ---
 
-## Related Docs
+## 📖 Related Docs
 
 | Tool | Keyword | Doc |
 |------|---------|-----|
@@ -377,6 +388,22 @@ npx vibe-kanban
 | `omc` | `omc` | [docs/omc/README.md](docs/omc/README.md) |
 | `bmad-orchestrator` | `bmad` | [docs/bmad/README.md](docs/bmad/README.md) |
 | Harness OSS | — | [docs/harness/README.md](docs/harness/README.md) |
+
+---
+
+## 📎 References
+
+| Component | Source | License |
+|-----------|--------|---------|
+| `jeo` | Internal | MIT |
+| `omc` | [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) | MIT |
+| `ralph` | [Q00/ouroboros](https://github.com/Q00/ouroboros) | MIT |
+| `plannotator` | [plannotator.ai](https://plannotator.ai) | MIT |
+| `bmad` | [bmad-dev/BMAD-METHOD](https://github.com/bmad-dev/BMAD-METHOD) | MIT |
+| `agentation` | [benjitaylor/agentation](https://github.com/benjitaylor/agentation) | MIT |
+| `fabric` | [danielmiessler/fabric](https://github.com/danielmiessler/fabric) | MIT |
+| `autoresearch` | Andrej Karpathy methodology | — |
+| Agent Skills Spec | [agentskills.io](https://agentskills.io/specification) | — |
 
 ---
 

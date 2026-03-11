@@ -1,0 +1,13 @@
+@skill image-generation-mcp
+desc: Generate high-quality images via MCP (Gemini models or compatible services) using structured prompts, ratios, and validation for marketing, UI, or presentations.
+tags: [image-generation, gemini, mcp, design, creative, ai-art]
+platforms: [Claude, ChatGPT, Gemini, Codex]
+when: generating images for marketing, UI design, presentations, brand assets
+trigger: image-generation-mcp
+steps:
+  1. Configure MCP environment (claude mcp list, gemini-cli check)
+  2. Define structured prompt (Subject, Style, Lighting, Mood, Composition, Aspect Ratio, Brand Colors)
+  3. Choose model (gemini-2.5-flash-image for speed, gemini-2.5-pro-image for quality)
+  4. Generate 2-4 variants and review (brand fit, composition, ratio, text readability)
+  5. Save final image + metadata JSON (prompt, model, ratio, style, output_file, timestamp)
+output: Final image files + prompt metadata JSON record
