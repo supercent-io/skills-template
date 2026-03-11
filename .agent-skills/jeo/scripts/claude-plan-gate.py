@@ -110,22 +110,47 @@ def reset_for_revised_plan(root: Path, state: dict[str, Any], current_hash: str)
         state["plan_gate_status"] = "pending"
         state["plan_approved"] = False
         state["plan_current_hash"] = current_hash
-        state["updated_at"] = subprocess.check_output(
-            ["python3", "-c", "import datetime;print(datetime.datetime.utcnow().isoformat()+\"Z\")"],
-            text=True,
-        ).strip()
-        save_state(root, state)
+        state["updated_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+        try:
+            save_state(root, state)
+        except Exception as exc:
+            print(f"[JEO] ⚠️  Failed to reset plan state: {exc}", file=sys.stderr)
 
 
-def run_plannotator(payload: str) -> int:
-    proc = subprocess.run(["plannotator"], input=payload, text=True)
+def run_plannotator(payload: str, plan_text: str = "") -> int:
+    """Run plannotator with the hook payload, injecting plan_text if tool_input.plan is missing.
+
+    plannotator expects {"tool_input": {"plan": "...", "permission_mode": "..."}} on stdin.
+    If the ExitPlanMode hook payload does not include tool_input.plan (e.g. Claude Code does
+    not embed it), we inject the plan text found by find_plan_text() so plannotator can
+    render the plan UI correctly.  Without this injection the browser page has no content
+    and clicking "Approve" causes a page error.
+    """
+    try:
+        data = json.loads(payload)
+    except Exception:
+        data = {}
+
+    if plan_text:
+        tool_input = data.get("tool_input")
+        if not isinstance(tool_input, dict):
+            data["tool_input"] = {"plan": plan_text, "permission_mode": "acceptEdits"}
+        else:
+            if not tool_input.get("plan"):
+                tool_input["plan"] = plan_text
+            if not tool_input.get("permission_mode"):
+                tool_input["permission_mode"] = "acceptEdits"
+
+    enriched_payload = json.dumps(data)
+    proc = subprocess.run(["plannotator"], input=enriched_payload, text=True)
     return proc.returncode
 
 
-def activate_ralphmode(root: Path, state: dict[str, Any]) -> None:
+def activate_ralphmode(root: Path, state: dict[str, Any], current_hash: str = "") -> None:
     """Activate ralphmode after plan approval.
 
     - Sets ralphmode_active=true in jeo-state.json
+    - Records last_reviewed_plan_hash so should_skip() can skip re-reviews of the same plan
     - Writes permissionMode=acceptEdits to project .claude/settings.json
       so the EXECUTE phase (/omc:team) runs with minimal approval prompts.
     """
@@ -135,7 +160,14 @@ def activate_ralphmode(root: Path, state: dict[str, Any]) -> None:
     state["ralphmode_active"] = True
     state["ralphmode_activated_at"] = now
     state["updated_at"] = now
-    save_state(root, state)
+    if current_hash:
+        state["last_reviewed_plan_hash"] = current_hash
+        state["last_reviewed_plan_at"] = now
+        state["plan_review_method"] = "plannotator"
+    try:
+        save_state(root, state)
+    except Exception as exc:
+        print(f"[JEO] ⚠️  Failed to save jeo-state.json: {exc}", file=sys.stderr)
 
     # Write project-local .claude/settings.json with acceptEdits
     project_settings_path = root / ".claude" / "settings.json"
@@ -201,7 +233,8 @@ def main() -> int:
     payload = sys.stdin.read()
     root = git_root()
     state = load_state(root)
-    current_hash = plan_hash(find_plan_text(root, payload))
+    plan_text = find_plan_text(root, payload)
+    current_hash = plan_hash(plan_text)
 
     if should_skip(state, current_hash):
         status = state.get("plan_gate_status", "unknown")
@@ -212,11 +245,11 @@ def main() -> int:
         return 0
 
     reset_for_revised_plan(root, state, current_hash)
-    rc = run_plannotator(payload)
+    rc = run_plannotator(payload, plan_text)
 
     if rc == 0:
         # Plan approved — activate ralphmode for the EXECUTE phase
-        activate_ralphmode(root, load_state(root))
+        activate_ralphmode(root, load_state(root), current_hash)
 
     return rc
 
