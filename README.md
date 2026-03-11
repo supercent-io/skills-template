@@ -173,7 +173,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `agent-configuration` | AI agent configuration & security policies | All |
 | `agent-evaluation` | AI agent evaluation system design | All |
 | `agentic-development-principles` | Universal agentic development principles | All |
-| `agentic-principles` | Core AI agent collaboration principles | All |
+| `agentic-principles` | Core AI agent principles: divide-and-conquer, context management, automation philosophy | All |
 | `agentic-workflow` | Daily workflow optimization: shortcuts, Git, MCP, sessions | All |
 | `prompt-repetition` | LLM accuracy via prompt repetition technique | All |
 | `skill-standardization` | SKILL.md validation against Agent Skills spec | All |
@@ -259,17 +259,17 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
-| `image-generation` | AI image generation *(in development)* | Claude · Gemini |
+| `image-generation` | Generate images via MCP (Gemini/compatible) for marketing, UI, presentations | All |
 | `image-generation-mcp` | Image generation via MCP (Gemini/compatible) | All |
 | `pollinations-ai` | Free image generation via Pollinations.ai | All |
 | `remotion-video-production` | Programmable video production with Remotion | All |
-| `video-production` | Video production workflows *(in development)* | All |
+| `video-production` | Produce programmable videos with Remotion — scene planning, asset orchestration | All |
 
 ### 📢 Marketing (2)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
-| `marketing-automation` | Marketing automation *(in development)* | All |
+| `marketing-automation` | 23 sub-skills: CRO, copywriting, SEO, analytics, growth | All |
 | `marketing-skills-collection` | 23 sub-skills: CRO, copywriting, SEO, analytics, growth | All |
 
 ### 🔧 Utilities (9)

@@ -173,7 +173,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `agent-configuration` | AI 에이전트 구성 및 보안 정책 | 전체 |
 | `agent-evaluation` | AI 에이전트 평가 시스템 설계 | 전체 |
 | `agentic-development-principles` | 에이전틱 개발 보편 원칙 | 전체 |
-| `agentic-principles` | 핵심 AI 에이전트 협업 원칙 | 전체 |
+| `agentic-principles` | 핵심 AI 에이전트 원칙: 분할정복, 컨텍스트 관리, 자동화 철학 | 전체 |
 | `agentic-workflow` | 일상 워크플로우 최적화: 단축키, Git, MCP, 세션 | 전체 |
 | `prompt-repetition` | 프롬프트 반복 기법으로 LLM 정확도 향상 | 전체 |
 | `skill-standardization` | Agent Skills 스펙 대비 SKILL.md 검증 | 전체 |
@@ -259,17 +259,17 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|
-| `image-generation` | AI 이미지 생성 *(개발 중)* | Claude · Gemini |
+| `image-generation` | MCP를 통한 이미지 생성 (Gemini/호환) — 마케팅, UI, 프레젠테이션용 | 전체 |
 | `image-generation-mcp` | MCP를 통한 이미지 생성 (Gemini/호환) | 전체 |
 | `pollinations-ai` | Pollinations.ai 무료 이미지 생성 | 전체 |
 | `remotion-video-production` | Remotion 기반 프로그래머블 비디오 제작 | 전체 |
-| `video-production` | 비디오 제작 워크플로우 *(개발 중)* | 전체 |
+| `video-production` | Remotion 기반 프로그래머블 비디오 — 씬 플래닝, 에셋 오케스트레이션 | 전체 |
 
 ### 📢 마케팅 (2개)
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|
-| `marketing-automation` | 마케팅 자동화 *(개발 중)* | 전체 |
+| `marketing-automation` | 23개 서브스킬: CRO, 카피라이팅, SEO, 애널리틱스, 그로스 | 전체 |
 | `marketing-skills-collection` | 23개 서브스킬: CRO, 카피라이팅, SEO, 애널리틱스, 그로스 | 전체 |
 
 ### 🔧 유틸리티 (9개)
