@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Skills](https://img.shields.io/badge/Skills-80-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
+[![Skills](https://img.shields.io/badge/Skills-72-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20%7C%20Gemini%20%7C%20Codex%20%7C%20OpenCode-orange?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![BMAD](https://img.shields.io/badge/BMAD-1.1.0-purple?style=for-the-badge)](docs/bmad/README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/akillness3q)
 
-**80 AI agent skills · TOON Format · Cross-platform**
+**72 AI agent skills · TOON Format · Cross-platform**
 
-[Quick Start](#-quick-start) · [Skills List](#-skills-list-80-total) · [Installation](#-installation) · [한국어](README.ko.md)
+[Quick Start](#-quick-start) · [Skills List](#-skills-list-72-total) · [Installation](#-installation) · [한국어](README.ko.md)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 💡 What is Agent Skills?
 
-**80 AI agent skills · TOON Format · Cross-platform**
+**72 AI agent skills · TOON Format · Cross-platform**
 
-Agent Skills is a curated collection of 80 AI agent skills for LLM-based development workflows. Built around the `jeo` orchestration protocol, it provides:
+Agent Skills is a curated collection of 72 AI agent skills for LLM-based development workflows. Built around the `jeo` orchestration protocol, it provides:
 - Unified orchestration across Claude Code, Gemini CLI, OpenAI Codex, and OpenCode
 - Plan → Execute → Verify → Cleanup automated pipelines
 - Multi-agent team coordination with parallel execution
@@ -74,9 +74,11 @@ graph TD
 
 | Change | Details |
 |--------|---------|
-| **autoresearch: Karpathy autonomous ML experiment skill** | AI agent modifies `train.py`, runs 5-min GPU experiments, evaluates with `val_bpb`, ratchets improvements via git. Includes `scripts/` and `references/`. 79 → **80 skills**. |
+| **Removed deprecated agent-development skills** | Removed `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`. 80 → **72 skills**. |
+| **Removed deprecated image/media skills** | Removed `image-generation`, `image-generation-mcp`, `pollinations-ai`. Use `remotion-video-production` / `video-production` for media. |
+| **autoresearch: Karpathy autonomous ML experiment skill** | AI agent modifies `train.py`, runs 5-min GPU experiments, evaluates with `val_bpb`, ratchets improvements via git. Includes `scripts/` and `references/`. |
 | **jeo v1.2.3: plannotator-plan-loop.sh all-platform hardening** | Cross-platform temp dir fallback, dedicated port `PLANNOTATOR_PORT=47291`, `probe_plannotator_port()` + `wait_for_listen()`, browser-crash retry up to 3 times, structured `jeo-blocked.json` output. |
-| **survey: cross-platform landscape scan** | 4-lane discovery flow, artifacts to `.survey/{slug}/`, Claude/Codex/Gemini abstraction as `settings/rules/hooks`. 76 → **77 skills**. |
+| **survey: cross-platform landscape scan** | 4-lane discovery flow, artifacts to `.survey/{slug}/`, Claude/Codex/Gemini abstraction as `settings/rules/hooks`. |
 | **presentation-builder: slides-grab workflow** | HTML-first deck creation, visual editing, PPTX/PDF export. Removed duplicate `pptx-presentation-builder`. |
 
 ---
@@ -137,7 +139,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 ---
 
-## 📚 Skills List (80 total)
+## 📚 Skills List (72 total)
 
 > Full manifest: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -166,15 +168,10 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `playwriter` | `playwriter` | Playwright automation connecting to live browser |
 | `vibe-kanban` | `kanbanview` | Visual Kanban board with git worktree isolation |
 
-### 🤖 Agent Development (7)
+### 🤖 Agent Development (2)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
-| `agent-configuration` | AI agent configuration & security policies | All |
-| `agent-evaluation` | AI agent evaluation system design | All |
-| `agentic-development-principles` | Universal agentic development principles | All |
-| `agentic-principles` | Core AI agent principles: divide-and-conquer, context management, automation philosophy | All |
-| `agentic-workflow` | Daily workflow optimization: shortcuts, Git, MCP, sessions | All |
 | `prompt-repetition` | LLM accuracy via prompt repetition technique | All |
 | `skill-standardization` | SKILL.md validation against Agent Skills spec | All |
 
@@ -255,13 +252,10 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `log-analysis` | Log analysis and incident debugging | All |
 | `pattern-detection` | Pattern and anomaly detection | All |
 
-### 🎬 Creative Media (5)
+### 🎬 Creative Media (2)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
-| `image-generation` | Generate images via MCP (Gemini/compatible) for marketing, UI, presentations | All |
-| `image-generation-mcp` | Image generation via MCP (Gemini/compatible) | All |
-| `pollinations-ai` | Free image generation via Pollinations.ai | All |
 | `remotion-video-production` | Programmable video production with Remotion | All |
 | `video-production` | Produce programmable videos with Remotion — scene planning, asset orchestration | All |
 
@@ -367,7 +361,7 @@ npx vibe-kanban
 
 ```text
 .
-├── .agent-skills/          ← 80 skill folders (each with SKILL.md + SKILL.toon)
+├── .agent-skills/          ← 72 skill folders (each with SKILL.md + SKILL.toon)
 ├── docs/                   ← detailed guides (bmad, omc, plannotator, ralph, ...)
 ├── install.sh
 ├── setup-all-skills-prompt.md

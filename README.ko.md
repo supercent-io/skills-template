@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Skills](https://img.shields.io/badge/Skills-80-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
+[![Skills](https://img.shields.io/badge/Skills-72-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20%7C%20Gemini%20%7C%20Codex%20%7C%20OpenCode-orange?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![BMAD](https://img.shields.io/badge/BMAD-1.1.0-purple?style=for-the-badge)](docs/bmad/README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/akillness3q)
 
-**80개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**72개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-80개) · [설치](#-설치) · [English](README.md)
+[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-72개) · [설치](#-설치) · [English](README.md)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 💡 Agent Skills란?
 
-**80개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**72개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-Agent Skills는 LLM 기반 개발 워크플로우를 위한 80개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
+Agent Skills는 LLM 기반 개발 워크플로우를 위한 72개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
 - Claude Code, Gemini CLI, OpenAI Codex, OpenCode 전반에 걸친 통합 오케스트레이션
 - 계획 → 실행 → 검증 → 정리 자동화 파이프라인
 - 병렬 실행이 가능한 멀티 에이전트 팀 조율
@@ -74,9 +74,11 @@ graph TD
 
 | 변경 | 내용 |
 |------|------|
-| **autoresearch: Karpathy 자율 ML 실험 스킬** | AI 에이전트가 `train.py`를 수정하고 5분 GPU 실험을 반복, `val_bpb`로 평가, git ratcheting으로 개선만 커밋합니다. `scripts/`와 `references/` 포함. 79 → **80개** |
+| **에이전트 개발 스킬 일부 제거** | `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow` 제거. 80 → **72개** |
+| **이미지/미디어 스킬 일부 제거** | `image-generation`, `image-generation-mcp`, `pollinations-ai` 제거. 미디어는 `remotion-video-production` / `video-production` 사용 |
+| **autoresearch: Karpathy 자율 ML 실험 스킬** | AI 에이전트가 `train.py`를 수정하고 5분 GPU 실험을 반복, `val_bpb`로 평가, git ratcheting으로 개선만 커밋합니다. `scripts/`와 `references/` 포함 |
 | **jeo v1.2.3: plannotator-plan-loop.sh 전 플랫폼 강화** | 크로스 플랫폼 임시 디렉토리, 전용 포트 `PLANNOTATOR_PORT=47291`, `probe_plannotator_port()` + `wait_for_listen()`, 브라우저 강제종료 시 최대 3회 자동 재시작, 구조화 `jeo-blocked.json` 출력 |
-| **survey: 전 플랫폼 문제공간 스캔 스킬** | 4개 병렬 조사 레인, 결과물을 `.survey/{slug}/`에 저장, Claude/Codex/Gemini 차이를 `settings/rules/hooks`로 정규화. 76 → **77개** |
+| **survey: 전 플랫폼 문제공간 스캔 스킬** | 4개 병렬 조사 레인, 결과물을 `.survey/{slug}/`에 저장, Claude/Codex/Gemini 차이를 `settings/rules/hooks`로 정규화 |
 | **presentation-builder: slides-grab 워크플로우** | HTML 슬라이드 작성, 시각 편집, PPTX/PDF export. 중복 스킬 `pptx-presentation-builder` 제거 |
 
 ---
@@ -137,7 +139,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 ---
 
-## 📚 스킬 목록 (80개)
+## 📚 스킬 목록 (72개)
 
 > 전체 매니페스트: `.agent-skills/skills.json` · 각 폴더의 `SKILL.md`
 
@@ -166,15 +168,10 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `playwriter` | `playwriter` | 실행 중인 브라우저에 연결하는 Playwright 자동화 |
 | `vibe-kanban` | `kanbanview` | git worktree 격리가 있는 시각적 칸반 보드 |
 
-### 🤖 에이전트 개발 (7개)
+### 🤖 에이전트 개발 (2개)
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|
-| `agent-configuration` | AI 에이전트 구성 및 보안 정책 | 전체 |
-| `agent-evaluation` | AI 에이전트 평가 시스템 설계 | 전체 |
-| `agentic-development-principles` | 에이전틱 개발 보편 원칙 | 전체 |
-| `agentic-principles` | 핵심 AI 에이전트 원칙: 분할정복, 컨텍스트 관리, 자동화 철학 | 전체 |
-| `agentic-workflow` | 일상 워크플로우 최적화: 단축키, Git, MCP, 세션 | 전체 |
 | `prompt-repetition` | 프롬프트 반복 기법으로 LLM 정확도 향상 | 전체 |
 | `skill-standardization` | Agent Skills 스펙 대비 SKILL.md 검증 | 전체 |
 
@@ -255,13 +252,10 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `log-analysis` | 로그 분석 및 인시던트 디버깅 | 전체 |
 | `pattern-detection` | 패턴 및 이상 탐지 | 전체 |
 
-### 🎬 창의 미디어 (5개)
+### 🎬 창의 미디어 (2개)
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|
-| `image-generation` | MCP를 통한 이미지 생성 (Gemini/호환) — 마케팅, UI, 프레젠테이션용 | 전체 |
-| `image-generation-mcp` | MCP를 통한 이미지 생성 (Gemini/호환) | 전체 |
-| `pollinations-ai` | Pollinations.ai 무료 이미지 생성 | 전체 |
 | `remotion-video-production` | Remotion 기반 프로그래머블 비디오 제작 | 전체 |
 | `video-production` | Remotion 기반 프로그래머블 비디오 — 씬 플래닝, 에셋 오케스트레이션 | 전체 |
 
@@ -367,7 +361,7 @@ npx vibe-kanban
 
 ```text
 .
-├── .agent-skills/          ← 80개 스킬 폴더 (각각 SKILL.md + SKILL.toon)
+├── .agent-skills/          ← 72개 스킬 폴더 (각각 SKILL.md + SKILL.toon)
 ├── docs/                   ← 상세 가이드 (bmad, omc, plannotator, ralph, ...)
 ├── install.sh
 ├── setup-all-skills-prompt.md

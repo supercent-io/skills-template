@@ -125,7 +125,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 80-Skill Installation (Default Execution Step)
+### Step 2: Full 72-Skill Installation (Default Execution Step)
 
 > **Always wipe existing skill directories before running — ensures no stale skills from previous installs or Step 1 partial install remain.**
 
@@ -147,12 +147,9 @@ echo "✅ All skill directories wiped — ready for clean install"
 
 ```bash
 npx skills add https://github.com/supercent-io/skills-template \
-  --skill agent-configuration --skill agent-evaluation \
-  --skill agentic-development-principles --skill agentic-principles \
-  --skill agentic-workflow --skill bmad-orchestrator \
-  --skill bmad-gds --skill bmad-idea \
-  --skill prompt-repetition --skill api-design \
-  --skill api-documentation --skill authentication-setup \
+  --skill bmad-orchestrator --skill bmad-gds --skill bmad-idea \
+  --skill prompt-repetition --skill skill-standardization \
+  --skill api-design --skill api-documentation --skill authentication-setup \
   --skill backend-testing --skill database-schema-design \
   --skill design-system --skill frontend-design-system \
   --skill react-best-practices --skill vercel-react-best-practices \
@@ -172,7 +169,6 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill codebase-search --skill data-analysis \
   --skill log-analysis --skill pattern-detection \
   --skill llm-monitoring-dashboard \
-  --skill image-generation --skill image-generation-mcp --skill pollinations-ai \
   --skill remotion-video-production --skill video-production \
   --skill marketing-automation --skill marketing-skills-collection \
   --skill agent-browser --skill agentation --skill copilot-coding-agent \
@@ -181,7 +177,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill git-submodule --skill git-workflow --skill jeo \
   --skill npm-git-install --skill ohmg --skill omx \
   --skill omc --skill opencontext --skill plannotator --skill playwriter \
-  --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
+  --skill ralph --skill ralphmode --skill survey \
   --skill vibe-kanban --skill workflow-automation \
   --skill fabric --skill autoresearch
 ```
