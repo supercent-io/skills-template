@@ -247,6 +247,37 @@ grep -i "attention\|GQA\|MLA\|MHA" results.tsv
 awk -F'\t' '$4=="keep"' results.tsv | sort -t$'\t' -k2 -n
 ```
 
+## Available scripts
+
+Run from inside the autoresearch repository directory:
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `setup.sh` | One-time environment setup | `bash scripts/setup.sh [--seq-len 512]` |
+| `run-experiment.sh` | Single 5-min experiment + metric extraction | `bash scripts/run-experiment.sh` |
+| `run-loop.sh` | Autonomous loop: run → keep/revert → repeat | `bash scripts/run-loop.sh [--max 20]` |
+| `show-results.sh` | Human-readable results.tsv report | `bash scripts/show-results.sh [--top 10]` |
+| `check-hardware.sh` | GPU/CUDA/uv availability check (JSON output) | `bash scripts/check-hardware.sh` |
+
+```bash
+# Typical overnight session
+bash scripts/check-hardware.sh
+bash scripts/setup.sh --seq-len 512     # adjust for your VRAM
+# Edit program.md with your research directives
+bash scripts/run-loop.sh --max 100 --desc "session-1"
+bash scripts/show-results.sh --kept-only
+```
+
+## References
+
+Detailed documentation in `references/`:
+
+| File | Contents |
+|------|---------|
+| `references/architecture.md` | System design, immutability contract, git ratcheting, key design decisions |
+| `references/program-md-guide.md` | How to write effective `program.md` directives; full template + principles |
+| `references/hardware-config.md` | VRAM settings by GPU, memory optimization techniques, troubleshooting |
+
 ## Best practices
 
 1. **Write program.md before running** — the agent is only as good as its directives; vague programs waste compute
