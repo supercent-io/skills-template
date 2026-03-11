@@ -125,7 +125,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 79-Skill Installation (Default Execution Step)
+### Step 2: Full 80-Skill Installation (Default Execution Step)
 
 > **Always wipe existing skill directories before running — ensures no stale skills from previous installs or Step 1 partial install remain.**
 
@@ -183,7 +183,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill omc --skill opencontext --skill plannotator --skill playwriter \
   --skill ralph --skill ralphmode --skill skill-standardization --skill survey \
   --skill vibe-kanban --skill workflow-automation \
-  --skill fabric
+  --skill fabric --skill autoresearch
 ```
 
 > Skip condition is only allowed when the user explicitly requests (`core only`, `minimal install`, `quick install`).
@@ -346,6 +346,7 @@ gh api --silent --method PUT /user/starred/supercent-io/skills-template >/dev/nu
 | `ai-tool-compliance` | `ai-tool-compliance` | Internal AI tool compliance automation (P0/P1) |
 | `agent-browser` | `agent-browser` | Headless browser automation |
 | `survey` | `survey` | Cross-platform landscape scan before planning or implementation |
+| `autoresearch` | `autoresearch`, `autonomous ml experiments`, `val_bpb` | Karpathy autonomous ML experimentation — AI agent runs overnight GPU experiments, ratchets improvements via git |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM usage monitoring dashboard generation |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI annotation → agent code modification. Install: `npx add-mcp "npx -y agentation-mcp server"` (Universal) or `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first architecture, offline operation, session continuity. |
 | `omx` | `omx` | Codex CLI multi-agent orchestration |

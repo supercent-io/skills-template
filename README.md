@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-11 · **79 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-11 · **80 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-79-brightgreen)](#skills-list-79-total)
+[![Skills](https://img.shields.io/badge/Skills-80-brightgreen)](#skills-list-80-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -20,7 +20,7 @@
 - [What's New](#whats-new-in-v2026-03-11)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
-- [Skills List (79)](#skills-list-79-total)
+- [Skills List (80)](#skills-list-80-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -50,6 +50,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 | Change | Details |
 |--------|---------|
+| **autoresearch: Karpathy autonomous ML experiment skill added** | Added `autoresearch` skill — Andrej Karpathy's autonomous ML experimentation framework. AI agent modifies `train.py`, runs fixed 5-minute GPU experiments, evaluates with `val_bpb`, and commits only improvements via git ratcheting. Covers setup, `program.md` authoring, overnight run workflow, and `results.tsv` interpretation. Brings total from 79 to **80 skills**. |
 | **jeo v1.2.3: plannotator-plan-loop.sh all-platform hardening** | Cross-platform temp dir (`TMPDIR`/`TMP`/`TEMP` fallback), dedicated port `PLANNOTATOR_PORT=47291` (IANA unassigned), `probe_plannotator_port()` (rc=0 free / rc=1 EADDRINUSE / rc=2 sandbox) + `wait_for_listen()` with `/dev/tcp` primary + Python3 fallback, background PID tracking with 2-phase monitoring (STARTING → LISTENING), browser-crash retry up to 3 times, structured `jeo-blocked.json` on exhaustion in non-TTY environments. |
 | **survey: cross-platform landscape scan added** | Added `survey`, a platform-neutral research skill inspired by `groundwork`. It keeps the 4-lane discovery flow, writes shared artifacts to `.survey/{slug}/`, and adds a Claude/Codex/Gemini abstraction layer for `settings`, `rules`, and `hooks`, bringing the repository from 76 to **77 skills**. |
 | **presentation-builder: slides-grab workflow adopted** | `presentation-builder` now uses `slides-grab` for HTML-first deck creation, visual editing, validation, and PPTX/PDF export. Removed duplicate `pptx-presentation-builder`, bringing the repository from 77 to **76 skills**. |
@@ -205,7 +206,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (79 total)
+## Skills List (80 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -288,10 +289,11 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `task-estimation` | Task estimation techniques | All platforms |
 | `task-planning` | Task planning & organization | All platforms |
 
-### Search & Analysis (4)
+### Search & Analysis (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
+| `autoresearch` | Autonomous ML experimentation (Karpathy) — AI agent modifies train.py, runs 5-min GPU experiments, evaluates with val_bpb, ratchets improvements via git | All platforms |
 | `codebase-search` | Codebase search & navigation | All platforms |
 | `data-analysis` | Data analysis & insights | All platforms |
 | `log-analysis` | Log analysis & debugging | All platforms |

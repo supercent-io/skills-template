@@ -2,10 +2,10 @@
 
 > 🌐 Language / 언어: **[English](README.md)** | **한국어**
 
-> v2026-03-11 · **79 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-11 · **80 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
-[![Skills](https://img.shields.io/badge/Skills-79-brightgreen)](#skills-list-79-total)
+[![Skills](https://img.shields.io/badge/Skills-80-brightgreen)](#skills-list-80-total)
 [![BMAD Deploy Version](https://img.shields.io/badge/BMAD-1.1.0-orange)](docs/bmad/README.md)
 
 ![Agent Skills Installer](AgentSkills.png)
@@ -20,7 +20,7 @@
 - [What's New](#whats-new-in-v2026-03-11)
 - [설치 (Install)](#설치-install)
 - [실행 가이드](#실행-가이드)
-- [Skills List (79)](#skills-list-79-total)
+- [Skills List (80)](#skills-list-80-total)
 - [Featured Tools](#featured-tools)
 - [TOON Format Injection](#toon-format-injection)
 - [Structure](#structure)
@@ -50,6 +50,7 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 | 변경 | 내용 |
 |------|------|
+| **autoresearch: Karpathy 자율 ML 실험 스킬 추가** | `autoresearch` 스킬을 추가했습니다 — Andrej Karpathy의 자율 ML 실험 프레임워크. AI 에이전트가 `train.py`를 수정하고 5분 GPU 실험을 반복하며 `val_bpb`로 평가, git ratcheting으로 개선만 커밋합니다. 설치, `program.md` 작성법, overnight 실행 워크플로우, `results.tsv` 해석 방법을 포함. 전체 스킬 수 79개에서 **80개**로 증가. |
 | **jeo v1.2.3: plannotator-plan-loop.sh 전 플랫폼 강화** | 크로스 플랫폼 임시 디렉토리(`TMPDIR`/`TMP`/`TEMP` 폴백), 전용 포트 `PLANNOTATOR_PORT=47291`(IANA 미배정), `probe_plannotator_port()`(rc=0 여유/rc=1 포트 충돌/rc=2 sandbox 차단) + `wait_for_listen()`(`/dev/tcp` 우선 + Python3 폴백), 백그라운드 PID 추적 및 2단계 모니터링(STARTING → LISTENING), 브라우저 강제종료 시 최대 3회 자동 재시작, 비TTY 환경에서 `jeo-blocked.json` 구조화 출력. |
 | **survey: 전 플랫폼 문제공간 스캔 스킬 추가** | `groundwork`에서 영감을 받은 `survey` 스킬을 추가했습니다. 4개 병렬 조사 레인을 유지하면서 결과물을 `.survey/{slug}/`에 저장하고, Claude/Codex/Gemini 차이를 `settings` / `rules` / `hooks` 추상 레이어로 정리합니다. 전체 스킬 수는 76개에서 **77개**가 되었습니다. |
 | **presentation-builder: slides-grab 워크플로우 채택** | `presentation-builder`가 이제 `slides-grab` 기반 HTML 슬라이드 작성, 시각 편집, 검증, PPTX/PDF export를 사용합니다. 중복 스킬 `pptx-presentation-builder`는 제거되어 전체 스킬 수는 77개에서 **76개**가 되었습니다. |
@@ -205,7 +206,7 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 
 ---
 
-## Skills List (79 total)
+## Skills List (80 total)
 
 > Full manifest + descriptions: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
@@ -288,10 +289,11 @@ npx skills add https://github.com/supercent-io/skills-template --skill playwrite
 | `task-estimation` | Task estimation techniques | All platforms |
 | `task-planning` | Task planning & organization | All platforms |
 
-### Search & Analysis (4)
+### Search & Analysis (5)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
+| `autoresearch` | 자율 ML 실험 (Karpathy) — AI 에이전트가 train.py 수정·5분 GPU 실험·val_bpb 평가·git ratcheting으로 개선만 커밋 | All platforms |
 | `codebase-search` | Codebase search & navigation | All platforms |
 | `data-analysis` | Data analysis & insights | All platforms |
 | `log-analysis` | Log analysis & debugging | All platforms |
