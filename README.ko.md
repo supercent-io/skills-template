@@ -130,7 +130,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 > 전체 매니페스트: `.agent-skills/skills.json` · 각 폴더의 `SKILL.md`
 
-### 핵심 오케스트레이션
+### 핵심 오케스트레이션 (10개)
 
 | 스킬 | 키워드 | 플랫폼 | 설명 |
 |------|--------|--------|------|
@@ -145,7 +145,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `bmad-idea` | `bmad-idea` | 전체 | 창의 지능 — 5개 전문 아이디에이션 에이전트 |
 | `survey` | `survey` | 전체 | 사전 구현 문제공간 스캔 |
 
-### 계획 및 검토
+### 계획 및 검토 (5개)
 
 | 스킬 | 키워드 | 설명 |
 |------|--------|------|

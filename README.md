@@ -130,7 +130,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 > Full manifest: `.agent-skills/skills.json` · each folder's `SKILL.md`
 
-### Core Orchestration
+### Core Orchestration (10)
 
 | Skill | Keyword | Platform | Description |
 |-------|---------|----------|-------------|
@@ -145,7 +145,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `bmad-idea` | `bmad-idea` | All | Creative intelligence — 5 specialist ideation agents |
 | `survey` | `survey` | All | Pre-implementation landscape scan |
 
-### Planning & Review
+### Planning & Review (5)
 
 | Skill | Keyword | Description |
 |-------|---------|-------------|
