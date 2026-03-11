@@ -79,11 +79,22 @@ if plannotator_entry is None:
     changed = True
 
 plan_hooks = plannotator_entry.setdefault("hooks", [])
+
+# Remove raw `plannotator` entries — claude-plan-gate.py calls plannotator
+# internally, so keeping both causes plannotator to launch twice.
+raw_plannotator = [
+    h for h in plan_hooks
+    if h.get("command", "").strip() == "plannotator"
+]
+if raw_plannotator:
+    plan_hooks[:] = [h for h in plan_hooks if h not in raw_plannotator]
+    changed = True
+    messages.append(f"✓ Removed {len(raw_plannotator)} duplicate raw plannotator hook(s) from ExitPlanMode")
+
 existing_plan_hook = next(
     (
         h for h in plan_hooks
-        if h.get("command", "").startswith("plannotator")
-        or "claude-plan-gate.py" in h.get("command", "")
+        if "claude-plan-gate.py" in h.get("command", "")
     ),
     None,
 )
