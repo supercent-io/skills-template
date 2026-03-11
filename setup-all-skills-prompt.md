@@ -1,6 +1,6 @@
 # Agent Skills — LLM Installation Delegation Guide
 
-> 🌐 Language / 언어: **English** | **[한국어](setup-all-skills-prompt.ko.md)**
+> 🌐 Language / 언어: **English**
 
 > Pass this file to an AI agent and it will automatically proceed with installation.
 >

@@ -5,9 +5,16 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Cross-platform temp dir: respects TMPDIR (macOS/Linux) TMP/TEMP (Windows Git Bash)
+_TMPDIR="${TMPDIR:-${TMP:-${TEMP:-/tmp}}}"
 PLAN_FILE="${1:-plan.md}"
 FEEDBACK_FILE="${2:-}"
 MAX_RESTARTS="${3:-3}"
+# Dedicated port for plannotator (IANA unassigned — rarely conflicts with other services).
+# Override with: PLANNOTATOR_PORT=XXXXX bash plannotator-plan-loop.sh ...
+PLANNOTATOR_PORT="${PLANNOTATOR_PORT:-47291}"
+# Seconds to wait for plannotator to bind its port after launch (startup detection).
+PLANNOTATOR_START_TIMEOUT="${PLANNOTATOR_START_TIMEOUT:-15}"
 PORT_ERROR_REGEX='Failed to start server\. Is port .* in use|EADDRINUSE|EPERM|operation not permitted|Failed to listen'
 
 if ! command -v plannotator >/dev/null 2>&1; then
@@ -41,7 +48,7 @@ PYEOF
 )"
 
 SESSION_KEY="$(python3 -c "import hashlib,os; print(hashlib.md5(os.getcwd().encode()).hexdigest()[:8])" 2>/dev/null || echo "default")"
-FEEDBACK_DIR="/tmp/jeo-${SESSION_KEY}"
+FEEDBACK_DIR="${_TMPDIR}/jeo-${SESSION_KEY}"
 RUNTIME_HOME="${FEEDBACK_DIR}/.plannotator"
 mkdir -p "$FEEDBACK_DIR" "$RUNTIME_HOME"
 
@@ -265,18 +272,90 @@ manual_fallback_gate() {
   esac
 }
 
-probe_local_listen() {
+# probe_plannotator_port PORT
+# Returns:
+#   0 — port is free and localhost bind is permitted (plannotator can start)
+#   1 — port is already in use (conflict — another instance may be running)
+#   2 — localhost bind is not permitted (sandbox/CI restriction)
+probe_plannotator_port() {
+  local port="${1:-$PLANNOTATOR_PORT}"
+  # Primary: Node.js probe on the exact plannotator port
   if command -v node >/dev/null 2>&1; then
-    node -e "const http=require('http');const s=http.createServer(()=>{});s.on('error',()=>process.exit(1));s.listen({host:'127.0.0.1',port:0},()=>s.close(()=>process.exit(0)));" >/dev/null 2>&1
+    node -e "
+const net=require('net');
+const s=net.createServer();
+s.on('error',(e)=>{
+  process.exitCode = e.code==='EADDRINUSE' ? 1 : 2;
+  process.exit();
+});
+s.listen({host:'127.0.0.1',port:${port}},()=>s.close(()=>process.exit(0)));
+" >/dev/null 2>&1
     return $?
   fi
+  # Fallback: Python3 socket probe on the exact port
+  if command -v python3 >/dev/null 2>&1; then
+    python3 -c "
+import socket, sys
+port = int(sys.argv[1])
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
+try:
+    s.bind(('127.0.0.1', port))
+    s.close()
+    sys.exit(0)
+except OSError as e:
+    import errno
+    sys.exit(1 if e.errno in (errno.EADDRINUSE,) else 2)
+" "$port" 2>/dev/null
+    return $?
+  fi
+  # Neither available — assume free (conservative default)
   return 0
 }
 
-# Some sandboxes disallow localhost bind(). In that environment plannotator hook mode cannot run.
+# wait_for_listen PORT PID [TIMEOUT_SECS]
+# Polls until plannotator binds PORT, the process dies, or timeout is reached.
+# Returns:
+#   0 — plannotator is listening (browser UI ready)
+#   1 — process exited before binding
+#   2 — timeout reached (process still alive but port not yet bound)
+wait_for_listen() {
+  local port="$1" pid="$2" timeout="${3:-$PLANNOTATOR_START_TIMEOUT}"
+  local elapsed=0
+  while [[ $elapsed -lt $timeout ]]; do
+    kill -0 "$pid" 2>/dev/null || return 1
+    # Primary: bash built-in /dev/tcp (no subprocess, available on Linux/macOS)
+    if ( exec 3<>/dev/tcp/127.0.0.1/"$port" ) 2>/dev/null; then
+      return 0
+    fi
+    # Fallback: Python3 socket connect (Windows Git Bash, systems without /dev/tcp)
+    if command -v python3 >/dev/null 2>&1; then
+      python3 -c "
+import socket, sys
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(0.5)
+try:
+    s.connect(('127.0.0.1', int(sys.argv[1])))
+    s.close()
+    sys.exit(0)
+except Exception:
+    sys.exit(1)
+" "$port" 2>/dev/null && return 0
+    fi
+    sleep 1
+    (( elapsed++ )) || true
+  done
+  return 2
+}
+
+# Pre-launch probe: verify the dedicated port is available before starting plannotator.
 if [[ "${JEO_SKIP_LISTEN_PROBE:-0}" != "1" ]]; then
-  if ! probe_local_listen; then
-    echo "[JEO][PLAN] localhost bind probe failed (listen not permitted)." >&2
+  set +e
+  probe_plannotator_port "$PLANNOTATOR_PORT"
+  probe_port_rc=$?
+  set -e
+  if [[ "$probe_port_rc" -eq 2 ]]; then
+    echo "[JEO][PLAN] localhost bind probe failed — listen not permitted (sandbox/CI)." >&2
     set +e
     manual_fallback_gate
     probe_rc=$?
@@ -285,19 +364,56 @@ if [[ "${JEO_SKIP_LISTEN_PROBE:-0}" != "1" ]]; then
       write_state_gate_status "infrastructure_blocked"
     fi
     exit "$probe_rc"
+  elif [[ "$probe_port_rc" -eq 1 ]]; then
+    echo "[JEO][PLAN] port ${PLANNOTATOR_PORT} already in use — another plannotator instance may be running." >&2
+    echo "[JEO][PLAN] override with: PLANNOTATOR_PORT=<free-port> or kill the existing process." >&2
+    exit 32
   fi
+  echo "[JEO][PLAN] port ${PLANNOTATOR_PORT} is available — starting plannotator." >&2
 fi
 
 attempt=1
 while (( attempt <= MAX_RESTARTS )); do
   : > "$FEEDBACK_FILE"
-  touch /tmp/jeo-plannotator-direct.lock
 
+  # Write plan JSON to a temp file so plannotator can be backgrounded (enables PID tracking)
+  PLAN_JSON_FILE="${FEEDBACK_DIR}/plan_input.json"
   python3 -c "
 import json, sys
 plan = open(sys.argv[1]).read()
 sys.stdout.write(json.dumps({'tool_input': {'plan': plan, 'permission_mode': 'acceptEdits'}}))
-" "$PLAN_FILE" | env HOME="$RUNTIME_HOME" PLANNOTATOR_HOME="$RUNTIME_HOME" plannotator > "$FEEDBACK_FILE" 2>&1 || true
+" "$PLAN_FILE" > "$PLAN_JSON_FILE"
+
+  # Launch plannotator with the dedicated port so we can monitor its binding state.
+  PORT="$PLANNOTATOR_PORT" env HOME="$RUNTIME_HOME" PLANNOTATOR_HOME="$RUNTIME_HOME" \
+    plannotator < "$PLAN_JSON_FILE" > "$FEEDBACK_FILE" 2>&1 &
+  PLANNOTATOR_PID=$!
+
+  # Phase 1: STARTING — wait for plannotator to bind the port (browser UI ready).
+  set +e
+  wait_for_listen "$PLANNOTATOR_PORT" "$PLANNOTATOR_PID" "$PLANNOTATOR_START_TIMEOUT"
+  listen_rc=$?
+  set -e
+  case "$listen_rc" in
+    0)
+      echo "[JEO][PLAN] plannotator listening on port ${PLANNOTATOR_PORT} — waiting for user input." >&2
+      ;;
+    1)
+      echo "[JEO][PLAN] plannotator exited during startup (attempt ${attempt}/${MAX_RESTARTS})." >&2
+      wait "$PLANNOTATOR_PID" 2>/dev/null || true
+      ((attempt++)) || true
+      continue
+      ;;
+    2)
+      echo "[JEO][PLAN] plannotator startup timeout (${PLANNOTATOR_START_TIMEOUT}s) — port ${PLANNOTATOR_PORT} not bound yet; continuing to wait." >&2
+      ;;
+  esac
+
+  # Phase 2: LISTENING / RUNNING — block while browser session is active.
+  while kill -0 "$PLANNOTATOR_PID" 2>/dev/null; do
+    sleep 1
+  done
+  wait "$PLANNOTATOR_PID" 2>/dev/null || true
 
   set +e
   python3 - "$FEEDBACK_FILE" <<'PYEOF'
@@ -341,7 +457,12 @@ PYEOF
     exit "$fallback_rc"
   fi
 
-  echo "[JEO][PLAN] session ended unexpectedly (attempt ${attempt}/${MAX_RESTARTS}). restarting..." >&2
+  # Classify crash type for clearer diagnostics before retrying
+  if [[ -s "$FEEDBACK_FILE" ]]; then
+    echo "[JEO][PLAN] browser crash detected (non-JSON output, attempt ${attempt}/${MAX_RESTARTS}). restarting..." >&2
+  else
+    echo "[JEO][PLAN] plannotator exited without output (attempt ${attempt}/${MAX_RESTARTS}). restarting..." >&2
+  fi
   ((attempt++))
 done
 
@@ -353,5 +474,26 @@ set -e
 if [[ "$fallback_rc" -eq 32 ]]; then
   echo "[JEO][PLAN] confirmation required. stop and ask user whether to continue PLAN." >&2
   write_state_gate_status "infrastructure_blocked"
+  # Write a structured blocked-state file so agent frameworks can parse the situation
+  python3 - "$FEEDBACK_DIR/jeo-blocked.json" "$PLAN_FILE" <<'PYEOF'
+import json, sys
+out_path, plan_file = sys.argv[1], sys.argv[2]
+try:
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "status": "infrastructure_blocked",
+            "reason": "plannotator_session_exhausted",
+            "max_restarts_reached": True,
+            "action_required": "manual_approval",
+            "plan_file": plan_file,
+            "instruction": (
+                "Review the plan file and manually approve or reject: "
+                "run the hook script again in a TTY, or set plan_gate_status "
+                "in .omc/state/jeo-state.json to 'manual_approved'."
+            ),
+        }, f, ensure_ascii=False, indent=2)
+except Exception:
+    pass
+PYEOF
 fi
 exit "$fallback_rc"

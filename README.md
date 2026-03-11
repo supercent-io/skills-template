@@ -2,7 +2,7 @@
 
 > 🌐 Language / 언어: **English** | **[한국어](README.ko.md)**
 
-> v2026-03-10 · **79 Skills** · **TOON Format** · **Flat Skill Layout**
+> v2026-03-11 · **79 Skills** · **TOON Format** · **Flat Skill Layout**
 
 [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases-blue)](https://github.com/supercent-io/skills-template/releases)
 [![Skills](https://img.shields.io/badge/Skills-79-brightgreen)](#skills-list-79-total)
@@ -17,7 +17,7 @@
 ## Contents
 
 - [Quick Start](#quick-start)
-- [What's New](#whats-new-in-v2026-03-10)
+- [What's New](#whats-new-in-v2026-03-11)
 - [Installation](#installation)
 - [Getting Started Guide](#getting-started-guide)
 - [Skills List (79)](#skills-list-79-total)
@@ -46,10 +46,11 @@ curl -s https://raw.githubusercontent.com/supercent-io/skills-template/main/setu
 
 ---
 
-## What's New in v2026-03-10
+## What's New in v2026-03-11
 
 | Change | Details |
 |--------|---------|
+| **jeo v1.2.3: plannotator-plan-loop.sh all-platform hardening** | Cross-platform temp dir (`TMPDIR`/`TMP`/`TEMP` fallback), dedicated port `PLANNOTATOR_PORT=47291` (IANA unassigned), `probe_plannotator_port()` (rc=0 free / rc=1 EADDRINUSE / rc=2 sandbox) + `wait_for_listen()` with `/dev/tcp` primary + Python3 fallback, background PID tracking with 2-phase monitoring (STARTING → LISTENING), browser-crash retry up to 3 times, structured `jeo-blocked.json` on exhaustion in non-TTY environments. |
 | **survey: cross-platform landscape scan added** | Added `survey`, a platform-neutral research skill inspired by `groundwork`. It keeps the 4-lane discovery flow, writes shared artifacts to `.survey/{slug}/`, and adds a Claude/Codex/Gemini abstraction layer for `settings`, `rules`, and `hooks`, bringing the repository from 76 to **77 skills**. |
 | **presentation-builder: slides-grab workflow adopted** | `presentation-builder` now uses `slides-grab` for HTML-first deck creation, visual editing, validation, and PPTX/PDF export. Removed duplicate `pptx-presentation-builder`, bringing the repository from 77 to **76 skills**. |
 | **jeo v1.2.2: Codex plannotator blocking wait fix** | `plannotator-plan-loop.sh` now writes `plan_gate_status` (`approved`/`feedback_required`/`infrastructure_blocked`) to `jeo-state.json` on every exit. `jeo-notify.py` gains `write_plan_gate_result()` that persists gate results back to state. `jeo.md` prompt and `SKILL.md` gain **Conversation Approval Mode** for exit 32: agent outputs plan.md inline and waits for explicit user approval rather than skipping the gate. |
