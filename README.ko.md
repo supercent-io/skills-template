@@ -261,7 +261,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `marketing-automation` | 마케팅 자동화 *(개발 중)* | 전체 |
 | `marketing-skills-collection` | 23개 서브스킬: CRO, 카피라이팅, SEO, 애널리틱스, 그로스 | 전체 |
 
-### 유틸리티 (14개)
+### 유틸리티 (9개)
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|

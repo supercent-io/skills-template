@@ -261,7 +261,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `marketing-automation` | Marketing automation *(in development)* | All |
 | `marketing-skills-collection` | 23 sub-skills: CRO, copywriting, SEO, analytics, growth | All |
 
-### Utilities (14)
+### Utilities (9)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
