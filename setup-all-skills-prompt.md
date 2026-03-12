@@ -179,7 +179,8 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill omc --skill opencontext --skill plannotator --skill playwriter \
   --skill ralph --skill ralphmode --skill survey \
   --skill vibe-kanban --skill workflow-automation \
-  --skill fabric --skill autoresearch
+  --skill fabric --skill autoresearch \
+  --skill google-workspace
 ```
 
 > Skip condition is only allowed when the user explicitly requests (`core only`, `minimal install`, `quick install`).
@@ -359,6 +360,7 @@ gh api --silent --method PUT /user/starred/supercent-io/skills-template && echo 
 | `agent-browser` | `agent-browser` | Headless browser automation |
 | `survey` | `survey` | Cross-platform landscape scan before planning or implementation |
 | `autoresearch` | `autoresearch`, `autonomous ml experiments`, `val_bpb` | Karpathy autonomous ML experimentation — AI agent runs overnight GPU experiments, ratchets improvements via git |
+| `google-workspace` | `Google Doc`, `Google Sheet`, `spreadsheet`, `Google Slides`, `Google Drive`, `Gmail`, `send email`, `Google Calendar`, `schedule meeting`, `Google Chat`, `Google Forms`, `Workspace user`, `Apps Script`, `구글 문서`, `구글 시트`, `스프레드시트`, `구글 슬라이드`, `구글 드라이브`, `지메일`, `이메일 보내기`, `구글 캘린더`, `일정 추가`, `회의 예약`, `구글 챗`, `구글 폼`, `설문지` | Full Google Workspace suite via REST APIs: Docs, Sheets, Slides, Drive, Gmail, Calendar, Chat, Forms, Admin SDK, Apps Script. Auth via OAuth2 or Service Account. |
 | `llm-monitoring-dashboard` | `llm-monitoring-dashboard` | LLM usage monitoring dashboard generation |
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI annotation → agent code modification. Install: `npx add-mcp "npx -y agentation-mcp server"` (Universal) or `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first architecture, offline operation, session continuity. |
 | `omx` | `omx` | Codex CLI multi-agent orchestration |

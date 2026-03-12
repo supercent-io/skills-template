@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
-  "generated": "2026-03-11T08:09:22Z",
-  "skill_count": 80,
+  "generated": "2026-03-12T02:45:48Z",
+  "skill_count": 81,
   "categories": {
     "planning-review": [
       "agent-browser",
@@ -108,6 +108,9 @@
       "standup-meeting",
       "task-estimation",
       "task-planning"
+    ],
+    "integrations": [
+      "google-workspace"
     ]
   },
   "skills": [
