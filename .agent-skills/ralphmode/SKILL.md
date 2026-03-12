@@ -4,7 +4,7 @@ description: Configure Claude Code, Codex CLI, and Gemini CLI for Ralph-style au
 license: CC-BY-4.0
 compatibility: Claude Code, Codex CLI, and Gemini CLI. Requires bash, git, and a repo-scoped workspace. Treat full bypass as sandbox-only. Codex guidance in this skill reflects the official sandbox/approval model current on 2026-03-06; legacy permissions.allow or deny examples are compatibility notes only.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
   author: supercent-io
   keyword: ralphmode
   platforms: Claude Code, Codex CLI, Gemini CLI
@@ -17,6 +17,156 @@ allowed-tools: Read Write Bash Grep Glob
 Ralphmode is a cross-platform permission profile for long-running `ralph` or `jeo` workflows.
 It reduces approval friction, but it is not "allow everything everywhere."
 The core rule is simple: widen automation only inside a bounded project or disposable sandbox, and keep secrets plus destructive commands explicitly blocked.
+
+---
+
+## 0. Agent Execution Protocol (execute immediately upon `ralphmode` keyword detection)
+
+> The following steps are commands, not descriptions. Execute them in order immediately when `ralphmode` is invoked. Do not skip steps.
+
+### STEP 0: Detect mode from user's message
+
+Parse the user's invocation:
+- If the user says **"sandbox"**, **"yolo"**, **"bypass all"**, **"skip all"**, **"disposable"** → `MODE=sandbox`
+- Otherwise → `MODE=repo` (default, safer)
+
+### STEP 1: Run the setup script
+
+The setup script auto-detects your git root, applies the preset to `.claude/settings.json`, and creates the safety hook.
+
+```bash
+# Find the script (checks installed locations)
+_RALPHMODE_SCRIPT=""
+for _candidate in \
+  "$(git rev-parse --show-toplevel 2>/dev/null)/.agent-skills/ralphmode/scripts/apply-ralphmode.sh" \
+  "$HOME/.agent-skills/ralphmode/scripts/apply-ralphmode.sh" \
+  "$HOME/.claude/skills/ralphmode/scripts/apply-ralphmode.sh" \
+  "$(pwd)/.agent-skills/ralphmode/scripts/apply-ralphmode.sh"; do
+  if [[ -f "$_candidate" ]]; then
+    _RALPHMODE_SCRIPT="$_candidate"
+    break
+  fi
+done
+
+if [[ -n "$_RALPHMODE_SCRIPT" ]]; then
+  bash "$_RALPHMODE_SCRIPT" --mode "$MODE"
+else
+  echo "⚠️  apply-ralphmode.sh not found — applying inline (Claude Code only)"
+fi
+```
+
+If the script is not found, fall through to STEP 2 (inline application for Claude Code).
+
+### STEP 2: Inline application (Claude Code — fallback when script is missing)
+
+Only run this if the script from STEP 1 was not found.
+
+**Repo preset** (default — for normal development):
+
+```python
+python3 - <<'EOF'
+import json, os, subprocess
+
+try:
+    root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'],
+        stderr=subprocess.DEVNULL, text=True).strip()
+except Exception:
+    root = os.getcwd()
+
+target = os.path.join(root, '.claude', 'settings.json')
+os.makedirs(os.path.dirname(target), exist_ok=True)
+
+try:
+    existing = json.loads(open(target).read()) if os.path.exists(target) else {}
+except Exception:
+    existing = {}
+
+existing['_ralphmode_previous_permissions'] = existing.get('permissions')
+existing['permissions'] = {
+    'defaultMode': 'acceptEdits',
+    'allow': [
+        'Bash(npm *)', 'Bash(pnpm *)', 'Bash(bun *)', 'Bash(yarn *)',
+        'Bash(python3 *)', 'Bash(pytest *)',
+        'Bash(git status)', 'Bash(git diff)', 'Bash(git add *)',
+        'Bash(git commit *)', 'Bash(git log *)', 'Bash(git push)',
+        'Read(*)', 'Edit(*)', 'Write(*)'
+    ],
+    'deny': [
+        'Read(.env*)', 'Read(./secrets/**)',
+        'Bash(rm -rf *)', 'Bash(sudo *)',
+        'Bash(git push --force*)', 'Bash(git reset --hard*)'
+    ]
+}
+
+with open(target, 'w') as f:
+    json.dump(existing, f, ensure_ascii=False, indent=2)
+print(f'✓ Repo preset applied to {target}')
+EOF
+```
+
+**Sandbox preset** (only for disposable environments):
+
+```python
+python3 - <<'EOF'
+import json, os, subprocess
+
+try:
+    root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'],
+        stderr=subprocess.DEVNULL, text=True).strip()
+except Exception:
+    root = os.getcwd()
+
+target = os.path.join(root, '.claude', 'settings.json')
+os.makedirs(os.path.dirname(target), exist_ok=True)
+
+try:
+    existing = json.loads(open(target).read()) if os.path.exists(target) else {}
+except Exception:
+    existing = {}
+
+existing['_ralphmode_previous_permissions'] = existing.get('permissions')
+existing['permissions'] = {'defaultMode': 'bypassPermissions'}
+
+with open(target, 'w') as f:
+    json.dump(existing, f, ensure_ascii=False, indent=2)
+print(f'✓ Sandbox preset applied to {target}')
+EOF
+```
+
+### STEP 3: Ensure safety hook exists
+
+```bash
+HOOK="$HOME/.claude/hooks/ralph-safety-check.sh"
+if [[ ! -f "$HOOK" ]]; then
+  mkdir -p "$(dirname "$HOOK")"
+  cat > "$HOOK" << 'HOOKEOF'
+#!/usr/bin/env bash
+CMD=$(echo "$CLAUDE_TOOL_INPUT" | python3 -c \
+  "import sys,json; print(json.load(sys.stdin).get('command',''))" 2>/dev/null)
+TIER1='(rm[[:space:]]+-rf|git[[:space:]]+reset[[:space:]]+--hard|git[[:space:]]+push.*--force|DROP[[:space:]]+TABLE|[[:space:]]sudo[[:space:]]|chmod[[:space:]]+777|\.env|secrets/)'
+if echo "$CMD" | grep -qE "$TIER1"; then
+  echo "BLOCKED: Tier 1 dangerous command detected." >&2
+  echo "Command: $CMD" >&2
+  exit 2
+fi
+HOOKEOF
+  chmod +x "$HOOK"
+  echo "✓ Safety hook created: $HOOK"
+else
+  echo "✓ Safety hook exists: $HOOK"
+fi
+```
+
+### STEP 4: Report to the user
+
+After applying, tell the user:
+1. Which preset was applied (`repo` or `sandbox`)
+2. Which file was written (`.claude/settings.json` path)
+3. What the allow/deny list contains
+4. How to revert: `rm .claude/settings.json` (project-local) or restore `~/.claude/settings.json` (global)
+5. **Restart Claude Code** to activate permission changes
+
+---
 
 ## When to use this skill
 
