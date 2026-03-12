@@ -152,7 +152,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill api-design --skill api-documentation --skill authentication-setup \
   --skill backend-testing --skill database-schema-design \
   --skill design-system --skill frontend-design-system \
-  --skill react-best-practices --skill vercel-react-best-practices \
+  --skill react-best-practices --skill react-grab --skill vercel-react-best-practices \
   --skill responsive-design --skill state-management \
   --skill ui-component-patterns --skill web-accessibility \
   --skill web-design-guidelines --skill code-refactoring \

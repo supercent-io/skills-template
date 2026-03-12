@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Skills](https://img.shields.io/badge/Skills-73-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
+[![Skills](https://img.shields.io/badge/Skills-74-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20%7C%20Gemini%20%7C%20Codex%20%7C%20OpenCode-orange?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![BMAD](https://img.shields.io/badge/BMAD-1.1.0-purple?style=for-the-badge)](docs/bmad/README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/akillness3q)
 
-**73개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**74개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-73개) · [설치](#-설치) · [English](README.md)
+[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-74개) · [설치](#-설치) · [English](README.md)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 💡 Agent Skills란?
 
-**73개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**74개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-Agent Skills는 LLM 기반 개발 워크플로우를 위한 73개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
+Agent Skills는 LLM 기반 개발 워크플로우를 위한 74개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
 - Claude Code, Gemini CLI, OpenAI Codex, OpenCode 전반에 걸친 통합 오케스트레이션
 - 계획 → 실행 → 검증 → 정리 자동화 파이프라인
 - 병렬 실행이 가능한 멀티 에이전트 팀 조율
@@ -70,10 +70,11 @@ graph TD
 
 ---
 
-## 🆕 v2026-03-11 업데이트
+## 🆕 v2026-03-12 업데이트
 
 | 변경 | 내용 |
 |------|------|
+| **react-grab: AI 에이전트용 브라우저 요소 컨텍스트 캡처** | 브라우저에서 React UI 요소에 마우스를 올리고 Cmd+C → 컴포넌트명 + 파일 경로 + HTML을 클립보드에 복사하여 Claude Code / Cursor / Copilot / Gemini에 바로 전달. MCP 서버, 플러그인 API, Primitives API 포함. 73 → **74개** |
 | **에이전트 개발 스킬 일부 제거** | `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow` 제거. 80 → **72개** |
 | **이미지/미디어 스킬 일부 제거** | `image-generation`, `image-generation-mcp`, `pollinations-ai` 제거. 미디어는 `remotion-video-production` / `video-production` 사용 |
 | **autoresearch: Karpathy 자율 ML 실험 스킬** | AI 에이전트가 `train.py`를 수정하고 5분 GPU 실험을 반복, `val_bpb`로 평가, git ratcheting으로 개선만 커밋합니다. `scripts/`와 `references/` 포함 |
@@ -185,13 +186,14 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `backend-testing` | 유닛/통합/API 테스트 전략 | 전체 |
 | `database-schema-design` | SQL/NoSQL 스키마 설계 | 전체 |
 
-### 🎨 프론트엔드 (9개)
+### 🎨 프론트엔드 (10개)
 
 | 스킬 | 설명 | 플랫폼 |
 |------|------|--------|
 | `design-system` | 디자인 토큰, 레이아웃 규칙, 모션, 접근성 | 전체 |
 | `frontend-design-system` | 디자인 토큰과 접근성 기반 프로덕션 UI | 전체 |
 | `react-best-practices` | React & Next.js 성능 최적화 | 전체 |
+| `react-grab` | AI 에이전트용 브라우저 요소 컨텍스트 캡처 (Cmd+C → 컴포넌트명 + 파일경로 + HTML) | 전체 |
 | `vercel-react-best-practices` | Vercel Engineering React & Next.js 가이드 | Claude · Gemini · Codex |
 | `responsive-design` | 모바일 우선 레이아웃과 브레이크포인트 | 전체 |
 | `state-management` | Redux, Context, Zustand 패턴 | 전체 |

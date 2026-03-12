@@ -36,6 +36,16 @@
       "tags": ["LLM", "monitoring", "dashboard", "tokuin", "pm-insights", "ranking", "cost-tracking"],
       "addedAt": "2026-03-03T00:00:00Z"
     },
+    "react-grab": {
+      "source": "supercent-io/skills-template",
+      "sourceType": "github",
+      "version": "1.0.0",
+      "keyword": "react-grab",
+      "description": "브라우저 UI 요소의 React 컴포넌트 컨텍스트(파일 경로, 컴포넌트명, HTML)를 클립보드에 복사하여 AI 코딩 에이전트에 전달",
+      "tags": ["react-grab", "grab", "element-context", "ai-agent", "clipboard", "component-inspector", "react", "mcp", "browser-devtools"],
+      "installCommand": "npx skills add https://github.com/supercent-io/skills-template --skill react-grab",
+      "addedAt": "2026-03-12T00:00:00Z"
+    },
     "survey": {
       "source": "supercent-io/skills-template",
       "sourceType": "github",
