@@ -216,9 +216,11 @@ if $INSTALL_AGENTATION; then
   info "Installing agentation MCP..."
   if command -v npx >/dev/null 2>&1; then
     run "npx -y agentation-mcp doctor 2>/dev/null || npx -y agentation-mcp --version 2>/dev/null || true"
-    ok "agentation-mcp available via npx"
+    ok "agentation-mcp (server) available via npx"
     info "Start server: npx agentation-mcp server"
-    info "Add to React app: <Agentation endpoint=\"http://localhost:4747\" />"
+    info "React component: auto-installed + injected by ensure-agentation.sh at VERIFY_UI time"
+    info "Manual install: cd <your-app> && npm install agentation --save-dev"
+    info "Manual inject:  import { Agentation } from 'agentation'; <Agentation endpoint=\"http://localhost:4747\" />"
   else
     warn "npx not found — install Node.js first"
   fi

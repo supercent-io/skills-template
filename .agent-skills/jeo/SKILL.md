@@ -401,8 +401,10 @@ if os.path.exists(f):
 
 1. Pre-flight check (required before entering):
    ```bash
+   # Auto-start server, auto-install package, auto-inject component (see §3.3.1 for full script)
+   bash scripts/ensure-agentation.sh --project-dir "${PROJECT_DIR:-$PWD}" --endpoint "http://localhost:4747" || true
+   # If agentation-mcp server is still not healthy after pre-flight → graceful skip to STEP 4
    if ! curl -sf --connect-timeout 2 http://localhost:4747/health >/dev/null 2>&1; then
-     echo "⚠️  agentation-mcp server not running — skipping VERIFY_UI and proceeding to CLEANUP"
      python3 -c "
 import json,os,subprocess,fcntl,time
 try:
@@ -661,17 +663,34 @@ agent-browser screenshot http://localhost:3000 -o verify.png
 Runs the agentation watch loop when the `annotate` keyword is detected. (The `agentui` keyword is also supported for backward compatibility.)
 This follows the same pattern as plannotator operating in `planui` / `ExitPlanMode`.
 
-**Prerequisites:**
-1. `npx agentation-mcp server` (HTTP :4747) is running
-2. `<Agentation endpoint="http://localhost:4747" />` is mounted in the app
+**Prerequisites (auto-resolved by pre-flight):**
+1. `npx agentation-mcp server` (HTTP :4747) is running — **auto-started if not running**
+2. `agentation` npm package installed in the project — **auto-installed if absent**
+3. `<Agentation endpoint="http://localhost:4747" />` is mounted in the app — **auto-injected into entry point if absent**
 
 **Pre-flight Check (required before entering — common to all platforms):**
 ```bash
-# Step 1: Check server status (graceful skip if not running — no exit 1)
-if ! curl -sf --connect-timeout 2 http://localhost:4747/health >/dev/null 2>&1; then
-  echo "⚠️  agentation-mcp server not running — skipping VERIFY_UI and proceeding to CLEANUP"
-  echo "   (to use agentation: npx agentation-mcp server)"
-  python3 -c "
+# ── Step 1: Auto-start agentation-mcp server if not running ─────────────────
+JEO_AGENTATION_ENDPOINT="${JEO_AGENTATION_ENDPOINT:-http://localhost:4747}"
+JEO_AGENTATION_PORT="${JEO_AGENTATION_PORT:-4747}"
+
+if ! curl -sf --connect-timeout 2 "${JEO_AGENTATION_ENDPOINT}/health" >/dev/null 2>&1; then
+  echo "[JEO][ANNOTATE] agentation-mcp not running — attempting auto-start on port ${JEO_AGENTATION_PORT}..."
+  if command -v npx >/dev/null 2>&1; then
+    npx -y agentation-mcp server --port "${JEO_AGENTATION_PORT}" >/tmp/agentation-mcp.log 2>&1 &
+    AGENTATION_MCP_PID=$!
+    echo "[JEO][ANNOTATE] started agentation-mcp (PID ${AGENTATION_MCP_PID})"
+    # Wait up to 8 seconds for server to become healthy
+    for i in $(seq 1 8); do
+      sleep 1
+      if curl -sf --connect-timeout 1 "${JEO_AGENTATION_ENDPOINT}/health" >/dev/null 2>&1; then
+        echo "[JEO][ANNOTATE] ✅ agentation-mcp server ready"
+        break
+      fi
+    done
+    if ! curl -sf --connect-timeout 2 "${JEO_AGENTATION_ENDPOINT}/health" >/dev/null 2>&1; then
+      echo "[JEO][ANNOTATE] ⚠️  agentation-mcp failed to start — skipping VERIFY_UI"
+      python3 -c "
 import json,os,subprocess,fcntl,time
 try:
     root=subprocess.check_output(['git','rev-parse','--show-toplevel'],stderr=subprocess.DEVNULL).decode().strip()
@@ -683,19 +702,94 @@ if os.path.exists(f):
         fcntl.flock(fh,fcntl.LOCK_EX)
         try:
             d=json.load(fh)
-            d['last_error']='agentation-mcp not running; VERIFY_UI skipped'
+            d['last_error']='agentation-mcp failed to start; VERIFY_UI skipped'
             d['updated_at']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
             fh.seek(0); json.dump(d,fh,ensure_ascii=False,indent=2); fh.truncate()
         finally:
             fcntl.flock(fh,fcntl.LOCK_UN)
 " 2>/dev/null || true
-  # Proceed to STEP 4 CLEANUP (no exit 1 — graceful skip)
-else
-  # Step 2: Check session existence (<Agentation> component mount status)
-  SESSIONS=$(curl -sf http://localhost:4747/sessions 2>/dev/null)
+      # Proceed to STEP 4 CLEANUP (no exit 1 — graceful skip)
+    fi
+  else
+    echo "[JEO][ANNOTATE] ⚠️  npx not found — cannot auto-start agentation-mcp. Skipping VERIFY_UI."
+    python3 -c "
+import json,os,subprocess,fcntl,time
+try:
+    root=subprocess.check_output(['git','rev-parse','--show-toplevel'],stderr=subprocess.DEVNULL).decode().strip()
+except:
+    root=os.getcwd()
+f=os.path.join(root,'.omc/state/jeo-state.json')
+if os.path.exists(f):
+    with open(f,'r+') as fh:
+        fcntl.flock(fh,fcntl.LOCK_EX)
+        try:
+            d=json.load(fh)
+            d['last_error']='npx not found; agentation-mcp auto-start skipped; VERIFY_UI skipped'
+            d['updated_at']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
+            fh.seek(0); json.dump(d,fh,ensure_ascii=False,indent=2); fh.truncate()
+        finally:
+            fcntl.flock(fh,fcntl.LOCK_UN)
+" 2>/dev/null || true
+    # Proceed to STEP 4 CLEANUP (no exit 1 — graceful skip)
+  fi
+fi
+
+# ── Step 2: Auto-install agentation package + inject <Agentation> if needed ──
+# Only runs when server is confirmed healthy
+if curl -sf --connect-timeout 2 "${JEO_AGENTATION_ENDPOINT}/health" >/dev/null 2>&1; then
+  SESSIONS=$(curl -sf "${JEO_AGENTATION_ENDPOINT}/sessions" 2>/dev/null || echo "[]")
   S_COUNT=$(echo "$SESSIONS" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
-  [ "$S_COUNT" -eq 0 ] && echo "⚠️ No active sessions — <Agentation endpoint='http://localhost:4747' /> needs to be mounted"
-  echo "✅ agentation ready — server OK, ${S_COUNT} session(s)"
+
+  if [ "$S_COUNT" -eq 0 ]; then
+    echo "[JEO][ANNOTATE] No active sessions — running ensure-agentation.sh to install package and inject component..."
+
+    # Locate ensure-agentation.sh (try common installation paths)
+    ENSURE_SCRIPT=""
+    for candidate in \
+      "$(dirname "${BASH_SOURCE[0]:-$0}")/ensure-agentation.sh" \
+      "$HOME/.claude/skills/jeo/scripts/ensure-agentation.sh" \
+      "$HOME/.agent-skills/jeo/scripts/ensure-agentation.sh" \
+      "$HOME/.codex/skills/jeo/scripts/ensure-agentation.sh"; do
+      if [[ -f "$candidate" ]]; then
+        ENSURE_SCRIPT="$candidate"
+        break
+      fi
+    done
+
+    if [[ -n "$ENSURE_SCRIPT" ]]; then
+      ENSURE_EXIT=0
+      bash "$ENSURE_SCRIPT" \
+        --project-dir "${PROJECT_DIR:-$PWD}" \
+        --endpoint "${JEO_AGENTATION_ENDPOINT}" || ENSURE_EXIT=$?
+
+      if [ "$ENSURE_EXIT" -eq 0 ]; then
+        echo "[JEO][ANNOTATE] ensure-agentation completed — waiting up to 15s for browser to reconnect..."
+        # Wait for dev server hot-reload and browser reconnection
+        for i in $(seq 1 15); do
+          sleep 1
+          NEW_S_COUNT=$(curl -sf "${JEO_AGENTATION_ENDPOINT}/sessions" 2>/dev/null | \
+            python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
+          if [ "$NEW_S_COUNT" -gt 0 ]; then
+            echo "[JEO][ANNOTATE] ✅ Browser session established (${NEW_S_COUNT} session(s))"
+            S_COUNT=$NEW_S_COUNT
+            break
+          fi
+        done
+        if [ "$S_COUNT" -eq 0 ]; then
+          echo "[JEO][ANNOTATE] ⚠️  Component injected but no browser session yet."
+          echo "   → Refresh the browser at your app URL, then re-run annotate."
+        fi
+      elif [ "$ENSURE_EXIT" -eq 2 ]; then
+        echo "[JEO][ANNOTATE] ℹ️  Not a Node.js project — mount <Agentation endpoint='${JEO_AGENTATION_ENDPOINT}' /> manually."
+      else
+        echo "[JEO][ANNOTATE] ⚠️  ensure-agentation.sh failed (exit $ENSURE_EXIT) — mount <Agentation endpoint='${JEO_AGENTATION_ENDPOINT}' /> manually."
+      fi
+    else
+      echo "[JEO][ANNOTATE] ⚠️  ensure-agentation.sh not found — mount <Agentation endpoint='${JEO_AGENTATION_ENDPOINT}' /> manually."
+    fi
+  fi
+
+  echo "[JEO][ANNOTATE] ✅ agentation ready — server OK, ${S_COUNT} session(s)"
 fi
 ```
 

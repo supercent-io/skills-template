@@ -4,14 +4,15 @@
     "jeo": {
       "source": "supercent-io/skills-template",
       "sourceType": "github",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "keyword": "jeo",
       "description": "통합 AI 에이전트 오케스트레이션. ralph+plannotator 계획→team/bmad 실행→agent-browser 검증→agentation submit-gated UI 피드백→worktree 정리.",
       "tags": ["jeo", "orchestration", "ralph", "plannotator", "team", "bmad", "agent-browser", "agentation", "submit-gate", "plan-hash"],
       "installCommand": "npx skills add https://github.com/supercent-io/skills-template --skill jeo",
       "addedAt": "2026-03-05T00:00:00Z",
-      "updatedAt": "2026-03-10T00:00:00Z",
+      "updatedAt": "2026-03-12T00:00:00Z",
       "changelog": {
+        "1.4.0": "VERIFY_UI pre-flight에 agentation 자동 설정 추가: agentation-mcp 서버 자동 시작, npm 패키지 자동 설치(npm/pnpm/bun 감지), React 진입점(main.jsx/layout.tsx/_app.tsx)에 <Agentation> 컴포넌트 자동 주입 — ensure-agentation.sh 신규 추가",
         "1.3.0": "Claude/Codex/Gemini에서 동일한 plan hash 재검토를 차단하고, annotate/agentation은 explicit submit/onSubmit 이후에만 처리하도록 submit gate를 추가",
         "1.1.0": "retry_count/last_error/checkpoint 에러 복구 필드 추가, 모든 STEP pre-flight 체크 추가, git 저장소 감지 개선",
         "1.0.0": "초기 릴리스 — PLAN/EXECUTE/VERIFY/VERIFY_UI/CLEANUP 전체 플로우"
