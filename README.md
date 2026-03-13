@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Skills](https://img.shields.io/badge/Skills-74-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
+[![Skills](https://img.shields.io/badge/Skills-73-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20%7C%20Gemini%20%7C%20Codex%20%7C%20OpenCode-orange?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![BMAD](https://img.shields.io/badge/BMAD-1.1.0-purple?style=for-the-badge)](docs/bmad/README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/akillness3q)
 
-**74 AI agent skills · TOON Format · Cross-platform**
+**73 AI agent skills · TOON Format · Cross-platform**
 
-[Quick Start](#-quick-start) · [Skills List](#-skills-list-74-total) · [Installation](#-installation) · [한국어](README.ko.md)
+[Quick Start](#-quick-start) · [Skills List](#-skills-list-73-total) · [Installation](#-installation) · [한국어](README.ko.md)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 💡 What is Agent Skills?
 
-**74 AI agent skills · TOON Format · Cross-platform**
+**73 AI agent skills · TOON Format · Cross-platform**
 
-Agent Skills is a curated collection of 74 AI agent skills for LLM-based development workflows. Built around the `jeo` orchestration protocol, it provides:
+Agent Skills is a curated collection of 73 AI agent skills for LLM-based development workflows. Built around the `jeo` orchestration protocol, it provides:
 - Unified orchestration across Claude Code, Gemini CLI, OpenAI Codex, and OpenCode
 - Plan → Execute → Verify → Cleanup automated pipelines
 - Multi-agent team coordination with parallel execution
@@ -74,8 +74,8 @@ graph TD
 
 | Change | Details |
 |--------|---------|
-| **react-grab: browser element context for AI agents** | Hover over any React UI element → Cmd+C → copy component name + file path + HTML to clipboard for Claude Code / Cursor / Copilot / Gemini. MCP server, plugin API, primitives API. 73 → **74 skills**. |
-| **Removed deprecated agent-development skills** | Removed `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`. 80 → **72 skills**. |
+| **react-grab: browser element context for AI agents** | Hover over any React UI element → Cmd+C → copy component name + file path + HTML to clipboard for Claude Code / Cursor / Copilot / Gemini. MCP server, plugin API, primitives API. Total: **73 skills**. |
+| **Removed deprecated agent-development skills** | Removed `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow`. |
 | **Removed deprecated image/media skills** | Removed `image-generation`, `image-generation-mcp`, `pollinations-ai`. Use `remotion-video-production` / `video-production` for media. |
 | **autoresearch: Karpathy autonomous ML experiment skill** | AI agent modifies `train.py`, runs 5-min GPU experiments, evaluates with `val_bpb`, ratchets improvements via git. Includes `scripts/` and `references/`. |
 | **jeo v1.2.3: plannotator-plan-loop.sh all-platform hardening** | Cross-platform temp dir fallback, dedicated port `PLANNOTATOR_PORT=47291`, `probe_plannotator_port()` + `wait_for_listen()`, browser-crash retry up to 3 times, structured `jeo-blocked.json` output. |
@@ -211,14 +211,13 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 | `performance-optimization` | Speed, efficiency, scalability optimization | All |
 | `testing-strategies` | Test pyramid, coverage, flaky-test hardening | All |
 
-### 🏗 Infrastructure (10)
+### 🏗 Infrastructure (9)
 
 | Skill | Description | Platforms |
 |-------|-------------|-----------|
 | `ai-tool-compliance` | Internal AI tool compliance automation (P0/P1) | All |
 | `deployment-automation` | CI/CD, Docker/Kubernetes, cloud infrastructure | All |
 | `environment-setup` | Dev/staging/production environment config | All |
-| `firebase-ai-logic` | Firebase AI Logic (Gemini) integration | Claude · Gemini |
 | `genkit` | Firebase Genkit AI flows and RAG pipelines | Claude · Gemini |
 | `looker-studio-bigquery` | Looker Studio + BigQuery dashboards | All |
 | `monitoring-observability` | Health checks, metrics, log aggregation | All |
@@ -369,7 +368,7 @@ npx vibe-kanban
 
 ```text
 .
-├── .agent-skills/          ← 72 skill folders (each with SKILL.md + SKILL.toon)
+├── .agent-skills/          ← 73 skill folders (each with SKILL.md + SKILL.toon)
 ├── docs/                   ← detailed guides (bmad, omc, plannotator, ralph, ...)
 ├── install.sh
 ├── setup-all-skills-prompt.md
