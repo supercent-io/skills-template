@@ -125,7 +125,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 73-Skill Installation (Default Execution Step)
+### Step 2: Full 75-Skill Installation (Default Execution Step)
 
 > **Always wipe existing skill directories before running — ensures no stale skills from previous installs or Step 1 partial install remain.**
 
@@ -159,7 +159,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill code-review --skill debugging \
   --skill performance-optimization --skill testing-strategies \
   --skill deployment-automation \
-  --skill genkit --skill looker-studio-bigquery \
+  --skill firebase-cli --skill genkit --skill looker-studio-bigquery \
   --skill monitoring-observability --skill security-best-practices \
   --skill system-environment-setup --skill vercel-deploy \
   --skill changelog-maintenance --skill presentation-builder \

@@ -36,6 +36,16 @@
       "tags": ["LLM", "monitoring", "dashboard", "tokuin", "pm-insights", "ranking", "cost-tracking"],
       "addedAt": "2026-03-03T00:00:00Z"
     },
+    "firebase-cli": {
+      "source": "supercent-io/skills-template",
+      "sourceType": "github",
+      "version": "1.0.0",
+      "keyword": "firebase-cli",
+      "description": "Firebase CLI 완전 스킬 — Hosting 배포, Cloud Functions, Firestore, Realtime DB, Auth 마이그레이션, 에뮬레이터 스위트, Remote Config, App Distribution, Extensions, App Hosting. scripts/install.sh + deploy.sh + emulators.sh 포함.",
+      "tags": ["firebase-cli", "firebase", "hosting", "functions", "firestore", "auth", "emulators", "remote-config", "app-distribution", "deploy", "ci-cd"],
+      "installCommand": "npx skills add https://github.com/supercent-io/skills-template --skill firebase-cli",
+      "addedAt": "2026-03-13T00:00:00Z"
+    },
     "react-grab": {
       "source": "supercent-io/skills-template",
       "sourceType": "github",
