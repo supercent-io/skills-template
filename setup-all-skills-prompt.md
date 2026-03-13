@@ -61,6 +61,7 @@ SKILL_DESTS=(
   "${HOME}/.gemini/skills" "${PWD}/.gemini/skills"
   "${HOME}/.opencode/skills" "${PWD}/.opencode/skills"
   "${HOME}/.config/opencode/skills" "${PWD}/.config/opencode/skills"
+  "${HOME}/.agents/skills"          # npx skills add -g actual install path
 )
 
 # Always wipe existing skill paths to guarantee a clean install
@@ -125,7 +126,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 
 ---
 
-### Step 2: Full 74-Skill Installation (Default Execution Step)
+### Step 2: Full 75-Skill Installation (Default Execution Step)
 
 > **Always wipe existing skill directories before running — ensures no stale skills from previous installs or Step 1 partial install remain.**
 
@@ -134,6 +135,7 @@ gemini extensions install https://github.com/supercent-io/skills-template
 _SKILLS_CANONICAL="${HOME}/.agent-skills"
 for _dest in \
   "${_SKILLS_CANONICAL}" \
+  "${HOME}/.agents/skills" \
   "${HOME}/.claude/skills"  "${PWD}/.claude/skills" \
   "${HOME}/.codex/skills"   "${PWD}/.codex/skills" \
   "${HOME}/.gemini/skills"  "${PWD}/.gemini/skills" \
@@ -180,7 +182,7 @@ npx skills add https://github.com/supercent-io/skills-template \
   --skill ralph --skill ralphmode --skill survey \
   --skill vibe-kanban --skill workflow-automation \
   --skill fabric --skill autoresearch \
-  --skill google-workspace
+  --skill google-workspace --skill langsmith
 ```
 
 > Skip condition is only allowed when the user explicitly requests (`core only`, `minimal install`, `quick install`).
@@ -205,6 +207,8 @@ configure and use the jeo skill. remember it.
 
 ```bash
 # jeo ExitPlanMode hook setup (plannotator auto-integration)
+# ⚠️ Run AFTER Step 4 completes — ~/.agent-skills/jeo/ must exist first
+# If jeo is missing from ~/.agent-skills/, run: npx skills add -g https://github.com/supercent-io/skills-template --skill jeo
 bash ~/.agent-skills/jeo/scripts/setup-claude.sh
 
 # agentation Claude Code Official Skill install (recommended)
@@ -365,6 +369,7 @@ gh api --silent --method PUT /user/starred/supercent-io/skills-template && echo 
 | `agentation` | `annotate`, `UI검토`, `agentui` | UI annotation → agent code modification. Install: `npx add-mcp "npx -y agentation-mcp server"` (Universal) or `npx skills add benjitaylor/agentation` → `/agentation` (Claude Code Official Skill). Local-first architecture, offline operation, session continuity. |
 | `omx` | `omx` | Codex CLI multi-agent orchestration |
 | `ohmg` | `ohmg` | Gemini / Antigravity workflows |
+| `langsmith` | `langsmith`, `llm tracing`, `llm evaluation`, `@traceable`, `langsmith evaluate`, `llm observability` | LLM observability, tracing & evaluation — instrument with `@traceable`/`wrap_openai`, run offline/online evaluations, manage prompts in Prompt Hub, LLM-as-judge via openevals, dataset regression testing. Python + TypeScript |
 
 ---
 

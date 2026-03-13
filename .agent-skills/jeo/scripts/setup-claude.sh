@@ -14,7 +14,23 @@ info() { echo -e "${BLUE}→${NC} $*"; }
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true
 
-JEO_SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Resolve JEO_SKILL_DIR: prefer stable canonical paths over script location
+# to ensure hooks survive reinstalls regardless of where this script is run from.
+_SCRIPT_JEO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+_CANONICAL_JEO="${HOME}/.agent-skills/jeo"      # canonical (setup-all-skills Step 4 rsync target)
+_GLOBAL_JEO="${HOME}/.agents/skills/jeo"        # npx skills add -g actual install path
+
+if [[ -d "${_CANONICAL_JEO}/scripts" ]]; then
+  JEO_SKILL_DIR="${_CANONICAL_JEO}"
+elif [[ -d "${_GLOBAL_JEO}/scripts" ]]; then
+  JEO_SKILL_DIR="${_GLOBAL_JEO}"
+  warn "Using global install path: ${JEO_SKILL_DIR}"
+  warn "Run Step 4 rsync from setup-all-skills-prompt.md to sync to canonical path."
+else
+  JEO_SKILL_DIR="${_SCRIPT_JEO}"
+  warn "jeo not at canonical path. Using script location: ${JEO_SKILL_DIR}"
+  warn "Hooks will break if this location changes. Run setup-all-skills-prompt.md Step 4 to fix."
+fi
 CLAUDE_SETTINGS="${HOME}/.claude/settings.json"
 
 echo ""
