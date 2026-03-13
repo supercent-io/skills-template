@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Skills](https://img.shields.io/badge/Skills-75-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
+[![Skills](https://img.shields.io/badge/Skills-74-blue?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20%7C%20Gemini%20%7C%20Codex%20%7C%20OpenCode-orange?style=for-the-badge)](https://github.com/supercent-io/skills-template)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![BMAD](https://img.shields.io/badge/BMAD-1.1.0-purple?style=for-the-badge)](docs/bmad/README.md)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/akillness3q)
 
-**75개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**74개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-75개) · [설치](#-설치) · [English](README.md)
+[빠른 시작](#-빠른-시작) · [스킬 목록](#-스킬-목록-74개) · [설치](#-설치) · [English](README.md)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 💡 Agent Skills란?
 
-**75개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
+**74개 AI 에이전트 스킬 · TOON 포맷 · 멀티플랫폼**
 
-Agent Skills는 LLM 기반 개발 워크플로우를 위한 75개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
+Agent Skills는 LLM 기반 개발 워크플로우를 위한 74개 AI 에이전트 스킬 컬렉션입니다. `jeo` 오케스트레이션 프로토콜을 중심으로 구축되었으며 다음을 제공합니다:
 - Claude Code, Gemini CLI, OpenAI Codex, OpenCode 전반에 걸친 통합 오케스트레이션
 - 계획 → 실행 → 검증 → 정리 자동화 파이프라인
 - 병렬 실행이 가능한 멀티 에이전트 팀 조율
@@ -74,7 +74,7 @@ graph TD
 
 | 변경 | 내용 |
 |------|------|
-| **firebase-cli: 완전한 Firebase CLI 스킬** | Hosting, Cloud Functions, Firestore, Realtime DB, Auth 가져오기/내보내기, 에뮬레이터 스위트, Remote Config, App Distribution, Extensions, App Hosting 전체 커버. scripts/install.sh + deploy.sh + emulators.sh 포함. 총 **75개** |
+| **firebase-cli: 완전한 Firebase CLI 스킬** | Hosting, Cloud Functions, Firestore, Realtime DB, Auth 가져오기/내보내기, 에뮬레이터 스위트, Remote Config, App Distribution, Extensions, App Hosting 전체 커버. scripts/install.sh + deploy.sh + emulators.sh 포함. 총 **74개** |
 | **react-grab: AI 에이전트용 브라우저 요소 컨텍스트 캡처** | 브라우저에서 React UI 요소에 마우스를 올리고 Cmd+C → 컴포넌트명 + 파일 경로 + HTML을 클립보드에 복사하여 Claude Code / Cursor / Copilot / Gemini에 바로 전달. MCP 서버, 플러그인 API, Primitives API 포함. 총 **74개** |
 | **에이전트 개발 스킬 일부 제거** | `agent-configuration`, `agent-evaluation`, `agentic-development-principles`, `agentic-principles`, `agentic-workflow` 제거. |
 | **이미지/미디어 스킬 일부 제거** | `image-generation`, `image-generation-mcp`, `pollinations-ai` 제거. 미디어는 `remotion-video-production` / `video-production` 사용 |
@@ -141,7 +141,7 @@ bash ~/.agent-skills/jeo/scripts/setup-gemini.sh
 
 ---
 
-## 📚 스킬 목록 (75개)
+## 📚 스킬 목록 (74개)
 
 > 전체 매니페스트: `.agent-skills/skills.json` · 각 폴더의 `SKILL.md`
 
@@ -370,7 +370,7 @@ npx vibe-kanban
 
 ```text
 .
-├── .agent-skills/          ← 75개 스킬 폴더 (각각 SKILL.md + SKILL.toon)
+├── .agent-skills/          ← 74개 스킬 폴더 (각각 SKILL.md + SKILL.toon)
 ├── docs/                   ← 상세 가이드 (bmad, omc, plannotator, ralph, ...)
 ├── install.sh
 ├── setup-all-skills-prompt.md
